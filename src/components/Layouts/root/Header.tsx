@@ -74,7 +74,7 @@ const Header: React.FC = () => {
             transition={{ duration: 0.4, ease: "easeInOut" }}
             className="mx-auto grid grid-cols-3 h-[40px] w-full items-center  bg-secondary px-4 text-white lg:px-6">
             <p>Get Ready For Summer Offers</p>
-            <p className="text-center">Use code '2025' and get 10% Off</p>
+            <p className="text-center">Use code 2025 and get 10% Off</p>
 
             <div
               className="relative flex cursor-pointer items-center justify-end gap-2"
