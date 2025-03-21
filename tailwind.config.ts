@@ -19,6 +19,7 @@ const config: Config = {
         transparent: "transparent",
         white: "#FFFFFF",
         primary: "#F9C726",
+        secondary: "#1F1F1F",
         stroke: "#E6EBF1",
         "stroke-dark": "#27303E",
         dark: {
