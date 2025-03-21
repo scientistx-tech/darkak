@@ -2,7 +2,7 @@ import React from 'react';
 
 function page() {
     return (
-        <div>
+        <div className='w-full h-[2000px]'>
             Home Page
         </div>
     );
