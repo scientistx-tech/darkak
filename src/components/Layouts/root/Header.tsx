@@ -15,11 +15,10 @@ import {
   ShoppingCartOutlined,
 } from "@ant-design/icons";
 import { motion } from "framer-motion";
-import { Drawer } from "antd";
-
 import Bangla from "@/Data/Img/BanglaLag.svg";
 import English from "@/Data/Img/EnglishLag.svg";
 import Logo from "@/Data/Img/Logo.svg";
+import NavLink from "@/components/shared/NavLink";
 
 const Header: React.FC = () => {
   const pathname = usePathname();
@@ -55,54 +54,63 @@ const Header: React.FC = () => {
 
   return (
     <div className="w-full">
-      {/* Top-Box */}
-      <div className="mx-auto flex h-[40px] w-full items-center justify-between bg-secondary px-4 text-white lg:px-6">
-        <p>Get Ready For Summer Offers</p>
-        <p>Use code '2025' and get 10% Off</p>
 
-        <div
-          className="relative flex cursor-pointer items-center gap-2"
-          onMouseEnter={() => setIsDropdownOpen(true)}
-          onMouseLeave={() => setIsDropdownOpen(false)}
-        >
-          <Image
-            alt=""
-            src={selectedLang === "Bangla" ? Bangla : English}
-            width={20}
-            height={20}
-          />
-          <p className="uppercase">{selectedLang}</p>
-          {isDropdownOpen ? <UpOutlined /> : <DownOutlined />}
 
-          {isDropdownOpen && (
-            <div className="absolute left-0 top-2 z-30 w-[100px] rounded-md bg-transparent py-2 text-black shadow-lg transition-opacity duration-300 ease-in-out">
-              <div className="mt-6 bg-white">
-                <p
-                  className="px-4 py-1 uppercase hover:bg-gray-200"
-                  onClick={() => handleLanguageChange("English")}
-                >
-                  English
-                </p>
-                <p
-                  className="px-4 py-1 uppercase hover:bg-gray-200"
-                  onClick={() => handleLanguageChange("Bangla")}
-                >
-                  Bangla
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
       <motion.div
-        animate={{ y: show ? 0 : -160 }}
+        animate={{ y: show ? 0 : -120 }}
         transition={
           show
-            ? { type: "spring", stiffness: 100, damping: 30 }
-            : { type: "spring", stiffness: 30 }
+            ? { type: "spring", stiffness: 120, damping: 30 }
+            : { type: "spring", stiffness: 50 }
         }
-        className="fixed top-0 z-50 w-full"
+        className={`fixed top-0 z-50 w-full`}
       >
+        {/* Top-Box */}
+        {lastScrollY < 45 && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 40 }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="mx-auto grid grid-cols-3 h-[40px] w-full items-center  bg-secondary px-4 text-white lg:px-6">
+            <p>Get Ready For Summer Offers</p>
+            <p className="text-center">Use code '2025' and get 10% Off</p>
+
+            <div
+              className="relative flex cursor-pointer items-center justify-end gap-2"
+              onMouseEnter={() => setIsDropdownOpen(true)}
+              onMouseLeave={() => setIsDropdownOpen(false)}
+            >
+              <Image
+                alt=""
+                src={selectedLang === "Bangla" ? Bangla : English}
+                width={20}
+                height={20}
+              />
+              <p className="uppercase">{selectedLang}</p>
+              {isDropdownOpen ? <UpOutlined /> : <DownOutlined />}
+
+              {isDropdownOpen && (
+                <div className="absolute left-0 top-2 z-30 w-[100px] rounded-md bg-transparent py-2 text-black shadow-lg transition-opacity duration-300 ease-in-out">
+                  <div className="mt-6 bg-white">
+                    <p
+                      className="px-4 py-1 uppercase hover:bg-gray-200"
+                      onClick={() => handleLanguageChange("English")}
+                    >
+                      English
+                    </p>
+                    <p
+                      className="px-4 py-1 uppercase hover:bg-gray-200"
+                      onClick={() => handleLanguageChange("Bangla")}
+                    >
+                      Bangla
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
         {/* Header-Box */}
         <div className="mx-auto flex h-[80px] w-full items-center justify-between bg-primary px-4 text-secondary lg:px-6">
           <Link href="/">
@@ -111,11 +119,11 @@ const Header: React.FC = () => {
 
           <div>
             <input
-              className="w-[350px] p-1.5 pl-4 pr-3 outline-none"
+              className="w-[350px] p-1.5 pl-4 pr-3 outline-none rounded-tl-md rounded-bl-md"
               placeholder="Search.."
             />
 
-            <button className="bg-secondary p-1.5 pl-5 pr-5 text-white">
+            <button className="bg-secondary p-1.5 pl-5 pr-5 text-white rounded-tr-md rounded-br-md">
               <SearchOutlined className="text-xl" />
             </button>
           </div>
@@ -148,51 +156,42 @@ const Header: React.FC = () => {
         </div>
 
         {/* Nav-Bar */}
-        <div className="flex h-[40px] w-full items-center justify-evenly border border-b">
-          <Link
+        <div className="flex bg-white h-[40px] w-full items-center justify-evenly border border-b">
+          <NavLink
             href="/"
-            className={`${
-              pathname === "/" ? "text-secondary" : ""
-            } font-serif text-xl uppercase hover:text-secondary`}
+            className="font-serif text-lg uppercase hover:text-secondary"
+
           >
             Home
-          </Link>
+          </NavLink>
 
-          <Link
+          <NavLink
             href="/shop"
-            className={`${
-              pathname === "/shop" ? "text-secondary" : ""
-            } font-serif text-xl uppercase hover:text-secondary`}
+            className={`font-serif text-lg uppercase hover:text-secondary`}
           >
             Shop
-          </Link>
+          </NavLink>
 
-          <Link
+          <NavLink
             href="/product"
-            className={`${
-              pathname === "/product" ? "text-secondary" : ""
-            } font-serif text-xl uppercase hover:text-secondary`}
+            className={`font-serif text-lg uppercase hover:text-secondary`}
           >
             Product
-          </Link>
+          </NavLink>
 
-          <Link
+          <NavLink
             href="/blogs"
-            className={`${
-              pathname === "/blogs" ? "text-secondary" : ""
-            } font-serif text-xl uppercase hover:text-secondary`}
+            className={`font-serif text-lg uppercase hover:text-secondary`}
           >
             Blogs
-          </Link>
+          </NavLink>
 
-          <Link
+          <NavLink
             href="/contact-us"
-            className={`${
-              pathname === "/contact-us" ? "text-secondary" : ""
-            } font-serif text-xl uppercase hover:text-secondary`}
+            className={`font-serif text-lg uppercase hover:text-secondary`}
           >
             Contact Us
-          </Link>
+          </NavLink>
         </div>
       </motion.div>
     </div>
