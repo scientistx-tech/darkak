@@ -1,13 +1,12 @@
-
-import React from 'react'
-import ShopPage from './ShopPage'
+import React from "react";
+import ShopPage from "./ShopPage";
 
 function page() {
   return (
-    <div>
-        <ShopPage />
+    <div className="w-full">
+      <ShopPage />
     </div>
-  )
+  );
 }
 
-export default page
+export default page;
