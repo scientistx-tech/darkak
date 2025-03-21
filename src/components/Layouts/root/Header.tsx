@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -14,6 +14,8 @@ import {
   UserOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
+import { motion } from "framer-motion";
+import { Drawer } from "antd";
 
 import Bangla from "@/Data/Img/BanglaLag.svg";
 import English from "@/Data/Img/EnglishLag.svg";
@@ -28,6 +30,28 @@ const Header: React.FC = () => {
     setSelectedLang(lang);
     setIsDropdownOpen(false);
   };
+
+  const [show, setShow] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY + 15) {
+        setShow(false);
+      } else if (currentScrollY < lastScrollY - 15) {
+        setShow(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
 
   return (
     <div className="w-full">
@@ -70,95 +94,107 @@ const Header: React.FC = () => {
           )}
         </div>
       </div>
+      <motion.div
+        animate={{ y: show ? 0 : -160 }}
+        transition={
+          show
+            ? { type: "spring", stiffness: 100, damping: 30 }
+            : { type: "spring", stiffness: 30 }
+        }
+        className="fixed top-0 z-50 w-full"
+      >
+        {/* Header-Box */}
+        <div className="mx-auto flex h-[80px] w-full items-center justify-between bg-primary px-4 text-secondary lg:px-6">
+          <Link href="/">
+            <Image alt="logo" src={Logo} className="h-[60px] w-[60px]" />
+          </Link>
 
-      {/* Header-Box */}
-      <div className="mx-auto flex h-[80px] w-full items-center justify-between bg-primary px-4 text-secondary lg:px-6">
-        <Link href="/">
-          <Image alt="logo" src={Logo} className="h-[60px] w-[60px]" />
-        </Link>
+          <div>
+            <input
+              className="w-[350px] p-1.5 pl-4 pr-3 outline-none"
+              placeholder="Search.."
+            />
 
-        <div>
-          <input
-            className="w-[350px] p-1.5 pl-4 pr-3 outline-none"
-            placeholder="Search.."
-          />
+            <button className="bg-secondary p-1.5 pl-5 pr-5 text-white">
+              <SearchOutlined className="text-xl" />
+            </button>
+          </div>
 
-          <button className="bg-secondary p-1.5 pl-5 pr-5 text-white">
-            <SearchOutlined className="text-xl" />
-          </button>
+          <div className="flex">
+            <Link href="" className="mr-4 text-xl hover:text-white md:text-2xl">
+              <UserOutlined />
+            </Link>
+
+            <Link
+              href=""
+              className="group mr-4 text-xl hover:text-white md:text-2xl"
+            >
+              <HeartOutlined />
+              <div className="absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full bg-black text-white group-hover:bg-white group-hover:text-black">
+                <p className="text-[10px] font-semibold">12</p>
+              </div>
+            </Link>
+
+            <Link
+              href=""
+              className="group text-xl hover:text-white md:text-2xl"
+            >
+              <ShoppingCartOutlined />
+              <div className="absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full bg-black text-white group-hover:bg-white group-hover:text-black">
+                <p className="text-[10px] font-semibold">6</p>
+              </div>
+            </Link>
+          </div>
         </div>
 
-        <div className="flex">
-          <Link href="" className="mr-4 text-xl hover:text-white md:text-2xl">
-            <UserOutlined />
+        {/* Nav-Bar */}
+        <div className="flex h-[40px] w-full items-center justify-evenly border border-b">
+          <Link
+            href="/"
+            className={`${
+              pathname === "/" ? "text-secondary" : ""
+            } font-serif text-xl uppercase hover:text-secondary`}
+          >
+            Home
           </Link>
 
           <Link
-            href=""
-            className="group mr-4 text-xl hover:text-white md:text-2xl"
+            href="/shop"
+            className={`${
+              pathname === "/shop" ? "text-secondary" : ""
+            } font-serif text-xl uppercase hover:text-secondary`}
           >
-            <HeartOutlined />
-            <div className="absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full bg-black text-white group-hover:bg-white group-hover:text-black">
-              <p className="text-[10px] font-semibold">12</p>
-            </div>
+            Shop
           </Link>
 
-          <Link href="" className="group text-xl hover:text-white md:text-2xl">
-            <ShoppingCartOutlined />
-            <div className="absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full bg-black text-white group-hover:bg-white group-hover:text-black">
-              <p className="text-[10px] font-semibold">6</p>
-            </div>
+          <Link
+            href="/product"
+            className={`${
+              pathname === "/product" ? "text-secondary" : ""
+            } font-serif text-xl uppercase hover:text-secondary`}
+          >
+            Product
+          </Link>
+
+          <Link
+            href="/blogs"
+            className={`${
+              pathname === "/blogs" ? "text-secondary" : ""
+            } font-serif text-xl uppercase hover:text-secondary`}
+          >
+            Blogs
+          </Link>
+
+          <Link
+            href="/contact-us"
+            className={`${
+              pathname === "/contact-us" ? "text-secondary" : ""
+            } font-serif text-xl uppercase hover:text-secondary`}
+          >
+            Contact Us
           </Link>
         </div>
-      </div>
-
-      {/* Nav-Bar */}
-      <div className="flex h-[40px] w-full items-center justify-evenly border border-b">
-        <Link
-          href="/"
-          className={`${
-            pathname === "/" ? "text-secondary" : ""
-          } font-serif text-xl uppercase hover:text-secondary`}
-        >
-          Home
-        </Link>
-
-        <Link
-          href="/shop"
-          className={`${
-            pathname === "/shop" ? "text-secondary" : ""
-          } font-serif text-xl uppercase hover:text-secondary`}
-        >
-          Shop
-        </Link>
-
-        <Link
-          href="/product"
-          className={`${
-            pathname === "/product" ? "text-secondary" : ""
-          } font-serif text-xl uppercase hover:text-secondary`}
-        >
-          Product
-        </Link>
-
-        <Link
-          href="/blogs"
-          className={`${
-            pathname === "/blogs" ? "text-secondary" : ""
-          } font-serif text-xl uppercase hover:text-secondary`}
-        >
-          Blogs
-        </Link>
-
-        <Link
-          href="/contact-us"
-          className={`${
-            pathname === "/contact-us" ? "text-secondary" : ""
-          } font-serif text-xl uppercase hover:text-secondary`}
-        >
-          Contact Us
-        </Link>
-      </div>
+      </motion.div>
     </div>
   );
 };
