@@ -23,7 +23,7 @@ function Footer() {
           </p>
 
           <Link
-            href="/"
+            href="/auth/login"
             className="rounded-full border border-primary bg-primary p-2 pl-4 pr-4 text-secondary hover:bg-transparent hover:text-primary"
           >
             Register now

@@ -18,7 +18,7 @@ const HotDeals: React.FC = () => {
         Hot <samp className="text-secondary">Deals</samp>
       </p>
 
-      <div className="mt-10 grid grid-flow-col gap-3">
+      <div className="mt-10 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         <HotCard
           name="iPad Air M3 - 2025"
           categories="Product"
@@ -84,6 +84,24 @@ const HotDeals: React.FC = () => {
           image2={Img7}
           image3={Img5}
           rating={5}
+          reviews={10}
+          cartLink=""
+          buyLink=""
+          favoriteLink=""
+        />
+
+        <HotCard
+          name="iPad Air M3 - 2025"
+          categories="Product"
+          regularPrice={80200}
+          discount={20}
+          status="In Stock"
+          description="Go beyond during every creative project with Apple iPad Air M3. One of the slimmest designs with premium colors looks fashionable and aesthetic at the same time. Get gorgeous visuals from the large 11-inch or 13-inch model, which has Wide Color (P3) supported for immersive viewing."
+          mainImage={Img1}
+          image1={Img2}
+          image2={Img3}
+          image3={Img4}
+          rating={1}
           reviews={10}
           cartLink=""
           buyLink=""

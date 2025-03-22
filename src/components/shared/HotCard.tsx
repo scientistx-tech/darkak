@@ -100,7 +100,7 @@ const HotCard: React.FC<HotCardProps> = ({
     setSelectedImage(image);
   };
   return (
-    <div className="group w-[400px] rounded-md bg-white p-5 transition-all duration-500 hover:shadow-lg">
+    <div className="group rounded-md bg-white p-5 transition-all duration-500 hover:shadow-lg">
       <div className="flex">
         <div className="w-[30%]">
           <Image
