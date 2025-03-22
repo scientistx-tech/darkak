@@ -6,6 +6,11 @@ import Img2 from "@/Data/Demo/iPad-Air-M3---2025-purple-1209.jpg";
 import Img3 from "@/Data/Demo/iPad-Air-M3---2025-space-gray-3684.jpg";
 import Img4 from "@/Data/Demo/iPad-Air-M3---2025-starlight-2313.jpg";
 
+import Img5 from "@/Data/Demo/Product-banner-1.jpg";
+import Img6 from "@/Data/Demo/Product-banner-2.jpg";
+import Img7 from "@/Data/Demo/Product-banner-3.webp";
+import Img8 from "@/Data/Demo/Product-banner-6.jpg";
+
 const HotDeals: React.FC = () => {
   return (
     <div className="w-full">
@@ -25,25 +30,25 @@ const HotDeals: React.FC = () => {
           image1={Img2}
           image2={Img3}
           image3={Img4}
-          rating={3.5}
+          rating={1}
           reviews={10}
           cartLink=""
           buyLink=""
           favoriteLink=""
         />
 
-<HotCard
-          name="iPad Air M3 - 2025"
+        <HotCard
+          name="Demo Product"
           categories="Product"
-          regularPrice={80200}
-          discount={20}
+          regularPrice={10100}
+          discount={10}
           status="In Stock"
           description="Go beyond during every creative project with Apple iPad Air M3. One of the slimmest designs with premium colors looks fashionable and aesthetic at the same time. Get gorgeous visuals from the large 11-inch or 13-inch model, which has Wide Color (P3) supported for immersive viewing."
-          mainImage={Img1}
-          image1={Img2}
-          image2={Img3}
-          image3={Img4}
-          rating={3.5}
+          mainImage={Img5}
+          image1={Img6}
+          image2={Img7}
+          image3={Img8}
+          rating={5}
           reviews={10}
           cartLink=""
           buyLink=""
@@ -60,15 +65,30 @@ const HotDeals: React.FC = () => {
           image1={Img2}
           image2={Img3}
           image3={Img4}
-          rating={3.5}
+          rating={4.5}
+          reviews={100}
+          cartLink=""
+          buyLink=""
+          favoriteLink=""
+        />
+
+        <HotCard
+          name="Demo Product"
+          categories="Product"
+          regularPrice={10100}
+          discount={10}
+          status="In Stock"
+          description="Go beyond during every creative project with Apple iPad Air M3. One of the slimmest designs with premium colors looks fashionable and aesthetic at the same time. Get gorgeous visuals from the large 11-inch or 13-inch model, which has Wide Color (P3) supported for immersive viewing."
+          mainImage={Img8}
+          image1={Img6}
+          image2={Img7}
+          image3={Img5}
+          rating={5}
           reviews={10}
           cartLink=""
           buyLink=""
           favoriteLink=""
         />
-        {/* <HotCard />
-
-        <HotCard /> */}
       </div>
     </div>
   );

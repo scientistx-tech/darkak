@@ -100,10 +100,14 @@ const HotCard: React.FC<HotCardProps> = ({
     setSelectedImage(image);
   };
   return (
-    <div className="group w-full rounded-md bg-white p-5 transition-all duration-500 hover:shadow-lg">
+    <div className="group w-[400px] rounded-md bg-white p-5 transition-all duration-500 hover:shadow-lg">
       <div className="flex">
         <div className="w-[30%]">
-          <Image alt="img" src={mainImage} className="h-[200px] w-[200px]" />
+          <Image
+            alt="img"
+            src={mainImage}
+            className="h-[200px] w-[200px] rounded"
+          />
         </div>
 
         <div className="absolute mt-[175px] flex gap-2 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
@@ -171,11 +175,11 @@ const HotCard: React.FC<HotCardProps> = ({
         <div className="h-auto">
           <div className="flex flex-col md:flex-row">
             {/* Product Image */}
-            <div className="tablet:w-1/2 w-full p-4">
+            <div className="w-full p-4 md:w-1/2">
               <Image
                 src={selectedImage}
                 alt={name}
-                className="rounded-xl object-cover"
+                className="h-[300px] w-[300px] rounded-xl object-cover"
               />
 
               <div className="mt-6 flex w-full justify-evenly">
@@ -186,7 +190,7 @@ const HotCard: React.FC<HotCardProps> = ({
                   <Image
                     src={mainImage}
                     alt={name}
-                    className="h-[80px] w-[80px] rounded-xl"
+                    className="h-[50px] w-[50px] rounded-lg"
                   />
                 </button>
 
@@ -198,7 +202,7 @@ const HotCard: React.FC<HotCardProps> = ({
                     <Image
                       src={image1}
                       alt={name}
-                      className="h-[80px] w-[80px] rounded-xl"
+                      className="h-[50px] w-[50px] rounded-lg"
                     />
                   </button>
                 )}
@@ -211,7 +215,7 @@ const HotCard: React.FC<HotCardProps> = ({
                     <Image
                       src={image2}
                       alt={name}
-                      className="h-[80px] w-[80px] rounded-xl"
+                      className="h-[50px] w-[50px] rounded-lg"
                     />
                   </button>
                 )}
@@ -224,7 +228,7 @@ const HotCard: React.FC<HotCardProps> = ({
                     <Image
                       src={image3}
                       alt={name}
-                      className="h-[80px] w-[80px] rounded-xl"
+                      className="h-[50px] w-[50px] rounded-lg"
                     />
                   </button>
                 )}
@@ -233,14 +237,14 @@ const HotCard: React.FC<HotCardProps> = ({
 
             {/* Product Details */}
             <div className="tablet:w-1/2 w-full p-4">
-              <p className="font-serif text-2xl font-bold">{name}</p>
+              <p className="text-2xl font-medium">{name}</p>
               <p className="font-serif font-bold opacity-60">
                 Categories: {categories}
               </p>
               <p className="text-red-500 line-through opacity-70">
                 Tk {regularPrice}
               </p>
-              <p className="mb-4 text-2xl font-medium text-blue-600">
+              <p className="mb-4 text-2xl font-medium text-secondary">
                 Tk {newPrice.toFixed(2)}
               </p>
               <p className="mb-4">{description}</p>
@@ -291,18 +295,17 @@ const HotCard: React.FC<HotCardProps> = ({
                 {/* Display Subtotal */}
                 <p className="text-lg font-semibold">
                   Sub Total:{" "}
-                  <samp className="text-red-500">{subTotal.toFixed(2)}</samp>Tk
+                  <samp className="text-secondary">{subTotal.toFixed(2)}</samp>
+                  Tk
                 </p>
               </div>
 
-              <Button
-                type="primary"
-                className="bg-blue-600"
+              <button
+                className="rounded bg-primary p-1 px-3 text-xl font-medium"
                 onClick={handleCancel}
-                block
               >
                 Add to Cart
-              </Button>
+              </button>
             </div>
           </div>
         </div>
