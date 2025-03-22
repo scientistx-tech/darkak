@@ -91,8 +91,8 @@ const Header: React.FC = () => {
               {isDropdownOpen ? <UpOutlined /> : <DownOutlined />}
 
               {isDropdownOpen && (
-                <div className="absolute top-0 z-30 w-[100px] rounded-md bg-transparent py-2 text-black shadow-lg transition-opacity duration-300 ease-in-out">
-                  <div className="mt-6 bg-white">
+                <div className="absolute top-0 z-30 w-[100px]  bg-transparent py-2 text-black transition-opacity duration-300 ease-in-out">
+                  <div className="mt-6 bg-white shadow-lg">
                     <p
                       className="px-4 py-1 uppercase hover:bg-gray-200"
                       onClick={() => handleLanguageChange("English")}
