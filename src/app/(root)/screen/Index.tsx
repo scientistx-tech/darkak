@@ -33,8 +33,8 @@ const Index: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
   return (
-    <div className="flex h-[450px] w-full justify-between">
-      <div className="relative w-[67%]">
+    <div className="flex h-[350px] md:h-[450px] w-full justify-between">
+      <div className="relative w-full md:w-[67%]">
         <button
           className="absolute left-4 top-1/2 h-[30px] w-[30px] -translate-y-1/2 transform rounded-full bg-white text-xl shadow-md"
           onClick={prevSlide}
@@ -45,7 +45,7 @@ const Index: React.FC = () => {
         <Image
           alt="Slider Image"
           src={images[currentIndex]}
-          className="h-[450px] w-full rounded object-cover"
+          className="h-[350px] md:h-[450px] w-full rounded object-cover"
         />
 
         <button
@@ -69,7 +69,7 @@ const Index: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex w-[30%] flex-col justify-between">
+      <div className="hidden md:flex w-[30%] flex-col justify-between">
         <Link href="" className="">
           <Image alt="Img" src={img5} className="h-[200px] w-full rounded" />
         </Link>

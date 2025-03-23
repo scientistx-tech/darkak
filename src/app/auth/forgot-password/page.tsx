@@ -1,10 +1,10 @@
 import React from 'react'
-import SignupPage from './SignupPage'
+import ForgotPasswordPage from './ForgotPasswordPage'
 
 export default function page() {
   return (
     <div className='w-full'>
-      <SignupPage />
+      <ForgotPasswordPage />
     </div>
   )
 }
