@@ -1,4 +1,5 @@
 import Footer from "@/components/Layouts/root/Footer";
+import FooterNav from "@/components/Layouts/root/FooterNav";
 import Header from "@/components/Layouts/root/Header";
 import React, { PropsWithChildren } from "react";
 
@@ -10,6 +11,7 @@ function layout({ children }: PropsWithChildren) {
         {children}
       </div>
       <Footer />
+      {/* <FooterNav /> */}
     </div>
   );
 }
