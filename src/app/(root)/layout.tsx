@@ -11,7 +11,9 @@ function layout({ children }: PropsWithChildren) {
         {children}
       </div>
       <Footer />
-      {/* <FooterNav /> */}
+      <div className="md:hidden">
+        <FooterNav />
+      </div>
     </div>
   );
 }

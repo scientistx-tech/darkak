@@ -15,7 +15,7 @@ import Image from "next/image";
 
 function Footer() {
   return (
-    <div className="w-full">
+    <div className="w-full mb-[60px] md:mb-0">
       <div className="grid w-full grid-cols-1 md:grid-cols-4 bg-secondary p-10 md:h-[450px]">
         <div className="">
           <p className="mb-10 text-xl font-semibold text-primary md:w-[80%]">
