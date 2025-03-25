@@ -13,7 +13,7 @@ import Img7 from "@/Data/Demo/Product-banner-3.webp";
 import Img8 from "@/Data/Demo/Product-banner-6.jpg";
 import Card from "@/components/shared/Card";
 
-const BestSelling: React.FC = () => {
+const NewArrival: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scrollLeft = () => {
@@ -36,8 +36,7 @@ const BestSelling: React.FC = () => {
   return (
     <div className="w-full">
       <p className="mt-10 text-2xl font-semibold uppercase text-primary md:mt-16 md:text-3xl">
-        <samp className="text-secondary">Our</samp> Best{" "}
-        <samp className="text-secondary">Selling</samp> Products
+        New <samp className="text-secondary">Arrival</samp>
       </p>
 
       <div className="tablet:mt-10 relative mt-5 flex w-full items-center justify-center">
@@ -184,4 +183,4 @@ const BestSelling: React.FC = () => {
   );
 };
 
-export default BestSelling;
+export default NewArrival;
