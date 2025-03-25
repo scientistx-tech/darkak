@@ -7,7 +7,7 @@ function layout({ children }: PropsWithChildren) {
   return (
     <div>
       <Header />
-      <div className="md:container pl-5 pr-5 md:pl-0 md:pr-0 mx-auto mt-[60px] md:mt-[160px] w-full md:px-4 lg:px-6">
+      <div className="md:container pl-5 pr-5 md:pl-0 md:pr-0 mx-auto mt-[60px] md:mt-[160px] w-full ">
         {children}
       </div>
       <Footer />
