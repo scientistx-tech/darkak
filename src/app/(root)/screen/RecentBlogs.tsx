@@ -9,7 +9,7 @@ const RecentBlogs: React.FC = () => {
   return (
     <div className="w-full">
       <p className="mt-10 text-2xl font-semibold uppercase text-primary md:mt-16 md:text-3xl">
-        New <samp className="text-secondary">Arrival</samp>
+        RECENT<samp className="text-secondary"> BLOGS</samp>
       </p>
 
       <div className="tablet:mt-10 relative mt-5 flex w-full items-center justify-center">

@@ -19,8 +19,6 @@ function page() {
       <PopularProduct />
       <RecentBlogs />
       <AboutUs />
-
-      <div className="h-[2000px] w-full">Home Page</div>
     </div>
   );
 }
