@@ -6,6 +6,7 @@ import NewArrival from "./screen/NewArrival";
 import Banner from "./screen/Banner";
 import PopularProduct from "./screen/PopularProduct";
 import RecentBlogs from "./screen/RecentBlogs";
+import AboutUs from "./screen/AboutUs";
 
 function page() {
   return (
@@ -17,6 +18,7 @@ function page() {
       <Banner />
       <PopularProduct />
       <RecentBlogs />
+      <AboutUs />
 
       <div className="h-[2000px] w-full">Home Page</div>
     </div>
