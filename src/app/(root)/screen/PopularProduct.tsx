@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Card from "@/components/shared/Card";
+
 import Img1 from "@/Data/Demo/product-2-1.png";
 import Img2 from "@/Data/Demo/product-2-2.avif";
 import Img3 from "@/Data/Demo/product-2-3.png";

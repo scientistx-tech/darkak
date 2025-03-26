@@ -42,7 +42,7 @@ const NewArrival: React.FC = () => {
       <div className="tablet:mt-10 relative mt-5 flex w-full items-center justify-center">
         <button
           onClick={scrollLeft}
-          className="absolute left-5 z-10 text-2xl text-primary hover:text-secondary"
+          className="absolute left-2 z-10 p-2 rounded-full bg-white shadow-md hover:bg-gray-200 transition"
         >
           <FaAngleDoubleLeft />
         </button>
@@ -174,7 +174,7 @@ const NewArrival: React.FC = () => {
 
         <button
           onClick={scrollRight}
-          className="absolute right-5 z-10 text-2xl text-primary hover:text-secondary"
+          className="absolute right-2 z-10 p-2 rounded-full bg-white shadow-md hover:bg-gray-200 transition"
         >
           <FaAngleDoubleRight />
         </button>
