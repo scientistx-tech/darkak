@@ -7,6 +7,9 @@
     @apply bg-gray-2 text-dark-5 dark:bg-[#020D1A] dark:text-dark-6;
   }
 }
+.rotate-animation {
+  transform: rotate(180deg);
+}
 
 @layer utilities {
   /* Chrome, Safari and Opera */

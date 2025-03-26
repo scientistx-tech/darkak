@@ -1,7 +1,10 @@
 import React from 'react'
+import SignupPage from './SignupPage'
 
 export default function page() {
   return (
-    <div>page signup</div>
+    <div className='w-full'>
+      <SignupPage />
+    </div>
   )
 }

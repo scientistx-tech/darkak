@@ -15,8 +15,8 @@ import Image from "next/image";
 
 function Footer() {
   return (
-    <div className="w-full">
-      <div className="grid w-full grid-cols-4 bg-secondary p-10 md:h-[450px]">
+    <div className="w-full mb-[60px] md:mb-0">
+      <div className="grid w-full grid-cols-1 md:grid-cols-4 bg-secondary p-10 md:h-[450px]">
         <div className="">
           <p className="mb-10 text-xl font-semibold text-primary md:w-[80%]">
             Get 10% Discount on first LOGIN
@@ -55,13 +55,13 @@ function Footer() {
             </p>
           </div>
 
-          <div className="mt-8 md:flex">
+          <div className="mt-8 flex">
             <a className="cursor-pointer opacity-60 hover:opacity-90">
-              <Image alt="logo" src={img1} className="h-[50px]" />
+              <Image alt="logo" src={img1} className="h-[50px] w-[200px] md:w-auto" />
             </a>
 
             <a className="cursor-pointer opacity-60 hover:opacity-90">
-              <Image alt="logo" src={img2} className="h-[50px]" />
+              <Image alt="logo" src={img2} className="h-[50px] w-[200px] md:w-auto" />
             </a>
           </div>
         </div>
