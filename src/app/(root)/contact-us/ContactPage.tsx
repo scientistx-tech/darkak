@@ -114,7 +114,7 @@ const ContactPage: React.FC = () => {
             />
             <label
               htmlFor="name"
-              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${name ? "-top-[2px] bg-white px-1 text-sm text-primary" : ""}`}
+              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${name ? "top-[-2px] bg-white px-1 text-sm text-primary" : ""}`}
             >
               Name
             </label>
@@ -132,7 +132,7 @@ const ContactPage: React.FC = () => {
             />
             <label
               htmlFor="email"
-              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${email ? "-top-[2px] bg-white px-1 text-sm text-primary" : ""}`}
+              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${email ? "top-[-2px] bg-white px-1 text-sm text-primary" : ""}`}
             >
               Email
             </label>
@@ -150,7 +150,7 @@ const ContactPage: React.FC = () => {
             />
             <label
               htmlFor="phone"
-              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${phone ? "-top-[2px] bg-white px-1 text-sm text-primary" : ""}`}
+              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${phone ? "top-[-2px] bg-white px-1 text-sm text-primary" : ""}`}
             >
               Phone
             </label>
@@ -167,7 +167,7 @@ const ContactPage: React.FC = () => {
             />
             <label
               htmlFor="message"
-              className={`absolute left-3 top-3 text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 ${message ? "-top-[10px] bg-white px-1 text-sm text-primary" : ""}`}
+              className={`absolute left-3 top-3 text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 ${message ? "top-[-10px] bg-white px-1 text-sm text-primary" : ""}`}
             >
               Message
             </label>
