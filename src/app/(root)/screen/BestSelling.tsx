@@ -67,8 +67,8 @@ const BestSelling: React.FC = () => {
               rating={4.5}
               reviews={10}
               cartLink=""
-              buyLink=""
-              favoriteLink=""
+              buyLink="/"
+              favoriteLink="/"
             />
           </div>
 
