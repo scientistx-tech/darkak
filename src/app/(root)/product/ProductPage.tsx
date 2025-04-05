@@ -1,14 +1,22 @@
 "use client";
 import React, { useState } from "react";
 import Image, { StaticImageData } from "next/image";
+import { Progress, Modal } from "antd";
 
 import {
   FaStar,
   FaStarHalfAlt,
   FaRegStar,
+  FaRegEye,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaMinus,
+  FaPlus,
   FaShoppingCart,
   FaHeart,
 } from "react-icons/fa";
+
+import icon1 from "@/Data/Icon/fire-icon.svg";
 
 import Img1 from "@/Data/Demo/product-2-1.png";
 import Img2 from "@/Data/Demo/product-2-2.avif";
@@ -40,6 +48,9 @@ const ProductPage: React.FC = () => {
     cartLink: "/cart",
     buyLink: "/buy",
     favoriteLink: "/wishlist",
+    viewing: 40,
+    sold: 120,
+    item: 40,
   };
 
   const {
@@ -54,7 +65,20 @@ const ProductPage: React.FC = () => {
     rating,
     reviews,
     newPrice,
+    viewing,
+    sold,
+    status,
+    item,
   } = product;
+
+  const colors = [
+    { name: "Red", value: "#f00" },
+    { name: "Yellow", value: "#ffff99" },
+    { name: "Dark Gray", value: "#444" },
+    { name: "Black", value: "#111" },
+  ];
+
+  const [selectedColor, setSelectedColor] = useState<string>("");
 
   const renderStars = () => {
     const fullStars = Math.floor(rating);
@@ -74,11 +98,27 @@ const ProductPage: React.FC = () => {
     );
   };
 
+  // terms and conditions Modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const [agreed, setAgreed] = useState(true);
+
+  const handleCheckboxChange = () => {
+    setAgreed((prev) => !prev);
+  };
   return (
     <div className="w-full">
       <div className="flex flex-col pt-10 md:flex-row">
         {/* Product Image */}
-        <div className="w-full p-4 md:w-1/2">
+        <div className="w-full p-4 md:w-1/4">
           <Image
             src={selectedImage}
             alt={name}
@@ -139,12 +179,11 @@ const ProductPage: React.FC = () => {
         </div>
 
         {/* Product Details */}
-        <div className="tablet:w-1/2 w-full bg-white p-4">
+        <div className="w-full bg-white p-4 md:w-2/4">
           <p className="text-2xl font-medium text-secondary">{name}</p>
           {/* <p className="font-serif font-bold opacity-60">
             Categories: {categories}
           </p> */}
-
           <div className="flex">
             <div className="mt-2 flex items-center gap-1 text-[12px] md:text-base">
               {renderStars()}
@@ -152,7 +191,6 @@ const ProductPage: React.FC = () => {
 
             <p className="ml-2 mt-3 text-[10px]">({reviews} reviews) </p>
           </div>
-
           <div className="mt-2 flex">
             <div className="text-xl font-semibold text-secondary">
               Price: {newPrice} TK
@@ -160,18 +198,146 @@ const ProductPage: React.FC = () => {
 
             <p className="ml-2 line-through">{regularPrice} TK</p>
           </div>
+          <div className="mb-5 mt-5 h-0.5 w-full bg-primary opacity-40" />
+          <div className="flex">
+            <FaRegEye className="text-xl" />{" "}
+            <p className="ml-3 mt-[-2px]">
+              {viewing} people are viewing this right now
+            </p>
+          </div>
+          <div className="mt-4 flex">
+            <Image alt="icon" src={icon1} className="h-6 w-6" />
+            <p className="ml-2 text-[#FF6300]">
+              {sold} sold in last 10 hour&apos;s
+            </p>
+          </div>
+          <div className="mt-4 flex items-center">
+            {status === "In Stock" ? (
+              <>
+                <FaCheckCircle className="text-xl" />
+                <p className="ml-3 text-[#009F05]">{status}</p>
+              </>
+            ) : (
+              <>
+                <FaTimesCircle className="text-xl" />
+                <p className="ml-3 text-[#FF6300]">{status}</p>
+              </>
+            )}
+          </div>
+          <div className="mt-4">
+            <label className="mb-2 block font-medium">Color:</label>
+            <div className="flex gap-4">
+              {colors.map((color) => (
+                <button
+                  key={color.name}
+                  onClick={() => setSelectedColor(color.value)}
+                  className={`h-12 w-12 rounded-lg border-2 transition duration-300 ${
+                    selectedColor === color.value
+                      ? "scale-110 border-primary"
+                      : "border-transparent"
+                  }`}
+                  style={{ backgroundColor: color.value }}
+                ></button>
+              ))}
+            </div>
+          </div>
+          <div className="mt-5">
+            <p>Only 25 item&apos;s left in stock</p>
+            <Progress
+              percent={item}
+              showInfo={false}
+              className="w-full md:w-[40%]"
+            />
+          </div>
+          <div className="mt-8 flex w-full items-center justify-between md:w-[70%]">
+            <div className="flex h-[40px] w-[80%] rounded-3xl border-b-2 border-l-2 border-t-2 border-slate-200">
+              <div className="flex w-[40%] items-center justify-evenly">
+                <button>
+                  <FaMinus />
+                </button>
 
-          <div className="mt-5 mb-5 h-0.5 w-full bg-primary opacity-40"/>
+                <p>1</p>
 
-          <div className="">
-            jhhkhkh
+                <button>
+                  <FaPlus />
+                </button>
+              </div>
+              <button className="relative mt-[-2px] flex h-[40px] w-[60%] items-center justify-center rounded-3xl border-2 border-white bg-primary text-xl font-medium text-secondary hover:bg-secondary hover:text-white">
+                <p>Ard to Cart</p>
+              </button>
+            </div>
+
+            <button className="flex h-[40px] w-[40px] items-center justify-center rounded-full border-2 border-primary bg-slate-200 text-xl text-black hover:border-secondary">
+              <FaHeart />
+            </button>
           </div>
 
-          <p className="mb-4">{description}</p>
+          <div className="mt-8 flex items-center">
+            <input
+              type="checkbox"
+              checked={agreed}
+              onChange={handleCheckboxChange}
+              className="h-4 w-4 rounded-sm border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+            />
+            <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+              I agree with the{" "}
+              <button
+                onClick={showModal}
+                className="text-blue-600 hover:underline dark:text-blue-500"
+              >
+                terms and conditions
+              </button>
+              .
+            </label>
+          </div>
 
+          <button
+            disabled={!agreed}
+            className={`group relative mt-4 inline-flex w-full items-center justify-center overflow-hidden rounded-3xl bg-primary p-3 px-5 py-2 text-xl font-medium text-secondary shadow-md transition duration-300 ease-out md:w-[70%] ${
+              agreed ? " " : "cursor-not-allowed"
+            }`}
+          >
+            <span className="ease absolute inset-0 flex h-full w-full -translate-x-full items-center justify-center bg-secondary text-white duration-300 group-hover:translate-x-0">
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                ></path>
+              </svg>
+            </span>
+            <span className="ease absolute flex h-full w-full transform items-center justify-center text-secondary transition-all duration-300 group-hover:translate-x-full">
+              Buy it Now
+            </span>
+            <span className="invisible relative">Buy it Now</span>
+          </button>
+          <p className="mb-4 mt-10">{description}</p>
           {/* Additional product options and buttons can go here */}
         </div>
+
+        {/* Hot Details */}
+        <div className="w-full p-4 md:w-1/4">
+        <p className="text-xl text-secondary font-medium">Hot Details</p>
+        </div>
       </div>
+
+      <Modal
+        title="Terms and Conditions"
+        open={isModalOpen}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </Modal>
     </div>
   );
 };
