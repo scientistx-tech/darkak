@@ -28,6 +28,7 @@ import RelatedProducts from "../screen/RelatedProducts";
 
 const ProductPage: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<StaticImageData>(Img1);
+  const [page, setPage] = useState(1);
 
   const handleImageClick = (image: StaticImageData) => {
     setSelectedImage(image);
@@ -180,6 +181,52 @@ const ProductPage: React.FC = () => {
               </button>
             )}
           </div>
+
+          <div className="mb-5 mt-5 h-0.5 w-full bg-primary opacity-40" />
+
+          <div className="mt-5 w-full md:mt-10">
+            <div className="flex items-center justify-around border-b border-primary">
+              <button
+                onClick={() => {
+                  setPage(1);
+                }}
+                className={`p-2 border border-b-0  font-medium transition-all duration-300 ease-in-out ${
+                  page === 1
+                    ? "border-primary text-secondary bg-primary"
+                    : "border-primary hover:text-secondary"
+                }`}
+              >
+                Specification
+              </button>
+
+              <button
+                onClick={() => {
+                  setPage(2);
+                }}
+                className={`p-2 border border-b-0 font-medium transition-all duration-300 ease-in-out ${
+                  page === 2
+                    ? "border-primary text-secondary bg-primary"
+                    : "border-primary hover:text-secondary"
+                }`}
+              >
+                Warranty
+              </button>
+            </div>
+
+            <div>
+              {page === 1 ? (
+                <div className="mt-5 w-full">
+                  <p>Specification</p>
+                </div>
+              ) : page === 2 ? (
+                <div className="mt-5 w-full">
+                  <p>Warranty</p>
+                </div>
+              ) : (
+                <h1> Error page</h1>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Product Details */}
@@ -255,11 +302,11 @@ const ProductPage: React.FC = () => {
               percent={item}
               showInfo={false}
               status="active"
-              strokeColor='orange'
+              strokeColor="orange"
               className="w-full md:w-[40%]"
             />
           </div>
-          <div className="mt-8 flex w-full text-orange-400 items-center justify-between md:w-[70%]">
+          <div className="mt-8 flex w-full items-center justify-between text-orange-400 md:w-[70%]">
             <div className="flex h-[40px] w-[80%] rounded-3xl border-b-2 border-l-2 border-t-2 border-slate-200">
               <div className="flex w-[40%] items-center justify-evenly">
                 <button>
@@ -421,7 +468,7 @@ const ProductPage: React.FC = () => {
       </div>
 
       {/* Bottom-box */}
-      <div className="mt-10 mb-10 md:mb-20">
+      <div className="mb-10 mt-10 md:mb-20">
         <RelatedProducts />
         <BestSelling />
       </div>
