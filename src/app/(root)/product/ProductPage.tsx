@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import { Progress, Modal } from "antd";
 
+import BestSelling from "../screen/BestSelling";
+
 import {
   FaStar,
   FaStarHalfAlt,
@@ -22,6 +24,7 @@ import Img1 from "@/Data/Demo/product-2-1.png";
 import Img2 from "@/Data/Demo/product-2-2.avif";
 import Img3 from "@/Data/Demo/product-2-3.png";
 import Img4 from "@/Data/Demo/product-2-4.png";
+import RelatedProducts from "../screen/RelatedProducts";
 
 const ProductPage: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<StaticImageData>(Img1);
@@ -50,7 +53,7 @@ const ProductPage: React.FC = () => {
     favoriteLink: "/wishlist",
     viewing: 40,
     sold: 120,
-    item: 40,
+    item: 80,
   };
 
   const {
@@ -116,6 +119,7 @@ const ProductPage: React.FC = () => {
   };
   return (
     <div className="w-full">
+      {/* Top-box */}
       <div className="flex flex-col pt-10 md:flex-row">
         {/* Product Image */}
         <div className="w-full p-4 md:w-1/4">
@@ -205,12 +209,14 @@ const ProductPage: React.FC = () => {
               {viewing} people are viewing this right now
             </p>
           </div>
+
           <div className="mt-4 flex">
             <Image alt="icon" src={icon1} className="h-6 w-6" />
             <p className="ml-2 text-[#FF6300]">
               {sold} sold in last 10 hour&apos;s
             </p>
           </div>
+
           <div className="mt-4 flex items-center">
             {status === "In Stock" ? (
               <>
@@ -224,6 +230,7 @@ const ProductPage: React.FC = () => {
               </>
             )}
           </div>
+
           <div className="mt-4">
             <label className="mb-2 block font-medium">Color:</label>
             <div className="flex gap-4">
@@ -241,22 +248,25 @@ const ProductPage: React.FC = () => {
               ))}
             </div>
           </div>
+
           <div className="mt-5">
-            <p>Only 25 item&apos;s left in stock</p>
+            <p>Only {item} item&apos;s left in stock</p>
             <Progress
               percent={item}
               showInfo={false}
+              status="active"
+              strokeColor='orange'
               className="w-full md:w-[40%]"
             />
           </div>
-          <div className="mt-8 flex w-full items-center justify-between md:w-[70%]">
+          <div className="mt-8 flex w-full text-orange-400 items-center justify-between md:w-[70%]">
             <div className="flex h-[40px] w-[80%] rounded-3xl border-b-2 border-l-2 border-t-2 border-slate-200">
               <div className="flex w-[40%] items-center justify-evenly">
                 <button>
                   <FaMinus />
                 </button>
 
-                <p>1</p>
+                <p className="font-semibold">1</p>
 
                 <button>
                   <FaPlus />
@@ -277,13 +287,13 @@ const ProductPage: React.FC = () => {
               type="checkbox"
               checked={agreed}
               onChange={handleCheckboxChange}
-              className="h-4 w-4 rounded-sm border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+              className="h-4 w-4 cursor-pointer accent-primary"
             />
             <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
               I agree with the{" "}
               <button
                 onClick={showModal}
-                className="text-blue-600 hover:underline dark:text-blue-500"
+                className="text-primary hover:underline dark:text-primary"
               >
                 terms and conditions
               </button>
@@ -324,8 +334,96 @@ const ProductPage: React.FC = () => {
 
         {/* Hot Details */}
         <div className="w-full p-4 md:w-1/4">
-        <p className="text-xl text-secondary font-medium">Hot Details</p>
+          <p className="text-xl font-medium text-secondary">Hot Details</p>
+
+          <div className="mt-5">
+            <HotDetailComponent
+              name="iPad Air M3 - 2025"
+              mainImage={image1}
+              sold={40}
+              newPrice={2990}
+              regularPrice={3900}
+            />
+
+            <HotDetailComponent
+              name="Product - 2 "
+              mainImage={mainImage}
+              sold={30}
+              newPrice={2990}
+              regularPrice={3900}
+            />
+
+            <HotDetailComponent
+              name="Product - 3 "
+              mainImage={image2}
+              sold={40}
+              newPrice={90}
+              regularPrice={80}
+            />
+
+            <HotDetailComponent
+              name="Product - 4 "
+              mainImage={image3}
+              sold={40}
+              newPrice={1000}
+              regularPrice={9999}
+            />
+
+            <HotDetailComponent
+              name="Product - 5 "
+              mainImage={image2}
+              sold={40}
+              newPrice={190}
+              regularPrice={180}
+            />
+
+            <HotDetailComponent
+              name="iPad Air M3 - 2025"
+              mainImage={image1}
+              sold={40}
+              newPrice={2990}
+              regularPrice={3900}
+            />
+
+            <HotDetailComponent
+              name="Product - 2 "
+              mainImage={mainImage}
+              sold={30}
+              newPrice={2990}
+              regularPrice={3900}
+            />
+
+            <HotDetailComponent
+              name="Product - 3 "
+              mainImage={image2}
+              sold={40}
+              newPrice={90}
+              regularPrice={80}
+            />
+
+            <HotDetailComponent
+              name="Product - 4 "
+              mainImage={image3}
+              sold={40}
+              newPrice={1000}
+              regularPrice={9999}
+            />
+
+            <HotDetailComponent
+              name="Product - 5 "
+              mainImage={image2}
+              sold={40}
+              newPrice={190}
+              regularPrice={180}
+            />
+          </div>
         </div>
+      </div>
+
+      {/* Bottom-box */}
+      <div className="mt-10 mb-10 md:mb-20">
+        <RelatedProducts />
+        <BestSelling />
       </div>
 
       <Modal
@@ -343,3 +441,35 @@ const ProductPage: React.FC = () => {
 };
 
 export default ProductPage;
+
+const HotDetailComponent: React.FC<{
+  mainImage: StaticImageData;
+  regularPrice: number;
+  newPrice: number;
+  name: string;
+  sold: number;
+}> = ({ mainImage, name, sold, regularPrice, newPrice }) => {
+  return (
+    <button className="mb-5 flex w-full rounded-xl border bg-white p-2 shadow-2 hover:border-primary">
+      <div className="max-h-[130px] w-[30%]">
+        <Image src={mainImage} alt="Img" className="h-full w-full rounded-xl" />
+      </div>
+      <div className="ml-[10%] flex w-[70%] flex-col items-start justify-center">
+        <p className="text-lg font-medium text-secondary">{name}</p>
+
+        <div className="flex">
+          <p>
+            <span className="line-through">{regularPrice}</span> TK
+          </p>
+
+          <p className="ml-2 text-secondary">{newPrice} TK</p>
+        </div>
+
+        <div className="mt-0 flex">
+          <Image alt="icon" src={icon1} className="h-6 w-6" />
+          <p className="ml-2 text-[#FF6300]">{sold} sold</p>
+        </div>
+      </div>
+    </button>
+  );
+};
