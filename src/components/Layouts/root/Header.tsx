@@ -205,7 +205,7 @@ const Header: React.FC = () => {
 
           <div className="flex w-[15%] md:w-auto">
             <Link
-              href=""
+              href="/profile"
               className="mr-4 hidden text-xl hover:text-white md:block md:text-2xl"
             >
               <UserOutlined />
