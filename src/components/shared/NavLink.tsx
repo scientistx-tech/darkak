@@ -22,12 +22,12 @@ export default function NavLink({
             href={href}
         >
             {children}
-            <motion.div
+            {/* <motion.div
                 className="absolute bottom-0 left-0 h-[2px] bg-primary"
                 initial={{ width: 0 }}
                 animate={{ width: isActive(href) ? "100%" : "0%" }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-            />
+            /> */}
         </Link>
     );
 }
