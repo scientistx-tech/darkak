@@ -1,85 +1,100 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-
 import img1 from "@/Data/Demo/Product-banner-1.jpg";
 import img2 from "@/Data/Demo/Product-banner-2.jpg";
 import img3 from "@/Data/Demo/Product-banner-3.webp";
-import img4 from "@/Data/Demo/Product-banner-4.jpg";
-import img5 from "@/Data/Demo/Product-banner-5.webp";
-import img6 from "@/Data/Demo/Product-banner-6.jpg";
 
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+// Slide data: image + text per slide
+const slides = [
+  {
+    no: "01",
+    image: img1,
+    title: "Save Up to 30% on First Purchase",
+    subtitle: "Unlocking the Power of Connection",
+    tag: "HOT DEALS AVAILABLE",
+    button: "Discover More",
+  },
+  {
+    no: "02",
+    image: img2,
+    title: "Upgrade Your Lifestyle Today",
+    subtitle: "Smart gadgets at unbeatable prices",
+    tag: "LIMITED TIME OFFER",
+    button: "Shop Now",
+  },
+  {
+    no: "03",
+    image: img3,
+    title: "Tech that Empowers You",
+    subtitle: "Explore innovation with every click",
+    tag: "EXCLUSIVE LAUNCH",
+    button: "Explore Deals",
+  },
+];
 
-const images = [img1, img2, img3, img4];
+const Slider: React.FC = () => {
+  const [index, setIndex] = useState(0);
 
-const Index: React.FC = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  };
-
+  // Auto slide every 5 seconds
   useEffect(() => {
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 4000);
-    return () => clearInterval(interval);
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % slides.length);
+    }, 7000);
+    return () => clearInterval(timer);
   }, []);
+
+  const handleDotClick = (i: number) => {
+    setIndex(i);
+  };
+
+  const current = slides[index];
+
   return (
-    <div className="flex h-[350px] md:h-[450px] w-full justify-between">
-      <div className="relative w-full md:w-[67%]">
-        <button
-          className="absolute left-4 top-1/2 h-[30px] w-[30px] -translate-y-1/2 transform rounded-full bg-white text-xl shadow-md"
-          onClick={prevSlide}
-        >
-          <LeftOutlined />
-        </button>
+    <div className="w-full bg-[#E6EFFF] overflow-hidden font-montserrat">
+      <div className="h-[calc(100vh-150px)] flex flex-col md:flex-row items-center justify-between px-6 md:px-16 py-12 gap-8">
+        {/* Left Content */}
+        <div className="flex-1 text-center md:text-left">
+          <h4 className="text-sm font-semibold uppercase text-black tracking-wider">
+            {current.tag}
+          </h4>
+          <h1 className="md:h-[100px] mt-4 text-4xl md:text-5xl font-medium text-gray-800">
+            {current.title}
+          </h1>
+          <p className="mt-4 text-lg text-gray-700">{current.subtitle}</p>
+          <button className="mt-6 px-6 py-2 rounded-full bg-blue-500 text-white font-semibold hover:bg-blue-600 transition">
+            {current.button}
+          </button>
 
-        <Image
-          alt="Slider Image"
-          src={images[currentIndex]}
-          className="h-[350px] md:h-[450px] w-full rounded object-cover"
-        />
+          <p className="hidden md:block absolute mt-[62px] text-white left-[20%] text-[150px] font-montserrat"> {current.no}</p>
+        </div>
 
-        <button
-          className="absolute right-4 top-1/2 h-[30px] w-[30px] -translate-y-1/2 transform rounded-full bg-white text-xl shadow-md"
-          onClick={nextSlide}
-        >
-          <RightOutlined />
-        </button>
-
-        {/* Slider Dots */}
-        <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 transform space-x-2">
-          {images.map((_, index) => (
-            <button
-              key={index}
-              className={`h-3 w-3 rounded-full transition-all ${
-                currentIndex === index ? "w-6 bg-primary" : "bg-secondary"
-              }`}
-              onClick={() => setCurrentIndex(index)}
-            />
-          ))}
+        {/* Right Image */}
+        <div className="flex-1">
+          <Image
+            src={current.image}
+            alt={`Slide ${index}`}
+            className="w-full h-[400px] rounded-xl object-contain"
+            priority
+          />
         </div>
       </div>
 
-      <div className="hidden md:flex w-[30%] flex-col justify-between">
-        <Link href="" className="">
-          <Image alt="Img" src={img5} className="h-[200px] w-full rounded" />
-        </Link>
-
-        <Link href="" className="">
-          <Image alt="Img" src={img6} className="h-[200px] w-full rounded" />
-        </Link>
+      {/* Dots */}
+      <div className="flex justify-center mt-4 pb-6">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => handleDotClick(i)}
+            className={`w-3 h-3 mx-1 rounded-full transition-all duration-300 ${
+              i === index ? "bg-blue-500 scale-110" : "bg-gray-300"
+            }`}
+          />
+        ))}
       </div>
     </div>
   );
 };
 
-export default Index;
+export default Slider;

@@ -17,9 +17,9 @@ import FooterNav from "./FooterNav";
 function Footer() {
   return (
     <div className="w-full mb-[60px] md:mb-0">
-      {/* <div className="grid w-full grid-cols-1 md:grid-cols-4 bg-secondary p-10 md:h-[450px]">
+      <div className="grid w-full grid-cols-1 md:grid-cols-4 bg-[#00153B] p-10 md:h-[450px]">
         <div className="">
-          <p className="mb-10 text-xl font-semibold text-primary md:w-[80%]">
+          <p className="mb-10 text-xl font-semibold text-[#BBD4FF] md:w-[80%]">
             Get 10% Discount on first LOGIN
           </p>
 
@@ -68,7 +68,7 @@ function Footer() {
         </div>
 
         <div className="flex flex-col">
-          <p className="text-xl font-semibold text-primary">Quick Links</p>
+          <p className="text-xl font-semibold text-[#BBD4FF]">Quick Links</p>
 
           <Link
             href="/"
@@ -103,7 +103,7 @@ function Footer() {
         </div>
 
         <div className="flex flex-col">
-          <p className="text-xl font-semibold text-primary">
+          <p className="text-xl font-semibold text-[#BBD4FF]">
             Product Categories
           </p>
 
@@ -140,7 +140,7 @@ function Footer() {
         </div>
 
         <div className="flex flex-col">
-          <p className="mb-5 text-xl font-semibold text-primary">DARKAK</p>
+          <p className="mb-5 text-xl font-semibold text-[#BBD4FF]">DARKAK</p>
 
           <p>
             Darkak is a Bangladeshi e-commerce site offering quality products,
@@ -166,11 +166,8 @@ function Footer() {
             Bogura -5800
           </p>
         </div>
-      </div> */}
-
-      <div className="w-full h-[500px] bg-primary text-3xl text-white">
-        Footer 
       </div>
+
 
       <div className="flex h-[50px] w-full items-center justify-center bg-[#D9D9D9]">
         <p className="">

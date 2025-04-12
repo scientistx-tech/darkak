@@ -10,8 +10,10 @@ import AboutUs from "./screen/AboutUs";
 
 function page() {
   return (
-    <div className="w-full h-[2000px]">
-      {/* <Index />
+    <div className="w-full">
+      <Index />
+      
+      {/* 
       <HotDeals />
       <BestSelling />
       <NewArrival />
@@ -19,6 +21,8 @@ function page() {
       <PopularProduct />
       <RecentBlogs />
       <AboutUs /> */}
+
+      <div className="h-screen"/>
     </div>
   );
 }
