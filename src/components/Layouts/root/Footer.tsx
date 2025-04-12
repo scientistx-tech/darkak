@@ -12,11 +12,12 @@ import {
 import img1 from "@/Data/Img/app_store_badge.svg";
 import img2 from "@/Data/Img/google_play_badge.svg";
 import Image from "next/image";
+import FooterNav from "./FooterNav";
 
 function Footer() {
   return (
     <div className="w-full mb-[60px] md:mb-0">
-      <div className="grid w-full grid-cols-1 md:grid-cols-4 bg-secondary p-10 md:h-[450px]">
+      {/* <div className="grid w-full grid-cols-1 md:grid-cols-4 bg-secondary p-10 md:h-[450px]">
         <div className="">
           <p className="mb-10 text-xl font-semibold text-primary md:w-[80%]">
             Get 10% Discount on first LOGIN
@@ -165,6 +166,10 @@ function Footer() {
             Bogura -5800
           </p>
         </div>
+      </div> */}
+
+      <div className="w-full h-[500px] bg-primary text-3xl text-white">
+        Footer 
       </div>
 
       <div className="flex h-[50px] w-full items-center justify-center bg-[#D9D9D9]">

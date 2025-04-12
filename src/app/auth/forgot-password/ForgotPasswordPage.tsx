@@ -57,7 +57,7 @@ const ForgotPasswordPage: React.FC = () => {
           />
           <label
             htmlFor="email"
-            className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${email ? "-top-[2px] bg-white px-1 text-sm text-primary" : ""}`}
+            className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${email ? "top-[-2px] bg-white px-1 text-sm text-primary" : ""}`}
           >
             Email or Phone
           </label>

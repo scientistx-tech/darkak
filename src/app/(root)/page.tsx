@@ -10,15 +10,15 @@ import AboutUs from "./screen/AboutUs";
 
 function page() {
   return (
-    <div className="w-full">
-      <Index />
+    <div className="w-full h-[2000px]">
+      {/* <Index />
       <HotDeals />
       <BestSelling />
       <NewArrival />
       <Banner />
       <PopularProduct />
       <RecentBlogs />
-      <AboutUs />
+      <AboutUs /> */}
     </div>
   );
 }
