@@ -39,7 +39,7 @@ const Banner: React.FC = () => {
           position="right"
           title="HOT DEALS"
           description="GET 33% OFF"
-          text="On SAMSUNG PHONE"
+          text="On SAMSUNG PHONE 2"
           link="/"
         />
 
