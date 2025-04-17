@@ -11,171 +11,63 @@ import {
 
 import img1 from "@/Data/Img/app_store_badge.svg";
 import img2 from "@/Data/Img/google_play_badge.svg";
+import imgBg from "@/Data/Img/Rectangle 136.jpeg";
 import Image from "next/image";
 import FooterNav from "./FooterNav";
 
 function Footer() {
   return (
-    <div className="w-full mb-[60px] md:mb-0">
-      <div className="grid w-full grid-cols-1 md:grid-cols-4 bg-[#00153B] p-10 md:h-[450px]">
-        <div className="">
-          <p className="mb-10 text-xl font-semibold text-[#BBD4FF] md:w-[80%]">
-            Get 10% Discount on first LOGIN
-          </p>
+    <div className="w-full">
+      <div className="h-[100px] w-full bg-slate-400" />
+      <div className="relative h-[500px] w-full bg-gradient-to-b from-[#00153B] to-[#003084]">
+        <Image
+          alt=""
+          src={imgBg}
+          className="absolute h-full w-full object-cover opacity-10"
+        />
+        <div className="absolute w-full flex">
+          <div className="w-2/3 pl-5 md:pl-10">
+            <div className="mt-[-65px] flex w-[50%] flex-col items-center justify-center rounded-md bg-[#F1F6FF] px-3 py-6 shadow-2xl">
+              <p className="text-xl font-semibold text-[#003084]">
+                SUBSCRIBE TO OUR NEWSLETTER
+              </p>
+              <div className="mt-5 w-[80%] rounded-full bg-white">
+                <input
+                  className="w-2/3 rounded-l-full border-none py-2 pl-4 outline-none"
+                  type="text"
+                  placeholder="Your email goes here..."
+                />
+                <button className="w-1/3 rounded-r-full bg-primary py-2 text-white hover:bg-[#003084]">
+                  SUBSCRIBE
+                </button>
+              </div>
+            </div>
 
-          <Link
-            href="/auth/login"
-            className="rounded-full border border-primary bg-primary p-2 pl-4 pr-4 text-secondary hover:bg-transparent hover:text-primary"
-          >
-            Register now
-          </Link>
+            <div className="w-full mt-[70px] flex">
+              <div className="flex w-2/3">
+                <div className="w-1/2 flex flex-col">
+                  <p className="mb-5 text-xl text-[#BBD4FF]">Quick Links</p>
 
-          <p className="mt-8 font-semibold text-white opacity-80">
-            Stay Connected
-          </p>
-
-          <div className="mt-2 flex items-center justify-between md:w-[80%]">
-            <a className="cursor-pointer rounded-full border border-primary bg-primary p-1.5 pl-2.5 pr-2.5 text-2xl text-secondary hover:bg-transparent hover:text-primary">
-              <FacebookOutlined />
-            </a>
-
-            <a className="cursor-pointer rounded-full border border-primary bg-primary p-1.5 pl-2.5 pr-2.5 text-2xl text-secondary hover:bg-transparent hover:text-primary">
-              <WhatsAppOutlined />
-            </a>
-
-            <a className="cursor-pointer rounded-full border border-primary bg-primary p-1.5 pl-2.5 pr-2.5 text-2xl text-secondary hover:bg-transparent hover:text-primary">
-              <LinkedinOutlined />
-            </a>
-
-            <a className="cursor-pointer rounded-full border border-primary bg-primary p-1.5 pl-2.5 pr-2.5 text-2xl text-secondary hover:bg-transparent hover:text-primary">
-              <XOutlined />
-            </a>
-
-            <p className="cursor-pointer rounded-full border border-primary bg-primary p-1.5 pl-2.5 pr-2.5 text-2xl text-secondary hover:bg-transparent hover:text-primary">
-              <PinterestOutlined />
-            </p>
+                  <Link href="/" className="text-[#F6F6F6] hover:text-white">Home</Link>
+                  <Link href="/shop" className="mt-3 text-[#F6F6F6] hover:text-white">Shop</Link>
+                  <Link href="/product" className="mt-3 text-[#F6F6F6] hover:text-white">Product</Link>
+                  <Link href="/contact-us" className="mt-3 text-[#F6F6F6] hover:text-white">Contact Us</Link>
+                </div>
+                <div className="w-1/2"></div>
+              </div>
+              <div className="w-1/3"></div>
+            </div>
           </div>
 
-          <div className="mt-8 flex">
-            <a className="cursor-pointer opacity-60 hover:opacity-90">
-              <Image alt="logo" src={img1} className="h-[50px] w-[200px] md:w-auto" />
-            </a>
-
-            <a className="cursor-pointer opacity-60 hover:opacity-90">
-              <Image alt="logo" src={img2} className="h-[50px] w-[200px] md:w-auto" />
-            </a>
-          </div>
+          <div className="w-1/3">Left</div>
         </div>
-
-        <div className="flex flex-col">
-          <p className="text-xl font-semibold text-[#BBD4FF]">Quick Links</p>
-
-          <Link
-            href="/"
-            className="mt-5 font-semibold text-white opacity-60 hover:opacity-90"
-          >
-            Home
-          </Link>
-          <Link
-            href="/"
-            className="mt-2 font-semibold text-white opacity-60 hover:opacity-90"
-          >
-            Profile
-          </Link>
-          <Link
-            href="/"
-            className="mt-2 font-semibold text-white opacity-60 hover:opacity-90"
-          >
-            Product
-          </Link>
-          <Link
-            href="/"
-            className="mt-2 font-semibold text-white opacity-60 hover:opacity-90"
-          >
-            Blogs
-          </Link>
-          <Link
-            href="/"
-            className="mt-2 font-semibold text-white opacity-60 hover:opacity-90"
-          >
-            Contact Us
-          </Link>
-        </div>
-
-        <div className="flex flex-col">
-          <p className="text-xl font-semibold text-[#BBD4FF]">
-            Product Categories
-          </p>
-
-          <Link
-            href="/"
-            className="mt-5 font-semibold text-white opacity-60 hover:opacity-90"
-          >
-            Categories-1
-          </Link>
-          <Link
-            href="/"
-            className="mt-2 font-semibold text-white opacity-60 hover:opacity-90"
-          >
-            Categories-2
-          </Link>
-          <Link
-            href="/"
-            className="mt-2 font-semibold text-white opacity-60 hover:opacity-90"
-          >
-            Categories-3
-          </Link>
-          <Link
-            href="/"
-            className="mt-2 font-semibold text-white opacity-60 hover:opacity-90"
-          >
-            Categories-4
-          </Link>
-          <Link
-            href="/"
-            className="mt-2 font-semibold text-white opacity-60 hover:opacity-90"
-          >
-            Categories-5
-          </Link>
-        </div>
-
-        <div className="flex flex-col">
-          <p className="mb-5 text-xl font-semibold text-[#BBD4FF]">DARKAK</p>
-
-          <p>
-            Darkak is a Bangladeshi e-commerce site offering quality products,
-            fast delivery, and secure payments for a seamless shopping
-            experience.
-          </p>
-
-          <p className="mb-5 mt-5 font-semibold text-white opacity-80">
-            Contact:
-          </p>
-
-          <p>
-            <samp className="text-white opacity-60">Email:</samp>{" "}
-            info@darkak.com.bd{" "}
-          </p>
-          <p>
-            {" "}
-            <samp className="text-white opacity-60">Phone:</samp> 01915665089
-          </p>
-          <p>
-            {" "}
-            <samp className="text-white opacity-60">Address:</samp> Upashahar ,
-            Bogura -5800
-          </p>
-        </div>
-      </div>
-
-
-      <div className="flex h-[50px] w-full items-center justify-center bg-[#D9D9D9]">
-        <p className="">
-          &copy; {new Date().getFullYear()} - DARKAK, All rights are reserved.
-        </p>
       </div>
     </div>
   );
 }
 
 export default Footer;
+
+// <p className="">
+//           &copy; {new Date().getFullYear()} - DARKAK, All rights are reserved.
+//         </p>
