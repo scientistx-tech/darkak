@@ -7,6 +7,7 @@ import PopularProduct from "./screen/PopularProduct";
 import RecentBlogs from "./screen/RecentBlogs";
 import AboutUs from "./screen/AboutUs";
 import Categories from "./screen/Categories";
+import RecommendedSection from "./screen/RecommendedSection";
 
 function page() {
   return (
@@ -15,6 +16,7 @@ function page() {
       <div className="container mx-auto px-2 py-6 md:px-4 md:py-12">
         <Categories />
         <Banner />
+        <RecommendedSection></RecommendedSection>
       </div>
 
       {/* 
