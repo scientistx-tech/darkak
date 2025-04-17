@@ -7,7 +7,7 @@ import PopularProduct from "./screen/PopularProduct";
 import RecentBlogs from "./screen/RecentBlogs";
 import AboutUs from "./screen/AboutUs";
 import Categories from "./screen/Categories";
-import RecommendedSection from "./screen/RecommendedSection";
+import RecommendedSection from "./screen/RecommendedProducts";
 
 function page() {
   return (
