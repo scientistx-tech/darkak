@@ -4,7 +4,7 @@ import React from "react";
 import img1 from "@/Data/Demo/Rectangle 130 (1).png";
 import img2 from "@/Data/Demo/Rectangle 131 (1).png";
 
-export default function secondaryBanner() {
+export default function SecondaryBanner() {
   return (
     <div className="mt-5 w-full space-y-6 md:mt-16">
       <div className="flex w-full flex-col gap-5 md:flex-row md:gap-10">

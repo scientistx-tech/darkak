@@ -3,11 +3,12 @@ import Index from "./screen/Index";
 import BestSelling from "./screen/BestSelling";
 import NewArrival from "./screen/NewArrival";
 import Banner from "./screen/Banner";
-import PopularProduct from "./screen/PopularProduct";
-import RecentBlogs from "./screen/RecentBlogs";
-import AboutUs from "./screen/AboutUs";
 import Categories from "./screen/Categories";
 import RecommendedSection from "./screen/RecommendedSection";
+import SecondaryBanner from "./screen/SecondaryBanner";
+import ThardBanner from "./screen/ThardBanner";
+import FourthBanner from "./screen/FourthBanner";
+import BestDeals from "./screen/BestDeals";
 
 function page() {
   return (
@@ -17,17 +18,21 @@ function page() {
         <Categories />
         <Banner />
         <RecommendedSection></RecommendedSection>
+        <SecondaryBanner />
+        <BestSelling />
+        <ThardBanner />
+        <NewArrival />
+        <FourthBanner />
+        <BestDeals />
       </div>
 
-      {/* 
-      <BestSelling />
-      <NewArrival />
       
-      <PopularProduct />
-      <RecentBlogs />
-      <AboutUs /> */}
+      
+      
+      
+      
 
-      <div className="h-screen" />
+      <div className="h-screen bg-gray-5" />
     </div>
   );
 }
