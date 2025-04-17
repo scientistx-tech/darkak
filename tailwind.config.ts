@@ -8,7 +8,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ['"Satoshi"', ...defaultTheme.fontFamily.sans],
-        montserrat: ['Montserrat', 'sans-serif'],
+        montserrat: ["Montserrat", "sans-serif"],
       },
       screens: {
         "2xsm": "375px",
@@ -16,6 +16,15 @@ const config: Config = {
         "3xl": "2000px",
       },
       colors: {
+        //////////front-End////////
+        primaryDarkBlue: "#00153B",
+        primaryBlue: "#003084",
+        secondarykBlue: "#",
+        secondaryLiteBlue: "#5694FF",
+        primaryWhite: "#ffffff",
+        secondaryWhite: "#E6EFFF",
+
+        ///////End///////
         current: "currentColor",
         transparent: "transparent",
         white: "#FFFFFF",
