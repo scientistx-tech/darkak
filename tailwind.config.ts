@@ -8,6 +8,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ['"Satoshi"', ...defaultTheme.fontFamily.sans],
+        montserrat: ['Montserrat', 'sans-serif'],
       },
       screens: {
         "2xsm": "375px",
@@ -18,8 +19,8 @@ const config: Config = {
         current: "currentColor",
         transparent: "transparent",
         white: "#FFFFFF",
-        primary: "rgb(38, 103, 242)",
-        secondary: "#1F1F1F",
+        primary: "#5694FF",
+        secondary: "#161616",
         stroke: "#E6EBF1",
         "stroke-dark": "#27303E",
         dark: {
