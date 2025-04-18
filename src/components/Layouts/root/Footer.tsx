@@ -161,7 +161,11 @@ function Footer() {
           </div>
 
           {/* Right-side */}
-          <div className="w-1/3">Left</div>
+          <div className="w-1/3 pr-5 md:pr-10">
+            <div className="mt-[-65px] flex w-[50%] flex-col items-center justify-center rounded-md bg-[#F1F6FF] px-3 py-6 shadow-2xl">
+              kjj
+            </div>
+          </div>
         </div>
       </div>
     </div>
