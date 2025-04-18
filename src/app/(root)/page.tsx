@@ -32,7 +32,7 @@ function page() {
       
       
 
-      <div className="h-screen bg-gray-5" />
+      <div className="h-screen" />
     </div>
   );
 }
