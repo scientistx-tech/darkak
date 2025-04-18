@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React, { useState } from "react";
 import { FaCamera, FaBell, FaClipboardList, FaShippingFast, FaPenNib } from "react-icons/fa";
 
@@ -27,11 +28,12 @@ const ProfilePage: React.FC = () => {
 
       <div className="flex flex-col md:flex-row items-center gap-6 mb-8">
         <div className="relative w-40 h-40">
-          <img
+          <Image
             src={profileImage || "/default-avatar.png"}
             alt="Profile"
             className="rounded-full object-cover w-full h-full border-4 border-primary"
           />
+          
           <label className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow cursor-pointer">
             <FaCamera className="text-primary" />
             <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />

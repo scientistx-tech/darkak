@@ -57,7 +57,7 @@ const Card: React.FC<CardProps> = ({
     }, 4000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [images.length]);
 
   // For Review
   const renderStars = () => {
