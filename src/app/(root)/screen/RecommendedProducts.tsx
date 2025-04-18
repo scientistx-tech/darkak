@@ -19,15 +19,15 @@ const dummyProducts: Product[] = new Array(8).fill(null).map((_, i) => ({
 
 const RecommendedProducts: React.FC = () => {
   return (
-    <section className="px-6 py-10">
+    <section className=" py-10">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-blue-900">
+        <h2 className="text-2xl font-bold text-primaryDarkBlue">
           RECOMMENDED PRODUCTS
         </h2>
         <span className="text-2xl">→</span>
       </div>
 
-      <div className="grid grid-cols-2 justify-center gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+      <div className="grid grid-cols-2 justify-center gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-6 xl:gap-8">
         {dummyProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
