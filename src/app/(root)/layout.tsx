@@ -7,7 +7,7 @@ function layout({ children }: PropsWithChildren) {
   return (
     <div>
       <Header />
-      <div className="mt-[65px] md:mt-[109px] w-full ">
+      <div className=" w-full ">
         {children}
       </div>
       <Footer />

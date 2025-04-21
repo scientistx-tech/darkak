@@ -9,10 +9,11 @@ import NavLink from "@/components/shared/NavLink";
 import {
   DownOutlined,
   UpOutlined,
-  MenuOutlined,
   SearchOutlined,
   MenuFoldOutlined,
-  HeartOutlined, ShoppingCartOutlined, UserOutlined,
+  HeartOutlined,
+  ShoppingCartOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import Bangla from "@/Data/Img/BanglaLag.svg";
@@ -27,6 +28,22 @@ const Header: React.FC = () => {
     setSelectedLang(lang);
     setIsDropdownOpen(false);
   };
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const [show, setShow] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -48,45 +65,21 @@ const Header: React.FC = () => {
     };
   }, [lastScrollY]);
 
-  const [open, setOpen] = useState(false);
-  const [animateClose, setAnimateClose] = useState(false);
-  const [animateClose2, setAnimateClose2] = useState(false);
 
-  const showDrawer = () => {
-    setAnimateClose2(true);
-    setTimeout(() => {
-      setOpen(true);
-      setAnimateClose2(false);
-    }, 500);
-  };
 
-  const onClose2 = () => {
-    setAnimateClose(true);
-    setTimeout(() => {
-      setOpen(false);
-      setAnimateClose(false);
-    }, 500);
-  };
+ 
+//  For Drawer
+const [open, setOpen] = useState(false);
 
-  const onClose = () => {
-    setOpen(false);
-  };
 
-  const dropdownRef = useRef<HTMLDivElement>(null);
+const showDrawer = () => {
+  setOpen(true);
+};
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+const onClose = () => {
+  setOpen(false);
+};
+  
 
   return (
     <div className="w-full">
@@ -106,56 +99,55 @@ const Header: React.FC = () => {
             animate={{ opacity: 1, height: 40 }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="mx-auto hidden w-full grid-cols-3 items-center overflow-hidden bg-[#5694FF] px-4 text-white md:grid lg:px-6"
+            className="mx-auto hidden w-full grid-cols-3 items-center overflow-visible bg-[#5694FF] px-4 text-white md:grid lg:px-6"
           >
             <p>Get Ready For Summer Offers</p>
             <p className="text-center">Use code 2025 and get 10% Off</p>
 
-            <div
-              className="relative flex cursor-pointer items-center justify-end gap-2"
-              onMouseEnter={() => setIsDropdownOpen(true)}
-              onMouseLeave={() => setIsDropdownOpen(false)}
-              ref={dropdownRef}
-            >
-              <Image
-                alt=""
-                src={selectedLang === "Bangla" ? Bangla : English}
-                width={20}
-                height={20}
-              />
-              <p className="uppercase">{selectedLang}</p>
-              {isDropdownOpen ? <UpOutlined /> : <DownOutlined />}
-              {isDropdownOpen && (
-                <div className="absolute top-0 z-30 w-[100px] bg-transparent py-2 text-black transition-opacity duration-300 ease-in-out">
-                  <div className="mt-6 bg-white shadow-lg">
-                    <p
-                      className="px-4 py-1 uppercase hover:bg-gray-200"
-                      onClick={() => handleLanguageChange("English")}
-                    >
-                      English
-                    </p>
-                    <p
-                      className="px-4 py-1 uppercase hover:bg-gray-200"
-                      onClick={() => handleLanguageChange("Bangla")}
-                    >
-                      Bangla
-                    </p>
+            {/* DropDown-menu */}
+            <div className="flex w-full items-center justify-end">
+              <div
+                className="relative flex cursor-pointer justify-end gap-2"
+                onMouseEnter={() => setIsDropdownOpen(true)}
+                onMouseLeave={() => setIsDropdownOpen(false)}
+                ref={dropdownRef}
+              >
+                <Image
+                  alt=""
+                  src={selectedLang === "Bangla" ? Bangla : English}
+                  width={20}
+                  height={20}
+                />
+                <p className="uppercase">{selectedLang}</p>
+
+                {isDropdownOpen ? <UpOutlined /> : <DownOutlined />}
+                {isDropdownOpen && (
+                  <div className="absolute top-0 z-30 mt-4 w-[100px] bg-transparent py-2 text-black transition-opacity duration-300 ease-in-out">
+                    <div className="h-[8px] w-full bg-transparent" />
+                    <div className="bg-white shadow-lg">
+                      <p
+                        className="px-4 py-1 uppercase hover:bg-gray-200"
+                        onClick={() => handleLanguageChange("English")}
+                      >
+                        English
+                      </p>
+                      <p
+                        className="px-4 py-1 uppercase hover:bg-gray-200"
+                        onClick={() => handleLanguageChange("Bangla")}
+                      >
+                        Bangla
+                      </p>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </motion.div>
         )}
 
         {/* Main Header */}
         <div className="mx-auto flex h-[65px] w-full items-center justify-between bg-[#E6EFFF] px-4 text-secondary md:h-[70px] lg:px-6">
-          <button className="w-[10%] text-2xl md:hidden" onClick={showDrawer}>
-            <MenuOutlined
-              className={`text-2xl transition-transform duration-500 ${
-                animateClose2 ? "rotate-animation" : ""
-              }`}
-            />
-          </button>
+          
 
           <Link href="/" className="hidden md:block">
             <p className="font-serif text-3xl font-semibold text-primary">
@@ -163,7 +155,7 @@ const Header: React.FC = () => {
             </p>
           </Link>
 
-          <div className="hidden md:grid grid-flow-col gap-8">
+          <div className="hidden grid-flow-col gap-8 md:grid">
             <NavLink href="/" className="font-serif text-lg hover:text-primary">
               Home
             </NavLink>
@@ -176,10 +168,10 @@ const Header: React.FC = () => {
             </NavLink>
 
             <NavLink
-              href="/blogs"
+              href="/category"
               className={`font-serif text-lg hover:text-primary`}
             >
-              Blogs
+              Category
             </NavLink>
 
             <NavLink
@@ -190,7 +182,7 @@ const Header: React.FC = () => {
             </NavLink>
           </div>
 
-          <div className="hidden md:flex w-[30%] justify-center rounded-full bg-white">
+          <div className="hidden w-[30%] justify-center rounded-full bg-white md:flex">
             <input
               className="w-[75%] rounded-bl-full rounded-tl-full p-1.5 pl-4 pr-3 outline-none"
               placeholder="Search.."
@@ -207,31 +199,44 @@ const Header: React.FC = () => {
             </div>
           </div>
 
-          <div className="hidden md:grid grid-flow-col gap-5">
-          <Link
-              href="/"
-              className="text-2xl"
+          <div className="hidden grid-flow-col gap-5 md:grid">
+            <Link
+              href="/profile"
+              className={`text-2xl transition-all duration-300 hover:scale-110 hover:text-primary ${
+                pathname === "/profile" ? "text-primary" : ""
+              }`}
             >
               <UserOutlined />
-              
-            </Link> 
+            </Link>
 
             <Link
-              href="/"
-              className="text-2xl"
+              href="/wishlist"
+              className={`group text-2xl transition-all duration-300 hover:scale-110 hover:text-primary ${
+                pathname === "/wishlist" ? "text-primary" : ""
+              }`}
             >
               <HeartOutlined />
-              <div className="absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full bg-secondary text-white group-hover:bg-primary group-hover:text-white">
+              <div
+                className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-white group-hover:bg-primary group-hover:text-white ${
+                  pathname === "/wishlist" ? "bg-primary" : "bg-secondary"
+                }`}
+              >
                 <p className="text-[10px] font-semibold">12</p>
               </div>
             </Link>
 
             <Link
-              href="/"
-              className="text-2xl"
+              href="/cart"
+              className={`group text-2xl transition-all duration-300 hover:scale-110 hover:text-primary ${
+                pathname === "/cart" ? "text-primary" : ""
+              }`}
             >
               <ShoppingCartOutlined />
-              <div className="absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full bg-secondary text-white group-hover:bg-primary group-hover:text-white">
+              <div
+                className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-white group-hover:bg-primary group-hover:text-white ${
+                  pathname === "/cart" ? "bg-primary" : "bg-secondary"
+                }`}
+              >
                 <p className="text-[10px] font-semibold">10</p>
               </div>
             </Link>
@@ -243,14 +248,17 @@ const Header: React.FC = () => {
 
       {/* Mobile Drawer */}
       <Drawer
-        title=""
+        title={null}
         placement="left"
         closable={false}
         onClose={onClose}
         open={open}
-        width={300}
+        className="custom-drawer"
+        bodyStyle={{ padding: 0 }}
       >
-        <div className="w-full">mobile</div>
+        <div className="flex h-full w-full flex-col bg-white px-6 py-5">
+          ghghgh
+        </div>
       </Drawer>
     </div>
   );

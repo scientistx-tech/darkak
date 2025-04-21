@@ -67,7 +67,7 @@ const ContactPage: React.FC = () => {
       <div className="flex w-full flex-col pb-5 pt-5 md:flex-row md:pb-20 md:pt-20">
         {/* Left Section */}
         <div className="flex w-full flex-col items-start justify-start md:w-[50%]">
-          <p className="mb-4 text-xl font-medium text-secondary md:text-2xl">
+          {/* <p className="mb-4 text-xl font-medium text-secondary md:text-2xl">
             <span className="text-primary">Contact</span> Info.
           </p>
 
@@ -93,7 +93,7 @@ const ContactPage: React.FC = () => {
             </div>
 
             <p className="text-xl text-secondary">Upashahar , Bogura -5800</p>
-          </div>
+          </div> */}
         </div>
 
         {/* Right Section - Form */}
