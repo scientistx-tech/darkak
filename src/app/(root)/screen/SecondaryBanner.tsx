@@ -9,7 +9,7 @@ export default function SecondaryBanner() {
     <div className="mt-5 w-full space-y-6 md:mt-16">
       <div className="flex w-full flex-col gap-5 md:flex-row md:gap-10">
         <BannerCart
-          bgColour="#5694FF"
+          bgColour="#4d4d4d"
           image={img2}
           position="right"
           title="HOT DEALS"
@@ -19,7 +19,7 @@ export default function SecondaryBanner() {
         />
 
         <BannerCart
-          bgColour="#07d38b"
+          bgColour="#171717"
           image={img1}
           position="left"
           title="SUMMER DEALS"

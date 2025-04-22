@@ -1,11 +1,11 @@
 import React from 'react'
-import BlogsPage from './BlogsPage'
+import CartPage from './CartPage'
 
 export default function page() {
   return (
     <div>
       <div className="h-[65px] md:h-[109px] w-full"/>
-      <BlogsPage />
+      <CartPage />
     </div>
   )
 }
