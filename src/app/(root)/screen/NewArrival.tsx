@@ -11,7 +11,6 @@ import Img5 from "@/Data/Demo/Product-banner-1.jpg";
 import Img6 from "@/Data/Demo/Product-banner-2.jpg";
 import Img7 from "@/Data/Demo/Product-banner-3.webp";
 import Img8 from "@/Data/Demo/Product-banner-6.jpg";
-import Card from "@/components/shared/Card";
 
 const NewArrival: React.FC = () => {
   
