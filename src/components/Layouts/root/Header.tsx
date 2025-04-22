@@ -257,7 +257,7 @@ const onClose = () => {
         bodyStyle={{ padding: 0 }}
       >
         <div className="flex h-full w-full flex-col bg-white px-6 py-5">
-          ghghgh
+          Mobile
         </div>
       </Drawer>
     </div>
