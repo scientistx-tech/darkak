@@ -33,7 +33,6 @@ function page() {
       
       
 
-      <div className="h-screen" />
     </div>
   );
 }

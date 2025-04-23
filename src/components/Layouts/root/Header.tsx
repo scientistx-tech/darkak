@@ -7,6 +7,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import NavLink from "@/components/shared/NavLink";
 import {
+  MenuOutlined,
+  CloseOutlined,
   DownOutlined,
   UpOutlined,
   SearchOutlined,
@@ -15,6 +17,7 @@ import {
   ShoppingCartOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+
 import { motion } from "framer-motion";
 import Bangla from "@/Data/Img/BanglaLag.svg";
 import English from "@/Data/Img/EnglishLag.svg";
@@ -65,21 +68,16 @@ const Header: React.FC = () => {
     };
   }, [lastScrollY]);
 
+  //  For Drawer
+  const [open, setOpen] = useState(false);
 
+  const showDrawer = () => {
+    setOpen(true);
+  };
 
- 
-//  For Drawer
-const [open, setOpen] = useState(false);
-
-
-const showDrawer = () => {
-  setOpen(true);
-};
-
-const onClose = () => {
-  setOpen(false);
-};
-  
+  const onClose = () => {
+    setOpen(false);
+  };
 
   return (
     <div className="w-full">
@@ -99,7 +97,7 @@ const onClose = () => {
             animate={{ opacity: 1, height: 40 }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="mx-auto hidden w-full grid-cols-3 items-center overflow-visible bg-[#5694FF] px-4 text-white md:grid lg:px-6"
+            className="mx-auto hidden w-full grid-cols-3 items-center overflow-visible bg-[#5694FF] px-4 text-white md:grid md:px-6"
           >
             <p>Get Ready For Summer Offers</p>
             <p className="text-center">Use code 2025 and get 10% Off</p>
@@ -146,11 +144,9 @@ const onClose = () => {
         )}
 
         {/* Main Header */}
-        <div className="mx-auto flex h-[65px] w-full items-center justify-between bg-[#E6EFFF] px-4 text-secondary md:h-[70px] lg:px-6">
-          
-
-          <Link href="/" className="hidden md:block">
-            <p className="font-serif text-3xl font-semibold text-primary">
+        <div className="mx-auto flex h-[65px] w-full items-center justify-between bg-[#E6EFFF] px-4 text-secondary md:h-[70px] md:px-6">
+          <Link href="/" className="">
+            <p className="font-serif text-2xl font-semibold text-primary md:text-3xl">
               Darkak
             </p>
           </Link>
@@ -242,7 +238,27 @@ const onClose = () => {
             </Link>
           </div>
 
-          <div className="md:hidden">Logo</div>
+          <button
+            onClick={open ? onClose : showDrawer}
+            className="transition-all duration-500 ease-in-out hover:scale-110 md:hidden"
+          >
+            <div className="relative h-6 w-6">
+              <span
+                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${
+                  open ? "opacity-0" : "opacity-100"
+                }`}
+              >
+                <MenuOutlined className="text-xl" />
+              </span>
+              <span
+                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${
+                  open ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                <CloseOutlined className="text-xl" />
+              </span>
+            </div>
+          </button>
         </div>
       </motion.div>
 
@@ -256,9 +272,7 @@ const onClose = () => {
         className="custom-drawer"
         bodyStyle={{ padding: 0 }}
       >
-        <div className="flex h-full w-full flex-col bg-white px-6 py-5">
-          Mobile
-        </div>
+        <div className="flex h-full flex-col bg-white px-6 py-5">Mobile</div>
       </Drawer>
     </div>
   );
