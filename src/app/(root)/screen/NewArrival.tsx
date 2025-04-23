@@ -32,7 +32,7 @@ const NewArrival: React.FC = () => {
   return (
     <section className="mt-10">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="ml-[26%] uppercase text-2xl font-bold text-primaryDarkBlue">
+        <h2 className="xl:ml-[26%] uppercase text-2xl font-bold text-primaryDarkBlue">
           New Arrival
         </h2>
         <span className="cursor-pointer text-2xl">→</span>
@@ -43,7 +43,7 @@ const NewArrival: React.FC = () => {
 
         {/* PRODUCTS GRID */}
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-6 xl:gap-8">
-          <div className="">
+          <div className="hidden xl:block">
             <div className="absolute mt-[-50px] flex flex-col justify-between rounded-lg bg-blue-600 p-5 text-white">
               <div className="mt-6">
                 <h3 className="mb-2 text-sm font-semibold">SUMMER OFFER</h3>
