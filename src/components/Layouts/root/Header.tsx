@@ -233,11 +233,12 @@ const Header: React.FC = () => {
                   pathname === "/cart" ? "bg-primary" : "bg-secondary"
                 }`}
               >
-                <p className="text-[10px] font-semibold">10</p>
+                <p className="text-[10px] font-semibold">3</p>
               </div>
             </Link>
           </div>
 
+          {/* For mobile menu Button */}
           <button
             onClick={open ? onClose : showDrawer}
             className="transition-all duration-500 ease-in-out hover:scale-110 md:hidden"
