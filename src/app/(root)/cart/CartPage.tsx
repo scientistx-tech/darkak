@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { PlusOutlined, MinusOutlined, DeleteOutlined } from "@ant-design/icons";
 import Image from "next/image";
-import { Modal } from "antd";
+import { Modal, message } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -69,9 +69,7 @@ const CartPage: React.FC = () => {
     );
   };
 
-  const deleteItem = (id: number) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
-  };
+ 
 
   const subTotal = cartItems.reduce(
     (total, item) => total + item.unitPrice * item.quantity,
@@ -101,8 +99,25 @@ const CartPage: React.FC = () => {
   };
 
   const router = useRouter();
+
+  // Message For Coupon / Voucher
+  const [messageApi, contextHolder] = message.useMessage();
+  const coupon = () => {
+    messageApi.open({
+      type: "success",
+      content: "This coupon applied successfully!",
+    });
+  };
+  
+  const voucher = () => {
+    messageApi.open({
+      type: "warning",
+      content: "This voucher is not found! Please try again.",
+    });
+  };
   return (
     <div className="px-1 py-6 md:container md:mx-auto md:px-2 md:py-6 xl:px-4 xl:py-12">
+      {contextHolder}
       <div className="w-full rounded-md bg-white p-2 shadow-md md:p-4">
         <p className="text-xl font-medium md:text-2xl">Shopping Cart</p>
 
@@ -195,39 +210,40 @@ const CartPage: React.FC = () => {
 
         {/* Totals */}
         <div className="mt-5 flex w-full flex-col items-end justify-center gap-2">
-          <p className="text-lg md:text-xl text-black">
+          <p className="text-black md:text-xl">
             Sub-Total:{" "}
-            <span className="ml-2 md:ml-5 text-primaryBlue">{subTotal} TK</span>
+            <span className="ml-2 text-primaryBlue md:ml-5">{subTotal} TK</span>
           </p>
-          <p className="text-lg md:text-xl text-black">
+          <p className="text-black md:text-xl">
             Delivery Charge:{" "}
-            <span className="ml-2 md:ml-5 text-primaryBlue">Will be added</span>
+            <span className="ml-2 text-primaryBlue md:ml-5">Will be added</span>
           </p>
-          <p className="text-lg md:text-xl text-black">
-            Discount: <span className="ml-2 md:ml-5 text-primaryBlue">0</span>
+          <p className="text-black md:text-xl">
+            Discount: <span className="ml-2 text-primaryBlue md:ml-5">0</span>
           </p>
-          <p className="text-lg md:text-xl text-black">
-            Total: <span className="ml-2 md:ml-5 text-primaryBlue">{subTotal} TK</span>
+          <p className="text-black md:text-xl">
+            Total:{" "}
+            <span className="ml-2 text-primaryBlue md:ml-5">{subTotal} TK</span>
           </p>
         </div>
 
         {/* Coupon / Voucher */}
-        <div className="mt-5 flex flex-col md:flex-row w-full justify-between gap-2 rounded-md bg-[#F6F9FF] px-6 py-2">
-          <div className="flex w-full md:w-[40%] rounded-full bg-[#E6EFFF]">
+        <div className="mt-5 flex w-full flex-col justify-between gap-2 rounded-md bg-[#F6F9FF] px-6 py-2 md:flex-row">
+          <div className="flex w-full rounded-full bg-[#E6EFFF] md:w-[40%]">
             <input
               placeholder="Promo/Coupon"
-              className="w-1/2 md:w-2/3 rounded-md border-none bg-[#E6EFFF] px-3 py-2 outline-none placeholder:text-primary"
+              className="w-1/2 rounded-md border-none bg-[#E6EFFF] px-3 py-2 outline-none placeholder:text-primary md:w-2/3"
             />
-            <button className="w-1/2 md:w-1/3 rounded-full border-[5px] border-white bg-primary px-3 py-1 text-white">
+            <button onClick={coupon} className="w-1/2 rounded-full border-[5px] border-white bg-primary px-3 py-1 text-white md:w-1/3">
               Apply Coupon
             </button>
           </div>
-          <div className="flex w-full md:w-[40%] rounded-full bg-[#E6EFFF]">
+          <div className="flex w-full rounded-full bg-[#E6EFFF] md:w-[40%]">
             <input
               placeholder="Gift voucher"
-              className="w-1/2 md:w-2/3 rounded-md border-none bg-[#E6EFFF] px-3 py-2 outline-none placeholder:text-primary"
+              className="w-1/2 rounded-md border-none bg-[#E6EFFF] px-3 py-2 outline-none placeholder:text-primary md:w-2/3"
             />
-            <button className="w-1/2 md:w-1/3 rounded-full border-[5px] border-white bg-primary px-3 py-1 text-white">
+            <button onClick={voucher} className="w-1/2 rounded-full border-[5px] border-white bg-primary px-3 py-1 text-white md:w-1/3">
               Apply Voucher
             </button>
           </div>
@@ -237,7 +253,7 @@ const CartPage: React.FC = () => {
         <div className="mb-10 mt-16 flex w-full items-center justify-between">
           <button
             onClick={() => router.back()}
-            className="rounded-full bg-primary px-6 py-2 text-white"
+            className="rounded-full bg-primary px-6 py-2.5 text-white"
           >
             Continue Shopping
           </button>
