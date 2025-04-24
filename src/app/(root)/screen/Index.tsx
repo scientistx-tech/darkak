@@ -63,7 +63,7 @@ const Slider: React.FC = () => {
             {current.title}
           </h1>
           <p className="mt-4 text-lg text-gray-700">{current.subtitle}</p>
-          <button className="mt-6 px-6 py-2 rounded-full bg-blue-500 text-white font-semibold hover:bg-blue-600 transition">
+          <button className="mt-6 px-6 py-2 rounded-full bg-[#003084] text-white font-semibold hover:bg-blue-600 transition">
             {current.button}
           </button>
 
@@ -88,7 +88,7 @@ const Slider: React.FC = () => {
             key={i}
             onClick={() => handleDotClick(i)}
             className={`w-3 h-3 mx-1 rounded-full transition-all duration-300 ${
-              i === index ? "bg-blue-500 scale-110" : "bg-gray-300"
+              i === index ? "bg-[#003084] scale-110" : "bg-gray-300"
             }`}
           />
         ))}

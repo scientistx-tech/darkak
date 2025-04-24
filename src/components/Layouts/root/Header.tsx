@@ -97,7 +97,7 @@ const Header: React.FC = () => {
             animate={{ opacity: 1, height: 40 }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="mx-auto hidden w-full grid-cols-3 items-center overflow-visible bg-[#5694FF] px-4 text-white md:grid md:px-6"
+            className="mx-auto hidden w-full grid-cols-3 items-center overflow-visible bg-[#003084] px-4 text-white md:grid md:px-6"
           >
             <p>Get Ready For Summer Offers</p>
             <p className="text-center">Use code 2025 and get 10% Off</p>
