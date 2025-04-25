@@ -27,7 +27,7 @@ const RecommendedProducts: React.FC = () => {
         <span className="text-2xl">→</span>
       </div>
 
-      <div className="grid grid-cols-2 justify-center gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-6 xl:gap-8">
+      <div className="grid grid-cols-2 justify-center gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 lg:gap-4 xl:gap-6">
         {dummyProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
