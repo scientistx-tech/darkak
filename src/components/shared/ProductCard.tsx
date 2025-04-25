@@ -26,7 +26,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   return (
     <div
-      className="relative mx-auto w-full max-w-sm overflow-hidden rounded-[20px] bg-primaryWhite shadow-md transition-all duration-300"
+      className="relative mx-auto w-full max-w-sm overflow-hidden rounded-[20px] bg-primaryWhite shadow-md transition-all duration-300 md:h-[370px] xl:h-[400px] 2xl:h-[380px] "
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -34,7 +34,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
       {/* Discount badge */}
       {product.discount > 0 && (
-        <div className="absolute left-0 top-5 z-10 rounded-r-full bg-secondaryLiteBlue px-4 py-1 text-center text-xs font-semibold text-secondaryWhite">
+        <div className="absolute left-0 top-5 rounded-r-full bg-secondaryLiteBlue px-4 py-1 text-center text-xs font-semibold text-secondaryWhite z-20">
           {product.discount}%
           <br />
           OFF
