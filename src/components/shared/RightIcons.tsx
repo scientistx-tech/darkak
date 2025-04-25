@@ -13,7 +13,7 @@ interface RightIconsProps {
 export default function RightIcons({ hovered, success }: RightIconsProps) {
     return (
         <motion.div
-            className="absolute right-3 top-5 z-20 flex flex-col gap-3 text-xl text-secondaryLiteBlue"
+            className="absolute right-3 top-5 z-30 flex flex-col gap-3 text-xl text-secondaryLiteBlue"
             initial={{ opacity: 0, y: -10 }}
             animate={hovered ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
             transition={{ duration: 0.8 }}
@@ -26,6 +26,7 @@ export default function RightIcons({ hovered, success }: RightIconsProps) {
             </Link>
 
             <Tooltip
+            className=''
                 placement="bottomRight"
                 color="#5694FF"
                 title={

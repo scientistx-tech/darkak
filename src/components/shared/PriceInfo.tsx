@@ -5,7 +5,7 @@ import { FaShoppingCart } from "react-icons/fa";
 const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
     return (
       <Link href="/product" className="group">
-        <div className="xl:space-y space-y-2 p-2 text-center xl:p-6">
+        <div className="xl:space-y space-y-2 md:space-y-1 lg:space-y-2 p-2 text-center xl:p-6 flex flex-col justify-between md:h-[150px] xl:h-[200px] 2xl:h-[170px]">
           <div className="flex flex-wrap items-center justify-center gap-1">
             <span className="md:text-md text-sm font-bold text-primaryDarkBlue">
               Price: {product.price} TK
