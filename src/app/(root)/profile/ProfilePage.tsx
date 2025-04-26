@@ -18,7 +18,7 @@ const ProfilePage: React.FC = () => {
       </div>
 
       <div className="px-1 py-6 md:container md:mx-auto md:px-2 md:py-6 xl:px-4 xl:py-12">
-        kjkjkj
+        kjkjkj ok
       </div>
     </div>
   );
