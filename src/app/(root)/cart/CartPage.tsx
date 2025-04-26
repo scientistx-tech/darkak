@@ -69,8 +69,6 @@ const CartPage: React.FC = () => {
     );
   };
 
- 
-
   const subTotal = cartItems.reduce(
     (total, item) => total + item.unitPrice * item.quantity,
     0,
@@ -108,7 +106,7 @@ const CartPage: React.FC = () => {
       content: "This coupon applied successfully!",
     });
   };
-  
+
   const voucher = () => {
     messageApi.open({
       type: "warning",
@@ -116,186 +114,202 @@ const CartPage: React.FC = () => {
     });
   };
   return (
-    <div className="px-1 py-6 md:container md:mx-auto md:px-2 md:py-6 xl:px-4 xl:py-12">
+    <div className="w-full">
       {contextHolder}
-      <div className="w-full rounded-md bg-white p-2 shadow-md md:p-4">
-        <p className="text-xl font-medium md:text-2xl">Shopping Cart</p>
+      <div className="flex h-[60px] w-full items-center justify-center bg-gradient-to-r from-[#00153B] to-[#00286EF2] md:h-[100px]">
+        <p className="text-xl text-white md:text-2xl">Shopping Cart</p>
+      </div>
 
-        {/* Header */}
-        <div className="mb-2 mt-5 flex items-center justify-between">
-          <div className="flex w-[19%] items-center justify-center rounded-md bg-[#E6EFFF] py-2 md:w-[12%] xl:w-[10%]">
-            Image
+      <div className="px-1 py-6 md:container md:mx-auto md:px-2 md:py-6 xl:px-4 xl:py-12">
+        <div className="w-full rounded-md bg-white p-2 shadow-md md:p-4">
+          {/* Header */}
+          <div className="mb-2 mt-5 flex items-center justify-between">
+            <div className="flex w-[19%] items-center justify-center rounded-md bg-[#E6EFFF] py-2 md:w-[12%] xl:w-[10%]">
+              Image
+            </div>
+            <div className="flex w-[42%] items-center justify-start rounded-md bg-[#E6EFFF] px-6 py-2 xl:w-[40%]">
+              Product Name
+            </div>
+            <div className="hidden w-[20%] items-center justify-center rounded-md bg-[#E6EFFF] py-2 md:w-[12%] xl:flex xl:w-[10%]">
+              Model
+            </div>
+            <div className="flex w-[19%] items-center justify-center rounded-md bg-[#E6EFFF] py-2 md:w-[12%] xl:w-[10%]">
+              Quantity
+            </div>
+            <div className="hidden w-[12%] items-center justify-center rounded-md bg-[#E6EFFF] py-2 md:flex xl:w-[10%]">
+              Unit Price
+            </div>
+            <div className="flex w-[19%] items-center justify-center rounded-md bg-[#E6EFFF] py-2 md:w-[12%] xl:w-[10%]">
+              Total
+            </div>
           </div>
-          <div className="flex w-[42%] items-center justify-start rounded-md bg-[#E6EFFF] px-6 py-2 xl:w-[40%]">
-            Product Name
-          </div>
-          <div className="hidden w-[20%] items-center justify-center rounded-md bg-[#E6EFFF] py-2 md:w-[12%] xl:flex xl:w-[10%]">
-            Model
-          </div>
-          <div className="flex w-[19%] items-center justify-center rounded-md bg-[#E6EFFF] py-2 md:w-[12%] xl:w-[10%]">
-            Quantity
-          </div>
-          <div className="hidden w-[12%] items-center justify-center rounded-md bg-[#E6EFFF] py-2 md:flex xl:w-[10%]">
-            Unit Price
-          </div>
-          <div className="flex w-[19%] items-center justify-center rounded-md bg-[#E6EFFF] py-2 md:w-[12%] xl:w-[10%]">
-            Total
-          </div>
-        </div>
 
-        {/* Cart Items */}
-        {cartItems.map((item) => (
-          <div
-            key={item.id}
-            className="mt-3 flex items-center justify-between rounded-md bg-[#E6EFFF]"
-          >
-            <div className="flex w-[19%] items-center justify-center rounded-md py-2 md:w-[12%] xl:w-[10%]">
-              <Image
-                src={item.image}
-                alt="product image"
-                className="h-[50px] w-[50px] rounded-md md:h-[80px] md:w-[80px]"
-              />
-            </div>
-            <div className="flex w-[42%] flex-col items-start justify-start rounded-md px-6 py-2 xl:w-[40%]">
-              <p className="text-base font-bold text-primaryBlue md:text-xl">
-                {item.name}
-              </p>
-              <p className="hidden text-sm md:block xl:text-base">
-                <span className="text-black">Brand:</span> {item.brand}
-              </p>
-              <p className="text-sm xl:hidden xl:text-base">
-                <span className="text-black">Model:</span> {item.model}
-              </p>
-            </div>
-            <div className="hidden w-[12%] items-center justify-center rounded-md py-2 xl:flex xl:w-[10%]">
-              <p>
-                <span className="text-black">Model:</span> {item.model}
-              </p>
-            </div>
-            <div className="flex w-[19%] items-center justify-center rounded-md py-2 md:w-[12%] xl:w-[10%]">
-              <div className="flex">
-                <button
-                  onClick={() => decreaseQty(item.id)}
-                  className="bg-primary px-1.5 py-1 text-white opacity-80 transition-all duration-300 hover:opacity-100 md:rounded-bl-full md:rounded-tl-full md:px-3 md:py-1.5 md:text-xl"
-                >
-                  <MinusOutlined />
-                </button>
-                <p className="border border-primary px-2 text-xl text-black opacity-80 md:py-1.5">
-                  {item.quantity}
+          {/* Cart Items */}
+          {cartItems.map((item) => (
+            <div
+              key={item.id}
+              className="mt-3 flex items-center justify-between rounded-md bg-[#E6EFFF]"
+            >
+              <div className="flex w-[19%] items-center justify-center rounded-md py-2 md:w-[12%] xl:w-[10%]">
+                <Image
+                  src={item.image}
+                  alt="product image"
+                  className="h-[50px] w-[50px] rounded-md md:h-[80px] md:w-[80px]"
+                />
+              </div>
+              <div className="flex w-[42%] flex-col items-start justify-start rounded-md px-6 py-2 xl:w-[40%]">
+                <p className="text-base font-bold text-primaryBlue md:text-xl">
+                  {item.name}
+                </p>
+                <p className="hidden text-sm md:block xl:text-base">
+                  <span className="text-black">Brand:</span> {item.brand}
+                </p>
+                <p className="text-sm xl:hidden xl:text-base">
+                  <span className="text-black">Model:</span> {item.model}
+                </p>
+              </div>
+              <div className="hidden w-[12%] items-center justify-center rounded-md py-2 xl:flex xl:w-[10%]">
+                <p>
+                  <span className="text-black">Model:</span> {item.model}
+                </p>
+              </div>
+              <div className="flex w-[19%] items-center justify-center rounded-md py-2 md:w-[12%] xl:w-[10%]">
+                <div className="flex">
+                  <button
+                    onClick={() => decreaseQty(item.id)}
+                    className="bg-primary px-1.5 py-1 text-white opacity-80 transition-all duration-300 hover:opacity-100 md:rounded-bl-full md:rounded-tl-full md:px-3 md:py-1.5 md:text-xl"
+                  >
+                    <MinusOutlined />
+                  </button>
+                  <p className="border border-primary px-2 text-xl text-black opacity-80 md:py-1.5">
+                    {item.quantity}
+                  </p>
+                  <button
+                    onClick={() => increaseQty(item.id)}
+                    className="bg-primary px-1.5 py-1 text-white opacity-80 transition-all duration-300 hover:opacity-100 md:rounded-br-full md:rounded-tr-full md:px-3 md:py-1.5 md:text-xl"
+                  >
+                    <PlusOutlined />
+                  </button>
+                </div>
+              </div>
+              <div className="hidden w-[12%] items-center justify-center rounded-md py-2 text-black md:flex xl:w-[10%]">
+                {item.unitPrice} TK
+              </div>
+              <div className="flex w-[19%] flex-col items-center justify-evenly rounded-md py-2 md:w-[12%] md:flex-row xl:w-[10%]">
+                <p className="font-medium text-primaryDarkBlue">
+                  {item.unitPrice * item.quantity} TK
                 </p>
                 <button
-                  onClick={() => increaseQty(item.id)}
-                  className="bg-primary px-1.5 py-1 text-white opacity-80 transition-all duration-300 hover:opacity-100 md:rounded-br-full md:rounded-tr-full md:px-3 md:py-1.5 md:text-xl"
+                  onClick={() => showModal(item.id)}
+                  className="text-xl text-red-500 hover:text-red-600"
                 >
-                  <PlusOutlined />
+                  <DeleteOutlined />
                 </button>
               </div>
             </div>
-            <div className="hidden w-[12%] items-center justify-center rounded-md py-2 text-black md:flex xl:w-[10%]">
-              {item.unitPrice} TK
-            </div>
-            <div className="flex w-[19%] flex-col items-center justify-evenly rounded-md py-2 md:w-[12%] md:flex-row xl:w-[10%]">
-              <p className="font-medium text-primaryDarkBlue">
-                {item.unitPrice * item.quantity} TK
-              </p>
+          ))}
+
+          {/* Totals */}
+          <div className="mt-5 flex w-full flex-col items-end justify-center gap-2">
+            <p className="text-black md:text-xl">
+              Sub-Total:{" "}
+              <span className="ml-2 text-primaryBlue md:ml-5">
+                {subTotal} TK
+              </span>
+            </p>
+            <p className="text-black md:text-xl">
+              Delivery Charge:{" "}
+              <span className="ml-2 text-primaryBlue md:ml-5">
+                Will be added
+              </span>
+            </p>
+            <p className="text-black md:text-xl">
+              Discount: <span className="ml-2 text-primaryBlue md:ml-5">0</span>
+            </p>
+            <p className="text-black md:text-xl">
+              Total:{" "}
+              <span className="ml-2 text-primaryBlue md:ml-5">
+                {subTotal} TK
+              </span>
+            </p>
+          </div>
+
+          {/* Coupon / Voucher */}
+          <div className="mt-5 flex w-full flex-col justify-between gap-2 rounded-md bg-[#F6F9FF] px-6 py-2 md:flex-row">
+            <div className="flex w-full rounded-full bg-[#E6EFFF] md:w-[40%]">
+              <input
+                placeholder="Promo/Coupon"
+                className="w-1/2 rounded-md border-none bg-[#E6EFFF] px-3 py-2 outline-none placeholder:text-primary md:w-2/3"
+              />
               <button
-                onClick={() => showModal(item.id)}
-                className="text-xl text-red-500 hover:text-red-600"
+                onClick={coupon}
+                className="w-1/2 rounded-full border-[5px] border-white bg-primary px-3 py-1 text-white md:w-1/3"
               >
-                <DeleteOutlined />
+                Apply Coupon
+              </button>
+            </div>
+            <div className="flex w-full rounded-full bg-[#E6EFFF] md:w-[40%]">
+              <input
+                placeholder="Gift voucher"
+                className="w-1/2 rounded-md border-none bg-[#E6EFFF] px-3 py-2 outline-none placeholder:text-primary md:w-2/3"
+              />
+              <button
+                onClick={voucher}
+                className="w-1/2 rounded-full border-[5px] border-white bg-primary px-3 py-1 text-white md:w-1/3"
+              >
+                Apply Voucher
               </button>
             </div>
           </div>
-        ))}
 
-        {/* Totals */}
-        <div className="mt-5 flex w-full flex-col items-end justify-center gap-2">
-          <p className="text-black md:text-xl">
-            Sub-Total:{" "}
-            <span className="ml-2 text-primaryBlue md:ml-5">{subTotal} TK</span>
-          </p>
-          <p className="text-black md:text-xl">
-            Delivery Charge:{" "}
-            <span className="ml-2 text-primaryBlue md:ml-5">Will be added</span>
-          </p>
-          <p className="text-black md:text-xl">
-            Discount: <span className="ml-2 text-primaryBlue md:ml-5">0</span>
-          </p>
-          <p className="text-black md:text-xl">
-            Total:{" "}
-            <span className="ml-2 text-primaryBlue md:ml-5">{subTotal} TK</span>
-          </p>
-        </div>
+          {/* Buttons */}
+          <div className="mb-10 mt-16 flex w-full items-center justify-between">
+            <button
+              onClick={() => router.back()}
+              className="rounded-full bg-primary px-6 py-2.5 text-white"
+            >
+              Continue Shopping
+            </button>
 
-        {/* Coupon / Voucher */}
-        <div className="mt-5 flex w-full flex-col justify-between gap-2 rounded-md bg-[#F6F9FF] px-6 py-2 md:flex-row">
-          <div className="flex w-full rounded-full bg-[#E6EFFF] md:w-[40%]">
-            <input
-              placeholder="Promo/Coupon"
-              className="w-1/2 rounded-md border-none bg-[#E6EFFF] px-3 py-2 outline-none placeholder:text-primary md:w-2/3"
-            />
-            <button onClick={coupon} className="w-1/2 rounded-full border-[5px] border-white bg-primary px-3 py-1 text-white md:w-1/3">
-              Apply Coupon
-            </button>
-          </div>
-          <div className="flex w-full rounded-full bg-[#E6EFFF] md:w-[40%]">
-            <input
-              placeholder="Gift voucher"
-              className="w-1/2 rounded-md border-none bg-[#E6EFFF] px-3 py-2 outline-none placeholder:text-primary md:w-2/3"
-            />
-            <button onClick={voucher} className="w-1/2 rounded-full border-[5px] border-white bg-primary px-3 py-1 text-white md:w-1/3">
-              Apply Voucher
-            </button>
+            <Link
+              href="/easy-checkout"
+              className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-primary bg-primary px-6 py-2 font-medium text-indigo-600 shadow-md transition duration-300 ease-out"
+            >
+              <span className="ease absolute inset-0 flex h-full w-full -translate-x-full items-center justify-center bg-primary text-white duration-300 group-hover:translate-x-0">
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  ></path>
+                </svg>
+              </span>
+              <span className="ease absolute flex h-full w-full transform items-center justify-center text-white transition-all duration-300 group-hover:translate-x-full">
+                Check Out
+              </span>
+              <span className="invisible relative">Check Out</span>
+            </Link>
           </div>
         </div>
 
-        {/* Buttons */}
-        <div className="mb-10 mt-16 flex w-full items-center justify-between">
-          <button
-            onClick={() => router.back()}
-            className="rounded-full bg-primary px-6 py-2.5 text-white"
-          >
-            Continue Shopping
-          </button>
-
-          <Link
-            href="/easy-checkout"
-            className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-primary bg-primary px-6 py-2 font-medium text-indigo-600 shadow-md transition duration-300 ease-out"
-          >
-            <span className="ease absolute inset-0 flex h-full w-full -translate-x-full items-center justify-center bg-primary text-white duration-300 group-hover:translate-x-0">
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                ></path>
-              </svg>
-            </span>
-            <span className="ease absolute flex h-full w-full transform items-center justify-center text-white transition-all duration-300 group-hover:translate-x-full">
-              Check Out
-            </span>
-            <span className="invisible relative">Check Out</span>
-          </Link>
-        </div>
+        <Modal
+          title="Are you sure?"
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          okText="Yes, Delete"
+          cancelText="Cancel"
+        >
+          <p>Do you really want to delete this product from your cart?</p>
+        </Modal>
       </div>
-
-      <Modal
-        title="Are you sure?"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        okText="Yes, Delete"
-        cancelText="Cancel"
-      >
-        <p>Do you really want to delete this product from your cart?</p>
-      </Modal>
     </div>
   );
 };
