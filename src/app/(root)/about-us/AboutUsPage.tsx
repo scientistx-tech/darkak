@@ -58,7 +58,7 @@ const AboutUsPage: React.FC = () => {
 
         {/* Ending Quote */}
         <div className="text-center pt-10">
-          <p className="italic text-gray-500">"At <span className="font-semibold text-primaryBlue">Darkak</span>, you’re not just shopping — you’re experiencing excellence."</p>
+          <p className="italic text-gray-500">&quot;At <span className="font-semibold text-primaryBlue">Darkak</span>, you&ldquo;re not just shopping — you&ldquo;re experiencing excellence.&quot;</p>
         </div>
 
       </div>

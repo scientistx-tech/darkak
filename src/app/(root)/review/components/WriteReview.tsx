@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { FaStar, FaUpload, FaTimes } from "react-icons/fa";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function WriteReview() {
   const [rating, setRating] = useState(0);
@@ -115,10 +116,12 @@ export default function WriteReview() {
       <div className="mb-6 flex flex-wrap justify-center gap-3">
         {images.map((img, index) => (
           <div key={index} className="relative">
-            <img
+            <Image
               src={URL.createObjectURL(img)}
               alt="preview"
-              className="h-20 w-20 rounded-lg object-cover"
+              height={100}
+              width={100}
+              className="rounded-lg object-cover"
             />
             <button
               type="button"
