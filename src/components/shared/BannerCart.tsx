@@ -42,15 +42,33 @@ const BannerCart: React.FC<BannerCardProps> = ({
         <p className={clsx(position === "left" ? "text-2xl" : "text-xl")}>
           {text}
         </p>
-        <div className="w-full h-[10px]"></div>
+        <div className="h-[10px] w-full"></div>
 
-        <Link href={link} className="relative inline-flex items-center justify-center p-4 px-6 py-2 overflow-hidden font-medium text-indigo-600 transition duration-300 ease-out border-2 border-primary bg-primary rounded-full shadow-md group">
-     <span className="absolute inset-0 flex items-center justify-center w-full h-full text-white duration-300 -translate-x-full bg-primary group-hover:translate-x-0 ease">
-         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-     </span>
-     <span className="absolute flex items-center justify-center w-full h-full text-white transition-all duration-300 transform group-hover:translate-x-full ease">Shop Now</span>
-     <span className="relative invisible">Shop Now</span>
- </Link>
+        <Link
+          href={link}
+          className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-primary bg-primary p-4 px-6 py-2 font-medium text-indigo-600 shadow-md transition duration-300 ease-out"
+        >
+          <span className="ease absolute inset-0 flex h-full w-full -translate-x-full items-center justify-center bg-primary text-white duration-300 group-hover:translate-x-0">
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              ></path>
+            </svg>
+          </span>
+          <span className="ease absolute flex h-full w-full transform items-center justify-center text-white transition-all duration-300 group-hover:translate-x-full">
+            Shop Now
+          </span>
+          <span className="invisible relative">Shop Now</span>
+        </Link>
       </div>
 
       <div className="w-[40%]">

@@ -4,6 +4,7 @@ import "flatpickr/dist/flatpickr.min.css";
 import "jsvectormap/dist/jsvectormap.css";
 import type { Metadata } from "next";
 import { PropsWithChildren } from "react";
+import UpdateNotice from "./(root)/component/UpdateNotice";
 
 export const metadata: Metadata = {
   title: {
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
     <html lang="en" suppressHydrationWarning>
       <body>
 
+        <UpdateNotice />
         {children}
 
       </body>

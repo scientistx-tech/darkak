@@ -2,104 +2,197 @@
 
 import Image from "next/image";
 import React, { useState } from "react";
-import { FaCamera, FaBell, FaClipboardList, FaShippingFast, FaPenNib } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FaUser,
+  FaCamera,
+  FaBell,
+  FaClipboardList,
+  FaShippingFast,
+  FaPen,
+} from "react-icons/fa";
+
+import profile from "@/Data/Img/blank-profile-picture.webp";
+import PersonalInfo from "./PersonalInfo";
+import EditProfile from "./EditProfile";
+import NotificationPage from "./NotificationPage";
+import OrderHistory from "./OrderHistory";
+import TrackOrder from "./TrackOrder";
 
 const ProfilePage: React.FC = () => {
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [name, setName] = useState("John Doe");
-  const [email, setEmail] = useState("john@example.com");
-  const [phone, setPhone] = useState("+8801234567890");
-  const [address, setAddress] = useState("Dhaka, Bangladesh");
+  const [profileImage, setProfileImage] = useState<string>("");
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [activeTab, setActiveTab] = useState<string>("personal"); // default active page
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      const imageUrl = URL.createObjectURL(file);
+      setProfileImage(imageUrl);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 mt-10 rounded-2xl shadow-2xl bg-white dark:bg-gray-900">
-      <h2 className="text-3xl font-bold mb-6 text-center text-primary">My Profile</h2>
-
-      <div className="flex flex-col md:flex-row items-center gap-6 mb-8">
-        <div className="relative w-40 h-40">
-          <Image
-            src={profileImage || "/default-avatar.png"}
-            alt="Profile"
-            className="rounded-full object-cover w-full h-full border-4 border-primary"
-          />
-          
-          <label className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow cursor-pointer">
-            <FaCamera className="text-primary" />
-            <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-          </label>
-        </div>
-
-        <div className="flex-1 space-y-4">
-          <div>
-            <label className="block mb-1 text-sm font-medium">Name</label>
-            <input value={name} onChange={(e) => setName(e.target.value)} />
-          </div>
-
-          <div>
-            <label className="block mb-1 text-sm font-medium">Email</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          </div>
-
-          <div>
-            <label className="block mb-1 text-sm font-medium">Phone</label>
-            <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
-          </div>
-
-          <div>
-            <label className="block mb-1 text-sm font-medium">Address</label>
-            <input value={address} onChange={(e) => setAddress(e.target.value)} />
-          </div>
-
-          <button className="bg-primary text-white hover:bg-secondary mt-2">Save Changes</button>
-        </div>
+    <div className="w-full">
+      {/* Header */}
+      <div className="flex h-[60px] w-full items-center justify-center bg-gradient-to-r from-[#00153B] to-[#00286EF2] md:h-[100px]">
+        <p className="text-xl text-white md:text-2xl">Profile</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <LinkCard
-          title="Notifications"
-          icon={<FaBell className="text-2xl" />}
-          href="/notifications"
-        />
-        <LinkCard
-          title="Order History"
-          icon={<FaClipboardList className="text-2xl" />}
-          href="/order-history"
-        />
-        <LinkCard
-          title="Track Order"
-          icon={<FaShippingFast className="text-2xl" />}
-          href="/track-order"
-        />
-        <LinkCard
-          title="Write a Blog"
-          icon={<FaPenNib className="text-2xl" />}
-          href="/write-blog"
-        />
+      {/* Main Content */}
+      <div className="flex flex-col gap-6 px-2 py-8 md:container md:mx-auto md:flex-row">
+        {/* Left Sidebar */}
+        <div className="flex w-full flex-col items-center gap-4 md:w-1/3">
+          {/* Profile Picture */}
+          <div className="relative">
+            <Image
+              src={profileImage || profile}
+              alt="Profile"
+              width={200}
+              height={200}
+              className="h-[200px] w-[200px] rounded-full border-[5px] border-primaryBlue object-cover"
+            />
+            <label className="absolute bottom-2 right-2 cursor-pointer rounded-full bg-white p-2 shadow-md">
+              <FaCamera className="text-gray-600" />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+            </label>
+          </div>
+
+          {/* Menu */}
+          <div className="mt-6 flex w-full flex-col gap-2">
+            <button
+              onClick={() => setActiveTab("personal")}
+              className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
+                activeTab === "personal"
+                  ? "bg-primaryBlue text-white"
+                  : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
+              }`}
+            >
+              <FaUser />
+              Personal information
+            </button>
+
+            <button
+              onClick={() => setActiveTab("edit")}
+              className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
+                activeTab === "edit"
+                  ? "bg-primaryBlue text-white"
+                  : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
+              }`}
+            >
+              <FaPen />
+              Edit profile
+            </button>
+
+            <button
+              onClick={() => setActiveTab("notification")}
+              className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
+                activeTab === "notification"
+                  ? "bg-primaryBlue text-white"
+                  : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
+              }`}
+            >
+              <FaBell />
+              Notification
+            </button>
+
+            <button
+              onClick={() => setActiveTab("order")}
+              className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
+                activeTab === "order"
+                  ? "bg-primaryBlue text-white"
+                  : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
+              }`}
+            >
+              <FaClipboardList />
+              Order History
+            </button>
+
+            <button
+              onClick={() => setActiveTab("track")}
+              className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
+                activeTab === "track"
+                  ? "bg-primaryBlue text-white"
+                  : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
+              }`}
+            >
+              <FaShippingFast />
+              Track Order
+            </button>
+          </div>
+        </div>
+
+        {/* Right Content */}
+        <div className="w-full md:w-2/3">
+          <AnimatePresence mode="wait">
+            {activeTab === "personal" && (
+              <motion.div
+                key="personal"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+              >
+                <PersonalInfo />
+              </motion.div>
+            )}
+
+            {activeTab === "edit" && (
+              <motion.div
+                key="edit"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+              >
+                <EditProfile />
+              </motion.div>
+            )}
+
+            {activeTab === "notification" && (
+              <motion.div
+                key="notification"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+              >
+                <NotificationPage />
+              </motion.div>
+            )}
+
+            {activeTab === "order" && (
+              <motion.div
+                key="order"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+              >
+                <OrderHistory />
+              </motion.div>
+            )}
+
+            {activeTab === "track" && (
+              <motion.div
+                key="track"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+              >
+                <TrackOrder />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
-  );
-};
-
-const LinkCard = ({ title, icon, href }: { title: string; icon: React.ReactNode; href: string }) => {
-  return (
-    <a
-      href={href}
-      className="flex items-center gap-4 p-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl shadow transition-all duration-300"
-    >
-      <div className="text-primary">{icon}</div>
-      <span className="text-lg font-medium text-gray-800 dark:text-gray-100">{title}</span>
-    </a>
   );
 };
 

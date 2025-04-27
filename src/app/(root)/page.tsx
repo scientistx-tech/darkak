@@ -13,6 +13,7 @@ import BestDeals from "./screen/BestDeals";
 function page() {
   return (
     <div className="w-full">
+      <div className="h-[65px] md:h-[109px] w-full bg-[#E6EFFF]"/>
       <Index />
       <div className="container mx-auto px-2 py-6 md:px-4 md:py-12">
         <Categories />
@@ -32,7 +33,6 @@ function page() {
       
       
 
-      <div className="h-screen" />
     </div>
   );
 }

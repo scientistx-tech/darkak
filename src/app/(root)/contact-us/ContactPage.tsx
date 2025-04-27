@@ -66,33 +66,33 @@ const ContactPage: React.FC = () => {
 
       <div className="flex w-full flex-col pb-5 pt-5 md:flex-row md:pb-20 md:pt-20">
         {/* Left Section */}
-        <div className="flex w-full flex-col items-start justify-start md:w-[50%]">
+        <div className="flex w-full flex-col items-start justify-center md:w-[50%] pl-[5%] md:pl-[10%]">
           <p className="mb-4 text-xl font-medium text-secondary md:text-2xl">
             <span className="text-primary">Contact</span> Info.
           </p>
 
           <div className="mt-3 flex items-center justify-center gap-3 md:mt-5">
-            <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-primary">
-              <FaEnvelope className="text-xl text-secondary" />
+            <div className="flex h-[30px] w-[30px] md:h-[40px] md:w-[40px] items-center justify-center rounded-full bg-primary">
+              <FaEnvelope className=" md:text-xl text-white" />
             </div>
 
-            <p className="text-xl text-secondary">info@darkak.com.bd</p>
+            <p className="md:text-xl text-secondary">info@darkak.com.bd</p>
           </div>
 
           <div className="mt-3 flex items-center justify-center gap-3 md:mt-5">
-            <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-primary">
-              <FaPhoneAlt className="text-xl text-secondary" />
+            <div className="flex h-[30px] w-[30px] md:h-[40px] md:w-[40px] items-center justify-center rounded-full bg-primary">
+              <FaPhoneAlt className="md:text-xl text-white" />
             </div>
 
-            <p className="text-xl text-secondary">01915665089</p>
+            <p className="md:text-xl text-secondary">01915665089</p>
           </div>
 
           <div className="mt-3 flex items-center justify-center gap-3 md:mt-5">
-            <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-primary">
-              <FaMapMarkerAlt className="text-xl text-secondary" />
+            <div className="flex h-[30px] w-[30px] md:h-[40px] md:w-[40px] items-center justify-center rounded-full bg-primary">
+              <FaMapMarkerAlt className="md:text-xl text-white" />
             </div>
 
-            <p className="text-xl text-secondary">Upashahar , Bogura -5800</p>
+            <p className="md:text-xl text-secondary">Upashahar , Bogura -5800</p>
           </div>
         </div>
 
@@ -185,6 +185,10 @@ const ContactPage: React.FC = () => {
 
       {/* Map Fields */}
       <div className="tablet:mb-16 mb-8 h-auto w-full">
+      <p className="mb-4 ml-10 text-xl font-medium text-secondary md:text-2xl">
+            <span className="text-primary">Visit</span> Us
+          </p>
+
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3619.9617163564317!2d89.35674171069608!3d24.865157094978088!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39fc55a840699313%3A0xe2ae75d2bf57142f!2sUposhohor%20Bazar!5e0!3m2!1sen!2sbd!4v1742903838097!5m2!1sen!2sbd"
           width="100%"
@@ -193,7 +197,7 @@ const ContactPage: React.FC = () => {
           allowFullScreen={false}
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
-          className="rounded-xl shadow-xl"
+          className="rounded-xl shadow-xl mt-5"
         />
       </div>
     </div>
