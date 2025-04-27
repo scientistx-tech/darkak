@@ -1,5 +1,5 @@
 import React from 'react'
-import CategoryPage from './CategoryPage'
+import CategoryPage from '@/components/category/CategoryPage'
 
 export default function page() {
   return (

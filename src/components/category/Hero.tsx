@@ -6,7 +6,7 @@ const Hero = () => {
     <div className="relative h-36 md:h-[300px] lg:h-[400px] xl:h-[500px] w-full border">
       <Image
         src="/images/category/catHero.png"
-        alt=""
+        alt="Category image"
         fill
         className="object-cover"
       />
