@@ -24,7 +24,6 @@ const brands: Brand[] = [
   { id: 16, name: "Oppo" },
 ];
 
-// Split into 3 rows: [0-4], [5-10], [11-15]
 const rows = [brands.slice(0, 5), brands.slice(5, 11), brands.slice(11, 16)];
 
 export default function Brands() {
