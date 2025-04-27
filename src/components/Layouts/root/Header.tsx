@@ -189,7 +189,7 @@ const Header: React.FC = () => {
                 <MenuFoldOutlined />
               </button>
 
-              <button className="w-[70%] rounded-br-full rounded-tr-full bg-primary p-1.5 pl-5 pr-5 text-white opacity-70 hover:opacity-100">
+              <button className="w-[70%] rounded-br-full rounded-tr-full bg-primaryBlue p-1.5 pl-5 pr-5 text-white transition-all duration-300 hover:bg-primary">
                 <SearchOutlined className="text-xl" />
               </button>
             </div>
