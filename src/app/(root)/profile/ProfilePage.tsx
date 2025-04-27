@@ -9,7 +9,7 @@ import {
   FaBell,
   FaClipboardList,
   FaShippingFast,
-  FaPen,
+  FaPen, FaStar,
 } from "react-icons/fa";
 
 import profile from "@/Data/Img/blank-profile-picture.webp";
@@ -18,6 +18,7 @@ import EditProfile from "./EditProfile";
 import NotificationPage from "./NotificationPage";
 import OrderHistory from "./OrderHistory";
 import TrackOrder from "./TrackOrder";
+import ReviewHistory from "./ReviewHistory";
 
 const ProfilePage: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string>("");
@@ -114,6 +115,18 @@ const ProfilePage: React.FC = () => {
             </button>
 
             <button
+              onClick={() => setActiveTab("review")}
+              className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
+                activeTab === "review"
+                  ? "bg-primaryBlue text-white"
+                  : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
+              }`}
+            >
+              <FaStar />
+              Review History
+            </button>
+
+            <button
               onClick={() => setActiveTab("track")}
               className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
                 activeTab === "track"
@@ -175,6 +188,18 @@ const ProfilePage: React.FC = () => {
                 transition={{ duration: 0.4 }}
               >
                 <OrderHistory />
+              </motion.div>
+            )}
+
+            {activeTab === "review" && (
+              <motion.div
+                key="review"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+              >
+                <ReviewHistory />
               </motion.div>
             )}
 
