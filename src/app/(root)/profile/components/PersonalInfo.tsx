@@ -24,7 +24,7 @@ const PersonalInfo: React.FC = () => {
   return (
     <div className="w-full rounded-3xl border border-gray-200 bg-gradient-to-br from-white via-[#f0f4ff] to-[#e4ecff] p-10 shadow-xl transition-all hover:shadow-2xl">
       {/* Header */}
-      <div className="mb-10 flex items-center justify-between">
+      <div className="mb-6 md:mb-12 flex items-center justify-between">
         <h2 className="text-3xl font-semibold text-[#1e3a8a]">
           Personal Profile
         </h2>

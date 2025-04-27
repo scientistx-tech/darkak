@@ -9,16 +9,17 @@ import {
   FaBell,
   FaClipboardList,
   FaShippingFast,
-  FaPen, FaStar,
+  FaPen,
+  FaStar,
 } from "react-icons/fa";
 
 import profile from "@/Data/Img/blank-profile-picture.webp";
-import PersonalInfo from "./PersonalInfo";
-import EditProfile from "./EditProfile";
-import NotificationPage from "./NotificationPage";
-import OrderHistory from "./OrderHistory";
-import TrackOrder from "./TrackOrder";
-import ReviewHistory from "./ReviewHistory";
+import PersonalInfo from "./components/PersonalInfo";
+import EditProfile from "./components/EditProfile";
+import NotificationPage from "./components/NotificationPage";
+import OrderHistory from "./components/OrderHistory";
+import TrackOrder from "./components/TrackOrder";
+import ReviewHistory from "./components/ReviewHistory";
 
 const ProfilePage: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string>("");
@@ -123,7 +124,7 @@ const ProfilePage: React.FC = () => {
               }`}
             >
               <FaStar />
-              Review History
+              My Review
             </button>
 
             <button

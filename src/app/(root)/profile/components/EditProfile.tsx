@@ -20,7 +20,7 @@ export default function EditProfile() {
 
   return (
     <div className="mx-auto w-full max-w-3xl rounded-3xl border bg-gradient-to-tr from-white via-[#ecf3ff] to-white p-10 shadow-2xl">
-      <h2 className="mb-10 text-center text-3xl font-medium text-[#1A237E]">
+      <h2 className="mb-6 md:mb-12 text-center text-2xl md:text-4xl font-semibold text-primaryBlue">
         Edit Your Profile
       </h2>
 

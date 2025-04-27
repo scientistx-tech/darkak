@@ -36,7 +36,7 @@ export default function NotificationPage() {
 
   return (
     <div className="mx-auto w-full max-w-4xl rounded-3xl border bg-gradient-to-tr from-[#ffffff80] via-[#ecf3ff90] to-[#ffffff80] p-10 shadow-2xl backdrop-blur-md">
-      <h2 className="mb-12 text-center text-4xl font-bold text-primaryBlue">
+      <h2 className="mb-6 md:mb-12 text-center text-2xl md:text-4xl font-semibold text-primaryBlue">
         ✨ Notifications
       </h2>
 
