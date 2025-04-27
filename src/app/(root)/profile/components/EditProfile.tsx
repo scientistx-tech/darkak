@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { FaPen } from "react-icons/fa";
 
 export default function EditProfile() {
   const [profile, setProfile] = useState({

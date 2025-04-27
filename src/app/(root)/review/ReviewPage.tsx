@@ -21,11 +21,11 @@ export default function ReviewPage() {
 
       {/* Main Content */}
       <div className="flex flex-col gap-6 px-2 py-8 md:container md:mx-auto md:flex-row">
-        <div className="flex w-full flex-col items-center gap-4 md:w-2/3">
+        <div className="flex w-full flex-col items-center gap-4 md:w-1/2">
           <WriteReview />
         </div>
 
-        <div className="w-full md:w-1/3">
+        <div className="w-full md:w-1/2">
           <MyReview />
         </div>
       </div>
