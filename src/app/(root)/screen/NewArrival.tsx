@@ -66,7 +66,7 @@ const NewArrival: React.FC = () => {
             <span className="cursor-pointer text-2xl">→</span>
           </div>
         </div>
-        {screen === "md" ? (
+        {screen === "sm" || screen === "md" ? (
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:gap-8">
             {dummyProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
