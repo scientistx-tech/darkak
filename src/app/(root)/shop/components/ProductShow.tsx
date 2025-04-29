@@ -31,8 +31,8 @@ const ProductShow = () => {
     <div className="py-6">
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         {/* Image Section */}
-        <div>
-          <div className="relative rounded-md border p-2">
+        <div className="rounded-md border p-2 h-min">
+          <div className="relative ">
             <ReactImageMagnify
               {...{
                 smallImage: {
@@ -48,7 +48,7 @@ const ProductShow = () => {
                 enlargedImageContainerStyle: { background: "#fff", zIndex: 99 },
               }}
             />
-            <div className="absolute left-2 top-6 rounded-r-full bg-secondaryBlue px-3 py-1 text-xs text-white">
+            <div className="absolute left-0 top-6 rounded-r-full bg-secondaryBlue px-3 py-1 text-xs text-white">
               {product.discount} OFF
             </div>
           </div>
@@ -122,7 +122,7 @@ const ProductShow = () => {
           {/* Storage */}
           <div className="mt-4 flex gap-4 items-center">
             <p className="text-sm font-medium">Storage:</p>
-            <div className="mt-2 flex gap-3 bg-secondaryWhite">
+            <div className="mt-2 flex gap-3 bg-secondaryWhite rounded-full">
               {product.storages.map((stor, idx) => (
                 <button
                   key={idx}
@@ -142,17 +142,17 @@ const ProductShow = () => {
           {/* Quantity */}
           <div className="mt-6 flex items-center gap-4">
             <p className="text-sm font-medium">Quantity</p>
-            <div className="flex items-center overflow-hidden rounded-md border">
+            <div className="flex items-center overflow-hidden rounded-full border">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="bg-secondaryWhite px-3 py-2 text-primaryBlue"
+                className="bg-secondaryBlue px-4 py-1 text-white"
               >
                 -
               </button>
               <span className="px-4">{quantity}</span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
-                className="bg-secondaryWhite px-3 py-2 text-primaryBlue"
+                className="bg-secondaryBlue px-4 py-1 text-white"
               >
                 +
               </button>
@@ -163,7 +163,7 @@ const ProductShow = () => {
           <div className="mt-6 flex gap-4">
             <motion.button
               whileTap={{ scale: 0.9 }}
-              className="rounded-full bg-blue-500 px-8 py-3 text-white"
+              className="rounded-full bg-secondaryBlue hover:bg-secondaryWhite border hover:border-secondaryBlue px-8 py-2 text-white hover:text-primaryDarkBlue transition-all duration-300"
               onClick={() => alert("Buying...")}
             >
               BUY NOW
@@ -172,7 +172,7 @@ const ProductShow = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="rounded-full border border-blue-500 px-8 py-3 text-blue-500"
+              className="rounded-full border border-secondaryBlue px-8 py-2 text-primaryDarkBlue"
               onClick={() => alert("Added to cart")}
             >
               ADD TO CART
