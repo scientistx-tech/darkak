@@ -16,11 +16,17 @@ import {
   HeartOutlined,
   ShoppingCartOutlined,
   UserOutlined,
+  HomeOutlined,
+  ShopOutlined,
+  AppstoreOutlined,
+  PhoneOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 
 import { motion } from "framer-motion";
 import Bangla from "@/Data/Img/BanglaLag.svg";
 import English from "@/Data/Img/EnglishLag.svg";
+import HeadLineText from "./HeadLineText";
 
 const Header: React.FC = () => {
   const pathname = usePathname();
@@ -256,7 +262,7 @@ const Header: React.FC = () => {
                   open ? "opacity-100" : "opacity-0"
                 }`}
               >
-                <CloseOutlined className="text-xl" />
+                {/* <CloseOutlined className="text-xl" /> */}
               </span>
             </div>
           </button>
@@ -265,7 +271,6 @@ const Header: React.FC = () => {
 
       {/* Mobile Drawer */}
       <Drawer
-        title={null}
         placement="left"
         closable={false}
         onClose={onClose}
@@ -273,7 +278,129 @@ const Header: React.FC = () => {
         className="custom-drawer"
         bodyStyle={{ padding: 0 }}
       >
-        <div className="flex h-full flex-col bg-white px-6 py-5">Mobile</div>
+        <div className="flex h-full w-full flex-col justify-between bg-white/90 px-5 py-6 text-gray-800 shadow-lg backdrop-blur-md sm:max-w-[360px]">
+          <div className="w-full">
+            {/* Header */}
+            <div className="mb-6 flex items-center justify-between border-b pb-4">
+              <Link href="/" onClick={onClose}>
+                <h1 className="font-serif text-2xl font-extrabold tracking-wide text-primary">
+                  Darkak
+                </h1>
+              </Link>
+              <button onClick={onClose}>
+                <CloseOutlined className="text-xl text-gray-700 transition duration-200 hover:text-primaryBlue" />
+              </button>
+            </div>
+
+            {/* Search Bar */}
+            <div className="mb-7 flex items-center overflow-hidden rounded border border-primaryBlue bg-white pl-3 shadow-md">
+              <SearchOutlined className="mr-2 text-gray-500" />
+              <input
+                type="text"
+                placeholder="Search products..."
+                className="w-3/4 border-none bg-transparent py-2 text-sm outline-none"
+              />
+              <button className="w-1/4 bg-primaryBlue py-2 text-white transition-all duration-300 hover:bg-primary">
+                Search
+              </button>
+            </div>
+
+            {/* Navigation */}
+            <nav className="flex flex-col gap-4 text-base font-medium">
+              <Link
+                href="/"
+                onClick={onClose}
+                className="flex items-center gap-3 hover:text-primary"
+              >
+                <HomeOutlined />
+                Home
+              </Link>
+              <Link
+                href="/shop"
+                onClick={onClose}
+                className="flex items-center gap-3 hover:text-primary"
+              >
+                <ShopOutlined />
+                Shop
+              </Link>
+              <Link
+                href="/category"
+                onClick={onClose}
+                className="flex items-center gap-3 hover:text-primary"
+              >
+                <AppstoreOutlined />
+                Category
+              </Link>
+              <Link
+                href="/contact-us"
+                onClick={onClose}
+                className="flex items-center gap-3 hover:text-primary"
+              >
+                <PhoneOutlined />
+                Contact Us
+              </Link>
+
+              <Link
+                href="/about-us"
+                onClick={onClose}
+                className="flex items-center gap-3 hover:text-primary"
+              >
+                <InfoCircleOutlined />
+                About Us
+              </Link>
+            </nav>
+
+            {/* Language Switcher */}
+            <div className="mt-6 flex items-center gap-3">
+              <Image
+                src={selectedLang === "Bangla" ? Bangla : English}
+                alt="lang"
+                width={22}
+                height={22}
+              />
+              <select
+                value={selectedLang}
+                onChange={(e) => handleLanguageChange(e.target.value)}
+                className="rounded-md border border-gray-300 px-2 py-1 text-sm outline-none"
+              >
+                <option value="English">English</option>
+                <option value="Bangla">Bangla</option>
+              </select>
+            </div>
+
+            {/* Bottom Icons */}
+            <div className="mt-10 grid grid-cols-3 gap-4 text-center text-sm">
+              <Link href="/profile" onClick={onClose}>
+                <div className="flex flex-col items-center justify-center hover:text-primary">
+                  <UserOutlined className="text-xl" />
+                  <span className="mt-1">Profile</span>
+                </div>
+              </Link>
+              <Link href="/wishlist" onClick={onClose}>
+                <div className="relative flex flex-col items-center hover:text-primary">
+                  <HeartOutlined className="text-xl" />
+                  <span className="absolute -top-1 right-7 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primaryBlue text-[10px] text-white">
+                    12
+                  </span>
+                  <span className="mt-1">Wishlist</span>
+                </div>
+              </Link>
+              <Link href="/cart" onClick={onClose}>
+                <div className="relative flex flex-col items-center hover:text-primary">
+                  <ShoppingCartOutlined className="text-xl" />
+                  <span className="absolute -top-1 right-7 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primaryBlue text-[10px] text-white">
+                    3
+                  </span>
+                  <span className="mt-1">Cart</span>
+                </div>
+              </Link>
+            </div>
+          </div>
+
+          <div className="border-b-2 border-t-2 border-primaryBlue bg-[#f0f8ff] text-sm text-gray-700">
+            <HeadLineText />
+          </div>
+        </div>
       </Drawer>
     </div>
   );

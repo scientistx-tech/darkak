@@ -18,7 +18,7 @@ export default function Categories() {
         Shop by Categories
       </h1>
 
-      <div className="mt-8 grid grid-cols-2 gap-6 px-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7">
+      <div className="mt-8 grid grid-cols-4 gap-3 md:gap-6 px-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7">
         <CategoriesComponent name="Electronics" icon={icon1} href="/" />
         <CategoriesComponent name="Accessories" icon={icon2} href="/" />
         <CategoriesComponent name="Dresses" icon={icon3} href="/" />
@@ -47,11 +47,11 @@ const CategoriesComponent: React.FC<CategoriesProps> = ({
       href={href}
       className="group flex flex-col items-center justify-center"
     >
-      <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full bg-white transition-all duration-300 hover:scale-105 group-hover:shadow-lg md:h-[120px] md:w-[120px]">
+      <div className="flex h-[60px] w-[60px] px-3 items-center justify-center rounded-full bg-white transition-all duration-300 hover:scale-105 group-hover:shadow-lg md:h-[120px] md:w-[120px]">
         <Image src={icon} alt={name} width={50} height={50} />
       </div>
 
-      <p className="mt-5 text-center text-xl font-semibold text-gray-700">
+      <p className="h-[50px] md:h-[60px] mt-3 md:mt-5 text-center text-base md:text-xl font-semibold text-gray-700">
         {name}
       </p>
     </Link>

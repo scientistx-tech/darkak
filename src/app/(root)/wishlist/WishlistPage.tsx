@@ -90,13 +90,13 @@ const WishlistPage: React.FC = () => {
 
                   <div className="flex items-center justify-evenly gap-4">
                     <Link href="/easy-checkout">
-                      <p className="text-primbg-primaryWhite scale-90 cursor-pointer rounded-full bg-secondaryLiteBlue px-4 py-2 text-sm font-medium text-secondaryWhite transition-all duration-300 hover:bg-primaryBlue hover:text-white md:scale-100 md:px-6 md:font-semibold lg:text-base">
+                      <p className="text-primbg-primaryWhite scale-90 cursor-pointer rounded-full hover:bg-primary px-4 py-2 text-sm font-medium text-secondaryWhite transition-all duration-300 bg-primaryBlue hover:text-white md:scale-100 md:px-6 md:font-semibold lg:text-base">
                         BUY NOW
                       </p>
                     </Link>
 
                     <Link href="/cart">
-                      <div className="h-[35px] w-[35px] flex justify-center items-center rounded-full border text-primary transition-all duration-300 hover:border-primary md:h-[40px] md:w-[40px]">
+                      <div className="h-[35px] w-[35px] flex justify-center items-center rounded-full border text-primaryBlue transition-all duration-300 hover:border-primaryBlue md:h-[40px] md:w-[40px]">
                         <FaShoppingCart className="md:text-xl"/>
                       </div>
                     </Link>
