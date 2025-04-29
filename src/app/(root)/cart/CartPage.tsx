@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import product1 from "@/Data/Demo/product-2-1.png";
 import product2 from "@/Data/Demo/product-2-3.png";
 import product3 from "@/Data/Demo/product-2-4.png";
+
 interface CartItem {
   id: number;
   name: string;
@@ -177,16 +178,16 @@ const CartPage: React.FC = () => {
                 <div className="flex">
                   <button
                     onClick={() => decreaseQty(item.id)}
-                    className="bg-primary px-1.5 py-1 text-white opacity-80 transition-all duration-300 hover:opacity-100 md:rounded-bl-full md:rounded-tl-full md:px-3 md:py-1.5 md:text-xl"
+                    className="bg-primaryBlue px-1.5 py-1 text-white transition-all duration-300 hover:bg-primary md:rounded-bl-full md:rounded-tl-full md:px-3 md:py-1.5 md:text-xl"
                   >
                     <MinusOutlined />
                   </button>
-                  <p className="border border-primary px-2 text-xl text-black opacity-80 md:py-1.5">
+                  <p className="border border-t-primaryBlue border-b-primaryBlue px-2 text-xl text-black md:py-1.5">
                     {item.quantity}
                   </p>
                   <button
                     onClick={() => increaseQty(item.id)}
-                    className="bg-primary px-1.5 py-1 text-white opacity-80 transition-all duration-300 hover:opacity-100 md:rounded-br-full md:rounded-tr-full md:px-3 md:py-1.5 md:text-xl"
+                    className="bg-primaryBlue px-1.5 py-1 text-white transition-all duration-300 hover:bg-primary md:rounded-br-full md:rounded-tr-full md:px-3 md:py-1.5 md:text-xl"
                   >
                     <PlusOutlined />
                   </button>
@@ -239,11 +240,11 @@ const CartPage: React.FC = () => {
             <div className="flex w-full rounded-full bg-[#E6EFFF] md:w-[40%]">
               <input
                 placeholder="Promo/Coupon"
-                className="w-1/2 rounded-md border-none bg-[#E6EFFF] px-3 py-2 outline-none placeholder:text-primary md:w-2/3"
+                className="w-1/2 rounded-md border-none bg-[#E6EFFF] px-3 py-2 outline-none placeholder:text-primaryBlue md:w-2/3"
               />
               <button
                 onClick={coupon}
-                className="w-1/2 rounded-full border-[5px] border-white bg-primary px-3 py-1 text-white md:w-1/3"
+                className="w-1/2 rounded-full border-[5px] border-white bg-primaryBlue px-3 py-1 text-white transition-all duration-300 hover:bg-primary md:w-1/3"
               >
                 Apply Coupon
               </button>
@@ -251,11 +252,11 @@ const CartPage: React.FC = () => {
             <div className="flex w-full rounded-full bg-[#E6EFFF] md:w-[40%]">
               <input
                 placeholder="Gift voucher"
-                className="w-1/2 rounded-md border-none bg-[#E6EFFF] px-3 py-2 outline-none placeholder:text-primary md:w-2/3"
+                className="w-1/2 rounded-md border-none bg-[#E6EFFF] px-3 py-2 outline-none placeholder:text-primaryBlue md:w-2/3"
               />
               <button
                 onClick={voucher}
-                className="w-1/2 rounded-full border-[5px] border-white bg-primary px-3 py-1 text-white md:w-1/3"
+                className="w-1/2 rounded-full border-[5px] border-white bg-primaryBlue px-3 py-1 text-white transition-all duration-300 hover:bg-primary md:w-1/3"
               >
                 Apply Voucher
               </button>
@@ -266,16 +267,16 @@ const CartPage: React.FC = () => {
           <div className="mb-10 mt-16 flex w-full items-center justify-between">
             <button
               onClick={() => router.back()}
-              className="rounded-full bg-primary px-6 py-2.5 text-white"
+              className="rounded-full bg-primaryBlue px-6 py-2.5 text-white transition-all duration-300 hover:bg-primary"
             >
               Continue Shopping
             </button>
 
             <Link
               href="/easy-checkout"
-              className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-primary bg-primary px-6 py-2 font-medium text-indigo-600 shadow-md transition duration-300 ease-out"
+              className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-primaryBlue bg-primaryBlue px-6 py-2 font-medium text-indigo-600 shadow-md transition duration-300 ease-out"
             >
-              <span className="ease absolute inset-0 flex h-full w-full -translate-x-full items-center justify-center bg-primary text-white duration-300 group-hover:translate-x-0">
+              <span className="ease absolute inset-0 flex h-full w-full -translate-x-full items-center justify-center bg-primaryBlue text-white duration-300 group-hover:translate-x-0">
                 <svg
                   className="h-6 w-6"
                   fill="none"

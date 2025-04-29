@@ -68,11 +68,11 @@ const ContactPage: React.FC = () => {
         {/* Left Section */}
         <div className="flex w-full flex-col items-start justify-center md:w-[50%] pl-[5%] md:pl-[10%]">
           <p className="mb-4 text-xl font-medium text-secondary md:text-2xl">
-            <span className="text-primary">Contact</span> Info.
+            <span className="text-primaryBlue">Contact</span> Info.
           </p>
 
           <div className="mt-3 flex items-center justify-center gap-3 md:mt-5">
-            <div className="flex h-[30px] w-[30px] md:h-[40px] md:w-[40px] items-center justify-center rounded-full bg-primary">
+            <div className="flex h-[30px] w-[30px] md:h-[40px] md:w-[40px] items-center justify-center rounded-full bg-primaryBlue">
               <FaEnvelope className=" md:text-xl text-white" />
             </div>
 
@@ -80,7 +80,7 @@ const ContactPage: React.FC = () => {
           </div>
 
           <div className="mt-3 flex items-center justify-center gap-3 md:mt-5">
-            <div className="flex h-[30px] w-[30px] md:h-[40px] md:w-[40px] items-center justify-center rounded-full bg-primary">
+            <div className="flex h-[30px] w-[30px] md:h-[40px] md:w-[40px] items-center justify-center rounded-full bg-primaryBlue">
               <FaPhoneAlt className="md:text-xl text-white" />
             </div>
 
@@ -88,7 +88,7 @@ const ContactPage: React.FC = () => {
           </div>
 
           <div className="mt-3 flex items-center justify-center gap-3 md:mt-5">
-            <div className="flex h-[30px] w-[30px] md:h-[40px] md:w-[40px] items-center justify-center rounded-full bg-primary">
+            <div className="flex h-[30px] w-[30px] md:h-[40px] md:w-[40px] items-center justify-center rounded-full bg-primaryBlue">
               <FaMapMarkerAlt className="md:text-xl text-white" />
             </div>
 
@@ -99,7 +99,7 @@ const ContactPage: React.FC = () => {
         {/* Right Section - Form */}
         <div className="flex w-full mt-10 md:mt-0 flex-col items-center bg-white p-6 md:w-[50%] rounded-md">
           <p className="mb-4 text-xl font-medium text-secondary md:text-2xl">
-            <span className="text-primary">Drop</span> Us a Line
+            <span className="text-primaryBlue">Drop</span> Us a Line
           </p>
 
           {/* Name Input */}
@@ -109,12 +109,12 @@ const ContactPage: React.FC = () => {
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="peer block w-full rounded border border-gray-300 bg-white px-3 py-2 leading-[1.6] outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              className="peer block w-full rounded border border-gray-300 bg-white px-3 py-2 leading-[1.6] outline-none focus:border-primaryBlue focus:ring-1 focus:ring-primaryBlue"
               required
             />
             <label
               htmlFor="name"
-              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${name ? "top-[-2px] bg-white px-1 text-sm text-primary" : ""}`}
+              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${name ? "top-[-2px] bg-white px-1 text-sm text-primaryBlue" : ""}`}
             >
               Name
             </label>
@@ -127,12 +127,12 @@ const ContactPage: React.FC = () => {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="peer block w-full rounded border border-gray-300 bg-white px-3 py-2 leading-[1.6] outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              className="peer block w-full rounded border border-gray-300 bg-white px-3 py-2 leading-[1.6] outline-none focus:border-primaryBlue focus:ring-1 focus:ring-primaryBlue"
               required
             />
             <label
               htmlFor="email"
-              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${email ? "top-[-2px] bg-white px-1 text-sm text-primary" : ""}`}
+              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${email ? "top-[-2px] bg-white px-1 text-sm text-primaryBlue" : ""}`}
             >
               Email
             </label>
@@ -145,12 +145,12 @@ const ContactPage: React.FC = () => {
               id="phone"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="peer block w-full rounded border border-gray-300 bg-white px-3 py-2 leading-[1.6] outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              className="peer block w-full rounded border border-gray-300 bg-white px-3 py-2 leading-[1.6] outline-none focus:border-primaryBlue focus:ring-1 focus:ring-primaryBlue"
               required
             />
             <label
               htmlFor="phone"
-              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${phone ? "top-[-2px] bg-white px-1 text-sm text-primary" : ""}`}
+              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${phone ? "top-[-2px] bg-white px-1 text-sm text-primaryBlue" : ""}`}
             >
               Phone
             </label>
@@ -162,12 +162,12 @@ const ContactPage: React.FC = () => {
               id="message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="peer block h-[150px] w-full resize-none rounded border border-gray-300 bg-white px-3 py-2 leading-[1.6] outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              className="peer block h-[150px] w-full resize-none rounded border border-gray-300 bg-white px-3 py-2 leading-[1.6] outline-none focus:border-primaryBlue focus:ring-1 focus:ring-primaryBlue"
               required
             />
             <label
               htmlFor="message"
-              className={`absolute left-3 top-3 text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 ${message ? "top-[-10px] bg-white px-1 text-sm text-primary" : ""}`}
+              className={`absolute left-3 top-3 text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 ${message ? "top-[-10px] bg-white px-1 text-sm text-primaryBlue" : ""}`}
             >
               Message
             </label>
@@ -176,7 +176,7 @@ const ContactPage: React.FC = () => {
           {/* Submit Button */}
           <button
             onClick={handleSignup}
-            className="mt-5 w-[50%] rounded-3xl border border-primary bg-primary py-2 text-xl font-medium text-white transition-all duration-300 hover:bg-transparent hover:text-primary md:w-[40%]"
+            className="mt-5 w-[50%] rounded-3xl border border-primaryBlue bg-primaryBlue py-2 text-xl font-medium text-white transition-all duration-300 hover:bg-transparent hover:text-primaryBlue md:w-[40%]"
           >
             Send
           </button>
@@ -186,7 +186,7 @@ const ContactPage: React.FC = () => {
       {/* Map Fields */}
       <div className="tablet:mb-16 mb-8 h-auto w-full">
       <p className="mb-4 ml-10 text-xl font-medium text-secondary md:text-2xl">
-            <span className="text-primary">Visit</span> Us
+            <span className="text-primaryBlue">Visit</span> Us
           </p>
 
         <iframe
