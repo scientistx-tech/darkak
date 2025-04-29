@@ -53,7 +53,7 @@ const NewArrival: React.FC = () => {
     return () => {
       window.removeEventListener("resize", logScreenSize);
     };
-  }, [window.innerWidth]);
+  }, []);
 
   return (
     <main className="mt-10 ">
