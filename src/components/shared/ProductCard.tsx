@@ -34,7 +34,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
       {/* Discount badge */}
       {product.discount > 0 && (
-        <div className="absolute left-0 top-5 rounded-r-full bg-secondaryLiteBlue px-4 py-1 text-center text-xs font-semibold text-secondaryWhite z-20">
+        <div className="absolute left-0 top-5 rounded-r-full bg-secondaryBlue px-4 py-1 text-center text-xs font-semibold text-secondaryWhite z-20">
           {product.discount}%
           <br />
           OFF
@@ -82,7 +82,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             onClick={() => setActiveImage(i)}
             className={`h-2 w-4 cursor-pointer rounded-full transition-all duration-300 ${
               i === activeImage
-                ? "w-8 bg-secondaryLiteBlue"
+                ? "w-8 bg-secondaryBlue"
                 : "border-[1px] border-secondaryLiteBlue bg-secondaryWhite"
             }`}
           />

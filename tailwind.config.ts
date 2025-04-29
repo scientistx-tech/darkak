@@ -19,8 +19,8 @@ const config: Config = {
         //////////front-End////////
         primaryDarkBlue: "#00153B",
         primaryBlue: "#003084",
-        secondarykBlue: "#",
-        secondaryLiteBlue: "#5694FF",
+        secondaryBlue: "#5694FF",
+        secondaryLiteBlue: "#BBD4FF",
         primaryWhite: "#ffffff",
         secondaryWhite: "#E6EFFF",
 

@@ -14,7 +14,7 @@ const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
               {product.originalPrice} TK
             </span>
           </div>
-          <h3 className="md:text-md line-clamp-2 text-center text-sm font-semibold text-primaryDarkBlue transition-all duration-300 group-hover:text-secondaryLiteBlue">
+          <h3 className="md:text-md line-clamp-2 text-center text-sm font-semibold text-primaryDarkBlue transition-all duration-300 group-hover:text-secondaryBlue">
             {product.name} ({product.storage})
           </h3>
           <div className="flex flex-wrap items-center justify-center text-sm text-secondaryLiteBlue">
@@ -31,13 +31,13 @@ const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
           {/* Buttons */}
           <div className="flex items-center justify-evenly">
             <Link href="/easy-checkout">
-              <p className="text-primbg-primaryWhite scale-90 cursor-pointer rounded-full bg-secondaryLiteBlue px-4 py-2 text-sm font-medium text-secondaryWhite transition-all duration-300 hover:bg-primaryBlue hover:text-white md:scale-100 md:px-6 md:font-semibold lg:text-base">
+              <p className="text-primbg-primaryWhite scale-90 cursor-pointer rounded-full bg-secondaryBlue px-4 py-2 text-sm font-medium text-secondaryWhite transition-all duration-300 hover:bg-primaryBlue hover:text-white md:scale-100 md:px-6 md:font-semibold lg:text-base">
                 BUY NOW
               </p>
             </Link>
   
             <Link href="/cart">
-              <div className="cursor-pointer rounded-full bg-secondaryWhite px-3 py-2 text-sm text-secondaryLiteBlue hover:text-primaryBlue md:px-4 lg:text-base">
+              <div className="cursor-pointer rounded-full bg-secondaryWhite px-3 py-2 text-sm text-secondaryBlue hover:text-primaryBlue md:px-4 lg:text-base">
                 <FaShoppingCart />
               </div>
             </Link>
