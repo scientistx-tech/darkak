@@ -1,6 +1,7 @@
 import React from "react";
 import ProductCard from "@/components/shared/ProductCard";
 import { Product } from "@/app/(root)/types/ProductType";
+import LeftSidebar from "@/components/category/leftSidebar/LeftSidebar";
 
 const dummyProducts: Product[] = new Array(7).fill(null).map((_, i) => ({
   id: `prod-${i}`,
@@ -20,8 +21,10 @@ const dummyProducts: Product[] = new Array(7).fill(null).map((_, i) => ({
 
 const ProductsSection = () => {
   return (
-    <section className="mt-[62px] flex w-full gap-x-7 p-4 md:p-6 lg:p-8 xl:p-10">
-      <div className="w-1/5 bg-green-300">left</div>
+    <section className="mt-[62px] flex items-start w-full gap-x-7 p-4 md:p-6 lg:p-8 xl:p-10">
+      <div className="w-1/5">
+        <LeftSidebar />
+      </div>
       <div className="grid w-4/5 grid-cols-2 gap-7 lg:grid-cols-3 xl:grid-cols-4">
         {dummyProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
