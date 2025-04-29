@@ -43,7 +43,7 @@ const NewArrival: React.FC = () => {
       }
     };
 
-    // Log the initial screen size
+    // Log the initial screen
     logScreenSize();
 
     // Add event listener for resize
