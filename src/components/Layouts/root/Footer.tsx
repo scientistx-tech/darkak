@@ -76,7 +76,7 @@ function Footer() {
             </div>
 
             <div className="md:hidden flex w-full justify-end">
-              <div className="bg-secondaryLiteBlue mt-[40px] w-[80%] rounded-bl-full rounded-tl-full px-3 py-2 text-white md:hidden">
+              <div className="bg-primary mt-[40px] w-[80%] rounded-bl-full rounded-tl-full px-3 py-2 text-white md:hidden">
                 <p className="text-end font-medium">
                   Have a Great Time and keep shopping with DARKAK
                 </p>
@@ -214,7 +214,7 @@ function Footer() {
 
           {/* Right-side */}
           <div className="flex w-full flex-col items-start justify-start pl-5 md:w-1/3 md:items-end md:pl-0">
-            <div className="bg-secondaryLiteBlue mt-[-40px] hidden w-[100%] rounded-bl-full rounded-tl-full px-3 py-5 text-white md:block">
+            <div className="bg-primary mt-[-40px] hidden w-[100%] rounded-bl-full rounded-tl-full px-3 py-5 text-white md:block">
               <p className="text-end text-lg font-medium">
                 Have a Great Time and keep shopping with DARKAK
               </p>

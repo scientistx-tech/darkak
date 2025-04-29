@@ -114,7 +114,7 @@ export default function TrackOrder() {
               {/* Line between steps */}
               {index !== steps.length - 1 && (
                 <div
-                  className={`absolute right-[-50%] top-5 hidden h-1 md:block ${
+                  className={`absolute right-[-47%] top-7 hidden h-1 md:block ${
                     index < activeStep ? "bg-primaryBlue" : "bg-gray-300"
                   }`}
                   style={{ width: "100px" }}
