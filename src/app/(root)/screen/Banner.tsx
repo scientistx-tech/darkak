@@ -9,7 +9,7 @@ import img4 from "@/Data/Demo/Rectangle 131 (1).png";
 const Banner: React.FC = () => {
   return (
     <div className="mt-5 w-full space-y-6 md:mt-16">
-      <div className="flex w-full flex-col gap-5 md:flex-row md:gap-10">
+      <div className="flex w-full flex-col gap-0 md:flex-row md:gap-10">
         <BannerCart
           bgColour="#00153B"
           image={img1}
@@ -26,7 +26,7 @@ const Banner: React.FC = () => {
           title="HOT DEALS"
           description="GET 13% OFF"
           text="On SAMSUNG PHONE"
-          link="/"
+          link="/shop"
         />
       </div>
 
