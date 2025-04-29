@@ -48,7 +48,7 @@ const ProductShow = () => {
                 enlargedImageContainerStyle: { background: "#fff", zIndex: 99 },
               }}
             />
-            <div className="absolute left-0 top-6 rounded-r-full bg-secondaryBlue px-3 py-1 text-xs text-white">
+            <div className="absolute left-0 top-6 rounded-r-full bg-secondaryBlue px-3 py-2 text-xs text-white">
               {product.discount} OFF
             </div>
           </div>
