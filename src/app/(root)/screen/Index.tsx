@@ -53,7 +53,7 @@ const Slider: React.FC = () => {
 
   return (
     <div className="w-full bg-[#E6EFFF] overflow-hidden font-montserrat">
-      <div className="h-[calc(100vh-150px)] flex flex-col md:flex-row items-center justify-between px-6 md:px-16 py-12 gap-8">
+      <div className="md:h-[calc(100vh-150px)] flex flex-col md:flex-row items-center md:justify-between px-6 md:px-16 py-12 gap-8">
         {/* Left Content */}
         <div className="flex-1 text-center md:text-left">
           <h4 className="text-sm font-semibold uppercase text-black tracking-wider">
@@ -62,8 +62,8 @@ const Slider: React.FC = () => {
           <h1 className="md:h-[100px] mt-4 text-4xl md:text-5xl font-medium text-gray-800">
             {current.title}
           </h1>
-          <p className="mt-4 text-lg text-gray-700">{current.subtitle}</p>
-          <button className="mt-6 px-6 py-2 rounded-full bg-[#003084] text-white font-semibold hover:bg-blue-600 transition">
+          <p className="md:mt-4 text-lg text-gray-700">{current.subtitle}</p>
+          <button className="mt-3 md:mt-6 px-6 py-2 rounded-full bg-[#003084] text-white font-semibold hover:bg-blue-600 transition">
             {current.button}
           </button>
 
@@ -71,11 +71,11 @@ const Slider: React.FC = () => {
         </div>
 
         {/* Right Image */}
-        <div className="flex-1">
+        <div className="flex-1 ">
           <Image
             src={current.image}
             alt={`Slide ${index}`}
-            className="w-full h-[400px] rounded-xl object-contain"
+            className="w-full h-[200px] md:h-[400px] rounded-xl object-contain"
             priority
           />
         </div>
