@@ -1,15 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
-
-
-
+import ProductBreadcrumb from "./components/ProductBreadcrumb";
+import ProductShow from "./components/ProductShow";
 
 export default function ShopPage() {
-  
-
   return (
-    <div>ShopPage</div>
+    <div className="container mx-auto px-2 md:px-4">
+      <ProductBreadcrumb />
+      <ProductShow></ProductShow>
+    </div>
   );
 }
