@@ -5,6 +5,7 @@ import { Product } from "../types/ProductType";
 import ProductCard from "@/components/shared/ProductCard";
 import laptop from "@/Data/Demo/Rectangle 130 (1).png";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 const dummyProducts: Product[] = new Array(7).fill(null).map((_, i) => ({
   id: `prod-${i}`,
@@ -24,12 +25,10 @@ const dummyProducts: Product[] = new Array(7).fill(null).map((_, i) => ({
 
 const NewArrival: React.FC = () => {
   const [screen, setScreen] = useState("md");
-  // console.log(screen);
 
   useEffect(() => {
     const logScreenSize = () => {
       const width = window.innerWidth;
-
       if (width < 640) {
         setScreen("sm");
       } else if (width >= 640 && width < 768) {
@@ -43,48 +42,59 @@ const NewArrival: React.FC = () => {
       }
     };
 
-    // Log the initial screen
     logScreenSize();
-
-    // Add event listener for resize
     window.addEventListener("resize", logScreenSize);
-
-    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener("resize", logScreenSize);
     };
   }, []);
 
   return (
-    <main className="mt-10 ">
+    <main className="mt-10">
       <div>
         <div className="h-[50px]">
-          <div className=" flex items-center gap-6 justify-between md:justify-start">
+          <div className="flex items-center gap-6 justify-between md:justify-start">
             <h2 className="text-2xl font-semibold text-primaryDarkBlue">
-            NEW ARRIVAL
+              NEW ARRIVAL
             </h2>
             <span className="cursor-pointer text-2xl">→</span>
           </div>
         </div>
+
         {screen === "sm" || screen === "md" ? (
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:gap-8">
+          <motion.div
+            className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:gap-8"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
             {dummyProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
-          </div>
+          </motion.div>
         ) : (
           <div className="relative">
-            <div
+            <motion.div
               className="grid w-full grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:gap-8"
               style={{
                 clipPath: `polygon(${screen === "lg" ? "68% 0" : screen === "xl" ? "76% 0" : "81% 0"}, ${screen === "lg" ? "68% 380px" : screen === "xl" ? "76% 380px" : "81% 405px"}, ${screen === "lg" ? "100% 380px" : screen === "xl" ? "100% 380px" : "100% 405px"}, 100% 100%, 0 100%, 0 50%, 0 0)`,
               }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
             >
               {dummyProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
-            </div>
-            <div className="absolute right-0 top-0 mt-[-50px] hidden w-[236px] flex-col justify-between rounded-xl bg-[#4C84FF] p-6 text-white md:flex md:h-[425px] lg:w-[238px] xl:h-[450px] xl:w-[240px] 2xl:w-[270px] 3xl:w-[365px]">
+            </motion.div>
+
+            {/* Banner animation */}
+            <motion.div
+              className="absolute right-0 top-0 mt-[-50px] hidden w-[236px] flex-col justify-between rounded-xl bg-[#4C84FF] p-6 text-white md:flex md:h-[425px] lg:w-[238px] xl:h-[450px] xl:w-[240px] 2xl:w-[270px] 3xl:w-[365px]"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+            >
               <div>
                 <h3 className="mb-3 text-sm font-semibold">SUMMER OFFER</h3>
                 <p className="text-2xl font-semibold leading-tight">
@@ -98,7 +108,7 @@ const NewArrival: React.FC = () => {
                   className="w-[200px] object-contain"
                 />
               </div>
-            </div>
+            </motion.div>
           </div>
         )}
       </div>
