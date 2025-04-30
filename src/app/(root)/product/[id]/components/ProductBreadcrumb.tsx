@@ -37,6 +37,7 @@ const ProductBreadcrumb = () => {
           {segments.map((seg, idx) => {
             const href = "/" + segments.slice(0, idx + 1).join("/");
             const isLast = idx === segments.length - 1;
+            
             return (
               <span key={idx} className="flex items-center space-x-1">
                 <span>/</span>

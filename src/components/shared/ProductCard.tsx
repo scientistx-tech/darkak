@@ -80,7 +80,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <div
             key={i}
             onClick={() => setActiveImage(i)}
-            className={`h-2 w-4 cursor-pointer rounded-full transition-all duration-300 ${
+            className={`h-2 w-4 hover:bg-secondaryBlue cursor-pointer rounded-full transition-all duration-300 ${
               i === activeImage
                 ? "w-8 bg-secondaryBlue"
                 : "border-[1px] border-secondaryLiteBlue bg-secondaryWhite"

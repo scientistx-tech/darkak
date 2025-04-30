@@ -17,7 +17,7 @@ const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
         <h3 className="md:text-md group-hover:text-secondaryBlue line-clamp-2 text-center text-sm font-semibold text-primaryDarkBlue transition-all duration-300">
           {product.name} ({product.storage})
         </h3>
-        <div className="flex flex-wrap items-center justify-center  text-sm text-secondaryLiteBlue">
+        <div className="flex flex-wrap items-center justify-center  text-sm text-secondaryBlue">
           <p>
             {Array(Math.round(product.rating))
               .fill("")
@@ -33,7 +33,7 @@ const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
         {/* Buttons */}
         <div className="flex items-center justify-evenly">
           <Link href="/easy-checkout">
-            <p className="text-primbg-primaryWhite bg-secondaryBlue scale-90 cursor-pointer rounded-full px-4 py-1 text-sm font-normal text-secondaryWhite transition-all duration-300 hover:bg-primaryBlue hover:text-white md:scale-100 md:px-6 md:font-semibold lg:text-base">
+            <p className="text-primbg-primaryWhite bg-primaryBlue hover:bg-primaryDarkBlue scale-90 cursor-pointer rounded-full px-4 py-1 text-sm font-normal text-secondaryWhite transition-all duration-300 hover:text-white md:scale-100 md:px-6 md:font-semibold lg:text-base">
               BUY NOW
             </p>
           </Link>
