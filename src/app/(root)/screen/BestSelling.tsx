@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
+import Image from "next/image";
 import ProductCard from "@/components/shared/ProductCard";
 import { Product } from "../types/ProductType";
-import Image from "next/image";
 import laptop from "@/Data/Demo/Rectangle 130 (1).png";
 
 const dummyProducts: Product[] = new Array(7).fill(null).map((_, i) => ({
@@ -22,9 +23,28 @@ const dummyProducts: Product[] = new Array(7).fill(null).map((_, i) => ({
   reviews: 65,
 }));
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
+
 const BestSelling: React.FC = () => {
   return (
-    <section className="mt-10 px-2 container mx-auto">
+    <motion.section
+      className="mt-10 px-2 container mx-auto"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
       <div className="mb-1 flex items-center justify-between">
         <h2 className="text-2xl lg:ml-[25%] xl:ml-[20%] md:ml-[33%] font-semibold  text-primaryDarkBlue">
           BEST SELLING PRODUCTS
@@ -34,7 +54,10 @@ const BestSelling: React.FC = () => {
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:gap-8 relative">
         {/* LEFT SIDE BANNER */}
-        <div className="absulate hidden md:h-[425px] lg:h-[420px] xl:h-[450px] rounded-xl md:mt-[-45px] lg:mt-[-40px] xl:mt-[-40px] 2xl:mt-[-50px] bg-[#4C84FF] p-6 text-white md:flex flex-col justify-between ">
+        <motion.div
+          variants={itemVariants}
+          className="absulate hidden md:h-[425px] lg:h-[420px] xl:h-[450px] rounded-xl md:mt-[-45px] lg:mt-[-40px] xl:mt-[-40px] 2xl:mt-[-50px] bg-[#4C84FF] p-6 text-white md:flex flex-col justify-between "
+        >
           <div>
             <h3 className="text-sm font-semibold mb-3">SUMMER OFFER</h3>
             <p className="text-2xl font-semibold leading-tight">
@@ -48,14 +71,16 @@ const BestSelling: React.FC = () => {
               className="w-[200px] object-contain"
             />
           </div>
-        </div>
+        </motion.div>
 
         {/* PRODUCT CARDS */}
         {dummyProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <motion.div key={product.id} variants={itemVariants}>
+            <ProductCard product={product} />
+          </motion.div>
         ))}
       </div>
-    </section>
+    </motion.section>
   );
 };
 

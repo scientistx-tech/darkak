@@ -1,3 +1,5 @@
+"use client";
+import { motion } from "framer-motion";
 import ProductCard from "@/components/shared/ProductCard";
 import { Product } from "../types/ProductType";
 
@@ -17,9 +19,29 @@ const dummyProducts: Product[] = new Array(8).fill(null).map((_, i) => ({
   reviews: 65,
 }));
 
+// Framer motion variants
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
+
 const RecommendedProducts: React.FC = () => {
   return (
-    <section className=" py-10">
+    <motion.section
+      className="py-10"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-2xl font-bold text-primaryDarkBlue">
           RECOMMENDED PRODUCTS
@@ -29,10 +51,12 @@ const RecommendedProducts: React.FC = () => {
 
       <div className="grid grid-cols-2 justify-center gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 lg:gap-4 xl:gap-6">
         {dummyProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <motion.div key={product.id} variants={itemVariants}>
+            <ProductCard product={product} />
+          </motion.div>
         ))}
       </div>
-    </section>
+    </motion.section>
   );
 };
 
