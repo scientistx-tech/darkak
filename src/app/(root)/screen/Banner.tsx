@@ -8,7 +8,7 @@ import img4 from "@/Data/Demo/Rectangle 131 (1).png";
 
 const Banner: React.FC = () => {
   return (
-    <div className="mt-5 w-full space-y-6 md:mt-16">
+    <div className="mt-5 w-full md:space-y-6 md:mt-16">
       <div className="flex w-full flex-col gap-0 md:flex-row md:gap-10">
         <BannerCart
           bgColour="#00153B"
@@ -30,7 +30,7 @@ const Banner: React.FC = () => {
         />
       </div>
 
-      <div className="flex w-full flex-col gap-5 md:flex-row md:gap-10">
+      <div className="flex w-full flex-col gap-0 md:flex-row md:gap-10">
         <BannerCart
           bgColour="#5694FF"
           image={img4}
