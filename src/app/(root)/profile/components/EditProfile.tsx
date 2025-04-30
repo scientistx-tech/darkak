@@ -1,5 +1,6 @@
 "use client";
 
+import SendButton from "@/components/Button/SendButton";
 import React, { useState } from "react";
 
 export default function EditProfile() {
@@ -17,9 +18,14 @@ export default function EditProfile() {
     setProfile((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleSubmit = () => {
+    // You can replace this with an API call or form submission logic
+    console.log("Profile Updated:", profile);
+    alert("Profile Updated Successfully!");
+  };
   return (
     <div className="mx-auto w-full max-w-3xl rounded-3xl border bg-gradient-to-tr from-white via-[#ecf3ff] to-white p-10 shadow-2xl">
-      <h2 className="mb-6 md:mb-12 text-center text-2xl md:text-4xl font-semibold text-primaryBlue">
+      <h2 className="mb-6 text-center text-2xl font-semibold text-primaryBlue md:mb-12 md:text-4xl">
         Edit Your Profile
       </h2>
 
@@ -128,26 +134,7 @@ export default function EditProfile() {
 
       {/* Update Button */}
       <div className="mt-10 flex justify-center">
-        <button className="group relative inline-flex items-center overflow-hidden rounded-full border-2 border-primaryBlue px-12 py-3 text-lg font-medium text-primaryBlue hover:bg-gray-50 hover:text-white">
-          <span className="duration-400 ease absolute left-0 top-1/2 block h-0 w-full bg-primaryBlue opacity-100 transition-all group-hover:top-0 group-hover:h-full"></span>
-          <span className="ease absolute right-0 flex h-10 w-10 translate-x-full transform items-center justify-start duration-300 group-hover:translate-x-0">
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M14 5l7 7m0 0l-7 7m7-7H3"
-              ></path>
-            </svg>
-          </span>
-          <span className="relative">Update Profile</span>
-        </button>
+        <SendButton link={handleSubmit} text="Update Profile" />
       </div>
     </div>
   );

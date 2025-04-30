@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { notification } from "antd";
 
 import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
+import SendButton from "@/components/Button/SendButton";
 
 const ContactPage: React.FC = () => {
   const [name, setName] = useState("");
@@ -174,12 +175,16 @@ const ContactPage: React.FC = () => {
           </div>
 
           {/* Submit Button */}
-          <button
+          {/* <button
             onClick={handleSignup}
             className="mt-5 w-[50%] rounded-3xl border border-primaryBlue bg-primaryBlue py-2 text-xl font-medium text-white transition-all duration-300 hover:bg-transparent hover:text-primaryBlue md:w-[40%]"
           >
             Send
-          </button>
+          </button> */}
+
+          <div className="mt-5">
+          <SendButton link={handleSignup} text="Send"/>
+          </div>
         </div>
       </div>
 
