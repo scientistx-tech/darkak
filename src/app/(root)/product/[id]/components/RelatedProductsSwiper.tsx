@@ -4,8 +4,8 @@ import 'keen-slider/keen-slider.min.css';
 import { useKeenSlider } from 'keen-slider/react';
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
-import { Product } from '../../types/ProductType';
 import ProductCard from '@/components/shared/ProductCard';
+import { Product } from '@/app/(root)/types/ProductType';
 
 const dummyProducts: Product[] = new Array(7).fill(null).map((_, i) => ({
   id: `prod-${i}`,

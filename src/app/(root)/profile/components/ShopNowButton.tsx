@@ -12,9 +12,9 @@ const ShopNowButton: React.FC<ShopNowButtonProps> = ({ link, text, icon, classNa
   return (
     <Link
       href={link}
-      className={`group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-primary bg-primary p-4 px-6 py-2 font-medium text-indigo-600 shadow-md transition duration-300 ease-out ${className}`}
+      className={`group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-primaryBlue bg-primaryBlue p-4 px-6 py-2 font-medium text-indigo-600 shadow-md transition duration-300 ease-out ${className}`}
     >
-      <span className="ease absolute inset-0 flex h-full w-full -translate-x-full items-center justify-center bg-primary text-white duration-300 group-hover:translate-x-0">
+      <span className="ease absolute inset-0 flex h-full w-full -translate-x-full items-center justify-center bg-primaryBlue text-white duration-300 group-hover:translate-x-0">
         {icon ? (
           icon
         ) : (
