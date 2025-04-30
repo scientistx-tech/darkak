@@ -195,7 +195,7 @@ const Header: React.FC = () => {
                 <MenuFoldOutlined />
               </button>
 
-              <button className="w-[70%] rounded-br-full rounded-tr-full bg-primaryBlue p-1.5 pl-5 pr-5 text-white transition-all duration-300 hover:bg-primary">
+              <button className="w-[70%] rounded-br-full rounded-tr-full bg-primaryBlue p-1.5 pl-5 pr-5 text-white transition-all duration-300 hover:bg-primaryDarkBlue">
                 <SearchOutlined className="text-xl" />
               </button>
             </div>
@@ -300,7 +300,7 @@ const Header: React.FC = () => {
                 placeholder="Search products..."
                 className="w-3/4 border-none bg-transparent py-2 text-sm outline-none"
               />
-              <button className="w-1/4 bg-primaryBlue py-2 text-white transition-all duration-300 hover:bg-primary">
+              <button className="w-1/4 bg-primaryBlue py-2 text-white transition-all duration-300 hover:bg-primaryDarkBlue">
                 Search
               </button>
             </div>
