@@ -4,7 +4,7 @@ import React from "react";
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
-import ShopNowButton from "@/app/(root)/profile/components/ShopNowButton";
+import ShopNowButton from "@/components/Button/ShopNowButton";
 
 interface BannerCardProps {
   bgColour: string;

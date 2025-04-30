@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import product1 from "@/Data/Demo/product-2-1.png";
 import product2 from "@/Data/Demo/product-2-3.png";
 import product3 from "@/Data/Demo/product-2-4.png";
+import SendButton from "@/components/Button/SendButton";
 
 const initialProducts = [
   {
@@ -165,8 +166,8 @@ const EasyCheckout: React.FC = () => {
             <button
               className={`flex items-center gap-2 rounded px-3 py-1 font-medium transition-all duration-300 md:px-3 md:py-1.5 ${
                 paymentMethod === "cash"
-                  ? "bg-primary text-white"
-                  : "text-black hover:bg-slate-50 hover:text-primary"
+                  ? "bg-primaryBlue text-white"
+                  : "text-black hover:bg-slate-50 hover:text-primaryBlue"
               }`}
               onClick={() => setPaymentMethod("cash")}
             >
@@ -179,8 +180,8 @@ const EasyCheckout: React.FC = () => {
             <button
               className={`flex items-center gap-2 rounded px-3 py-1.5 font-medium transition-all duration-300 ${
                 paymentMethod === "online"
-                  ? "bg-primary text-white"
-                  : "text-black hover:bg-slate-50 hover:text-primary"
+                  ? "bg-primaryBlue text-white"
+                  : "text-black hover:bg-slate-50 hover:text-primaryBlue"
               }`}
               onClick={() => setPaymentMethod("online")}
             >
@@ -196,11 +197,11 @@ const EasyCheckout: React.FC = () => {
             <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
               <div>
                 <label className="mb-1 block text-sm font-medium">
-                  Full Name <span className="text-primary">*</span>
+                  Full Name <span className="text-primaryBlue">*</span>
                 </label>
                 <Input
                   placeholder="Full Name"
-                  className="border border-primary px-3 py-2"
+                  className="border border-primaryBlue px-3 py-2"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
@@ -209,12 +210,13 @@ const EasyCheckout: React.FC = () => {
 
               <div>
                 <label className="mb-1 block text-sm font-medium">
-                  Phone Number or Email <span className="text-primary">*</span>
+                  Phone Number or Email{" "}
+                  <span className="text-primaryBlue">*</span>
                 </label>
                 <div className="flex gap-2">
                   <Input
                     placeholder="Phone or Email"
-                    className="border border-primary px-3 py-2"
+                    className="border border-primaryBlue px-3 py-2"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     required
@@ -225,11 +227,11 @@ const EasyCheckout: React.FC = () => {
 
               <div>
                 <label className="mb-1 block text-sm font-medium">
-                  Full Address <span className="text-primary">*</span>
+                  Full Address <span className="text-primaryBlue">*</span>
                 </label>
                 <Input.TextArea
                   placeholder="Address"
-                  className="border border-primary px-3 py-2"
+                  className="border border-primaryBlue px-3 py-2"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   required
@@ -242,47 +244,27 @@ const EasyCheckout: React.FC = () => {
                 required
               >
                 I have read and agree to the{" "}
-                <button onClick={showModal} className="text-primary">
+                <button onClick={showModal} className="text-primaryBlue">
                   Terms and Conditions
                 </button>{" "}
                 and{" "}
-                <button onClick={showModal2} className="text-primary">
+                <button onClick={showModal2} className="text-primaryBlue">
                   Privacy Policy
                 </button>
               </Checkbox>
             </form>
 
-            <button
-              onClick={handleConfirm}
-              className="group relative mt-5 inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-primary bg-primary px-6 py-2 font-medium text-indigo-600 shadow-md transition duration-300 ease-out md:mt-10"
-            >
-              <span className="ease absolute inset-0 flex h-full w-full -translate-x-full items-center justify-center bg-primary text-white duration-300 group-hover:translate-x-0">
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  ></path>
-                </svg>
-              </span>
-              <span className="ease absolute flex h-full w-full transform items-center justify-center text-white transition-all duration-300 group-hover:translate-x-full">
-                Confirm Order
-              </span>
-              <span className="invisible relative">Confirm Order</span>
-            </button>
+            <div className="mt-5">
+              <SendButton link={handleConfirm} text="Confirm Order" />
+            </div>
           </div>
         </div>
 
         {/* right side */}
         <div className="w-full md:w-1/2 md:pl-[10%]">
-          <h2 className="mb-3 text-lg font-semibold">Your Order</h2>
+          <h2 className="mb-0 mt-5 text-lg font-semibold md:mb-3">
+            Your Order
+          </h2>
 
           {products.map((item) => (
             <div
@@ -309,16 +291,16 @@ const EasyCheckout: React.FC = () => {
                 <div className="flex">
                   <button
                     onClick={() => updateQuantity(item.id, "dec")}
-                    className="bg-primary px-1.5 py-1 text-white opacity-80 transition-all duration-300 hover:opacity-100"
+                    className="bg-primaryBlue px-1.5 py-1 text-white opacity-80 transition-all duration-300 hover:opacity-100"
                   >
                     <MinusOutlined />
                   </button>
-                  <p className="border border-primary px-2 text-xl text-black opacity-80">
+                  <p className="w-[30px] border border-primaryBlue text-center text-xl text-black opacity-80">
                     {item.quantity}
                   </p>
                   <button
                     onClick={() => updateQuantity(item.id, "inc")}
-                    className="bg-primary px-1.5 py-1 text-white opacity-80 transition-all duration-300 hover:opacity-100"
+                    className="bg-primaryBlue px-1.5 py-1 text-white opacity-80 transition-all duration-300 hover:opacity-100"
                   >
                     <PlusOutlined />
                   </button>
@@ -337,7 +319,7 @@ const EasyCheckout: React.FC = () => {
               <span>Subtotal</span>
               <span>BDT {subtotal}</span>
             </div>
-            <div className="flex justify-between text-primary">
+            <div className="flex justify-between text-primaryBlue">
               <span>Delivery Charge</span>
               <span>will be added</span>
             </div>
