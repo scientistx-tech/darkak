@@ -127,7 +127,7 @@ const ProductShow = () => {
                 <button
                   key={idx}
                   onClick={() => setStorage(stor)}
-                  className={`rounded-full border px-4 py-2 text-sm ${
+                  className={`rounded-full border shadow-1 transition-all duration-300 hover:shadow-primaryBlue px-4 py-2 text-sm ${
                     storage === stor
                       ? "bg-secondaryBlue text-white"
                       : "bg-secondaryWhite text-primaryBlue"
@@ -145,14 +145,14 @@ const ProductShow = () => {
             <div className="flex items-center overflow-hidden rounded-full border">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="bg-secondaryBlue px-4 py-1 text-white"
+                className="bg-secondaryBlue px-4 hover:bg-primaryBlue transition-all duration-300 py-1 text-white"
               >
                 -
               </button>
               <span className="px-4">{quantity}</span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
-                className="bg-secondaryBlue px-4 py-1 text-white"
+                className="bg-secondaryBlue px-4 hover:bg-primaryBlue transition-all duration-300 py-1 text-white"
               >
                 +
               </button>
@@ -160,10 +160,10 @@ const ProductShow = () => {
           </div>
 
           {/* Buttons */}
-          <div className="mt-6 flex gap-4">
+          <div className="mt-6 flex gap-4 items-center">
             <motion.button
               whileTap={{ scale: 0.9 }}
-              className="rounded-full bg-secondaryBlue hover:bg-secondaryWhite border hover:border-secondaryBlue px-8 py-2 text-white hover:text-primaryDarkBlue transition-all duration-300"
+              className="rounded-full bg-primaryBlue hover:bg-secondaryWhite  hover:border-primaryBlue border-2 px-8 py-2 text-white hover:text-primaryDarkBlue transition-all duration-300"
               onClick={() => alert("Buying...")}
             >
               BUY NOW
@@ -172,7 +172,7 @@ const ProductShow = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="rounded-full border border-secondaryBlue px-8 py-2 text-primaryDarkBlue"
+              className="rounded-full border-2 border-primaryBlue px-8 py-2 text-primaryDarkBlue"
               onClick={() => alert("Added to cart")}
             >
               ADD TO CART
