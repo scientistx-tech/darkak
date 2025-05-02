@@ -5,6 +5,8 @@ import "jsvectormap/dist/jsvectormap.css";
 import type { Metadata } from "next";
 import { PropsWithChildren } from "react";
 import UpdateNotice from "./(root)/component/UpdateNotice";
+import ReduxProvider from "@/redux/ReduxProvider";
+import DataLoader from "./DataLoader";
 
 export const metadata: Metadata = {
   title: {
@@ -19,10 +21,12 @@ export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-
-        <UpdateNotice />
-        {children}
-
+        <ReduxProvider>
+          <DataLoader>
+            <UpdateNotice />
+            {children}
+          </DataLoader>
+        </ReduxProvider>
       </body>
     </html>
   );

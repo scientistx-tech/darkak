@@ -1,18 +1,37 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import { FaFacebook, FaGoogle, FaPhoneAlt } from "react-icons/fa";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import SVG from "@/Data/Img/LoginPage.svg";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { usePathname, useRouter } from "next/navigation";
+import { setLocalStorage } from "@/utils/localStorage";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const admin = useSelector((state: RootState) => state.auth.user);
+  const router = useRouter();
+  const pathname = usePathname();
+  setLocalStorage("path", pathname);
 
+  useEffect(() => {
+    if (!admin) {
+      router.replace("/auth/login");
+    } else {
+      router.replace("/admin");
+    }
+  }, [admin, router]); // Runs when admin state changes
+
+  if (admin) {
+    return null; // Prevent rendering before redirect
+  }
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#E6EFFF] px-4">
       {/* Decorative Image */}
