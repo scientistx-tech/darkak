@@ -7,9 +7,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { notification } from "antd";
 import { useRouter } from "next/navigation";
-
+import { motion } from "framer-motion";
 import SVG from "@/Data/Img/LoginPage.svg";
-
 
 const SignupPage: React.FC = () => {
   const [name, setName] = useState("");
@@ -70,33 +69,37 @@ const SignupPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-100">
+    <div className="flex h-screen items-center justify-center bg-[#E6EFFF]">
       {contextHolder}
       <Image
         alt="img"
         src={SVG}
-        className="absolute left-[12.5%] -top-7 hidden h-[200px] w-[200px] opacity-45 md:block"
+        className="absolute -top-7 left-[12.5%] hidden h-[200px] w-[200px] opacity-45 md:block"
       />
 
-      <div className="z-10 flex w-[90%] flex-col items-center justify-center rounded-lg bg-white p-6 shadow md:w-[60%]">
+      <motion.div 
+       initial={{ opacity: 0, scale: 0.9, y: 10 }}
+       animate={{ opacity: 1, scale: 1, y: 0 }}
+       transition={{ duration: 0.5, ease: "easeOut" }}
+      className="z-10 flex w-[90%] flex-col items-center justify-center rounded-lg bg-white p-6 shadow md:w-[60%]">
         <p className="mb-1 text-2xl font-medium text-secondary">
-          SignIn to Darkak<span className="text-primary">Mart</span>
+          Sign Up to Darkak<span className="text-primary">Mart</span>
         </p>
 
-        <p className="text-[15px]">SignIn using social network</p>
+        <p className="text-[15px]">Sign Up using social network</p>
 
         <div className="mb-2 mt-5 flex w-[90%] items-center justify-center gap-3 md:w-[70%]">
-          <button className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-primary text-3xl text-secondary hover:bg-secondary hover:text-primary">
-            <FaFacebook />
-          </button>
-
-          <button className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-primary text-3xl text-secondary hover:bg-secondary hover:text-primary">
-            <FaGoogle />
-          </button>
-
-          <button className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-primary text-2xl text-secondary hover:bg-secondary hover:text-primary">
-            <FaPhoneAlt />
-          </button>
+          {/* Social Buttons */}
+          <div className="mb-4 flex justify-center gap-4">
+            {[FaFacebook, FaGoogle, FaPhoneAlt].map((Icon, index) => (
+              <button
+                key={index}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-[#5694FF] text-white transition hover:bg-[#003084]"
+              >
+                <Icon size={20} />
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="mb-2 flex w-[90%] items-center justify-around md:w-[70%]">
@@ -211,18 +214,18 @@ const SignupPage: React.FC = () => {
 
         <button
           onClick={handleSignup}
-          className="w-[90%] rounded-lg border border-primary bg-primary py-1.5 text-xl font-medium text-secondary hover:bg-transparent hover:text-primary md:w-[70%]"
+           className="w-[90%] rounded-lg bg-[#003084] py-2 font-semibold text-white transition hover:bg-[#00153B] md:w-[70%]"
         >
-          SignIn
+          Sign Up
         </button>
 
         <div className="mt-5 flex font-medium">
           <p>Already Have an account?</p>
           <Link
             href="/auth/login"
-            className="ml-1 text-secondary underline hover:text-primary"
+            className="ml-1 text-primary hover:underline hover:text-primaryBlue transition-all"
           >
-            LogIn Now
+            Log In
           </Link>
         </div>
 
@@ -235,12 +238,12 @@ const SignupPage: React.FC = () => {
         <div className="mt-3 flex font-medium">
           <Link
             href="/"
-            className="ml-1 text-secondary underline hover:text-primary"
+            className=" text-primary hover:underline hover:text-primaryBlue transition-all"
           >
             Continue as a Guest
           </Link>
         </div>
-      </div>
+      </motion.div>
 
       <Image
         alt="img"

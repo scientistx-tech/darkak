@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-
+import { motion } from "framer-motion";
 import SVG from "@/Data/Img/LoginPage.svg";
 
 const ForgotPasswordPage: React.FC = () => {
@@ -29,14 +29,18 @@ const ForgotPasswordPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-100">
+    <div className="flex h-screen items-center justify-center bg-[#E6EFFF]">
       <Image
         alt="img"
         src={SVG}
         className="absolute left-[12.5%] top-4 hidden h-[200px] w-[200px] opacity-45 md:block"
       />
 
-      <div className="z-10 flex w-[90%] flex-col items-center justify-center rounded-lg bg-white p-6 shadow md:w-[60%]">
+      <motion.div 
+       initial={{ opacity: 0, scale: 0.9, y: 10 }}
+       animate={{ opacity: 1, scale: 1, y: 0 }}
+       transition={{ duration: 0.5, ease: "easeOut" }}
+      className="z-10 flex w-[90%] flex-col items-center justify-center rounded-lg bg-white p-6 shadow md:w-[60%]">
         <p className="mb-1 text-2xl font-medium text-secondary">
           Reset Password
         </p>
@@ -63,7 +67,7 @@ const ForgotPasswordPage: React.FC = () => {
           </label>
         </div>
 
-        <button className="mb-5 mt-5 w-[90%] rounded-lg border border-primary bg-primary py-1.5 text-xl font-medium text-secondary hover:bg-transparent hover:text-primary md:w-[70%]">
+        <button  className="w-[90%] rounded-lg bg-[#003084] py-2 font-semibold text-white transition hover:bg-[#00153B] md:w-[70%] my-4">
           Send for OTP
         </button>
 
@@ -144,7 +148,7 @@ const ForgotPasswordPage: React.FC = () => {
           in <span className="text-primary">{timer}s</span>
         </p>
 
-        <button className="mt-5 w-[90%] rounded-lg border border-primary bg-primary py-1.5 text-xl font-medium text-secondary hover:bg-transparent hover:text-primary md:w-[70%]">
+        <button className="w-[90%] rounded-lg bg-[#003084] py-2 font-semibold text-white transition hover:bg-[#00153B] md:w-[70%] mt-4">
           Submit
         </button>
 
@@ -152,7 +156,7 @@ const ForgotPasswordPage: React.FC = () => {
           <p>Don&apos;t Have an account?</p>
           <Link
             href="/auth/signup"
-            className="ml-1 text-secondary underline hover:text-primary"
+            className="ml-1 text-primary hover:underline hover:text-primaryBlue transition-all"
           >
             Register Now
           </Link>
@@ -167,12 +171,12 @@ const ForgotPasswordPage: React.FC = () => {
         <div className="mt-3 flex font-medium">
           <Link
             href="/"
-            className="ml-1 text-secondary underline hover:text-primary"
+            className=" text-primary hover:underline hover:text-primaryBlue transition-all"
           >
             Continue as a Guest
           </Link>
         </div>
-      </div>
+      </motion.div>
 
       <Image
         alt="img"
