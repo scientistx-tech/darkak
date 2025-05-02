@@ -5,16 +5,14 @@ import React, { PropsWithChildren } from "react";
 
 function layout({ children }: PropsWithChildren) {
   return (
-    <div>
-      <Header />
-      <div className=" w-full ">
-        {children}
+      <div>
+        <Header />
+        <div className="w-full">{children}</div>
+        <Footer />
+        <div className="md:hidden">
+          <FooterNav />
+        </div>
       </div>
-      <Footer />
-      <div className="md:hidden">
-        <FooterNav />
-      </div>
-    </div>
   );
 }
 
