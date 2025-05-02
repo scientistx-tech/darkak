@@ -109,9 +109,9 @@ const Header: React.FC = () => {
             <p className="text-center">Use code 2025 and get 10% Off</p>
 
             {/* DropDown-menu */}
-            <div className="flex w-full items-center justify-end">
+            <div className="flex w-full items-center justify-end gap-2">
               <div
-                className="relative flex cursor-pointer items-center gap-2 rounded-md p-2 transition hover:bg-primaryDarkBlue"
+                className="relative flex cursor-pointer items-center gap-1 rounded-md p-2 transition hover:bg-primaryDarkBlue"
                 onMouseEnter={() => setIsDropdownOpen(true)}
                 onMouseLeave={() => setIsDropdownOpen(false)}
                 ref={dropdownRef}
@@ -126,12 +126,14 @@ const Header: React.FC = () => {
                   {selectedLang}
                 </p>
 
-                {isDropdownOpen ? <UpOutlined /> : <DownOutlined />}
+                <p className="text-sm">
+                  {isDropdownOpen ? <UpOutlined /> : <DownOutlined />}
+                </p>
 
                 <AnimatePresence>
                   {isDropdownOpen && (
                     <motion.div
-                      className="absolute right-0 top-9 z-30 w-[120px] rounded-md bg-primaryBlue shadow-md "
+                      className="absolute right-0 top-9 z-30 w-[120px] rounded-md bg-primaryBlue shadow-md"
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
@@ -152,6 +154,21 @@ const Header: React.FC = () => {
                     </motion.div>
                   )}
                 </AnimatePresence>
+              </div>
+              {/* Login & Register Buttons */}
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/auth/login"
+                  className="rounded-md bg-secondaryLiteBlue px-4 py-1 text-sm text-primaryDarkBlue transition hover:bg-primaryDarkBlue hover:text-primaryWhite"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="rounded-md border border-primary px-4 py-1 text-sm text-primaryWhite transition hover:bg-primaryDarkBlue"
+                >
+                  Register
+                </Link>
               </div>
             </div>
           </motion.div>
@@ -283,10 +300,10 @@ const Header: React.FC = () => {
         closable={false}
         onClose={onClose}
         open={open}
-        className="custom-drawer"
+        className="custom-drawer "
         bodyStyle={{ padding: 0 }}
       >
-        <div className="flex h-full w-full flex-col justify-between bg-white/90 px-5 py-6 text-gray-800 shadow-lg backdrop-blur-md sm:max-w-[360px]">
+        <div className="flex h-full flex-col justify-between px-5 py-6 text-gray-800 shadow-lg backdrop-blur-md ">
           <div className="w-full">
             {/* Header */}
             <div className="mb-6 flex items-center justify-between border-b pb-4">
@@ -359,7 +376,7 @@ const Header: React.FC = () => {
             </nav>
 
             {/* Language Switcher */}
-            <div className="mt-6 flex items-center gap-3">
+            <div className="mt-6 flex items-center gap-2">
               <Image
                 src={selectedLang === "Bangla" ? Bangla : English}
                 alt="lang"
@@ -374,6 +391,20 @@ const Header: React.FC = () => {
                 <option value="English">English</option>
                 <option value="Bangla">Bangla</option>
               </select>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/auth/login"
+                  className="rounded-md bg-secondaryLiteBlue px-4 py-1 text-sm text-primaryDarkBlue transition hover:bg-primaryDarkBlue hover:text-primaryWhite"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="rounded-md border border-primary px-4 py-1 text-sm text-primaryDarkBlue hover:text-primaryWhite transition hover:bg-primaryDarkBlue"
+                >
+                  Register
+                </Link>
+              </div>
             </div>
 
             {/* Bottom Icons */}
