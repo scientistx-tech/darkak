@@ -11,6 +11,7 @@ import {
   FaShippingFast,
   FaPen,
   FaStar,
+  FaMapMarkerAlt,
 } from "react-icons/fa";
 
 import profile from "@/Data/Img/blank-profile-picture.webp";
@@ -20,6 +21,7 @@ import NotificationPage from "./components/NotificationPage";
 import OrderHistory from "./components/OrderHistory";
 import TrackOrder from "./components/TrackOrder";
 import ReviewHistory from "./components/ReviewHistory";
+import ReturnAndRefund from "./components/ReturnAndRefund";
 
 const ProfilePage: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string>("");
@@ -135,8 +137,20 @@ const ProfilePage: React.FC = () => {
                   : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
               }`}
             >
-              <FaShippingFast />
+              <FaMapMarkerAlt />
               Track Order
+            </button>
+
+            <button
+              onClick={() => setActiveTab("return")}
+              className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
+                activeTab === "return"
+                  ? "bg-primaryBlue text-white"
+                  : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
+              }`}
+            >
+              <FaShippingFast />
+              Return & Refund
             </button>
           </div>
         </div>
@@ -192,18 +206,6 @@ const ProfilePage: React.FC = () => {
               </motion.div>
             )}
 
-            {activeTab === "review" && (
-              <motion.div
-                key="review"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
-                <ReviewHistory />
-              </motion.div>
-            )}
-
             {activeTab === "track" && (
               <motion.div
                 key="track"
@@ -213,6 +215,28 @@ const ProfilePage: React.FC = () => {
                 transition={{ duration: 0.4 }}
               >
                 <TrackOrder />
+              </motion.div>
+            )}
+            {activeTab === "return" && (
+              <motion.div
+                key="return"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+              >
+                <ReturnAndRefund />
+              </motion.div>
+            )}
+            {activeTab === "review" && (
+              <motion.div
+                key="review"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+              >
+                <ReviewHistory />
               </motion.div>
             )}
           </AnimatePresence>
