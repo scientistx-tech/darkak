@@ -23,7 +23,7 @@ import {
   InfoCircleOutlined,
 } from "@ant-design/icons";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Bangla from "@/Data/Img/BanglaLag.svg";
 import English from "@/Data/Img/EnglishLag.svg";
 import HeadLineText from "./HeadLineText";
@@ -111,39 +111,47 @@ const Header: React.FC = () => {
             {/* DropDown-menu */}
             <div className="flex w-full items-center justify-end">
               <div
-                className="relative flex cursor-pointer justify-end gap-2"
+                className="relative flex cursor-pointer items-center gap-2 rounded-md p-2 transition hover:bg-primaryDarkBlue"
                 onMouseEnter={() => setIsDropdownOpen(true)}
                 onMouseLeave={() => setIsDropdownOpen(false)}
                 ref={dropdownRef}
               >
                 <Image
-                  alt=""
+                  alt="Language"
                   src={selectedLang === "Bangla" ? Bangla : English}
                   width={20}
                   height={20}
                 />
-                <p className="uppercase">{selectedLang}</p>
+                <p className="text-sm font-medium uppercase text-primaryWhite">
+                  {selectedLang}
+                </p>
 
                 {isDropdownOpen ? <UpOutlined /> : <DownOutlined />}
-                {isDropdownOpen && (
-                  <div className="absolute top-0 z-30 mt-4 w-[100px] bg-transparent py-2 text-black transition-opacity duration-300 ease-in-out">
-                    <div className="h-[8px] w-full bg-transparent" />
-                    <div className="bg-white shadow-lg">
+
+                <AnimatePresence>
+                  {isDropdownOpen && (
+                    <motion.div
+                      className="absolute right-0 top-9 z-30 w-[120px] rounded-md bg-primaryBlue shadow-md "
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                    >
                       <p
-                        className="px-4 py-1 uppercase hover:bg-gray-200"
+                        className="cursor-pointer px-4 py-2 text-sm uppercase text-primaryWhite hover:bg-primaryDarkBlue"
                         onClick={() => handleLanguageChange("English")}
                       >
                         English
                       </p>
                       <p
-                        className="px-4 py-1 uppercase hover:bg-gray-200"
+                        className="cursor-pointer px-4 py-2 text-sm uppercase text-primaryWhite hover:bg-primaryDarkBlue"
                         onClick={() => handleLanguageChange("Bangla")}
                       >
                         Bangla
                       </p>
-                    </div>
-                  </div>
-                )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </motion.div>
