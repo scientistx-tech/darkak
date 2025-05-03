@@ -1,27 +1,30 @@
 "use client";
 
 import React, { useState } from "react";
-import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-import { FaFacebook, FaGoogle, FaPhoneAlt } from "react-icons/fa";
-import Link from "next/link";
-import Image from "next/image";
-import { notification } from "antd";
 import { useRouter } from "next/navigation";
+import { notification } from "antd";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import SVG from "@/Data/Img/LoginPage.svg";
+import SocialButton from "./components/SocialButton";
+import InputField from "./components/InputField";
+import Link from "next/link";
+import { useEmailRegistrationMutation } from "@/redux/services/authApis";
+import OtpModal from "./components/OtpModal";
 
 const SignupPage: React.FC = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
 
   const [api, contextHolder] = notification.useNotification();
   const router = useRouter();
-
+  const [otpModalVisible, setOtpModalVisible] = useState(false);
+  const [emailRegistration, { isLoading }] = useEmailRegistrationMutation();
   const openNotification = (
     type: "success" | "error" | "warning",
     message: string,
@@ -33,11 +36,11 @@ const SignupPage: React.FC = () => {
     });
   };
 
-  const validateEmail = (email: string) => {
+  const validateEmail = (email: string): boolean => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (!validateEmail(email)) {
       openNotification(
         "warning",
@@ -56,16 +59,21 @@ const SignupPage: React.FC = () => {
       return;
     }
 
-    openNotification(
-      "success",
-      "Signup Successful",
-      "You have successfully signed up!",
-    );
-    console.log({ name, email, phone, password });
-
-    setTimeout(() => {
-      router.push("/auth/login");
-    }, 1500);
+    try {
+      await emailRegistration({ name, email, password }).unwrap();
+      openNotification(
+        "success",
+        "Signup Initiated",
+        "Check your email for the OTP.",
+      );
+      setOtpModalVisible(true);
+    } catch (error: any) {
+      openNotification(
+        "error",
+        "Signup Failed",
+        error?.data?.message || "Something went wrong.",
+      );
+    }
   };
 
   return (
@@ -77,30 +85,19 @@ const SignupPage: React.FC = () => {
         className="absolute -top-7 left-[12.5%] hidden h-[200px] w-[200px] opacity-45 md:block"
       />
 
-      <motion.div 
-       initial={{ opacity: 0, scale: 0.9, y: 10 }}
-       animate={{ opacity: 1, scale: 1, y: 0 }}
-       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="z-10 flex w-[90%] flex-col items-center justify-center rounded-lg bg-white p-6 shadow md:w-[60%]">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="z-10 flex w-[90%] flex-col items-center justify-center rounded-lg bg-white p-6 shadow md:w-[70%] max-w-md"
+      >
         <p className="mb-1 text-2xl font-medium text-secondary">
           Sign Up to Darkak<span className="text-primary">Mart</span>
         </p>
 
         <p className="text-[15px]">Sign Up using social network</p>
 
-        <div className="mb-2 mt-5 flex w-[90%] items-center justify-center gap-3 md:w-[70%]">
-          {/* Social Buttons */}
-          <div className="mb-4 flex justify-center gap-4">
-            {[FaFacebook, FaGoogle, FaPhoneAlt].map((Icon, index) => (
-              <button
-                key={index}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-[#5694FF] text-white transition hover:bg-[#003084]"
-              >
-                <Icon size={20} />
-              </button>
-            ))}
-          </div>
-        </div>
+        <SocialButton />
 
         <div className="mb-2 flex w-[90%] items-center justify-around md:w-[70%]">
           <div className="h-[1px] w-[45%] bg-yellow-200" />{" "}
@@ -108,122 +105,51 @@ const SignupPage: React.FC = () => {
           <div className="h-[1px] w-[45%] bg-yellow-200" />
         </div>
 
-        {/* Name */}
-        <div className="relative mb-4 w-[90%] md:w-[70%]">
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="peer block w-full rounded border border-gray-300 bg-white px-3 py-2 leading-[1.6] outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-            required
-          />
-          <label
-            htmlFor="name"
-            className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${name ? "top-[-2px] bg-white px-1 text-sm text-primary" : ""} `}
-          >
-            Full Name
-          </label>
-        </div>
-
-        {/* Email  */}
-        <div className="relative mb-4 w-[90%] md:w-[70%]">
-          <input
-            type="text"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="peer block w-full rounded border border-gray-300 bg-white px-3 py-2 leading-[1.6] outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-            required
-          />
-          <label
-            htmlFor="email"
-            className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${email ? "top-[-2px] bg-white px-1 text-sm text-primary" : ""} `}
-          >
-            Email
-          </label>
-        </div>
-
-        {/* Phone */}
-        <div className="relative mb-4 w-[90%] md:w-[70%]">
-          <input
-            type="number"
-            id="phone"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="peer block w-full rounded border border-gray-300 bg-white px-3 py-2 leading-[1.6] outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-            required
-          />
-          <label
-            htmlFor="phone"
-            className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${phone ? "top-[-2px] bg-white px-1 text-sm text-primary" : ""} `}
-          >
-            Phone No
-          </label>
-        </div>
-
-        {/* Password Input */}
-        <div className="relative mb-4 w-[90%] md:w-[70%]">
-          <input
-            type={showPassword ? "text" : "password"}
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="peer block w-full rounded border border-gray-300 bg-white px-3 py-2 leading-[1.6] outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-            required
-          />
-          <label
-            htmlFor="password"
-            className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${password ? "top-[-2px] bg-white px-1 text-sm text-primary" : ""} `}
-          >
-            Enter Password
-          </label>
-          <button
-            type="button"
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-          </button>
-        </div>
-
-        {/* Confirm Password Input */}
-        <div className="relative mb-4 w-[90%] md:w-[70%]">
-          <input
-            type={showConfirmPassword ? "text" : "password"}
-            id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="peer block w-full rounded border border-gray-300 bg-white px-3 py-2 leading-[1.6] outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-            required
-          />
-          <label
-            htmlFor="confirmPassword"
-            className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${confirmPassword ? "top-[-2px] bg-white px-1 text-sm text-primary" : ""} `}
-          >
-            Confirm Password
-          </label>
-          <button
-            type="button"
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-          >
-            {showConfirmPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-          </button>
-        </div>
+        <InputField
+          id="name"
+          label="Full Name"
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <InputField
+          id="email"
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <InputField
+          id="password"
+          label="Enter Password"
+          type={showPassword ? "text" : "password"}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          showPasswordToggle={true}
+          onTogglePassword={() => setShowPassword(!showPassword)}
+        />
+        <InputField
+          id="confirmPassword"
+          label="Confirm Password"
+          type={showConfirmPassword ? "text" : "password"}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          showPasswordToggle={true}
+          onTogglePassword={() => setShowConfirmPassword(!showConfirmPassword)}
+        />
 
         <button
           onClick={handleSignup}
-           className="w-[90%] rounded-lg bg-[#003084] py-2 font-semibold text-white transition hover:bg-[#00153B] md:w-[70%]"
+          className="w-[90%] rounded-lg bg-[#003084] py-2 font-semibold text-white transition hover:bg-[#00153B] md:w-[70%]"
         >
-          Sign Up
+          {isLoading ? "Signing Up..." : " Sign Up"}
         </button>
 
         <div className="mt-5 flex font-medium">
           <p>Already Have an account?</p>
           <Link
             href="/auth/login"
-            className="ml-1 text-primary hover:underline hover:text-primaryBlue transition-all"
+            className="ml-1 text-primary transition-all hover:text-primaryBlue hover:underline"
           >
             Log In
           </Link>
@@ -238,7 +164,7 @@ const SignupPage: React.FC = () => {
         <div className="mt-3 flex font-medium">
           <Link
             href="/"
-            className=" text-primary hover:underline hover:text-primaryBlue transition-all"
+            className="text-primary transition-all hover:text-primaryBlue hover:underline"
           >
             Continue as a Guest
           </Link>
@@ -249,6 +175,12 @@ const SignupPage: React.FC = () => {
         alt="img"
         src={SVG}
         className="absolute -bottom-7 right-[12.5%] hidden h-[200px] w-[200px] opacity-45 md:block"
+      />
+      <OtpModal
+        onResendOtp={handleSignup}
+        email={email}
+        isVisible={otpModalVisible}
+        onClose={() => setOtpModalVisible(false)}
       />
     </div>
   );

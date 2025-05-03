@@ -1,12 +1,12 @@
 "use client";
-import { useGetAdminQuery } from "@/redux/services/authApis";
+import { useGetUserQuery } from "@/redux/services/authApis";
 import { updateUser } from "@/redux/slices/authSlice";
 import { AppDispatch } from "@/redux/store";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 function DataLoader({ children }: { children: React.ReactNode }) {
-  const { currentData, isLoading } = useGetAdminQuery();
+  const { currentData, isLoading } = useGetUserQuery();
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
