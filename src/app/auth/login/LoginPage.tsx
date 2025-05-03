@@ -1,47 +1,62 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-import { FaFacebook, FaGoogle, FaPhoneAlt } from "react-icons/fa";
-import Link from "next/link";
-import Image from "next/image";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import SVG from "@/Data/Img/LoginPage.svg";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { AppDispatch, RootState } from "@/redux/store";
 import { setLocalStorage } from "@/utils/localStorage";
+import InputField from "../signup/components/InputField";
+import SocialButton from "../signup/components/SocialButton";
+import SVG from "@/Data/Img/LoginPage.svg";
+import { useEmailLoginMutation } from "@/redux/services/authApis";
+import { toast } from "react-toastify";
+import { setUser } from "@/redux/slices/authSlice";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const admin = useSelector((state: RootState) => state.auth.user);
+
+  const [login, { isLoading }] = useEmailLoginMutation();
+  const user = useSelector((state: RootState) => state.auth.user);
   const router = useRouter();
   const pathname = usePathname();
+  const dispatch = useDispatch<AppDispatch>();
   setLocalStorage("path", pathname);
 
   useEffect(() => {
-    if (!admin) {
-      router.replace("/auth/login");
-    } else {
-      router.replace("/admin");
-    }
-  }, [admin, router]); // Runs when admin state changes
+    if (user) router.replace("/");
+  }, [user, router]);
 
-  if (admin) {
-    return null; // Prevent rendering before redirect
-  }
+  const handleLogin = async () => {
+    if (!email || !password) {
+      toast.error("Please enter both email and password.");
+      return;
+    }
+
+    try {
+      const res = await login({ email, password }).unwrap();
+      dispatch(setUser(res));
+      toast.success("Login successful!");
+      router.push("/");
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Login failed!");
+    }
+  };
+
+  if (user) return null;
+
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#E6EFFF] px-4">
-      {/* Decorative Image */}
       <Image
         alt="img"
         src={SVG}
         className="absolute -top-7 left-[12.5%] hidden h-[200px] w-[200px] opacity-45 md:block"
       />
 
-      {/* Login Card */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -55,17 +70,7 @@ const LoginPage: React.FC = () => {
           Login using your social account or email
         </p>
 
-        {/* Social Buttons */}
-        <div className="mb-4 flex justify-center gap-4">
-          {[FaFacebook, FaGoogle, FaPhoneAlt].map((Icon, index) => (
-            <button
-              key={index}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-[#5694FF] text-white transition hover:bg-[#003084]"
-            >
-              <Icon size={20} />
-            </button>
-          ))}
-        </div>
+        <SocialButton />
 
         <div className="mb-4 flex items-center justify-between">
           <div className="h-[1px] w-[45%] bg-gray-200" />
@@ -73,53 +78,23 @@ const LoginPage: React.FC = () => {
           <div className="h-[1px] w-[45%] bg-gray-200" />
         </div>
 
-        {/* Email Input */}
-        <div className="relative mb-4">
-          <label
-            htmlFor="email"
-            className={`absolute  left-3 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:text-gray-400 ${email ? "top-[-10px] bg-white px-1 text-sm text-primary" : "top-2"} `}
-          >
-            Email or Phone
-          </label>
-          <input
-            type="text"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="peer block w-full rounded border border-gray-300 bg-white px-3 py-2 leading-[1.6] outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-            placeholder=" "
-            required
-          />
-        </div>
+        <InputField
+          id="email"
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <InputField
+          id="password"
+          label="Enter Password"
+          type={showPassword ? "text" : "password"}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          showPasswordToggle={true}
+          onTogglePassword={() => setShowPassword(!showPassword)}
+        />
 
-        {/* Password Input */}
-        <div className="relative mb-4">
-        <label
-            htmlFor="password"
-            className={`absolute  left-3 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:text-gray-400 ${password ? "top-[-10px] bg-white px-1 text-sm text-primary" : "top-2"} `}
-          >
-            Password
-          </label>
-          <input
-            type={showPassword ? "text" : "password"}
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="peer block w-full rounded border border-gray-300 bg-white px-3 py-2 leading-[1.6] outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-            placeholder=" "
-            required
-          />
-         
-          <button
-            type="button"
-            className="absolute right-4 top-2/4 -translate-y-2/4 text-gray-500 hover:text-gray-700"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-          </button>
-        </div>
-
-        {/* Forgot password */}
         <div className="mb-4 text-right">
           <Link
             href="/auth/forgot-password"
@@ -129,12 +104,14 @@ const LoginPage: React.FC = () => {
           </Link>
         </div>
 
-        {/* Login Button */}
-        <button className="w-full rounded-lg bg-[#003084] py-2 font-semibold text-white transition hover:bg-[#00153B]">
-          Login
+        <button
+          onClick={handleLogin}
+          disabled={isLoading}
+          className="w-full rounded-lg bg-[#003084] py-2 font-semibold text-white transition hover:bg-[#00153B] disabled:opacity-50"
+        >
+          {isLoading ? "Logging in..." : "Login"}
         </button>
 
-        {/* Register Prompt */}
         <div className="mt-4 text-center text-sm text-gray-600">
           Don’t have an account?
           <Link
@@ -145,7 +122,6 @@ const LoginPage: React.FC = () => {
           </Link>
         </div>
 
-        {/* Continue as Guest */}
         <div className="mt-6 text-center text-sm">
           <div className="mb-3 flex items-center justify-between">
             <div className="h-[1px] w-[45%] bg-gray-200" />
@@ -161,7 +137,6 @@ const LoginPage: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Bottom SVG */}
       <Image
         alt="img"
         src={SVG}

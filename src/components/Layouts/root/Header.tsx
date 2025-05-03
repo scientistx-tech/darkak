@@ -27,8 +27,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import Bangla from "@/Data/Img/BanglaLag.svg";
 import English from "@/Data/Img/EnglishLag.svg";
 import HeadLineText from "./HeadLineText";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
 
 const Header: React.FC = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
+
   const pathname = usePathname();
   const [selectedLang, setSelectedLang] = useState("English");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -84,7 +88,7 @@ const Header: React.FC = () => {
   const onClose = () => {
     setOpen(false);
   };
-
+  const handleLogOut = () => {};
   return (
     <div className="w-full">
       <motion.div
@@ -156,20 +160,29 @@ const Header: React.FC = () => {
                 </AnimatePresence>
               </div>
               {/* Login & Register Buttons */}
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/auth/login"
+              {user ? (
+                <button
+                  onClick={handleLogOut}
                   className="rounded-md bg-secondaryLiteBlue px-4 py-1 text-sm text-primaryDarkBlue transition hover:bg-primaryDarkBlue hover:text-primaryWhite"
                 >
-                  Login
-                </Link>
-                <Link
-                  href="/auth/signup"
-                  className="rounded-md border border-primary px-4 py-1 text-sm text-primaryWhite transition hover:bg-primaryDarkBlue"
-                >
-                  Register
-                </Link>
-              </div>
+                  Log Out
+                </button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Link
+                    href="/auth/login"
+                    className="rounded-md bg-secondaryLiteBlue px-4 py-1 text-sm text-primaryDarkBlue transition hover:bg-primaryDarkBlue hover:text-primaryWhite"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/auth/signup"
+                    className="rounded-md border border-primary px-4 py-1 text-sm text-primaryWhite transition hover:bg-primaryDarkBlue"
+                  >
+                    Register
+                  </Link>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -300,10 +313,10 @@ const Header: React.FC = () => {
         closable={false}
         onClose={onClose}
         open={open}
-        className="custom-drawer "
+        className="custom-drawer"
         bodyStyle={{ padding: 0 }}
       >
-        <div className="flex h-full flex-col justify-between px-5 py-6 text-gray-800 shadow-lg backdrop-blur-md ">
+        <div className="flex h-full flex-col justify-between px-5 py-6 text-gray-800 shadow-lg backdrop-blur-md">
           <div className="w-full">
             {/* Header */}
             <div className="mb-6 flex items-center justify-between border-b pb-4">
@@ -400,7 +413,7 @@ const Header: React.FC = () => {
                 </Link>
                 <Link
                   href="/auth/signup"
-                  className="rounded-md border border-primary px-4 py-1 text-sm text-primaryDarkBlue hover:text-primaryWhite transition hover:bg-primaryDarkBlue"
+                  className="rounded-md border border-primary px-4 py-1 text-sm text-primaryDarkBlue transition hover:bg-primaryDarkBlue hover:text-primaryWhite"
                 >
                   Register
                 </Link>
