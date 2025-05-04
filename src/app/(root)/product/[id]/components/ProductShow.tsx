@@ -1,8 +1,10 @@
-'use client'
+"use client";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import ReactImageMagnify from "react-image-magnify";
 import { BsWhatsapp } from "react-icons/bs";
+import DeliveryDetails from "./DeliveryDetails";
+
 const ProductShow = () => {
   const product = {
     brand: "APPLE",
@@ -31,8 +33,8 @@ const ProductShow = () => {
     <div className="py-6">
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         {/* Image Section */}
-        <div className="rounded-md border p-2 h-min">
-          <div className="relative ">
+        <div className="h-min rounded-md border p-2">
+          <div className="relative">
             <ReactImageMagnify
               {...{
                 smallImage: {
@@ -70,7 +72,9 @@ const ProductShow = () => {
           <p className="text-sm uppercase text-[#4B4E55]">
             Brand: {product.brand}
           </p>
-          <h1 className="mt-2 text-2xl font-semibold text-[#4B4E55]">{product.name}</h1>
+          <h1 className="mt-2 text-2xl font-semibold text-[#4B4E55]">
+            {product.name}
+          </h1>
 
           <div className="mt-4 flex gap-2">
             <span className="rounded-full bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue line-through">
@@ -82,7 +86,6 @@ const ProductShow = () => {
             <span className="rounded-full bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue">
               {product.status}
             </span>
-          
           </div>
 
           <p className="mt-4 inline-block rounded-full bg-secondaryWhite px-4 py-2 text-sm">
@@ -99,10 +102,12 @@ const ProductShow = () => {
             Message on Whatsapp
           </a>
 
-          <p className="mt-6 text-lg font-semibold text-[#323232]">{product.warranty}</p>
+          <p className="mt-6 text-lg font-semibold text-[#323232]">
+            {product.warranty}
+          </p>
 
           {/* Color */}
-          <div className="mt-4 flex gap-4 items-center">
+          <div className="mt-4 flex items-center gap-4">
             <p className="text-sm font-medium">Color: </p>
             <div className="mt-2 flex gap-3">
               {product.colors.map((clr, idx) => (
@@ -120,14 +125,14 @@ const ProductShow = () => {
           </div>
 
           {/* Storage */}
-          <div className="mt-4 flex gap-4 items-center">
+          <div className="mt-4 flex items-center gap-4">
             <p className="text-sm font-medium">Storage:</p>
-            <div className="mt-2 flex gap-3 bg-secondaryWhite rounded-full">
+            <div className="mt-2 flex gap-3 rounded-full bg-secondaryWhite">
               {product.storages.map((stor, idx) => (
                 <button
                   key={idx}
                   onClick={() => setStorage(stor)}
-                  className={`rounded-full border shadow-1 transition-all duration-300 hover:shadow-primaryBlue px-4 py-2 text-sm ${
+                  className={`rounded-full border px-4 py-2 text-sm shadow-1 transition-all duration-300 hover:shadow-primaryBlue ${
                     storage === stor
                       ? "bg-secondaryBlue text-white"
                       : "bg-secondaryWhite text-primaryBlue"
@@ -145,25 +150,25 @@ const ProductShow = () => {
             <div className="flex items-center overflow-hidden rounded-full border">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="bg-secondaryBlue px-4 hover:bg-primaryBlue transition-all duration-300 py-1 text-white"
+                className="bg-secondaryBlue px-4 py-1 text-white transition-all duration-300 hover:bg-primaryBlue"
               >
                 -
               </button>
               <span className="px-4">{quantity}</span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
-                className="bg-secondaryBlue px-4 hover:bg-primaryBlue transition-all duration-300 py-1 text-white"
+                className="bg-secondaryBlue px-4 py-1 text-white transition-all duration-300 hover:bg-primaryBlue"
               >
                 +
               </button>
             </div>
           </div>
-
+          <DeliveryDetails></DeliveryDetails>
           {/* Buttons */}
-          <div className="mt-6 flex gap-4 items-center">
+          <div className="mt-6 flex items-center gap-4">
             <motion.button
               whileTap={{ scale: 0.9 }}
-              className="rounded-full bg-primaryBlue hover:bg-secondaryWhite  hover:border-primaryBlue border-2 px-8 py-2 text-white hover:text-primaryDarkBlue transition-all duration-300"
+              className="rounded-full border-2 bg-primaryBlue px-8 py-2 text-white transition-all duration-300 hover:border-primaryBlue hover:bg-secondaryWhite hover:text-primaryDarkBlue"
               onClick={() => alert("Buying...")}
             >
               BUY NOW
@@ -185,3 +190,5 @@ const ProductShow = () => {
 };
 
 export default ProductShow;
+
+
