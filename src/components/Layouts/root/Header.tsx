@@ -27,10 +27,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import Bangla from "@/Data/Img/BanglaLag.svg";
 import English from "@/Data/Img/EnglishLag.svg";
 import HeadLineText from "./HeadLineText";
-import { RootState } from "@/redux/store";
-import { useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { clearUser } from "@/redux/slices/authSlice";
 
 const Header: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.auth.user);
 
   const pathname = usePathname();
@@ -88,7 +90,9 @@ const Header: React.FC = () => {
   const onClose = () => {
     setOpen(false);
   };
-  const handleLogOut = () => {};
+  const handleLogOut = () => {
+    dispatch(clearUser());
+  };
   return (
     <div className="w-full">
       <motion.div
@@ -200,12 +204,12 @@ const Header: React.FC = () => {
               Home
             </NavLink>
 
-            <NavLink
+            {/* <NavLink
               href="/shop"
               className={`font-serif text-lg hover:text-primary`}
             >
               Shop
-            </NavLink>
+            </NavLink> */}
 
             <NavLink
               href="/category"
@@ -241,7 +245,7 @@ const Header: React.FC = () => {
 
           <div className="hidden grid-flow-col gap-5 md:grid">
             <Link
-              href="/profile"
+              href="/user/profile"
               className={`text-2xl transition-all duration-300 hover:scale-110 hover:text-primary ${
                 pathname === "/profile" ? "text-primary" : ""
               }`}
@@ -250,7 +254,7 @@ const Header: React.FC = () => {
             </Link>
 
             <Link
-              href="/wishlist"
+              href="/user/wishlist"
               className={`group text-2xl transition-all duration-300 hover:scale-110 hover:text-primary ${
                 pathname === "/wishlist" ? "text-primary" : ""
               }`}
@@ -266,7 +270,7 @@ const Header: React.FC = () => {
             </Link>
 
             <Link
-              href="/cart"
+              href="/user/cart"
               className={`group text-2xl transition-all duration-300 hover:scale-110 hover:text-primary ${
                 pathname === "/cart" ? "text-primary" : ""
               }`}

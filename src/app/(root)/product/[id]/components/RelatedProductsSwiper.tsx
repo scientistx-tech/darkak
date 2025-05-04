@@ -52,7 +52,7 @@ export default function RelatedProductsSwiper() {
 
   return (
     <div className="container mx-auto px-2 md:px-4 py-8">
-      <h2 className="text-2xl font-bold text-center text-primaryDarkBlue mb-6">
+      <h2 className="text-2xl font-bold text-center text-primaryDarkBlue">
         Related Products
       </h2>
 
@@ -64,7 +64,7 @@ export default function RelatedProductsSwiper() {
         transition={{ duration: 0.6 }}
       >
         {dummyProducts.map((product) => (
-          <div className="keen-slider__slide" key={product.id}>
+          <div className="keen-slider__slide py-4" key={product.id}>
             <ProductCard product={product} />
           </div>
         ))}
