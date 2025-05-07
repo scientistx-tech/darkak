@@ -17,7 +17,7 @@ const UserPrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
     setLocalStorage("path", pathname);
 
 
-    useEffect(() => {
+    useEffect(() => { 
         if (!user) {
             router.replace("/auth/login");
         } else {
