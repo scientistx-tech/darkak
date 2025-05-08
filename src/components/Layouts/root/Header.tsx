@@ -357,14 +357,14 @@ const Header: React.FC = () => {
                 <HomeOutlined />
                 Home
               </Link>
-              <Link
+              {/* <Link
                 href="/shop"
                 onClick={onClose}
                 className="flex items-center gap-3 hover:text-primary"
               >
                 <ShopOutlined />
                 Shop
-              </Link>
+              </Link> */}
               <Link
                 href="/category"
                 onClick={onClose}
@@ -408,20 +408,29 @@ const Header: React.FC = () => {
                 <option value="English">English</option>
                 <option value="Bangla">Bangla</option>
               </select>
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/auth/login"
+              {user ? (
+                <button
+                  onClick={handleLogOut}
                   className="rounded-md bg-secondaryLiteBlue px-4 py-1 text-sm text-primaryDarkBlue transition hover:bg-primaryDarkBlue hover:text-primaryWhite"
                 >
-                  Login
-                </Link>
-                <Link
-                  href="/auth/signup"
-                  className="rounded-md border border-primary px-4 py-1 text-sm text-primaryDarkBlue transition hover:bg-primaryDarkBlue hover:text-primaryWhite"
-                >
-                  Register
-                </Link>
-              </div>
+                  Log Out
+                </button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Link
+                    href="/auth/login"
+                    className="rounded-md bg-secondaryLiteBlue px-4 py-1 text-sm text-primaryDarkBlue transition hover:bg-primaryDarkBlue hover:text-primaryWhite"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/auth/signup"
+                    className="rounded-md border border-primary px-4 py-1 text-sm text-primaryDarkBlue transition hover:bg-primaryDarkBlue hover:text-primaryWhite"
+                  >
+                    Register
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* Bottom Icons */}

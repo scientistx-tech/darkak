@@ -36,16 +36,23 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
       }),
     }),
-    // adminPassWordChange: builder.mutation<
-    //   AdminLoginResponse,
-    //   { password: string; oldPassword: string }
-    // >({
-    //   query: (body) => ({
-    //     url: `/admin/change-password`,
-    //     body: body,
-    //     method: "POST",
-    //   }),
-    // }),
+    passwordResetMail: builder.mutation({
+      query: (email) => ({
+        url: `/auth/password-reset-mail`,
+        body: { email },
+        method: "POST",
+      }),
+    }),
+    userPassWordChange: builder.mutation<
+      AuthResponse,
+      { password: string; code: any; id: any }
+    >({
+      query: (body) => ({
+        url: `/auth/reset-password`,
+        body: body,
+        method: "PUT",
+      }),
+    }),
   }),
 });
 
@@ -54,5 +61,6 @@ export const {
   useEmailLoginMutation,
   useEmailRegistrationMutation,
   useVerifyEmailOTPMutation,
-  // useAdminPassWordChangeMutation,
+  usePasswordResetMailMutation,
+  useUserPassWordChangeMutation,
 } = authApi;
