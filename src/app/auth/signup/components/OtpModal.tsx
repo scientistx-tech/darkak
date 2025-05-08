@@ -8,12 +8,13 @@ import { toast } from "react-toastify";
 import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/slices/authSlice";
+import OTPInputs from "../../forgot-password/OTPInputs";
 
 type Props = {
   isVisible: boolean;
   email: string;
   onClose: () => void;
-  onResendOtp?: () => void; // optional: pass resend logic
+  onResendOtp?: () => void;
 };
 
 const OtpModal: React.FC<Props> = ({
@@ -22,7 +23,7 @@ const OtpModal: React.FC<Props> = ({
   email,
   onResendOtp,
 }) => {
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState(Array(6).fill(""));
   const [timer, setTimer] = useState(60);
   const [error, setError] = useState("");
   const dispatch = useDispatch<AppDispatch>();
@@ -39,16 +40,29 @@ const OtpModal: React.FC<Props> = ({
 
   const handleSubmit = async () => {
     setError("");
+    const otpString = otp.join("").trim();
+
+    if (otpString.length !== 6) {
+      setError("Please enter a 6-digit OTP.");
+      return;
+    }
+
     try {
-      const res = await verifyOtp({ email, otp }).unwrap();
+      const res = await verifyOtp({ email, otp: otpString }).unwrap();
       dispatch(setUser(res));
       if (res.token) {
-        toast.success("Registration Successfull");
+        toast.success("Registration Successful");
         router.push("/");
       }
     } catch (err: any) {
       setError(err?.data?.message || "Failed to verify OTP.");
     }
+  };
+
+  const handleOtpChange = (index: number, value: string) => {
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
   };
 
   const handleResendOtp = () => {
@@ -74,14 +88,9 @@ const OtpModal: React.FC<Props> = ({
           OTP has been sent to <span className="font-medium">{email}</span>
         </p>
 
-        <input
-          type="text"
-          value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-          maxLength={6}
-          className="mb-3 w-full rounded-lg border border-gray-300 px-4 py-3 text-center text-lg tracking-widest outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Enter 6-digit OTP"
-        />
+        <div className="flex justify-center">
+          <OTPInputs otp={otp} onChange={handleOtpChange} />
+        </div>
 
         {error && (
           <p className="mb-3 text-center text-sm text-red-500">{error}</p>
