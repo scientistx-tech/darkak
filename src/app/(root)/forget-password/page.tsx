@@ -62,56 +62,47 @@ const ChangePasswordPage: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#E6EFFF] px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md rounded-lg bg-white p-6 shadow"
-      >
-        <h2 className="mb-4 text-center text-2xl font-semibold text-secondary">
-          Change Password
-        </h2>
+    <div>
+      <h2 className="mb-4 text-center text-2xl font-semibold text-secondary">
+        Change Password
+      </h2>
 
-        {error && <p className="mb-2 text-sm text-red-600">{error}</p>}
-        {successMessage && (
-          <p className="mb-2 text-sm text-green-600">{successMessage}</p>
-        )}
+      {error && <p className="mb-2 text-sm text-red-600">{error}</p>}
+      {successMessage && (
+        <p className="mb-2 text-sm text-green-600">{successMessage}</p>
+      )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium">New Password</label>
-            <input
-              type="password"
-              className="mt-1 w-full rounded border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium">New Password</label>
+          <input
+            type="password"
+            className="mt-1 w-full rounded border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              className="mt-1 w-full rounded border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </div>
+        <div>
+          <label className="block text-sm font-medium">Confirm Password</label>
+          <input
+            type="password"
+            className="mt-1 w-full rounded border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+        </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full rounded bg-[#003084] py-2 font-semibold text-white hover:bg-[#00153B] disabled:opacity-60"
-          >
-            {isLoading ? "Changing..." : "Change Password"}
-          </button>
-        </form>
-      </motion.div>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full rounded bg-[#003084] py-2 font-semibold text-white hover:bg-[#00153B] disabled:opacity-60"
+        >
+          {isLoading ? "Changing..." : "Change Password"}
+        </button>
+      </form>
     </div>
   );
 };
