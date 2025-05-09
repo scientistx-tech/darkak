@@ -31,6 +31,8 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "@/redux/slices/authSlice";
 
+import logo from "@/Data/Icon/PNG.png";
+
 const Header: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.auth.user);
@@ -194,9 +196,7 @@ const Header: React.FC = () => {
         {/* Main Header */}
         <div className="mx-auto flex h-[65px] w-full items-center justify-between bg-[#E6EFFF] px-4 text-secondary md:h-[70px] md:px-6">
           <Link href="/" className="">
-            <p className="font-serif text-2xl font-semibold text-primary md:text-3xl">
-              Darkak
-            </p>
+            <Image alt="Darkak-Logo" src={logo} height={50} className="" />
           </Link>
 
           <div className="hidden grid-flow-col gap-8 md:grid">
