@@ -6,33 +6,34 @@ import { useGetUserQuery } from "@/redux/services/authApis";
 import { useUpdateUserMutation } from "@/redux/services/userApis";
 import ClientLoading from "@/app/(root)/components/ClientLoading";
 import { toast } from "react-toastify";
+import InputField from "./InputField";
+import SelectField from "./SelectField";
 
 export default function EditProfile({ refetch }: any) {
   const { data: user, isLoading, isError } = useGetUserQuery();
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
-  // console.log(user);
 
   const [profile, setProfile] = useState({
     name: "",
-    email: "",
     phone: "",
     dob: "",
     gender: "",
     maritalStatus: "",
     anniversary: "",
-    address: "",
   });
 
   useEffect(() => {
     if (user) {
-      setProfile((prev) => ({
-        ...prev,
+      setProfile({
         name: user.name || "",
-        email: user.email || "",
         phone: user.phone || "",
-        dob: user.dob ? user.dob.split("T")[0] : "",
+        dob: user.dob ? new Date(user.dob).toISOString().split("T")[0] : "",
         gender: user.gender || "",
-      }));
+        maritalStatus: user.marital_status || "",
+        anniversary: user.anniversary_date
+          ? new Date(user.anniversary_date).toISOString().split("T")[0]
+          : "",
+      });
     }
   }, [user]);
 
@@ -47,6 +48,13 @@ export default function EditProfile({ refetch }: any) {
         phone: profile.phone,
         dob: profile.dob,
         gender: profile.gender,
+        marital_status: profile.maritalStatus,
+        anniversary_date:
+          profile.maritalStatus === "single"
+            ? undefined
+            : profile.maritalStatus === "divorced"
+              ? undefined
+              : profile.anniversary,
       }).unwrap();
       refetch();
       toast.success("Profile Updated Successfully!");
@@ -66,65 +74,57 @@ export default function EditProfile({ refetch }: any) {
       </h2>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {/* Name */}
-        <div className="relative">
-          <label className="block text-sm font-semibold text-gray-700">
-            Name
-          </label>
-          <input
-            className="peer mt-2 w-full rounded-lg border border-gray-300 px-6 py-3"
-            placeholder="Enter Your Name"
-            value={profile.name}
-            onChange={(e) => handleChange("name", e.target.value)}
-          />
-        </div>
-
-        {/* Phone */}
-        <div className="relative">
-          <label className="block text-sm font-semibold text-gray-700">
-            Phone
-          </label>
-          <input
-            type="tel"
-            className="peer mt-2 w-full rounded-lg border border-gray-300 px-6 py-3"
-            placeholder="Enter Your Phone"
-            value={profile.phone}
-            onChange={(e) => handleChange("phone", e.target.value)}
-          />
-        </div>
-
-        {/* Date of Birth */}
-        <div className="relative">
-          <label className="block text-sm font-semibold text-gray-700">
-            Date of Birth
-          </label>
-          <input
+        <InputField
+          label="Name"
+          value={profile.name}
+          placeholder="Enter Your Name"
+          onChange={(value) => handleChange("name", value)}
+        />
+        <InputField
+          label="Phone"
+          type="tel"
+          value={profile.phone}
+          placeholder="Enter Your Phone"
+          onChange={(value) => handleChange("phone", value)}
+        />
+        <InputField
+          label="Date of Birth"
+          type="date"
+          value={profile.dob}
+          onChange={(value) => handleChange("dob", value)}
+        />
+        <SelectField
+          label="Gender"
+          value={profile.gender}
+          onChange={(value) => handleChange("gender", value)}
+          options={[
+            { label: "Select Gender", value: "" },
+            { label: "Male", value: "male" },
+            { label: "Female", value: "female" },
+            { label: "Other", value: "other" },
+          ]}
+        />
+        <SelectField
+          label="Marital Status"
+          value={profile.maritalStatus}
+          onChange={(value) => handleChange("maritalStatus", value)}
+          options={[
+            { label: "Select Marital Status", value: "" },
+            { label: "Married", value: "married" },
+            { label: "Single", value: "single" },
+            { label: "Divorced", value: "divorced" },
+          ]}
+        />
+        {profile.maritalStatus === "married" && (
+          <InputField
+            label="Anniversary Date"
             type="date"
-            className="peer mt-2 w-full rounded-lg border border-gray-300 px-6 py-3"
-            value={profile.dob}
-            onChange={(e) => handleChange("dob", e.target.value)}
+            value={profile.anniversary}
+            onChange={(value) => handleChange("anniversary", value)}
           />
-        </div>
-
-        {/* Gender */}
-        <div className="relative">
-          <label className="block text-sm font-semibold text-gray-700">
-            Gender
-          </label>
-          <select
-            className="peer mt-2 w-full rounded-lg border border-gray-300 px-6 py-3"
-            value={profile.gender}
-            onChange={(e) => handleChange("gender", e.target.value)}
-          >
-            <option value="">Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
+        )}
       </div>
 
-      {/* Update Button */}
       <div className="mt-10 flex justify-center">
         <SendButton
           link={handleSubmit}

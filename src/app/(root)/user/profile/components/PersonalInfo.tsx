@@ -9,10 +9,12 @@ import {
   FaBirthdayCake,
   FaHeart,
   FaMapMarkerAlt,
+  FaRing,
+  FaCalendarCheck,
+  FaKey,
 } from "react-icons/fa";
 import { User } from "@/types/userTypes";
 
-// Props for PersonalInfo component
 interface PersonalInfoProps {
   data?: User;
   isLoading: boolean;
@@ -29,6 +31,10 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
     return <p className="text-red-500">Failed to load user data.</p>;
 
   const user = data;
+
+  const fullAddress = user.address
+    ? `${user.address.area}, ${user.address.sub_district}, ${user.address.district}, ${user.address.division}`
+    : "Not Provided";
 
   return (
     <div className="w-full rounded-3xl border border-gray-200 bg-gradient-to-br from-white via-[#f0f4ff] to-[#e4ecff] p-10 shadow-xl transition-all hover:shadow-2xl">
@@ -57,9 +63,22 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
           value={user.gender ?? "N/A"}
         />
         <InfoItem
+          icon={<FaRing />}
+          label="Marital Status"
+          value={user.marital_status ?? "N/A"}
+        />
+        {user.marital_status === "Married" && (
+          <InfoItem
+            icon={<FaCalendarCheck />}
+            label="Anniversary Date"
+            value={user.anniversary_date?.split("T")[0] ?? "N/A"}
+          />
+        )}
+
+        <InfoItem
           icon={<FaMapMarkerAlt />}
           label="Address"
-          value="Not Provided"
+          value={fullAddress}
           fullWidth
         />
       </div>
