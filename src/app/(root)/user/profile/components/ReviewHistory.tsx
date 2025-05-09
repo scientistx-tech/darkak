@@ -104,7 +104,7 @@ export default function ReviewHistory() {
               </div>
 
               <Link
-                href="/review"
+                href="/user/review"
                 // href={`/review?id=${product.id}`}
                 className="mt-4 inline-block rounded-full bg-primaryBlue px-6 py-2 text-sm font-semibold text-white transition hover:bg-blue-600"
               >
