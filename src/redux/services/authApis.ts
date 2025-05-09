@@ -44,7 +44,7 @@ export const authApi = baseApi.injectEndpoints({
       }),
     }),
     userPassWordChange: builder.mutation<
-      AuthResponse,
+      any,
       { password: string; code: any; id: any }
     >({
       query: (body) => ({
