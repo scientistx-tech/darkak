@@ -12,7 +12,7 @@ export default function ReviewPage() {
           <FaHome className="mt-1" />
         </Link>
         <label>\</label>
-        <Link href="/profile" className="hover:text-primaryBlue">
+        <Link href="/user/profile" className="hover:text-primaryBlue">
           Profile
         </Link>
         <label>\</label>

@@ -15,7 +15,7 @@ const FooterNav: React.FC = () => {
   const pathname = usePathname();
 
   return (
-    <div className="fixed bottom-0 left-0 z-50 flex h-[60px] w-full items-center justify-evenly bg-black text-white">
+    <div className="fixed bottom-0 left-0 z-50 flex h-[60px] w-full items-center justify-evenly bg-[#00286EF2] text-white">
       <Link
         href="/"
         className="flex flex-col items-center transition-all duration-300"

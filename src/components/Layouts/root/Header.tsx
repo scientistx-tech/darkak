@@ -96,7 +96,7 @@ const Header: React.FC = () => {
     dispatch(clearUser());
   };
   return (
-    <div className="w-full">
+    <div className="w-full bg-black">
       <motion.div
         animate={{ y: show ? 0 : -130 }}
         transition={
@@ -113,7 +113,7 @@ const Header: React.FC = () => {
             animate={{ opacity: 1, height: 40 }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="mx-auto hidden w-full grid-cols-3 items-center overflow-visible bg-[#003084] px-4 text-white md:grid md:px-6"
+            className="mx-auto hidden w-full grid-cols-3 items-center overflow-visible bg-primary px-4 text-white md:grid md:px-6"
           >
             <p>Get Ready For Summer Offers</p>
             <p className="text-center">Use code 2025 and get 10% Off</p>
@@ -194,7 +194,7 @@ const Header: React.FC = () => {
         )}
 
         {/* Main Header */}
-        <div className="mx-auto flex h-[65px] w-full items-center justify-between bg-[#E6EFFF] px-4 text-secondary md:h-[70px] md:px-6">
+        <div className="mx-auto flex h-[65px] w-full items-center justify-between bg-[#00286EF2] px-4 text-white md:h-[70px] md:px-6">
           <Link href="/" className="">
             <Image alt="Darkak-Logo" src={logo} height={50} className="" />
           </Link>
@@ -233,11 +233,11 @@ const Header: React.FC = () => {
             />
 
             <div className="flex w-[25%] justify-between">
-              <button className="w-[30%]">
+              <button className="w-[30%] text-black">
                 <MenuFoldOutlined />
               </button>
 
-              <button className="w-[70%] rounded-br-full rounded-tr-full bg-primaryBlue p-1.5 pl-5 pr-5 text-white transition-all duration-300 hover:bg-primaryDarkBlue">
+              <button className="w-[70%] rounded-br-full rounded-tr-full border-none bg-primary p-1.5 pl-5 pr-5 text-white transition-all duration-300">
                 <SearchOutlined className="text-xl" />
               </button>
             </div>
@@ -247,7 +247,7 @@ const Header: React.FC = () => {
             <Link
               href="/user/profile"
               className={`text-2xl transition-all duration-300 hover:scale-110 hover:text-primary ${
-                pathname === "/profile" ? "text-primary" : ""
+                pathname === "/user/profile" ? "opacity-100" : "opacity-70"
               }`}
             >
               <UserOutlined />
@@ -255,14 +255,18 @@ const Header: React.FC = () => {
 
             <Link
               href="/user/wishlist"
-              className={`group text-2xl transition-all duration-300 hover:scale-110 hover:text-primary ${
-                pathname === "/wishlist" ? "text-primary" : ""
-              }`}
+              className="group text-2xl transition-all duration-300 hover:scale-110 hover:text-primary"
             >
-              <HeartOutlined />
+              <HeartOutlined
+                className={` ${
+                  pathname === "/user/wishlist" ? "opacity-100" : "opacity-70"
+                }`}
+              />
               <div
-                className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-white group-hover:bg-primary group-hover:text-white ${
-                  pathname === "/wishlist" ? "bg-primary" : "bg-secondary"
+                className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-black group-hover:bg-primary group-hover:text-white ${
+                  pathname === "/user/wishlist"
+                    ? "bg-primary text-white"
+                    : "bg-white"
                 }`}
               >
                 <p className="text-[10px] font-semibold">12</p>
@@ -271,14 +275,18 @@ const Header: React.FC = () => {
 
             <Link
               href="/user/cart"
-              className={`group text-2xl transition-all duration-300 hover:scale-110 hover:text-primary ${
-                pathname === "/cart" ? "text-primary" : ""
-              }`}
+              className="group text-2xl transition-all duration-300 hover:scale-110 hover:text-primary"
             >
-              <ShoppingCartOutlined />
+              <ShoppingCartOutlined
+                className={` ${
+                  pathname === "/user/cart" ? "opacity-100" : "opacity-70"
+                }`}
+              />
               <div
-                className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-white group-hover:bg-primary group-hover:text-white ${
-                  pathname === "/cart" ? "bg-primary" : "bg-secondary"
+                className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-black group-hover:bg-primary group-hover:text-white ${
+                  pathname === "/user/cart"
+                    ? "bg-primary text-white"
+                    : "bg-white"
                 }`}
               >
                 <p className="text-[10px] font-semibold">3</p>
@@ -323,14 +331,12 @@ const Header: React.FC = () => {
         <div className="flex h-full flex-col justify-between px-5 py-6 text-gray-800 shadow-lg backdrop-blur-md">
           <div className="w-full">
             {/* Header */}
-            <div className="mb-6 flex items-center justify-between border-b pb-4">
-              <Link href="/" onClick={onClose}>
-                <h1 className="font-serif text-2xl font-extrabold tracking-wide text-primary">
-                  Darkak
-                </h1>
+            <div className="mb-6 h-[50px] flex items-center justify-between bg-primaryBlue">
+              <Link href="/" onClick={onClose} className="ml-5">
+                <Image alt="Darkak-Logo" src={logo} height={35} className="" />
               </Link>
-              <button onClick={onClose}>
-                <CloseOutlined className="text-xl text-gray-700 transition duration-200 hover:text-primaryBlue" />
+              <button onClick={onClose} className="mr-5">
+                <CloseOutlined className="text-xl text-white transition duration-200 hover:text-primary" />
               </button>
             </div>
 
