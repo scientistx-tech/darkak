@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import ClientLoading from "@/app/(root)/components/ClientLoading";
 import {
   FaUser,
   FaEnvelope,
@@ -9,51 +10,56 @@ import {
   FaHeart,
   FaMapMarkerAlt,
 } from "react-icons/fa";
+import { User } from "@/types/userTypes";
 
-const PersonalInfo: React.FC = () => {
-  const userInfo = {
-    name: "Mr. xyz",
-    email: "example@gmail.com",
-    phone: "0123456789",
-    dob: "01 Apr 2025",
-    maritalStatus: "Married",
-    anniversary: "01 Apr 2025",
-    address: "Kazipara, Mirpur-10, Dhaka",
-  };
+// Props for PersonalInfo component
+interface PersonalInfoProps {
+  data?: User;
+  isLoading: boolean;
+  isError: boolean;
+}
+
+const PersonalInfo: React.FC<PersonalInfoProps> = ({
+  data,
+  isLoading,
+  isError,
+}) => {
+  if (isLoading) return <ClientLoading />;
+  if (isError || !data)
+    return <p className="text-red-500">Failed to load user data.</p>;
+
+  const user = data;
 
   return (
     <div className="w-full rounded-3xl border border-gray-200 bg-gradient-to-br from-white via-[#f0f4ff] to-[#e4ecff] p-10 shadow-xl transition-all hover:shadow-2xl">
-      {/* Header */}
-      <div className="mb-6 md:mb-12 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between md:mb-12">
         <h2 className="text-3xl font-semibold text-[#1e3a8a]">
           Personal Profile
         </h2>
       </div>
 
-      {/* Information */}
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-        <InfoItem icon={<FaUser />} label="Name" value={userInfo.name} />
-        <InfoItem icon={<FaEnvelope />} label="Email" value={userInfo.email} />
-        <InfoItem icon={<FaPhone />} label="Phone" value={userInfo.phone} />
+        <InfoItem icon={<FaUser />} label="Name" value={user.name} />
+        <InfoItem icon={<FaEnvelope />} label="Email" value={user.email} />
+        <InfoItem
+          icon={<FaPhone />}
+          label="Phone"
+          value={user.phone ?? "N/A"}
+        />
         <InfoItem
           icon={<FaBirthdayCake />}
           label="Date of Birth"
-          value={userInfo.dob}
+          value={user.dob?.split("T")[0] ?? "N/A"}
         />
         <InfoItem
           icon={<FaHeart />}
-          label="Marital Status"
-          value={userInfo.maritalStatus}
-        />
-        <InfoItem
-          icon={<FaBirthdayCake />}
-          label="Anniversary Date"
-          value={userInfo.anniversary}
+          label="Gender"
+          value={user.gender ?? "N/A"}
         />
         <InfoItem
           icon={<FaMapMarkerAlt />}
           label="Address"
-          value={userInfo.address}
+          value="Not Provided"
           fullWidth
         />
       </div>

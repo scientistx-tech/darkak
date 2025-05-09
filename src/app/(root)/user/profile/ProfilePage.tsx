@@ -1,20 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  FaUser,
-  FaCamera,
-  FaBell,
-  FaClipboardList,
-  FaShippingFast,
-  FaPen,
-  FaStar,
-  FaMapMarkerAlt,
-} from "react-icons/fa";
+import { FaCamera } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { useGetUserQuery } from "@/redux/services/authApis";
+import { useUpdateUserProfilePictureMutation } from "@/redux/services/userApis";
 
-import profile from "@/Data/Img/blank-profile-picture.webp";
+// Components
+import MenuItems from "./components/MenuItems";
 import PersonalInfo from "./components/PersonalInfo";
 import EditProfile from "./components/EditProfile";
 import NotificationPage from "./components/NotificationPage";
@@ -24,15 +19,36 @@ import ReviewHistory from "./components/ReviewHistory";
 import ReturnAndRefund from "./components/ReturnAndRefund";
 
 const ProfilePage: React.FC = () => {
-  const [profileImage, setProfileImage] = useState<string>("");
+  const { data, isLoading, isError, refetch } = useGetUserQuery(undefined);
+  const [updateProfilePicture] = useUpdateUserProfilePictureMutation();
 
-  const [activeTab, setActiveTab] = useState<string>("personal"); // default active page
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("personal");
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    if (data?.image) {
+      setImagePreview(data.image); // Show image from server
+    }
+  }, [data]);
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
+    if (!file) return;
+
+    setProfileImage(file);
+    setImagePreview(URL.createObjectURL(file)); // Preview immediately
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      await updateProfilePicture(formData).unwrap();
+      toast.success("Profile picture updated!");
+      refetch();
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      toast.error("Failed to upload profile picture.");
     }
   };
 
@@ -50,7 +66,7 @@ const ProfilePage: React.FC = () => {
           {/* Profile Picture */}
           <div className="relative">
             <Image
-              src={profileImage || profile}
+              src={imagePreview || "/default-avatar.png"}
               alt="Profile"
               width={200}
               height={200}
@@ -68,90 +84,8 @@ const ProfilePage: React.FC = () => {
           </div>
 
           {/* Menu */}
-          <div className="mt-6 flex w-full flex-col gap-2">
-            <button
-              onClick={() => setActiveTab("personal")}
-              className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
-                activeTab === "personal"
-                  ? "bg-primaryBlue text-white"
-                  : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
-              }`}
-            >
-              <FaUser />
-              Personal information
-            </button>
-
-            <button
-              onClick={() => setActiveTab("edit")}
-              className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
-                activeTab === "edit"
-                  ? "bg-primaryBlue text-white"
-                  : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
-              }`}
-            >
-              <FaPen />
-              Edit profile
-            </button>
-
-            <button
-              onClick={() => setActiveTab("notification")}
-              className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
-                activeTab === "notification"
-                  ? "bg-primaryBlue text-white"
-                  : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
-              }`}
-            >
-              <FaBell />
-              Notification
-            </button>
-
-            <button
-              onClick={() => setActiveTab("order")}
-              className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
-                activeTab === "order"
-                  ? "bg-primaryBlue text-white"
-                  : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
-              }`}
-            >
-              <FaClipboardList />
-              Order History
-            </button>
-
-            <button
-              onClick={() => setActiveTab("review")}
-              className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
-                activeTab === "review"
-                  ? "bg-primaryBlue text-white"
-                  : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
-              }`}
-            >
-              <FaStar />
-              My Review
-            </button>
-
-            <button
-              onClick={() => setActiveTab("track")}
-              className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
-                activeTab === "track"
-                  ? "bg-primaryBlue text-white"
-                  : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
-              }`}
-            >
-              <FaMapMarkerAlt />
-              Track Order
-            </button>
-
-            <button
-              onClick={() => setActiveTab("return")}
-              className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
-                activeTab === "return"
-                  ? "bg-primaryBlue text-white"
-                  : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
-              }`}
-            >
-              <FaShippingFast />
-              Return & Refund
-            </button>
+          <div className=" w-full">
+            <MenuItems setActiveTab={setActiveTab} activeTab={activeTab} />
           </div>
         </div>
 
@@ -166,76 +100,40 @@ const ProfilePage: React.FC = () => {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
               >
-                <PersonalInfo />
+                <PersonalInfo
+                  data={data}
+                  isError={isError}
+                  isLoading={isLoading}
+                />
               </motion.div>
             )}
-
             {activeTab === "edit" && (
-              <motion.div
-                key="edit"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
-                <EditProfile />
+              <motion.div key="edit" {...animationProps}>
+                <EditProfile refetch={refetch} />
               </motion.div>
             )}
-
             {activeTab === "notification" && (
-              <motion.div
-                key="notification"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
+              <motion.div key="notification" {...animationProps}>
                 <NotificationPage />
               </motion.div>
             )}
-
             {activeTab === "order" && (
-              <motion.div
-                key="order"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
+              <motion.div key="order" {...animationProps}>
                 <OrderHistory />
               </motion.div>
             )}
-
             {activeTab === "track" && (
-              <motion.div
-                key="track"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
+              <motion.div key="track" {...animationProps}>
                 <TrackOrder />
               </motion.div>
             )}
             {activeTab === "return" && (
-              <motion.div
-                key="return"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
+              <motion.div key="return" {...animationProps}>
                 <ReturnAndRefund />
               </motion.div>
             )}
             {activeTab === "review" && (
-              <motion.div
-                key="review"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
+              <motion.div key="review" {...animationProps}>
                 <ReviewHistory />
               </motion.div>
             )}
@@ -244,6 +142,13 @@ const ProfilePage: React.FC = () => {
       </div>
     </div>
   );
+};
+
+const animationProps = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 },
+  transition: { duration: 0.4 },
 };
 
 export default ProfilePage;

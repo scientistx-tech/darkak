@@ -53,6 +53,16 @@ export const authApi = baseApi.injectEndpoints({
         method: "PUT",
       }),
     }),
+    userGoogleAuthentication: builder.mutation<
+      AuthResponse,
+      { token: string; name: string }
+    >({
+      query: (body) => ({
+        url: `/auth/continue-with-google`,
+        body: body,
+        method: "POST",
+      }),
+    }),
   }),
 });
 
@@ -63,4 +73,5 @@ export const {
   useVerifyEmailOTPMutation,
   usePasswordResetMailMutation,
   useUserPassWordChangeMutation,
+  useUserGoogleAuthenticationMutation,
 } = authApi;
