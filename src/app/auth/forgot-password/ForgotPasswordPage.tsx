@@ -4,31 +4,24 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import SVG from "@/Data/Img/LoginPage.svg";
 import EmailInput from "./EmailInput";
-import {
-  usePasswordResetMailMutation,
-  useVerifyEmailOTPMutation,
-} from "@/redux/services/authApis";
+import { usePasswordResetMailMutation } from "@/redux/services/authApis";
 import { toast } from "react-toastify";
-import ChangePasswordPage from "@/app/(root)/forget-password/page";
+import ChangePasswordPage from "./ChangePasswordPage";
 
 const ForgotPasswordPage: React.FC = () => {
   const searchParams = useSearchParams();
 
   const id = searchParams.get("id");
   const code = searchParams.get("code");
-  // const router = useRouter();
   const [email, setEmail] = useState("");
-  // const [otp, setOtp] = useState(Array(6).fill(""));
   const [timer, setTimer] = useState(60);
   const [resendDisabled, setResendDisabled] = useState(true);
   const [isOtpSent, setIsOtpSent] = useState(false);
-  // const [isSubmitEnabled, setIsSubmitEnabled] = useState(false);
 
   const [sendOtp, { isLoading: sendingOtp }] = usePasswordResetMailMutation();
-  const [verifyOtp, { isLoading: verifyingOtp }] = useVerifyEmailOTPMutation();
 
   useEffect(() => {
     if (isOtpSent && timer > 0) {
@@ -41,12 +34,6 @@ const ForgotPasswordPage: React.FC = () => {
     }
   }, [isOtpSent, timer]);
 
-  // const handleOtpChange = (index: number, value: string) => {
-  //   const newOtp = [...otp];
-  //   newOtp[index] = value;
-  //   setOtp(newOtp);
-  // };
-
   const handleSendOtp = async () => {
     if (!email) return toast.info("Please enter your email.");
 
@@ -54,7 +41,6 @@ const ForgotPasswordPage: React.FC = () => {
       await sendOtp(email).unwrap();
       toast.success("Please check your email!");
       setIsOtpSent(true);
-      // setIsSubmitEnabled(true);
       setTimer(60);
       setResendDisabled(true);
     } catch (error) {
@@ -63,21 +49,6 @@ const ForgotPasswordPage: React.FC = () => {
     }
   };
 
-  // const handleVerifyOtp = async () => {
-  //   const fullOtp = otp.join("");
-  //   if (!email || fullOtp.length !== 6) {
-  //     alert("Please enter the full OTP.");
-  //     return;
-  //   }
-
-  //   try {
-  //     await verifyOtp({ email, otp: fullOtp }).unwrap();
-  //     router.push("/auth/change-password"); // Navigate after verification
-  //   } catch (error) {
-  //     console.error("OTP verification failed:", error);
-  //     alert("Invalid OTP. Please try again.");
-  //   }
-  // };
   if (id && code)
     return (
       <div className="flex h-screen items-center justify-center bg-[#E6EFFF]">
@@ -137,9 +108,6 @@ const ForgotPasswordPage: React.FC = () => {
           {isOtpSent ? "Resend OTP" : "Send for OTP"}
         </button>
 
-        {/* <p className="text-[15px]">Your 6-digit code goes here</p>
-        <OTPInputs otp={otp} onChange={handleOtpChange} /> */}
-
         {isOtpSent && (
           <p className="text-[14px]">
             <button
@@ -156,18 +124,6 @@ const ForgotPasswordPage: React.FC = () => {
             in <span className="text-primary">{timer}s</span>
           </p>
         )}
-
-        {/* <button
-          className={`mt-4 w-[90%] rounded-lg bg-[#003084] py-2 font-semibold text-white transition hover:bg-[#00153B] md:w-[70%] ${
-            !isSubmitEnabled || verifyingOtp
-              ? "cursor-not-allowed opacity-50"
-              : ""
-          }`}
-          onClick={handleVerifyOtp}
-          disabled={!isSubmitEnabled || verifyingOtp}
-        >
-          Submit
-        </button> */}
 
         <div className="mt-5 flex font-medium">
           <p>Don&apos;t Have an account?</p>

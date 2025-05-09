@@ -4,6 +4,9 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useUserPassWordChangeMutation } from "@/redux/services/authApis";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { setUser } from "@/redux/slices/authSlice";
 
 const ChangePasswordPage: React.FC = () => {
   const searchParams = useSearchParams();
@@ -16,7 +19,7 @@ const ChangePasswordPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-
+  const dispatch = useDispatch<AppDispatch>();
   const [changePassword, { isLoading }] = useUserPassWordChangeMutation();
 
   useEffect(() => {
@@ -45,7 +48,8 @@ const ChangePasswordPage: React.FC = () => {
         code,
         password,
       }).unwrap();
-
+      console.log(response);
+      dispatch(setUser(response));
       setSuccessMessage("Password changed successfully!");
       setError("");
       setPassword("");
