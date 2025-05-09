@@ -4,17 +4,21 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import SVG from "@/Data/Img/LoginPage.svg";
 import EmailInput from "./EmailInput";
-import OTPInputs from "./OTPInputs";
 import {
   usePasswordResetMailMutation,
   useVerifyEmailOTPMutation,
 } from "@/redux/services/authApis";
 import { toast } from "react-toastify";
+import ChangePasswordPage from "@/app/(root)/forget-password/page";
 
 const ForgotPasswordPage: React.FC = () => {
+  const searchParams = useSearchParams();
+
+  const id = searchParams.get("id");
+  const code = searchParams.get("code");
   // const router = useRouter();
   const [email, setEmail] = useState("");
   // const [otp, setOtp] = useState(Array(6).fill(""));
@@ -74,7 +78,32 @@ const ForgotPasswordPage: React.FC = () => {
   //     alert("Invalid OTP. Please try again.");
   //   }
   // };
+  if (id && code)
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#E6EFFF]">
+        <Image
+          alt="img"
+          src={SVG}
+          className="absolute left-[12.5%] top-4 hidden h-[200px] w-[200px] opacity-45 md:block"
+        />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="z-10 flex w-[90%] flex-col items-center justify-center rounded-lg bg-white p-6 shadow md:w-[60%]"
+        >
+          <div className="w-full">
+            <ChangePasswordPage></ChangePasswordPage>
+          </div>
+        </motion.div>
 
+        <Image
+          alt="img"
+          src={SVG}
+          className="absolute bottom-4 right-[12.5%] hidden h-[200px] w-[200px] opacity-45 md:block"
+        />
+      </div>
+    );
   return (
     <div className="flex h-screen items-center justify-center bg-[#E6EFFF]">
       <Image
