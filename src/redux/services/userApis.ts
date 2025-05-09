@@ -5,7 +5,17 @@ export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     updateUser: builder.mutation<
       AuthResponse,
-      Partial<Pick<User, "name" | "phone" | "dob" | "gender">>
+      Partial<
+        Pick<
+          User,
+          | "name"
+          | "phone"
+          | "dob"
+          | "gender"
+          | "marital_status"
+          | "anniversary_date"
+        >
+      >
     >({
       query: (body) => ({
         url: `/user/update`,
