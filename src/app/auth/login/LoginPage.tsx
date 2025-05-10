@@ -28,7 +28,10 @@ const LoginPage: React.FC = () => {
   setLocalStorage("path", pathname);
 
   useEffect(() => {
-    if (user) router.replace("/");
+    if (user?.isAdmin) return router.replace("/admin");
+    if(user?.isSeller) return router.replace('/seller')
+      if(user) return router.replace('/user/profile')
+   
   }, [user, router]);
 
   const handleLogin = async () => {
@@ -41,7 +44,7 @@ const LoginPage: React.FC = () => {
       const res = await login({ email, password }).unwrap();
       dispatch(setUser(res));
       toast.success("Login successful!");
-      router.push("/");
+      // router.push("/");
     } catch (err: any) {
       toast.error(err?.data?.message || "Login failed!");
     }
