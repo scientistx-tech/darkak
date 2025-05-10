@@ -11,21 +11,22 @@ interface PrivateLayoutProps {
 }
 
 const AdminPrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
-    const admin = useSelector((state: RootState) => state.auth.user);
+    const user = useSelector((state: RootState) => state.auth.user);
     const router = useRouter();
     const pathname = usePathname();
     setLocalStorage("path", pathname);
+// console.log(user);
 
 
     useEffect(() => {
-        if (!admin) {
-            router.replace("/sign-in");
+        if (!user?.isAdmin) {
+            router.replace("/auth/login");
         } else {
             router.replace(getLocalStorage("path") || "/admin");
         }
-    }, [admin, router]); // Runs when admin state changes
+    }, [user, router]); // Runs when admin state changes
 
-    if (!admin) {
+    if (!user) {
         return null; // Prevent rendering before redirect
     }
 
