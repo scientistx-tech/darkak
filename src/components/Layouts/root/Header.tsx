@@ -32,6 +32,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "@/redux/slices/authSlice";
 
 import logo from "@/Data/Icon/PNG.png";
+import { auth } from "@/utils/firebase";
 
 const Header: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -94,7 +95,9 @@ const Header: React.FC = () => {
   };
   const handleLogOut = () => {
     dispatch(clearUser());
+    auth.signOut();
   };
+
   return (
     <div className="w-full bg-black">
       <motion.div

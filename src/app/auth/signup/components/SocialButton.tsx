@@ -4,24 +4,31 @@ import { setUser } from "@/redux/slices/authSlice";
 import { toast } from "react-toastify";
 import { convertFirebaseToAppUser } from "@/utils/convertFirebaseUser";
 import { FaGoogle } from "react-icons/fa";
+import { useUserGoogleAuthenticationMutation, useGetUserQuery } from "@/redux/services/authApis";
+import { GoogleAuthProvider } from "firebase/auth";
 
 const SocialButton = () => {
   const dispatch = useDispatch();
+  const { data, isLoading, isError, refetch } = useGetUserQuery(undefined);
+  const [userGoogleAuthentication] = useUserGoogleAuthenticationMutation();
 
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      const appUser = convertFirebaseToAppUser(user);
+      // const appUser = convertFirebaseToAppUser(user);
 
-      // You can store user in Redux or make an API call to sync with your backend
-      dispatch(setUser({
-        user: appUser,
-        token: await user.getIdToken(),
-      }));
-
+      const firebaseToken = await user.getIdToken();
+      console.log("🚀 ~ handleGoogleLogin ~ token:", firebaseToken);
+      console.log("🚀 ~ handleGoogleLogin ~ user.displayName:", user.displayName);
+      
+      const userValue = await userGoogleAuthentication({ token: firebaseToken, name: user.displayName || "Unknown User" }).unwrap();
       toast.success("Google login successful!");
+      console.log("🚀 ~ handleGoogleLogin ~ userValue:", userValue)
+
+      dispatch(setUser(userValue));
+
     } catch (error: any) {
       toast.error("Google login failed!");
       console.error(error);
