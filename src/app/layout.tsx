@@ -4,17 +4,17 @@ import "flatpickr/dist/flatpickr.min.css";
 import "jsvectormap/dist/jsvectormap.css";
 import type { Metadata } from "next";
 import { PropsWithChildren } from "react";
-import UpdateNotice from "./(root)/component/UpdateNotice";
+import UpdateNotice from "@/app/(root)/component/UpdateNotice";
 import ReduxProvider from "@/redux/ReduxProvider";
-import DataLoader from "./DataLoader";
+import DataLoader from "@/app/DataLoader";
+import ClientFirebaseAuthProvider from "@/components/Auth/ClientFirebaseAuthProvider";
 
 export const metadata: Metadata = {
   title: {
     template: "%s | Darkak",
     default: "Darkak",
   },
-  description:
-    "Next.js admin dashboard toolkit with 200+ templates, UI components, and integrations for fast dashboard development.",
+  description: "Next.js admin dashboard toolkit...",
 };
 
 export default function RootLayout({ children }: PropsWithChildren) {
@@ -22,6 +22,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
     <html lang="en" suppressHydrationWarning>
       <body>
         <ReduxProvider>
+          <ClientFirebaseAuthProvider />
           <DataLoader>
             <UpdateNotice />
             {children}
