@@ -1,5 +1,6 @@
 import { BiCategory, BiSlider } from "react-icons/bi";
 import * as Icons from "../icons";
+import { BsTornado } from "react-icons/bs";
 
 export const NAV_DATA = [
   {
@@ -20,6 +21,20 @@ export const NAV_DATA = [
         url: "/admin/category",
         icon: BiCategory,
         items: [],
+      },
+      {
+        title: "Brand",
+        icon: BsTornado,
+        items: [
+          {
+            title: "Brand",
+            url: "/admin/brand",
+          },
+          {
+            title: "Add Brand",
+            url: "/admin/brand/add-brand",
+          },
+        ],
       },
       {
         title: "Slider Adds",
