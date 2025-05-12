@@ -1,6 +1,7 @@
 import { BiCategory, BiLogoProductHunt, BiSlider } from "react-icons/bi";
 import * as Icons from "../icons";
 import { BsTornado } from "react-icons/bs";
+import { url } from "inspector";
 
 export const NAV_DATA = [
   {
@@ -9,12 +10,8 @@ export const NAV_DATA = [
       {
         title: "Dashboard",
         icon: Icons.HomeIcon,
-        items: [
-          {
-            title: "eCommerce",
-            url: "/",
-          },
-        ],
+        url: "/admin",
+        items: [],
       },
       {
         title: "Category",
@@ -25,16 +22,8 @@ export const NAV_DATA = [
       {
         title: "Brand",
         icon: BsTornado,
-        items: [
-          {
-            title: "Brand",
-            url: "/admin/brand",
-          },
-          {
-            title: "Add Brand",
-            url: "/admin/brand/add-brand",
-          },
-        ],
+        url: "/admin/brand",
+        items: [],
       },
       {
         title: "Product",
