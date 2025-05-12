@@ -6,6 +6,9 @@ import Button from "../../components/Button";
 import Select from "../../components/Select";
 import Keywords from "../../components/Keywords";
 
+import { FaAngleUp, FaAngleDown } from "react-icons/fa";
+import TabSection from "../components/TabSection";
+
 // 1️⃣ Define Types
 type Option = {
   image?: string;
@@ -160,6 +163,9 @@ const AddProductPage: React.FC = () => {
   };
 
   const handleSubmit = async () => {};
+
+  const [isOpen, setIsOpen] = useState(false); // State to toggle visibility
+  const toggleSection = () => setIsOpen((prev) => !prev); // Toggle function
 
   return (
     <div className="mx-auto space-y-4 bg-white p-4">
@@ -364,6 +370,42 @@ const AddProductPage: React.FC = () => {
           }
         />
       </div>
+
+      {/* Add items */}
+      <div className="w-full">
+        {/* Button to toggle the section */}
+        <button
+          onClick={toggleSection}
+          className="flex w-full items-center justify-between rounded-md bg-primary px-5 py-2 text-white"
+        >
+          <h3 className="font-bold">Add Items (Optional)</h3>
+          {/* Change the icon based on the state */}
+          {isOpen ? <FaAngleUp /> : <FaAngleDown />}
+        </button>
+
+        {/* Div that opens or closes slowly */}
+        <div
+          className={`mt-4 overflow-hidden transition-all duration-500 ease-in-out ${
+            isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Input placeholder="Items Size" label="Items Size" />
+            <Input placeholder="Items Price" label="Items Price" />
+          </div>
+
+          <div className="mt-3">
+            <Input placeholder="Items Details" label="Items Details" />
+          </div>
+
+          <div className="mt-3 flex w-full justify-end">
+            <Button>Add Items</Button>
+          </div>
+        </div>
+      </div>
+
+      {/* TabSection */}
+      <TabSection />
 
       {/* Submit Button */}
       <Button onClick={handleSubmit}>Submit</Button>

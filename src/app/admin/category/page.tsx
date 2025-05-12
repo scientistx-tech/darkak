@@ -72,6 +72,7 @@ function CategoryTable() {
             <TableHead>Title</TableHead>
             <TableHead>Product Count</TableHead>
             <TableHead>Edit</TableHead>
+            <TableHead>Delete</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -103,6 +104,15 @@ function CategoryTable() {
                     className="bg-blue text-white"
                   >
                     Edit
+                  </Button>
+                </TableCell>
+
+                <TableCell>
+                  <Button
+                    onClick={() => handleEdit(doc)}
+                    className="bg-red-500 text-white"
+                  >
+                    Delete
                   </Button>
                 </TableCell>
               </TableRow>
