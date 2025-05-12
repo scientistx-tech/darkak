@@ -55,7 +55,7 @@ function AddData() {
         <img
           src={previewImage}
           alt="Preview"
-          className="mt-2 h-32 w-32 object-cover rounded"
+          className="mt-2 h-32 w-32 rounded object-cover"
         />
       )}
 
