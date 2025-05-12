@@ -1,4 +1,4 @@
-import { BiCategory, BiSlider } from "react-icons/bi";
+import { BiCategory, BiLogoProductHunt, BiSlider } from "react-icons/bi";
 import * as Icons from "../icons";
 import { BsTornado } from "react-icons/bs";
 
@@ -37,14 +37,25 @@ export const NAV_DATA = [
         ],
       },
       {
+        title: "Product",
+        icon: BiLogoProductHunt,
+        items: [
+          {
+            title: "Product",
+            url: "/admin/product",
+          },
+          {
+            title: "Add Product",
+            url: "/admin/product/add-product",
+          },
+        ],
+      },
+      {
         title: "Slider Adds",
         url: "/admin/slider",
         icon: BiSlider,
         items: [],
       },
-     
-    
-    
     ],
   },
   {
