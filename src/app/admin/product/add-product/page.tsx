@@ -1,7 +1,10 @@
 "use client";
 import React, { useState } from "react";
 import Input from "../../components/Input";
+import Textarea from "../../components/Textarea";
 import Button from "../../components/Button";
+import Select from "../../components/Select";
+import Keywords from "../../components/Keywords";
 
 // 1️⃣ Define Types
 type Option = {
@@ -60,8 +63,8 @@ const AddProductPage: React.FC = () => {
     brandId: 4,
     categoryId: 1,
     price: 20.22,
-    short_description: "This is short description",
-    title: "New Product",
+    short_description: "",
+    title: "",
     code: "",
     offerPrice: 19,
     available: "in-stock",
@@ -105,145 +108,262 @@ const AddProductPage: React.FC = () => {
     }));
   };
 
+  // Handle image upload
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const newImages = Array.from(files).map((file) =>
+        URL.createObjectURL(file),
+      );
+      setFormData((prev) => ({
+        ...prev,
+        images: [...prev.images, ...newImages],
+      }));
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
+  };
+
+  const [keywords, setKeywords] = useState<string[]>([]); // Stores the list of keywords
+  const [keywordsInput, setKeywordsInput] = useState(""); // Stores the current input for keywords
+
+  const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    if (input.endsWith(",")) {
+      const newKeyword = input.slice(0, -1).trim();
+      if (newKeyword && !keywords.includes(newKeyword)) {
+        setKeywords((prev) => [...prev, newKeyword]);
+      }
+      setKeywordsInput("");
+    } else {
+      setKeywordsInput(input);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if ((e.key === "Enter" || e.key === ",") && keywordsInput.trim()) {
+      e.preventDefault();
+      const newKeyword = keywordsInput.trim();
+      if (!keywords.includes(newKeyword)) {
+        setKeywords((prev) => [...prev, newKeyword]);
+      }
+      setKeywordsInput("");
+    } else if (e.key === "Backspace" && !keywordsInput && keywords.length > 0) {
+      setKeywords((prev) => prev.slice(0, -1));
+    }
+  };
+
   const handleSubmit = async () => {};
 
   return (
     <div className="mx-auto space-y-4 bg-white p-4">
-      <Input
-        placeholder="Title"
-        value={formData.title}
-        onChange={(e) => handleChange("title", e.target.value)}
+      <h1 className="text-2xl font-bold">Add Product&apos;s</h1>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Input
+          placeholder="Title"
+          label="Product Title"
+          value={formData.title}
+          onChange={(e) => handleChange("title", e.target.value)}
+        />
+        <Input
+          placeholder="Price"
+          label="Product Price"
+          type="number"
+          value={formData.price}
+          onChange={(e) => handleChange("price", parseFloat(e.target.value))}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Input
+          placeholder="Offer Price"
+          label="Offer Price (Optional)"
+          type="number"
+          value={formData.offerPrice}
+          onChange={(e) =>
+            handleChange("offerPrice", parseFloat(e.target.value))
+          }
+        />
+
+        <Input
+          placeholder="Code"
+          label="Product Code (Optional)"
+          value={formData.code}
+          onChange={(e) => handleChange("code", e.target.value)}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Input
+          placeholder="Stock"
+          label="Stock (Optional)"
+          type="number"
+          value={formData.stock}
+          onChange={(e) => handleChange("stock", parseInt(e.target.value))}
+        />
+        <Input
+          placeholder="Min Order"
+          label="Minimum Order"
+          type="number"
+          value={formData.minOrder}
+          onChange={(e) => handleChange("minOrder", parseInt(e.target.value))}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Select
+          label="Select Availability (Optional)"
+          options={[
+            { value: "in-stock", label: "In Stock" },
+            { value: "online-order", label: "Online-Order" },
+            { value: "pre-order", label: "Pre-Order" },
+          ]}
+        />
+
+        <Select
+          label="Select Category (Optional)"
+          options={[
+            { value: "", label: "Select Category" },
+            { value: "category-1", label: "category-1" },
+            { value: "category-2", label: "category-2" },
+            { value: "category-3", label: "category-3" },
+            { value: "category-4", label: "category-4" },
+            { value: "category-5", label: "category-5" },
+            { value: "category-6", label: "category-6" },
+          ]}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Select
+          label="Warranty (Optional)"
+          options={[
+            { value: "", label: "No Warranty" },
+            { value: "official", label: "Official" },
+            { value: "darkak", label: "Darkak" },
+          ]}
+        />
+
+        <Select
+          label="Select Region (Optional)"
+          options={[
+            { value: "BD", label: "Bangladesh" },
+            { value: "CN", label: "China" },
+            { value: "USA", label: "United States" },
+          ]}
+        />
+      </div>
+
+      <Keywords
+        label="Product Keywords"
+        value={keywords}
+        onChange={setKeywords}
+        required={false}
+        className="mb-4"
       />
-      <Input
+
+      <Textarea
         placeholder="Short Description"
+        label="Short Description (Optional)"
         value={formData.short_description}
         onChange={(e) => handleChange("short_description", e.target.value)}
       />
-      <Input
-        placeholder="Price"
-        type="number"
-        value={formData.price}
-        onChange={(e) => handleChange("price", parseFloat(e.target.value))}
-      />
-      <Input
-        placeholder="Offer Price"
-        type="number"
-        value={formData.offerPrice}
-        onChange={(e) => handleChange("offerPrice", parseFloat(e.target.value))}
-      />
-      <Input
-        placeholder="Stock"
-        type="number"
-        value={formData.stock}
-        onChange={(e) => handleChange("stock", parseInt(e.target.value))}
-      />
-      <Input
-        placeholder="Min Order"
-        type="number"
-        value={formData.minOrder}
-        onChange={(e) => handleChange("minOrder", parseInt(e.target.value))}
-      />
-      <Input
-        placeholder="Region"
-        value={formData.region}
-        onChange={(e) => handleChange("region", e.target.value)}
-      />
-      <Input
-        placeholder="Warranty"
-        value={formData.warranty}
-        onChange={(e) => handleChange("warranty", e.target.value)}
-      />
-      <Input
-        placeholder="Availability"
-        value={formData.available}
-        onChange={(e) => handleChange("available", e.target.value)}
-      />
-      <Input
-        placeholder="Keywords (comma-separated)"
-        value={formData.keywords.join(",")}
-        onChange={(e) =>
-          handleChange(
-            "keywords",
-            e.target.value.split(",").map((k) => k.trim()),
-          )
-        }
-      />
+
+      {/* Image Upload Section */}
       <h3 className="font-bold">Product Images</h3>
-      {formData.images.map((img, index) => (
-        <div key={index} className="mb-2 flex items-center gap-2">
-          <Input
-            placeholder={`Image URL ${index + 1}`}
-            value={img}
-            onChange={(e) => {
-              const newImages = [...formData.images];
-              newImages[index] = e.target.value;
-              handleChange("images", newImages);
-            }}
-          />
-          {img && (
+
+      {/* File Input */}
+      <div className="mb-4">
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="file-input file-input-bordered"
+        />
+      </div>
+
+      {/* Display Uploaded Images */}
+      <div className="flex flex-wrap gap-2">
+        {formData.images.map((img, index) => (
+          <div key={index} className="relative mb-2 flex items-center gap-2">
             <img
               src={img}
               alt={`preview-${index}`}
-              className="h-16 w-16 rounded object-cover"
+              className="h-16 w-16 rounded object-cover md:h-26 md:w-26"
             />
-          )}
-          <Button
-            
-            type="button"
-            onClick={() => {
-              const newImages = formData.images.filter((_, i) => i !== index);
-              handleChange("images", newImages);
-            }}
-          >
-            Remove
-          </Button>
-        </div>
-      ))}
+
+            {/* Remove Button */}
+            <button
+              type="button"
+              className="absolute right-0 top-0 rounded bg-white px-3 py-1 text-red-600 hover:bg-red-100"
+              onClick={() => removeImage(index)}
+            >
+              &#10005; {/* Cross icon */}
+            </button>
+          </div>
+        ))}
+      </div>
 
       {/* Delivery Info */}
       <h3 className="font-bold">Delivery Info</h3>
-      <Input
-        placeholder="Delivery Charge"
-        type="number"
-        value={formData.delivery_info.delivery_charge}
-        onChange={(e) =>
-          handleNestedChange(
-            "delivery_info",
-            "delivery_charge",
-            parseFloat(e.target.value),
-          )
-        }
-      />
-      <Input
-        placeholder="Delivery Time"
-        value={formData.delivery_info.delivery_time}
-        onChange={(e) =>
-          handleNestedChange("delivery_info", "delivery_time", e.target.value)
-        }
-      />
-      <Input
-        placeholder="Outside Delivery Charge"
-        type="number"
-        value={formData.delivery_info.delivery_charge_outside}
-        onChange={(e) =>
-          handleNestedChange(
-            "delivery_info",
-            "delivery_charge_outside",
-            parseFloat(e.target.value),
-          )
-        }
-      />
-      <Input
-        placeholder="Outside Delivery Time"
-        value={formData.delivery_info.delivery_time_outside}
-        onChange={(e) =>
-          handleNestedChange(
-            "delivery_info",
-            "delivery_time_outside",
-            e.target.value,
-          )
-        }
-      />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Input
+          placeholder="Delivery Charge"
+          label="Delivery Charge"
+          type="number"
+          value={formData.delivery_info.delivery_charge}
+          onChange={(e) =>
+            handleNestedChange(
+              "delivery_info",
+              "delivery_charge",
+              parseFloat(e.target.value),
+            )
+          }
+        />
+        <Input
+          placeholder="Delivery Time"
+          label="Delivery Time"
+          value={formData.delivery_info.delivery_time}
+          onChange={(e) =>
+            handleNestedChange("delivery_info", "delivery_time", e.target.value)
+          }
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Input
+          placeholder="Outside Delivery Charge"
+          label="Outside Delivery Charge"
+          type="number"
+          value={formData.delivery_info.delivery_charge_outside}
+          onChange={(e) =>
+            handleNestedChange(
+              "delivery_info",
+              "delivery_charge_outside",
+              parseFloat(e.target.value),
+            )
+          }
+        />
+        <Input
+          placeholder="Outside Delivery Time"
+          label="Outside Delivery Time"
+          value={formData.delivery_info.delivery_time_outside}
+          onChange={(e) =>
+            handleNestedChange(
+              "delivery_info",
+              "delivery_time_outside",
+              e.target.value,
+            )
+          }
+        />
+      </div>
 
       {/* Submit Button */}
       <Button onClick={handleSubmit}>Submit</Button>
