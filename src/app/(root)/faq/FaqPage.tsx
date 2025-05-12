@@ -51,6 +51,7 @@ export default function FaqPage() {
                 <h2 className="text-lg md:text-xl font-semibold text-gray-800">
                   {faq.question}
                 </h2>
+                
                 <FaChevronDown
                   className={`transition-transform ${
                     openIndex === index ? "rotate-180" : "rotate-0"
