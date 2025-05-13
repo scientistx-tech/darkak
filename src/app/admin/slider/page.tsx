@@ -1,96 +1,132 @@
 "use client";
 
 import React, { useState } from "react";
-import Input from "../components/Input";
+import Image from "next/image";
 import Button from "../components/Button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import ModalLayout from "@/components/Layouts/ModalLayout";
+import AddSlider from "./AddSlider";
 
-function AddSlider() {
-  const [title, setTitle] = useState("");
-  const [offerName, setOfferName] = useState("");
-  const [details, setDetails] = useState("");
-  const [productId, setProductId] = useState("");
-  const [bannerFile, setBannerFile] = useState<File | null>(null);
-  const [previewBanner, setPreviewBanner] = useState<string | null>(null);
+function SliderTable() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [editingData, setEditingData] = useState<any | null>(null);
+  const [sliders, setSliders] = useState([
+    {
+      id: 1,
+      title: "Summer Sale",
+      offerName: "50% OFF",
+      details: "All summer items",
+      productId: "123",
+      bannerUrl: "https://via.placeholder.com/400x200",
+    },
+    {
+      id: 2,
+      title: "Winter Deals",
+      offerName: "Up to 30%",
+      details: "Winter clothing",
+      productId: "456",
+      bannerUrl: "https://via.placeholder.com/400x200",
+    },
+  ]);
 
-  const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setBannerFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewBanner(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+  const handleSave = (slider: any) => {
+    if (editingData) {
+      setSliders((prev) =>
+        prev.map((s) => (s.id === editingData.id ? { ...s, ...slider } : s)),
+      );
+    } else {
+      setSliders((prev) => [...prev, { ...slider, id: Date.now() }]);
     }
-  };
-
-  const handleSubmit = () => {
-    if (!title || !offerName || !details || !productId || !bannerFile) {
-      alert("Please fill in all fields and upload a banner image.");
-      return;
-    }
-
-    // Dummy payload submission (can be replaced with actual API call)
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("offer_name", offerName);
-    formData.append("details", details);
-    formData.append("productId", productId);
-    formData.append("banner", bannerFile);
-
-    console.log("Slider Submitted:", {
-      title,
-      offerName,
-      details,
-      productId,
-      bannerFile,
-    });
+    setIsOpen(false);
+    setEditingData(null);
   };
 
   return (
-    <div className=" mx-auto mt-6 rounded-lg bg-white p-6 shadow-md">
-      <h2 className="text-2xl font-semibold mb-4">Add New Slider</h2>
+    <ModalLayout
+      isOpen={isOpen}
+      onChange={() => {
+        setIsOpen(false);
+        setEditingData(null);
+      }}
+      modalComponent={<AddSlider />}
+    >
+      <div className="rounded-[10px] bg-white shadow-md dark:bg-gray-dark">
+        <div className="flex justify-between px-6 py-4">
+          <h2 className="text-2xl font-bold text-dark dark:text-white">
+            All Sliders
+          </h2>
+          <Button
+            onClick={() => {
+              setIsOpen(true);
+              setEditingData(null);
+            }}
+          >
+            Add Slider
+          </Button>
+        </div>
 
-      <Input
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <Input
-        placeholder="Offer Name"
-        value={offerName}
-        onChange={(e) => setOfferName(e.target.value)}
-      />
-      <Input
-        placeholder="Details"
-        value={details}
-        onChange={(e) => setDetails(e.target.value)}
-      />
-      <Input
-        placeholder="Product ID"
-        value={productId}
-        onChange={(e) => setProductId(e.target.value)}
-      />
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Banner</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead>Offer</TableHead>
+              <TableHead>Details</TableHead>
+              <TableHead>Product ID</TableHead>
+              <TableHead>Edit</TableHead>
+              <TableHead>Delete</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sliders.map((slider) => (
+              <TableRow key={slider.id}>
+                <TableCell>
+                  <Image
+                    src={slider.bannerUrl}
+                    alt={slider.title}
+                    width={100}
+                    height={50}
+                    className="rounded-md"
+                  />
+                </TableCell>
+                <TableCell>{slider.title}</TableCell>
+                <TableCell>{slider.offerName}</TableCell>
+                <TableCell>{slider.details}</TableCell>
+                <TableCell>{slider.productId}</TableCell>
+                <TableCell>
+                  <Button
+                    className="bg-blue text-white"
+                    onClick={() => {
+                      setEditingData(slider);
+                      setIsOpen(true);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                </TableCell>
 
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleBannerChange}
-        className="mt-3"
-      />
-      {previewBanner && (
-        <img
-          src={previewBanner}
-          alt="Banner Preview"
-          className="mt-3 h-40 w-full object-cover rounded"
-        />
-      )}
-
-      <div className="mt-4">
-        <Button onClick={handleSubmit}>Submit Slider</Button>
+                <TableCell>
+                  <Button
+                    className="bg-red-500 text-white"
+                    
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
-    </div>
+    </ModalLayout>
   );
 }
 
-export default AddSlider;
+export default SliderTable;
