@@ -10,6 +10,24 @@ export const adminApi = baseApi.injectEndpoints({
       }),
     }),
 
+    updateCategory: builder.mutation<
+      any,
+      { categoryId: string; formData: FormData }
+    >({
+      query: ({ categoryId, formData }) => ({
+        url: `/admin/category/create/${categoryId}`,
+        method: "PUT",
+        body: formData,
+      }),
+    }),
+
+    deleteCategory: builder.mutation<any, string>({
+      query: (categoryId) => ({
+        url: `/admin/category/create/${categoryId}`,
+        method: "DELETE",
+      }),
+    }),
+
     getCategories: builder.query<
       {
         totalPage: number;
@@ -30,4 +48,9 @@ export const adminApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useUploadFormDataMutation, useGetCategoriesQuery } = adminApi;
+export const {
+  useUploadFormDataMutation,
+  useUpdateCategoryMutation,
+  useDeleteCategoryMutation,
+  useGetCategoriesQuery,
+} = adminApi;

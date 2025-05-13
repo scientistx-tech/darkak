@@ -1,30 +1,19 @@
-"use client";
-
 import React, { useState } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import * as yup from "yup";
-import { useUploadFormDataMutation } from "@/redux/services/adminApis";
+import { useUploadFormDataMutation } from "@/redux/services/adminCategoryApis";
 import { toast } from "react-toastify";
 
-const schema = yup.object().shape({
-  title: yup.string().required("Title is required"),
-  icon: yup
-    .mixed()
-    .required("Image is required")
-    .test(
-      "fileExist",
-      "Image is required",
-      (value: any) => value && value.length > 0,
-    ),
-});
+type AddDataProps = {
+  refetch: () => void;
+};
 
-function AddData() {
+function AddData({ refetch }: AddDataProps) {
   const [title, setTitle] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [errors, setErrors] = useState<{ title?: string; icon?: string }>({});
-  const [uploadFormData] = useUploadFormDataMutation();
+
+  const [uploadFormData, { isLoading }] = useUploadFormDataMutation();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -39,33 +28,25 @@ function AddData() {
   };
 
   const handleSubmit = async () => {
-    const formValues = {
-      title,
-      icon: imageFile ? [imageFile] : null,
-    };
+    if (!title || !imageFile) {
+      toast.error("Please provide both title and image.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("icon", imageFile);
 
     try {
-      await schema.validate(formValues, { abortEarly: false });
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("image", imageFile as File);
-      const res = await uploadFormData(formData).unwrap();
-      console.log("Upload success:", res);
-
-      console.log("Submitted FormData:", formValues);
-
-      toast.success("Category upload successful");
+      await uploadFormData(formData).unwrap();
+      toast.success("Category created successfully!");
+      refetch();
       setTitle("");
       setImageFile(null);
       setPreviewImage(null);
-      setErrors({});
-    } catch (validationError: any) {
-      const newErrors: any = {};
-      validationError.inner.forEach((err: any) => {
-        newErrors[err.path] = err.message;
-      });
-      setErrors(newErrors);
-      toast.error("unknown error");
+    } catch (error) {
+      console.error("Error uploading:", error);
+      toast.error("Failed to create category.");
     }
   };
 
@@ -78,19 +59,13 @@ function AddData() {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
-      {errors.title && (
-        <span className="text-sm text-red-500">{errors.title}</span>
-      )}
 
       <input
         type="file"
-        accept="icon/*"
+        accept="image/*"
         onChange={handleImageChange}
         className="mt-2"
       />
-      {errors.icon && (
-        <span className="text-sm text-red-500">{errors.icon}</span>
-      )}
 
       {previewImage && (
         <img
@@ -100,7 +75,9 @@ function AddData() {
         />
       )}
 
-      <Button onClick={handleSubmit}>Submit</Button>
+      <Button onClick={handleSubmit} disabled={isLoading}>
+        {isLoading ? "Submitting..." : "Submit"}
+      </Button>
     </div>
   );
 }

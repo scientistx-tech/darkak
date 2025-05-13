@@ -13,10 +13,10 @@ import Image from "next/image";
 import React from "react";
 import Button from "../components/Button";
 import AddData from "./AddData";
-import { useGetCategoriesQuery } from "@/redux/services/adminApis";
+import { useGetCategoriesQuery } from "@/redux/services/adminCategoryApis";
 
 function CategoryTable() {
-  const { data, isLoading, error } = useGetCategoriesQuery();
+  const { data, isLoading, error, refetch } = useGetCategoriesQuery();
 
   const handleEdit = (doc: any) => {
     alert(`Edit clicked for ${doc.title}`);
@@ -25,7 +25,7 @@ function CategoryTable() {
   return (
     <div className="rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
       <div className="flex justify-between px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
-        <AddData />
+        <AddData refetch={refetch} />
       </div>
       <div className="flex justify-between px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
         <h2 className="text-2xl font-bold text-dark dark:text-white">
