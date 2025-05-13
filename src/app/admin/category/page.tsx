@@ -14,12 +14,22 @@ import React from "react";
 import Button from "../components/Button";
 import AddData from "./AddData";
 import { useGetCategoriesQuery } from "@/redux/services/adminCategoryApis";
+import { useDeleteCategoryMutation } from "@/redux/services/adminCategoryApis";
+import { toast } from "react-toastify";
+import Link from "next/link";
 
 function CategoryTable() {
   const { data, isLoading, error, refetch } = useGetCategoriesQuery();
-
-  const handleEdit = (doc: any) => {
-    alert(`Edit clicked for ${doc.title}`);
+  const [deleteCategory] = useDeleteCategoryMutation();
+  const handleEdit = (doc: any) => {};
+  const handleDelete = async (categoryId: number) => {
+    try {
+      await deleteCategory(categoryId).unwrap();
+      toast.success("Category deleted successfully!");
+      refetch();
+    } catch (err) {
+      toast.error("Failed to delete category.");
+    }
   };
 
   return (
@@ -73,16 +83,16 @@ function CategoryTable() {
                   <TableCell>{doc.title}</TableCell>
                   <TableCell>{doc._count.products}</TableCell>
                   <TableCell>
-                    <Button
-                      onClick={() => handleEdit(doc)}
-                      className="bg-blue text-white"
+                    <Link
+                      href={`/admin/category/${doc.id}`}
+                      className="rounded-md bg-blue px-4 py-2 text-white"
                     >
                       Edit
-                    </Button>
+                    </Link>
                   </TableCell>
                   <TableCell>
                     <Button
-                      onClick={() => handleEdit(doc)}
+                      onClick={() => handleDelete(doc.id)}
                       className="bg-red-500 text-white"
                     >
                       Delete

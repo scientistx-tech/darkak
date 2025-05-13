@@ -21,7 +21,7 @@ export const adminApi = baseApi.injectEndpoints({
       }),
     }),
 
-    deleteCategory: builder.mutation<any, string>({
+    deleteCategory: builder.mutation<any, number>({
       query: (categoryId) => ({
         url: `/admin/category/create/${categoryId}`,
         method: "DELETE",
