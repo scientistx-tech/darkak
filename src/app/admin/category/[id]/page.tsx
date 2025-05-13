@@ -1,19 +1,23 @@
-import React, { useState } from "react";
-import Input from "../components/Input";
-import Button from "../components/Button";
-import { useUploadFormDataMutation } from "@/redux/services/adminCategoryApis";
+"use client";
+
+import React, { use, useState } from "react";
+import Input from "../../components/Input";
+import Button from "../../components/Button";
+
 import { toast } from "react-toastify";
+import { useUpdateCategoryMutation } from "@/redux/services/adminCategoryApis";
 
-type AddDataProps = {
-  refetch: () => void;
-};
+interface EditDataProps {
+  params: Promise<{ id: string }>;
+}
 
-function AddData({ refetch }: AddDataProps) {
+function EditData({ params }: EditDataProps) {
+  const { id } = use(params);
   const [title, setTitle] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  const [uploadFormData, { isLoading }] = useUploadFormDataMutation();
+  const [updateCategory, { isLoading }] = useUpdateCategoryMutation();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -38,21 +42,20 @@ function AddData({ refetch }: AddDataProps) {
     formData.append("icon", imageFile);
 
     try {
-      await uploadFormData(formData).unwrap();
-      toast.success("Category created successfully!");
-      refetch();
+      await updateCategory({ categoryId: id, formData }).unwrap();
+      toast.success("Category updated successfully!");
       setTitle("");
       setImageFile(null);
       setPreviewImage(null);
     } catch (error) {
-      console.error("Error uploading:", error);
-      toast.error("Failed to create category.");
+      console.error("Error updating category:", error);
+      toast.error("Failed to update category.");
     }
   };
 
   return (
-    <div className="flex flex-col gap-3 px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
-      <div className="text-xl font-semibold">Add Category</div>
+    <div className="flex w-auto flex-col gap-3 px-6 py-4 sm:w-[50%] sm:px-7 sm:py-5 xl:px-8.5">
+      <div className="text-xl font-semibold">Edit Category</div>
 
       <Input
         placeholder="Category Title"
@@ -76,10 +79,10 @@ function AddData({ refetch }: AddDataProps) {
       )}
 
       <Button onClick={handleSubmit} disabled={isLoading}>
-        {isLoading ? "Submitting..." : "Submit"}
+        {isLoading ? "Updating..." : "Update"}
       </Button>
     </div>
   );
 }
 
-export default AddData;
+export default EditData;

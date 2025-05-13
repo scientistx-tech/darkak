@@ -1,4 +1,4 @@
-'use client'; // Required only in App Router
+'use client';
 
 import React from 'react';
 import { CKEditor, useCKEditorCloud } from '@ckeditor/ckeditor5-react';
@@ -32,6 +32,10 @@ const CustomEditor = () => {
         FontFamily,
         FontColor,
         FontBackgroundColor,
+        Table,
+        TableToolbar,
+        TableProperties,
+        TableCellProperties,
     } = cloud.CKEditor;
 
     const { FormatPainter } = cloud.CKEditorPremiumFeatures;
@@ -39,9 +43,9 @@ const CustomEditor = () => {
     return (
         <CKEditor
             editor={ClassicEditor}
-            data={'<p>Hello world!</p>'}
+            data="<p>Hello world!</p>"
             config={{
-                licenseKey: licenseKey, // Replace with your actual license key
+                licenseKey: licenseKey,
                 plugins: [
                     Essentials,
                     Paragraph,
@@ -55,6 +59,10 @@ const CustomEditor = () => {
                     FontColor,
                     FontBackgroundColor,
                     Alignment,
+                    Table,
+                    TableToolbar,
+                    TableProperties,
+                    TableCellProperties,
                     FormatPainter,
                 ],
                 toolbar: [
@@ -73,8 +81,18 @@ const CustomEditor = () => {
                     '|',
                     'alignment',
                     '|',
+                    'insertTable',
                     'formatPainter',
                 ],
+                table: {
+                    contentToolbar: [
+                        'tableColumn',
+                        'tableRow',
+                        'mergeTableCells',
+                        'tableProperties',
+                        'tableCellProperties',
+                    ],
+                },
             }}
         />
     );
