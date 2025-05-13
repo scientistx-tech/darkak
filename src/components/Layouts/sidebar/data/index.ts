@@ -1,4 +1,5 @@
 import { BiCategory, BiLogoProductHunt, BiSlider } from "react-icons/bi";
+import { TbBinaryTree2Filled } from "react-icons/tb";
 import * as Icons from "../icons";
 import { BsTornado } from "react-icons/bs";
 import { url } from "inspector";
@@ -15,27 +16,61 @@ export const NAV_DATA = [
       },
       {
         title: "Category",
-        url: "/admin/category",
         icon: BiCategory,
-        items: [],
+        items: [
+          {
+            title: "Categories",
+            url: "/admin/category/categories",
+          },
+          {
+            title: "Sub Categories",
+            url: "/admin/category/sub-categories",
+          },
+          {
+            title: "Sub Sub Categories",
+            url: "/admin/category/sub-sub-categories",
+          },
+        ],
       },
       {
         title: "Brand",
         icon: BsTornado,
-        url: "/admin/brand",
+        items: [
+          {
+            title: "Add New",
+            url: "/admin/brand",
+          },
+          {
+            title: "List",
+            url: "/admin/brand/list",
+          },
+        ],
+      },
+      {
+        title: "Product Attribute Setup",
+        icon: TbBinaryTree2Filled,
+        url: "/admin/product-attribute",
         items: [],
       },
       {
-        title: "Product",
+        title: "In House Products",
         icon: BiLogoProductHunt,
         items: [
           {
-            title: "Product",
+            title: "Product List",
             url: "/admin/product",
           },
           {
             title: "Add Product",
             url: "/admin/product/add-product",
+          },
+          {
+            title: "Bulk Import",
+            url: "/admin/product/bulk-import",
+          },
+          {
+            title: "Request Restock List",
+            url: "/admin/product/request-restock-list",
           },
         ],
       },
