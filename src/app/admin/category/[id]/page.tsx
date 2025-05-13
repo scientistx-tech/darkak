@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 
@@ -8,12 +8,11 @@ import { toast } from "react-toastify";
 import { useUpdateCategoryMutation } from "@/redux/services/adminCategoryApis";
 
 interface EditDataProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 function EditData({ params }: EditDataProps) {
-  const { id } = params;
-  console.log(id);
+  const { id } = use(params);
   const [title, setTitle] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
