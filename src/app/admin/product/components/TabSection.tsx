@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Button from "../../components/Button";
+import CustomEditor from "../../components/CustomEditor";
 
 const TabSection = () => {
   const [activeTab, setActiveTab] = useState<"spec" | "warranty" | "desc">(
@@ -54,19 +55,19 @@ const TabSection = () => {
         {activeTab === "spec" && (
           <div>
             <h4 className="font-bold">Make Specification</h4>
-            <div>Add Editor Here</div>
+            <CustomEditor />
           </div>
         )}
         {activeTab === "warranty" && (
           <div>
             <h4 className="font-bold">Make Warranty</h4>
-            <div>Add Editor Here</div>
+           <CustomEditor />
           </div>
         )}
         {activeTab === "desc" && (
           <div>
             <h4 className="font-bold">Make Description</h4>
-            <div>Add Editor Here</div>
+            <CustomEditor />
           </div>
         )}
       </div>
