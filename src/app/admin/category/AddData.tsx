@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import { useUploadFormDataMutation } from "@/redux/services/adminCategoryApis";
+import { useUploadFormDataMutation } from "@/redux/services/admin/adminCategoryApis";
 import { toast } from "react-toastify";
 
 type AddDataProps = {

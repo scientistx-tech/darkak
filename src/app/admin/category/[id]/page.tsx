@@ -5,7 +5,7 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 
 import { toast } from "react-toastify";
-import { useUpdateCategoryMutation } from "@/redux/services/adminCategoryApis";
+import { useUpdateCategoryMutation } from "@/redux/services/admin/adminCategoryApis";
 
 interface EditDataProps {
   params: Promise<{ id: string }>;

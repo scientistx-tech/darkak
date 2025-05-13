@@ -1,4 +1,5 @@
 "use client";
+
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -11,60 +12,87 @@ import {
 import Image from "next/image";
 import React, { useState } from "react";
 import Button from "../components/Button";
-import Link from "next/link";
 import AddBrand from "./AddBrand";
-import ModalLayout from "@/components/Layouts/ModalLayout";
+import {
+  useGetBrandsQuery,
+  useDeleteBrandMutation,
+  useUpdateBrandMutation,
+} from "@/redux/services/admin/adminBrandApis";
+import { toast } from "react-toastify";
+import * as yup from "yup";
+
+// Yup schema
+const brandSchema = yup.object().shape({
+  title: yup.string().required("Title is required"),
+});
 
 function BrandTable() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const { data, isLoading, error, refetch } = useGetBrandsQuery();
+  const [deleteBrand] = useDeleteBrandMutation();
+  const [updateBrand, { isLoading: isUpdating }] = useUpdateBrandMutation();
 
-  const data = [
-    {
-      id: 1,
-      title: "Technology",
-      icon: "https://via.placeholder.com/60x50",
-      _count: {
-        news: 15,
-      },
-    },
-    {
-      id: 2,
-      title: "Sports",
-      icon: "https://via.placeholder.com/60x50",
-      _count: {
-        news: 23,
-      },
-    },
-    {
-      id: 3,
-      title: "Health",
-      icon: "https://via.placeholder.com/60x50",
-      _count: {
-        news: 9,
-      },
-    },
-  ];
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editData, setEditData] = useState<{
+    title: string;
+    icon: File | null;
+  }>({
+    title: "",
+    icon: null,
+  });
+
+  const handleDelete = async (brandId: number) => {
+    try {
+      await deleteBrand(brandId).unwrap();
+      toast.success("Brand deleted successfully!");
+      refetch();
+    } catch (err) {
+      toast.error("Failed to delete brand.");
+    }
+  };
 
   const handleEdit = (doc: any) => {
-    alert(`Edit clicked for ${doc.title}`);
+    setEditingId(doc.id);
+    setEditData({ title: doc.title, icon: null });
+  };
+
+  const handleUpdate = async (brandId: number) => {
+    try {
+      // Validate using Yup
+      await brandSchema.validate(editData);
+
+      const formData = new FormData();
+      formData.append("title", editData.title);
+      if (editData.icon) {
+        formData.append("icon", editData.icon);
+      }
+
+      await updateBrand({ categoryId: String(brandId), formData }).unwrap();
+      toast.success("Brand updated successfully!");
+      setEditingId(null);
+      refetch();
+    } catch (err: any) {
+      if (err.name === "ValidationError") {
+        toast.error(err.message);
+      } else {
+        toast.error("Failed to update brand.");
+      }
+    }
   };
 
   return (
-    <ModalLayout
-      isOpen={isOpen}
-      onChange={() => setIsOpen(false)}
-      modalComponent={<AddBrand />}
-    >
-      <div className="rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
-        <div className="flex justify-between px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
-          <h2 className="text-2xl font-bold text-dark dark:text-white">
-            All Brands
-          </h2>
+    <div className="rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
+      <div className="flex justify-between px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
+        <AddBrand refetch={refetch} />
+      </div>
+      <div className="flex justify-between px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
+        <h2 className="text-2xl font-bold text-dark dark:text-white">
+          All Brands
+        </h2>
+      </div>
 
-          <Button onClick={() => setIsOpen(true)}>Add Brand</Button>
-        </div>
-
+      {error ? (
+        <p className="px-6 text-red-500">Error loading brands.</p>
+      ) : (
         <Table>
           <TableHeader>
             <TableRow className="border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
@@ -86,32 +114,79 @@ function BrandTable() {
                   </TableCell>
                 </TableRow>
               ))}
+
             {!isLoading &&
-              data?.map((doc, i) => (
-                <TableRow key={i}>
+              data?.data?.map((doc) => (
+                <TableRow key={doc.id}>
                   <TableCell className="pl-5 sm:pl-6 xl:pl-7.5">
-                    <Image
-                      src={doc.icon}
-                      className="aspect-[6/5] w-15 rounded-[5px] object-cover"
-                      width={60}
-                      height={50}
-                      alt={`${doc.title} image`}
-                    />
+                    {editingId === doc.id ? (
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) =>
+                          setEditData({
+                            ...editData,
+                            icon: e.target.files?.[0] || null,
+                          })
+                        }
+                      />
+                    ) : (
+                      <Image
+                        src={doc.icon}
+                        className="aspect-[6/5] w-15 rounded-[5px] object-cover"
+                        width={60}
+                        height={50}
+                        alt={`${doc.title} image`}
+                      />
+                    )}
                   </TableCell>
-                  <TableCell>{doc.title}</TableCell>
-                  <TableCell>{doc._count.news}</TableCell>
+
                   <TableCell>
-                    <Button
-                      onClick={() => setIsOpen(true)}
-                      className="bg-blue text-white"
-                    >
-                      Edit
-                    </Button>
+                    {editingId === doc.id ? (
+                      <input
+                        type="text"
+                        className="w-full rounded-md border px-2 py-1"
+                        value={editData.title}
+                        onChange={(e) =>
+                          setEditData({ ...editData, title: e.target.value })
+                        }
+                      />
+                    ) : (
+                      doc.title
+                    )}
+                  </TableCell>
+
+                  <TableCell>{doc._count.products}</TableCell>
+
+                  <TableCell>
+                    {editingId === doc.id ? (
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => handleUpdate(doc.id)}
+                          className="bg-green-600 text-white"
+                        >
+                          {isUpdating ? "plz wait.." : "save"}
+                        </Button>
+                        <Button
+                          onClick={() => setEditingId(null)}
+                          className="bg-gray-500 text-white"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={() => handleEdit(doc)}
+                        className="bg-blue text-white"
+                      >
+                        Edit
+                      </Button>
+                    )}
                   </TableCell>
 
                   <TableCell>
                     <Button
-                      onClick={() => handleEdit(doc)}
+                      onClick={() => handleDelete(doc.id)}
                       className="bg-red-500 text-white"
                     >
                       Delete
@@ -121,8 +196,8 @@ function BrandTable() {
               ))}
           </TableBody>
         </Table>
-      </div>
-    </ModalLayout>
+      )}
+    </div>
   );
 }
 
