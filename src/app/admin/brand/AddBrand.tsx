@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useUploadFormDataBrandMutation } from "@/redux/services/admin/adminBrandApis";
 
 // Schema validation
 const schema = yup.object().shape({
@@ -17,13 +18,15 @@ const schema = yup.object().shape({
     }),
 });
 
-
 interface FormValues {
   title: string;
   image: FileList;
 }
+type AddDataProps = {
+  refetch: () => void;
+};
 
-function AddBrand() {
+function AddBrand({ refetch }: AddDataProps) {
   const {
     handleSubmit,
     control,
@@ -32,21 +35,27 @@ function AddBrand() {
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
   });
-
+  const [uploadFormDataBrand, { isLoading }] = useUploadFormDataBrandMutation();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     const imageFile = data.image[0];
 
     const formData = new FormData();
     formData.append("title", data.title);
-    formData.append("image", imageFile);
+    formData.append("icon", imageFile);
 
-    console.log("Submitted:", data.title, imageFile);
-    toast.success("Brand submitted successfully!");
+    try {
+      console.log("Submitted:", data.title, imageFile);
+      await uploadFormDataBrand(formData).unwrap();
+      toast.success("Brand submitted successfully!");
 
-    reset();
-    setPreviewImage(null);
+      reset();
+      refetch();
+      setPreviewImage(null);
+    } catch (error) {
+      toast.error("Invalid Error");
+    }
   };
 
   return (
@@ -90,7 +99,9 @@ function AddBrand() {
               className="mt-2"
             />
             {errors.image && (
-              <span className="text-sm text-red-500">{errors.image.message}</span>
+              <span className="text-sm text-red-500">
+                {errors.image.message}
+              </span>
             )}
           </>
         )}
@@ -106,7 +117,9 @@ function AddBrand() {
       )}
 
       {/* Submit */}
-      <Button onClick={handleSubmit(onSubmit)}>Submit</Button>
+      <Button onClick={handleSubmit(onSubmit)}>
+        {isLoading ? "Submitting..." : "Submit"}{" "}
+      </Button>
     </div>
   );
 }

@@ -13,15 +13,14 @@ import Image from "next/image";
 import React from "react";
 import Button from "../components/Button";
 import AddData from "./AddData";
-import { useGetCategoriesQuery } from "@/redux/services/adminCategoryApis";
-import { useDeleteCategoryMutation } from "@/redux/services/adminCategoryApis";
+import { useGetCategoriesQuery } from "@/redux/services/admin/adminCategoryApis";
+import { useDeleteCategoryMutation } from "@/redux/services/admin/adminCategoryApis";
 import { toast } from "react-toastify";
 import Link from "next/link";
 
 function CategoryTable() {
   const { data, isLoading, error, refetch } = useGetCategoriesQuery();
   const [deleteCategory] = useDeleteCategoryMutation();
-  const handleEdit = (doc: any) => {};
   const handleDelete = async (categoryId: number) => {
     try {
       await deleteCategory(categoryId).unwrap();
