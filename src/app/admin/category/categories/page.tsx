@@ -61,6 +61,7 @@ function CategoryTable() {
               </TableHead>
               <TableHead>Title</TableHead>
               <TableHead className="text-center">Product Count</TableHead>
+              <TableHead className="text-center">Priority</TableHead>
               <TableHead className="text-center">
                 Home category status
               </TableHead>
@@ -94,6 +95,7 @@ function CategoryTable() {
                   <TableCell className="text-center">
                     {doc._count.products}
                   </TableCell>
+                  <TableCell className="text-center">{doc.serial}</TableCell>
                   <TableCell className="flex h-full justify-center align-middle">
                     <Switch />
                   </TableCell>

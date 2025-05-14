@@ -13,8 +13,8 @@ import Image from "next/image";
 import React from "react";
 import Button from "../../components/Button";
 // import AddData from "./AddData";
-import { useGetCategoriesQuery } from "@/redux/services/admin/adminCategoryApis";
-import { useDeleteCategoryMutation } from "@/redux/services/admin/adminCategoryApis";
+import { useGetSubCategoriesQuery } from "@/redux/services/admin/adminCategoryApis";
+import { useDeleteSubCategoryMutation } from "@/redux/services/admin/adminCategoryApis";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { Switch } from "@/components/FormElements/switch";
@@ -25,8 +25,9 @@ import AddData from "../categories/AddData";
 import AddSubCategories from "./AddSubCategories";
 
 function CategoryTable() {
-  const { data, isLoading, error, refetch } = useGetCategoriesQuery();
-  const [deleteCategory] = useDeleteCategoryMutation();
+  const { data, isLoading, error, refetch } = useGetSubCategoriesQuery();
+  const [deleteCategory] = useDeleteSubCategoryMutation();
+
   const handleDelete = async (categoryId: number) => {
     try {
       await deleteCategory(categoryId).unwrap();
@@ -58,12 +59,10 @@ function CategoryTable() {
           <TableHeader>
             <TableRow className="border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
               <TableHead>ID</TableHead>
-              <TableHead className="min-w-[120px] pl-5 sm:pl-6 xl:pl-7.5">
-                Icon
-              </TableHead>
+
               <TableHead>Sub Category Name</TableHead>
               <TableHead>Category Name</TableHead>
-              <TableHead className="text-center">Priority</TableHead>
+
               <TableHead className="text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -81,20 +80,10 @@ function CategoryTable() {
               data?.data?.map((doc, i) => (
                 <TableRow key={i} className="h-auto">
                   <TableCell>{doc.id}</TableCell>
-                  <TableCell className="pl-5 sm:pl-6 xl:pl-7.5">
-                    <Image
-                      src={doc.icon}
-                      className="aspect-[5/5] w-15 rounded-[5px] object-cover"
-                      width={60}
-                      height={50}
-                      alt={`${doc.title} image`}
-                    />
-                  </TableCell>
+
                   <TableCell>{doc.title}</TableCell>
-                  <TableCell>{doc._count.products}</TableCell>
-                  <TableCell className="flex h-full justify-center align-middle">
-                    <Switch />
-                  </TableCell>
+
+                  <TableCell>{doc?.categoryId}</TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-x-2">
                       <Link

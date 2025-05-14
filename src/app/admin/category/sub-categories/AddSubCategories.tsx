@@ -1,9 +1,12 @@
 import React, { useRef, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
-import { useUploadFormDataMutation } from "@/redux/services/admin/adminCategoryApis";
-import { toast } from "react-toastify";
 import SelectField from "@/app/(root)/user/profile/components/SelectField";
+import { useCreateSubCategoryMutation } from "@/redux/services/admin/adminCategoryApis";
+import { toast } from "react-toastify";
 
 type AddDataProps = {
   refetch: () => void;
@@ -17,122 +20,136 @@ type AddDataProps = {
     | undefined;
 };
 
+// Validation schema using Yup
+const schema = yup.object().shape({
+  title: yup.string().required("Sub Category Name is required"),
+  categoryId: yup.string().required("Main Category is required"),
+});
+
 function AddSubCategories({ refetch, categories }: AddDataProps) {
-  const [title, setTitle] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [currentLanguage, setCurrentLanguage] = useState("en");
-  const [selectedCategoryPriority, setSelectedCategoryPriority] =
-    useState("Select Priority");
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [uploadFormData, { isLoading }] = useUploadFormDataMutation();
+  const [uploadFormData, { isLoading }] = useCreateSubCategoryMutation();
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  // React Hook Form setup
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      title: "",
+      categoryId: "",
+    },
+  });
 
-  const handleSubmit = async () => {
-    if (!title || !imageFile) {
-      toast.error("Please provide both title and image.");
-      return;
-    }
+  const onSubmit = async (data: any) => {
+    // const formData = new FormData();
 
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("icon", imageFile);
+    // formData.append("title", data.title);
+    // formData.append("categoryId", data.categoryId);
+
+    const formData = {
+      title: data?.title,
+      categoryId: data?.categoryId,
+    };
 
     try {
       await uploadFormData(formData).unwrap();
-      toast.success("Category created successfully!");
-      refetch();
-      setTitle("");
-      setImageFile(null);
-      setPreviewImage(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      toast.success("Sub Category created successfully!");
+      refetch(); // Refetch the data after successful submission
+      reset(); // Reset the form after successful submission
     } catch (error) {
       console.error("Error uploading:", error);
-      toast.error("Failed to create category.");
+      toast.error("Failed to create sub category.");
     }
   };
-  const handlePriorityChange = (value: string) => {
-    setSelectedCategoryPriority(value);
-  };
-
-  console.log("categories", categories);
 
   return (
     <div className="flex w-full flex-col gap-3">
       <div className="text-xl font-semibold">Add Sub Category</div>
 
-      {/* language tabs */}
+      {/* Language Tabs */}
       <div className="my-5 flex items-center gap-x-5">
         <div
-          className={`${currentLanguage === "en" ? "border-b-2 border-blue-500 text-blue-500" : ""} flex cursor-pointer py-2 text-sm font-medium tracking-wider`}
+          className={`${
+            currentLanguage === "en"
+              ? "border-b-2 border-blue-500 text-blue-500"
+              : ""
+          } flex cursor-pointer py-2 text-sm font-medium tracking-wider`}
           onClick={() => setCurrentLanguage("en")}
         >
           <button>English (EN)</button>
         </div>
         <div
-          className={`${currentLanguage === "bn" ? "border-b-2 border-blue-500 text-blue-500" : ""} cursor-pointer py-2 text-sm font-medium tracking-wider`}
+          className={`${
+            currentLanguage === "bn"
+              ? "border-b-2 border-blue-500 text-blue-500"
+              : ""
+          } cursor-pointer py-2 text-sm font-medium tracking-wider`}
           onClick={() => setCurrentLanguage("bn")}
         >
           <button>Bengali (BD)</button>
         </div>
       </div>
 
+      {/* Form Fields */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <Input
-          placeholder={`Sub Category Name (${currentLanguage === "en" ? "EN" : "BD"})`}
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+        {/* Sub Category Name */}
+        <div>
+          <Input
+            placeholder={`Sub Category Name (${currentLanguage === "en" ? "EN" : "BD"})`}
+            {...register("title")}
+          />
+          {errors.title && (
+            <p className="mt-1 text-sm text-red-500">{errors.title.message}</p>
+          )}
+        </div>
 
-        <SelectField
-          // label="Marital Status"
-          value={selectedCategoryPriority}
-          onChange={(value: string) => handlePriorityChange(value)}
-          options={[
-            { label: "Select main category", value: "" },
-            ...(categories?.map((category: any) => ({
-              label: category.title,
-              value: category.id,
-            })) || []),
-          ]}
-        />
-
-        <SelectField
-          // label="Marital Status"
-          value={selectedCategoryPriority}
-          onChange={(value: string) => handlePriorityChange(value)}
-          options={[
-            { label: "Set Priority", value: "" },
-            { label: "1", value: "1" },
-            { label: "2", value: "2" },
-            { label: "3", value: "3" },
-            { label: "4", value: "4" },
-            { label: "5", value: "5" },
-            { label: "6", value: "6" },
-            { label: "7", value: "7" },
-            { label: "8", value: "8" },
-            { label: "9", value: "9" },
-            { label: "10", value: "10" },
-          ]}
-        />
+        {/* Main Category Select */}
+        <div>
+          <Controller
+            name="categoryId"
+            control={control}
+            render={({ field }) => (
+              <SelectField
+                {...field}
+                options={[
+                  { label: "Select main category", value: "" },
+                  ...(categories?.map((category: any) => ({
+                    label: category.title,
+                    value: category.id.toString(), // Ensure value is a string
+                  })) || []),
+                ]}
+                onChange={(value: string) => {
+                  field.onChange(value); // Update the value in the form
+                }}
+                value={
+                  categories
+                    ?.find(
+                      (category: any) => category.id.toString() === field.value,
+                    )
+                    ?.id.toString() || "" // Ensure the selected value is a string
+                } // Ensure the selected value is displayed correctly
+              />
+            )}
+          />
+          {errors.categoryId && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.categoryId.message}
+            </p>
+          )}
+        </div>
       </div>
 
+      {/* Submit Button */}
       <div>
-        <Button onClick={handleSubmit} disabled={isLoading}>
+        <Button onClick={handleSubmit(onSubmit)} disabled={isLoading}>
           {isLoading ? "Submitting..." : "Submit"}
         </Button>
       </div>

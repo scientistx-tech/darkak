@@ -3,10 +3,11 @@
 import React, { use, useRef, useState } from "react";
 import Input from "../../../components/Input";
 import Button from "../../../components/Button";
-
 import { toast } from "react-toastify";
 import { useUpdateCategoryMutation } from "@/redux/services/admin/adminCategoryApis";
 import SelectField from "@/app/(root)/user/profile/components/SelectField";
+import { FaArrowLeft } from "react-icons/fa6";
+import { useRouter } from "next/navigation";
 
 interface EditDataProps {
   params: Promise<{ id: string }>;
@@ -14,6 +15,7 @@ interface EditDataProps {
 
 function EditData({ params }: EditDataProps) {
   const { id } = use(params);
+  const router = useRouter();
   const [title, setTitle] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -64,7 +66,13 @@ function EditData({ params }: EditDataProps) {
 
   return (
     <div className="flex w-full flex-col gap-3 rounded bg-white p-5">
-      <div className="text-xl font-semibold">Edit Category</div>
+      <div className="text-xl font-semibold">
+        <FaArrowLeft
+          onClick={() => router.back()}
+          className="mr-3 inline h-8 w-8 cursor-pointer rounded-full bg-gray-4 p-2 hover:bg-gray-3"
+        />
+        Edit Category
+      </div>
 
       {/* language tabs */}
       <div className="my-5 flex items-center gap-x-5">

@@ -42,6 +42,7 @@ export interface Category {
   name: string;
   image: string;
   id: string;
+  serial: number;
   images: string[];
   _count: {
     news: number;
