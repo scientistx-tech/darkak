@@ -79,7 +79,7 @@ export const NAV_DATA = [
       {
         title: "Product Attribute Setup",
         icon: TbBinaryTree2Filled,
-        url: "/admin/product-attribute",
+        url: "/admin/product-attributes",
         items: [],
       },
       {
