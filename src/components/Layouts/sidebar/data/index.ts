@@ -38,7 +38,7 @@ export const NAV_DATA = [
         items: [
           {
             title: "Add New",
-            url: "/admin/brand",
+            url: "/admin/brand/add-brand",
           },
           {
             title: "List",
