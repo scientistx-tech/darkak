@@ -43,7 +43,7 @@ function CategoryTable() {
       <div className="flex justify-between px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
         <h2 className="text-xl font-bold text-dark dark:text-white">
           All Categories{" "}
-          <button className="rounded-full bg-gray-3 px-4 py-1 text-sm">
+          <button className="rounded-full bg-gray-3 px-4 py-1 text-sm dark:bg-blue-500">
             {data?.data?.length}
           </button>
         </h2>
