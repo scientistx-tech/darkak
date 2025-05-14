@@ -14,8 +14,7 @@ type AddDataProps = {
     | {
         id: number;
         title: string;
-        icon: string;
-        _count: { products: number };
+        categoryId: number;
       }[]
     | undefined;
 };
