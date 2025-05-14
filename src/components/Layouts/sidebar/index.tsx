@@ -33,7 +33,6 @@ export function Sidebar() {
     //         if (!expandedItems.includes(item.title)) {
     //           toggleExpanded(item.title);
     //         }
-
     //         // Break the loop
     //         return true;
     //       }
@@ -95,9 +94,9 @@ export function Sidebar() {
 
                 <nav role="navigation" aria-label={section.label}>
                   <ul className="space-y-2">
-                    {section.items.map((item) => (
+                    {section.items?.map((item) => (
                       <li key={item.title}>
-                        {item.items.length ? (
+                        {"items" in item && item.items.length ? (
                           <div>
                             <MenuItem
                               isActive={item.items.some(
@@ -116,7 +115,7 @@ export function Sidebar() {
                                 className={cn(
                                   "ml-auto rotate-180 transition-transform duration-200",
                                   expandedItems.includes(item.title) &&
-                                  "rotate-0",
+                                    "rotate-0",
                                 )}
                                 aria-hidden="true"
                               />
@@ -147,7 +146,7 @@ export function Sidebar() {
                               "url" in item
                                 ? item.url + ""
                                 : "/" +
-                                item.title.toLowerCase().split(" ").join("-");
+                                  item.title.toLowerCase().split(" ").join("-");
 
                             return (
                               <MenuItem
