@@ -1,19 +1,12 @@
-import { useState } from "react";
-
 export const DateRangePicker: React.FC<{
   label: string;
   onChange: (range: string) => void;
-}> = ({ label, onChange }) => {
-  const [range, setRange] = useState("");
-
+  value: string;
+  error?: string;
+}> = ({ label, onChange, value, error }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setRange(value);
-    // Validate format (e.g., DD/MM/YYYY-DD/MM/YYYY)
-    const regex = /^\d{2}\/\d{2}\/\d{4}-\d{2}\/\d{2}\/\d{4}$/;
-    if (regex.test(value)) {
-      onChange(value);
-    }
+    onChange(value);
   };
 
   return (
@@ -22,10 +15,11 @@ export const DateRangePicker: React.FC<{
       <input
         type="text"
         placeholder="DD/MM/YYYY-DD/MM/YYYY"
-        value={range}
+        value={value}
         onChange={handleChange}
-        className="rounded border p-2 text-sm"
+        className={`rounded border p-2 text-sm ${error ? "border-red-500" : ""}`}
       />
+      {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   );
 };
