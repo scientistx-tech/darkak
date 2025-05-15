@@ -97,7 +97,7 @@ function AddSubSubCategories({
       await uploadFormData(formData).unwrap();
       toast.success("Sub Sub Category created successfully!");
       refetch();
-      setTitle("");
+      reset();
     } catch (error) {
       console.error("Error uploading:", error);
       toast.error("Failed to create category.");
