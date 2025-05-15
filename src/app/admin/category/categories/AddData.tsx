@@ -41,6 +41,7 @@ function AddData({ refetch }: AddDataProps) {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("icon", imageFile);
+    formData.append("serial", selectedCategoryPriority);
 
     try {
       await uploadFormData(formData).unwrap();
