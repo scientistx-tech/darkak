@@ -47,7 +47,7 @@ export const NAV_DATA = [
           },
           {
             title: "Confirm",
-            url: "/admin/orders/confirm",
+            url: "/admin/orders/confirmed",
             values: { vive: "neutral-1", value: 12 },
           },
           {
@@ -77,7 +77,7 @@ export const NAV_DATA = [
           },
           {
             title: "Canceled",
-            url: "/admin/orders/canceled",
+            url: "/admin/orders/cancelled",
             values: { vive: "negetive", value: 19 },
           },
         ],
@@ -85,6 +85,28 @@ export const NAV_DATA = [
       {
         title: "Refund Request",
         icon: GiTakeMyMoney,
+        items: [
+          {
+            title: "Pending",
+            url: "/admin/refund-request/pending",
+            values: { vive: "positive", value: 111 },
+          },
+          {
+            title: "Approved",
+            url: "/admin/refund-request/approved",
+            values: { vive: "positive", value: 55 },
+          },
+          {
+            title: "Refunded",
+            url: "/admin/refund-request/refunded",
+            values: { vive: "neutral-1", value: 12 },
+          },
+          {
+            title: "Rejected",
+            url: "/admin/refund-request/rejected",
+            values: { vive: "neutral-2", value: 5 },
+          },
+        ],
       },
     ],
   },
