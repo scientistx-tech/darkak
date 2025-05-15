@@ -10,13 +10,18 @@ import { toast } from "react-toastify";
 
 type AddDataProps = {
   refetch: () => void;
-  categories:
-    | {
-        id: number;
-        title: string;
-        categoryId: number;
-      }[]
-    | undefined;
+  categories: {
+    id: number;
+    title: string;
+    icon: string;
+    serial: number;
+    isActive: true;
+    _count:
+      | {
+          products: number;
+        }[]
+      | undefined;
+  }[];
 };
 
 // Validation schema using Yup
@@ -55,7 +60,7 @@ function AddSubCategories({ refetch, categories }: AddDataProps) {
 
     const formData = {
       title: data?.title,
-      categoryId: data?.categoryId,
+      categoryId: parseInt(data?.categoryId),
     };
 
     try {

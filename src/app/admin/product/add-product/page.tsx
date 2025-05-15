@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import CustomEditor from "../../components/CustomEditor";
+import dynamic from "next/dynamic";
+
+const CustomEditor = dynamic(
+  () => import("@/app/admin/components/CustomEditor"),
+  { ssr: false },
+);
 
 export default function ProductForm() {
   const [formData, setFormData] = useState<{

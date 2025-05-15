@@ -1,23 +1,67 @@
 import React, { useRef, useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
-import { useUploadFormDataMutation } from "@/redux/services/admin/adminCategoryApis";
+import {
+  useCreateSubSubCategoryMutation,
+  useUploadFormDataMutation,
+} from "@/redux/services/admin/adminCategoryApis";
 import { toast } from "react-toastify";
 import SelectField from "@/app/(root)/user/profile/components/SelectField";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
 type AddDataProps = {
   refetch: () => void;
-  categories:
-    | {
-        id: number;
-        title: string;
-        icon: string;
-        _count: { products: number };
-      }[]
-    | undefined;
+  categories: {
+    id: number;
+    title: string;
+    icon: string;
+    serial: number;
+    isActive: true;
+    _count:
+      | {
+          products: number;
+        }[]
+      | undefined;
+  }[];
+
+  subCategories: {
+    id: number;
+    title: string;
+    categoryId: number;
+    _count:
+      | {
+          products: number;
+        }[]
+      | undefined;
+    category: {
+      id: number;
+      title: string;
+      icon: string;
+      serial: number;
+      isActive: boolean;
+      _count:
+        | {
+            products: number;
+          }[]
+        | undefined;
+    };
+  }[];
 };
 
-function AddSubSubCategories({ refetch, categories }: AddDataProps) {
+// Validation schema using Yup
+const schema = yup.object().shape({
+  title: yup.string().required("Sub Category Name is required"),
+  categoryId: yup.string().required("Main Category is required"),
+  subCategoryId: yup.string().required("Sub Category is required"),
+});
+
+function AddSubSubCategories({
+  refetch,
+  categories,
+  subCategories,
+}: AddDataProps) {
   const [title, setTitle] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -26,50 +70,39 @@ function AddSubSubCategories({ refetch, categories }: AddDataProps) {
     useState("Select Priority");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [uploadFormData, { isLoading }] = useUploadFormDataMutation();
+  const [uploadFormData, { isLoading }] = useCreateSubSubCategoryMutation();
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      title: "",
+      categoryId: "",
+    },
+  });
 
-  const handleSubmit = async () => {
-    if (!title || !imageFile) {
-      toast.error("Please provide both title and image.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("icon", imageFile);
+  const onSubmit = async (data: any) => {
+    const formData = {
+      title: data?.title,
+      categoryId: parseInt(data?.categoryId),
+      subCategoryId: parseInt(data?.subCategoryId),
+    };
 
     try {
       await uploadFormData(formData).unwrap();
-      toast.success("Category created successfully!");
+      toast.success("Sub Sub Category created successfully!");
       refetch();
       setTitle("");
-      setImageFile(null);
-      setPreviewImage(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
     } catch (error) {
       console.error("Error uploading:", error);
       toast.error("Failed to create category.");
     }
   };
-  const handlePriorityChange = (value: string) => {
-    setSelectedCategoryPriority(value);
-  };
-
-  console.log("categories", categories);
 
   return (
     <div className="flex w-full flex-col gap-3">
@@ -91,60 +124,86 @@ function AddSubSubCategories({ refetch, categories }: AddDataProps) {
         </div>
       </div>
 
-      <Input
-        placeholder={`Sub sub category name (${currentLanguage === "en" ? "EN" : "BD"})`}
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <SelectField
-          // label="Marital Status"
-          value={selectedCategoryPriority}
-          onChange={(value: string) => handlePriorityChange(value)}
-          options={[
-            { label: "Select main category", value: "" },
-            ...(categories?.map((category: any) => ({
-              label: category.title,
-              value: category.id,
-            })) || []),
-          ]}
-        />
-        <SelectField
-          // label="Marital Status"
-          value={selectedCategoryPriority}
-          onChange={(value: string) => handlePriorityChange(value)}
-          options={[
-            { label: "Select sub category", value: "" },
-            ...(categories?.map((category: any) => ({
-              label: category.title,
-              value: category.id,
-            })) || []),
-          ]}
-        />
-
-        <SelectField
-          // label="Marital Status"
-          value={selectedCategoryPriority}
-          onChange={(value: string) => handlePriorityChange(value)}
-          options={[
-            { label: "Set Priority", value: "" },
-            { label: "1", value: "1" },
-            { label: "2", value: "2" },
-            { label: "3", value: "3" },
-            { label: "4", value: "4" },
-            { label: "5", value: "5" },
-            { label: "6", value: "6" },
-            { label: "7", value: "7" },
-            { label: "8", value: "8" },
-            { label: "9", value: "9" },
-            { label: "10", value: "10" },
-          ]}
-        />
+        <div>
+          <Input
+            placeholder={`Sub sub category name (${currentLanguage === "en" ? "EN" : "BD"})`}
+            {...register("title")}
+          />
+          {errors.title && (
+            <p className="mt-1 text-sm text-red-500">{errors.title.message}</p>
+          )}
+        </div>
+        <div>
+          <Controller
+            name="categoryId"
+            control={control}
+            render={({ field }) => (
+              <SelectField
+                {...field}
+                options={[
+                  { label: "Select main category", value: "" },
+                  ...(categories?.map((category: any) => ({
+                    label: category.title,
+                    value: category.id.toString(), // Ensure value is a string
+                  })) || []),
+                ]}
+                onChange={(value: string) => {
+                  field.onChange(value); // Update the value in the form
+                }}
+                value={
+                  categories
+                    ?.find(
+                      (category: any) => category.id.toString() === field.value,
+                    )
+                    ?.id.toString() || "" // Ensure the selected value is a string
+                } // Ensure the selected value is displayed correctly
+              />
+            )}
+          />
+          {errors.categoryId && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.categoryId.message}
+            </p>
+          )}
+        </div>
+        <div>
+          <Controller
+            name="subCategoryId"
+            control={control}
+            render={({ field }) => (
+              <SelectField
+                {...field}
+                options={[
+                  { label: "Select sub category", value: "" },
+                  ...(subCategories?.map((subCategory: any) => ({
+                    label: subCategory.title,
+                    value: subCategory.id.toString(), // Ensure value is a string
+                  })) || []),
+                ]}
+                onChange={(value: string) => {
+                  field.onChange(value); // Update the value in the form
+                }}
+                value={
+                  categories
+                    ?.find(
+                      (category: any) => category.id.toString() === field.value,
+                    )
+                    ?.id.toString() || "" // Ensure the selected value is a string
+                } // Ensure the selected value is displayed correctly
+              />
+            )}
+          />
+          {errors.categoryId && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.categoryId.message}
+            </p>
+          )}
+        </div>
       </div>
 
       <div>
-        <Button onClick={handleSubmit} disabled={isLoading}>
+        <Button onClick={handleSubmit(onSubmit)} disabled={isLoading}>
           {isLoading ? "Submitting..." : "Submit"}
         </Button>
       </div>

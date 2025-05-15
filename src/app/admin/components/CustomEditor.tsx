@@ -93,14 +93,12 @@ const CustomEditor = () => {
             "tableCellProperties",
           ],
         },
-        minHeight: "400px",
       }}
-      onReady={(editor) => {
-        // Apply persistent height to the editable area
-        const editableElement = editor.ui.view.editable.element;
-        editableElement.style.height = "200px"; // Set your desired height
-        editableElement.style.overflow = "auto"; // Ensure scrollbars appear if content overflows
-      }}
+      // onReady={(editor) => {
+      //   const editableElement = editor.ui.view.editable.element;
+      //   editableElement.style.height = "200px";
+      //   editableElement.style.overflow = "auto";
+      // }}
     />
   );
 };

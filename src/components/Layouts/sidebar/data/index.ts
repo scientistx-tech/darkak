@@ -34,6 +34,53 @@ export const NAV_DATA = [
       {
         title: "Orders",
         icon: IoMdCart,
+        items: [
+          {
+            title: "All",
+            url: "/admin/orders/all",
+            values: { vive: "positive", value: 111 },
+          },
+          {
+            title: "Pending",
+            url: "/admin/orders/pending",
+            values: { vive: "positive", value: 55 },
+          },
+          {
+            title: "Confirm",
+            url: "/admin/orders/confirm",
+            values: { vive: "neutral-1", value: 12 },
+          },
+          {
+            title: "Packaging",
+            url: "/admin/orders/packaging",
+            values: { vive: "neutral-2", value: 5 },
+          },
+          {
+            title: "Out For Delivery",
+            url: "/admin/orders/out-for-delivery",
+            values: { vive: "neutral-2", value: 20 },
+          },
+          {
+            title: "Delivered",
+            url: "/admin/orders/delivered",
+            values: { vive: "neutral-1", value: 65 },
+          },
+          {
+            title: "Returned",
+            url: "/admin/orders/returned",
+            values: { vive: "negetive", value: 31 },
+          },
+          {
+            title: "Failled To Deliver",
+            url: "/admin/orders/failled-to-deliver",
+            values: { vive: "negetive", value: 23 },
+          },
+          {
+            title: "Canceled",
+            url: "/admin/orders/canceled",
+            values: { vive: "negetive", value: 19 },
+          },
+        ],
       },
       {
         title: "Refund Request",

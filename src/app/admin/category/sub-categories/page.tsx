@@ -13,7 +13,10 @@ import Image from "next/image";
 import React from "react";
 import Button from "../../components/Button";
 // import AddData from "./AddData";
-import { useGetSubCategoriesQuery } from "@/redux/services/admin/adminCategoryApis";
+import {
+  useGetCategoriesQuery,
+  useGetSubCategoriesQuery,
+} from "@/redux/services/admin/adminCategoryApis";
 import { useDeleteSubCategoryMutation } from "@/redux/services/admin/adminCategoryApis";
 import { toast } from "react-toastify";
 import Link from "next/link";
@@ -25,29 +28,51 @@ import AddData from "../categories/AddData";
 import AddSubCategories from "./AddSubCategories";
 
 function CategoryTable() {
-  const { data, isLoading, error, refetch } = useGetSubCategoriesQuery();
+  const {
+    data: categoriesData,
+    isLoading: isCategoriesLoading,
+    error: categoriesError,
+    refetch: refetchCategories,
+  } = useGetCategoriesQuery();
+  const {
+    data: subCategoriesData,
+    isLoading,
+    error,
+    refetch,
+  } = useGetSubCategoriesQuery();
   const [deleteCategory] = useDeleteSubCategoryMutation();
 
   const handleDelete = async (categoryId: number) => {
     try {
       await deleteCategory(categoryId).unwrap();
-      toast.success("Category deleted successfully!");
+      toast.success("Sub Category deleted successfully!");
       refetch();
     } catch (err) {
-      toast.error("Failed to delete category.");
+      toast.error("Failed to delete sub category.");
     }
   };
 
   return (
     <div className="rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
       <div className="flex justify-between px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
-        <AddSubCategories categories={data?.data} refetch={refetch} />
+        <AddSubCategories
+          categories={
+            Array.isArray(categoriesData?.data)
+              ? categoriesData.data.map((cat) => ({
+                  ...cat,
+                  isActive: true,
+                  _count: Array.isArray(cat._count) ? cat._count : [cat._count],
+                }))
+              : []
+          }
+          refetch={refetch}
+        />
       </div>
       <div className="flex justify-between px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
         <h2 className="text-xl font-bold text-dark dark:text-white">
           All Sub Categories{" "}
           <button className="rounded-full bg-gray-3 px-4 py-1 text-sm dark:bg-blue-500">
-            {data?.data?.length}
+            {subCategoriesData?.data?.length}
           </button>
         </h2>
       </div>
@@ -58,7 +83,7 @@ function CategoryTable() {
         <Table>
           <TableHeader>
             <TableRow className="border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
-              <TableHead>ID</TableHead>
+              <TableHead>Serial</TableHead>
 
               <TableHead>Sub Category Name</TableHead>
               <TableHead>Category Name</TableHead>
@@ -77,13 +102,13 @@ function CategoryTable() {
               ))}
 
             {!isLoading &&
-              data?.data?.map((doc, i) => (
+              subCategoriesData?.data?.map((doc, i) => (
                 <TableRow key={i} className="h-auto">
-                  <TableCell>{doc.id}</TableCell>
+                  <TableCell>{i + 1}</TableCell>
 
                   <TableCell>{doc.title}</TableCell>
 
-                  <TableCell>{doc?.categoryId}</TableCell>
+                  <TableCell>{doc?.category?.title}</TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-x-2">
                       <Link
