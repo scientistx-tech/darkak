@@ -48,10 +48,10 @@ function CategoryTable() {
   const handleDelete = async (categoryId: number) => {
     try {
       await deleteCategory(categoryId).unwrap();
-      toast.success("Sub Category deleted successfully!");
+      toast.success("Sub Sub Category deleted successfully!");
       refetchSubSubCategories();
     } catch (err) {
-      toast.error("Failed to delete category.");
+      toast.error("Failed to delete Sub Sub category.");
     }
   };
 
@@ -126,7 +126,6 @@ function CategoryTable() {
               <TableHead>Sub Sub Category Name</TableHead>
               <TableHead>Sub Category Name</TableHead>
               <TableHead>Category Name</TableHead>
-              <TableHead className="text-center">Products</TableHead>
               <TableHead className="text-center">Action</TableHead>
             </TableRow>
           </TableHeader>

@@ -117,8 +117,19 @@ function BrandTable() {
               </svg>
             </span>
           </div>
-          {/* export button */}
+          {/* refresh button */}
           <div>
+            <button
+              onClick={() => {
+                refetch();
+              }}
+              className="rounded-md border-2 border-green-500 px-5 py-1"
+            >
+              Refresh
+            </button>
+          </div>
+          {/* export button */}
+          {/* <div>
             <button className="flex items-center gap-2 rounded-md border-2 border-blue-400 px-4 py-2 text-sm font-medium text-blue-400">
               <img
                 width={20}
@@ -128,7 +139,7 @@ function BrandTable() {
               />
               Export
             </button>
-          </div>
+          </div> */}
         </div>
         {error ? (
           <p className="px-6 text-red-500">Error loading brands.</p>

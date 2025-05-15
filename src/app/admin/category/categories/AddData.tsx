@@ -48,6 +48,7 @@ function AddData({ refetch }: AddDataProps) {
       toast.success("Category created successfully!");
       refetch();
       setTitle("");
+      setSelectedCategoryPriority("Select Priority");
       setImageFile(null);
       setPreviewImage(null);
       if (fileInputRef.current) {

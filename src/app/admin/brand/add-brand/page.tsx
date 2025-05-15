@@ -2,9 +2,9 @@
 import React, { useRef, useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
-import { useUploadFormDataMutation } from "@/redux/services/admin/adminCategoryApis";
 import { toast } from "react-toastify";
 import SelectField from "@/app/(root)/user/profile/components/SelectField";
+import { useUploadFormDataBrandMutation } from "@/redux/services/admin/adminBrandApis";
 
 function AddBrandData() {
   const [title, setTitle] = useState("");
@@ -15,7 +15,7 @@ function AddBrandData() {
     useState("Select Priority");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [uploadFormData, { isLoading }] = useUploadFormDataMutation();
+  const [uploadFormData, { isLoading }] = useUploadFormDataBrandMutation();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -41,8 +41,7 @@ function AddBrandData() {
 
     try {
       await uploadFormData(formData).unwrap();
-      toast.success("Category created successfully!");
-      // refetch();
+      toast.success("Brand created successfully!");
       setTitle("");
       setImageFile(null);
       setPreviewImage(null);
@@ -51,7 +50,7 @@ function AddBrandData() {
       }
     } catch (error) {
       console.error("Error uploading:", error);
-      toast.error("Failed to create category.");
+      toast.error("Failed to create brand.");
     }
   };
   const handlePriorityChange = (value: string) => {
@@ -78,18 +77,18 @@ function AddBrandData() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4">
         <Input
           placeholder={`Brand Name (${currentLanguage === "en" ? "EN" : "BD"}) Ex: RFL`}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        <Input
+        {/* <Input
           placeholder={`Image Alt Text`}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-        />
+        /> */}
       </div>
       <div
         className="mt-4"
