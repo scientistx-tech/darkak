@@ -9,29 +9,47 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Image from "next/image";
 import React from "react";
-import Button from "../../components/Button";
-// import AddData from "./AddData";
-import { useGetCategoriesQuery } from "@/redux/services/admin/adminCategoryApis";
-import { useDeleteCategoryMutation } from "@/redux/services/admin/adminCategoryApis";
+import {
+  useDeleteSubSubCategoryMutation,
+  useGetCategoriesQuery,
+  useGetSubCategoriesQuery,
+  useGetSubSubCategoriesQuery,
+} from "@/redux/services/admin/adminCategoryApis";
 import { toast } from "react-toastify";
 import Link from "next/link";
-import { Switch } from "@/components/FormElements/switch";
 import { MdOutlineEdit } from "react-icons/md";
-
 import { MdDelete } from "react-icons/md";
-import AddData from "../categories/AddData";
 import AddSubSubCategories from "./AddSubSubCategories";
 
 function CategoryTable() {
-  const { data, isLoading, error, refetch } = useGetCategoriesQuery();
-  const [deleteCategory] = useDeleteCategoryMutation();
+  const {
+    data: categoriesData,
+    isLoading: isCategoriesLoading,
+    error: categoriesError,
+    refetch: refetchCategories,
+  } = useGetCategoriesQuery();
+
+  const {
+    data: subCategoriesData,
+    isLoading: isSubCategoriesLoading,
+    error: subCategoriesError,
+    refetch: refetchSubCategories,
+  } = useGetSubCategoriesQuery();
+  const {
+    data: subSubCategoriesData,
+    isLoading: isSubSubCategoriesLoading,
+    error: subSubCategoriesError,
+    refetch: refetchSubSubCategories,
+  } = useGetSubSubCategoriesQuery();
+
+  const [deleteCategory] = useDeleteSubSubCategoryMutation();
+
   const handleDelete = async (categoryId: number) => {
     try {
       await deleteCategory(categoryId).unwrap();
-      toast.success("Category deleted successfully!");
-      refetch();
+      toast.success("Sub Category deleted successfully!");
+      refetchSubSubCategories();
     } catch (err) {
       toast.error("Failed to delete category.");
     }
@@ -40,36 +58,80 @@ function CategoryTable() {
   return (
     <div className="rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
       <div className="flex justify-between px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
-        <AddSubSubCategories categories={data?.data} refetch={refetch} />
+        <AddSubSubCategories
+          categories={
+            categoriesData?.data
+              ? categoriesData.data.map((cat) => ({
+                  ...cat,
+                  isActive: true,
+                  _count: Array.isArray(cat._count) ? cat._count : [cat._count],
+                }))
+              : []
+          }
+          subCategories={
+            subCategoriesData?.data
+              ? subCategoriesData.data.map((subCat) => ({
+                  id: subCat.id ?? 0,
+                  title: subCat.title ?? "",
+                  categoryId: subCat.categoryId ?? 0,
+                  _count: subCat.hasOwnProperty("_count")
+                    ? Array.isArray((subCat as any)._count)
+                      ? (subCat as any)._count
+                      : [(subCat as any)._count ?? { products: 0 }]
+                    : [{ products: 0 }],
+                  category: {
+                    id:
+                      subCat.category && "id" in subCat.category
+                        ? ((subCat.category as any).id ?? 0)
+                        : 0,
+                    title: subCat.category?.title ?? "",
+                    icon:
+                      subCat.category && "icon" in subCat.category
+                        ? ((subCat.category as any).icon ?? "")
+                        : "",
+                    serial:
+                      subCat.category && "serial" in subCat.category
+                        ? ((subCat.category as any).serial ?? 0)
+                        : 0,
+                    isActive:
+                      subCat.category && "isActive" in subCat.category
+                        ? ((subCat.category as any).isActive ?? true)
+                        : true,
+                    _count: Array.isArray((subCat.category as any)?._count)
+                      ? (subCat.category as any)._count
+                      : [(subCat.category as any)?._count ?? { products: 0 }],
+                  },
+                }))
+              : []
+          }
+          refetch={refetchSubSubCategories}
+        />
       </div>
       <div className="flex justify-between px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
         <h2 className="text-xl font-bold text-dark dark:text-white">
           All Sub Sub Categories{" "}
           <button className="rounded-full bg-gray-3 px-4 py-1 text-sm dark:bg-blue-500">
-            {data?.data?.length}
+            {subSubCategoriesData?.data?.length}
           </button>
         </h2>
       </div>
 
-      {error ? (
-        <p className="px-6 text-red-500">Error loading categories.</p>
+      {subSubCategoriesError ? (
+        <p className="px-6 text-red-500">Error loading sub sub categories.</p>
       ) : (
         <Table>
           <TableHeader>
             <TableRow className="border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
-              <TableHead>ID</TableHead>
-              <TableHead className="min-w-[120px] pl-5 sm:pl-6 xl:pl-7.5">
-                Icon
-              </TableHead>
+              <TableHead>Serial</TableHead>
               <TableHead>Sub Sub Category Name</TableHead>
               <TableHead>Sub Category Name</TableHead>
               <TableHead>Category Name</TableHead>
-              <TableHead className="text-center">Priority</TableHead>
+              <TableHead className="text-center">Products</TableHead>
               <TableHead className="text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading &&
+            {isSubSubCategoriesLoading &&
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
                   <TableCell colSpan={5}>
@@ -78,24 +140,13 @@ function CategoryTable() {
                 </TableRow>
               ))}
 
-            {!isLoading &&
-              data?.data?.map((doc, i) => (
+            {!isSubSubCategoriesLoading &&
+              subSubCategoriesData?.data?.map((doc, i) => (
                 <TableRow key={i} className="h-auto">
-                  <TableCell>{doc.id}</TableCell>
-                  <TableCell className="pl-5 sm:pl-6 xl:pl-7.5">
-                    <Image
-                      src={doc.icon}
-                      className="aspect-[5/5] w-15 rounded-[5px] object-cover"
-                      width={60}
-                      height={50}
-                      alt={`${doc.title} image`}
-                    />
-                  </TableCell>
+                  <TableCell>{i + 1}</TableCell>
                   <TableCell>{doc.title}</TableCell>
-                  <TableCell>{doc._count.products}</TableCell>
-                  <TableCell className="flex h-full justify-center align-middle">
-                    <Switch />
-                  </TableCell>
+                  <TableCell>{doc.subCategory.title}</TableCell>
+                  <TableCell>{doc.categoryId}</TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-x-2">
                       <Link

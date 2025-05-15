@@ -51,11 +51,14 @@ export const adminApi = baseApi.injectEndpoints({
 
     createSubCategory: builder.mutation<
       any,
-      { title: string; categoryId: string }
+      { title: string; categoryId: number }
     >({
       query: (data) => ({
         url: `/admin/category/sub-category`,
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(data),
       }),
     }),
@@ -85,6 +88,9 @@ export const adminApi = baseApi.injectEndpoints({
           id: number;
           title: string;
           categoryId: number;
+          category: {
+            title: string;
+          };
         }[];
       },
       void
@@ -99,11 +105,14 @@ export const adminApi = baseApi.injectEndpoints({
 
     createSubSubCategory: builder.mutation<
       any,
-      { title: string; categoryId: string }
+      { title: string; categoryId: number; subCategoryId: number }
     >({
       query: (data) => ({
         url: `/admin/category/sub-sub-category`,
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(data),
       }),
     }),
@@ -121,7 +130,7 @@ export const adminApi = baseApi.injectEndpoints({
 
     deleteSubSubCategory: builder.mutation<any, number>({
       query: (subSubCategoryId) => ({
-        url: `/admin/category/sub-category/${subSubCategoryId}`,
+        url: `/admin/category/sub-sub-category/${subSubCategoryId}`,
         method: "DELETE",
       }),
     }),
@@ -133,6 +142,11 @@ export const adminApi = baseApi.injectEndpoints({
           id: number;
           title: string;
           categoryId: number;
+          subCategory: {
+            id: number;
+            title: string;
+            categoryId: number;
+          };
         }[];
       },
       void

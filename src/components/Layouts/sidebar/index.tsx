@@ -96,7 +96,9 @@ export function Sidebar() {
                   <ul className="space-y-2">
                     {section.items?.map((item) => (
                       <li key={item.title}>
-                        {"items" in item && item.items.length ? (
+                        {"items" in item &&
+                        Array.isArray(item.items) &&
+                        item.items.length ? (
                           <div>
                             <MenuItem
                               isActive={item.items.some(
@@ -127,14 +129,30 @@ export function Sidebar() {
                                 role="menu"
                               >
                                 {item.items.map((subItem) => (
-                                  <li key={subItem.title} role="none">
+                                  <li
+                                    key={subItem.title}
+                                    role="none"
+                                    className={
+                                      pathname === subItem.url
+                                        ? "rounded-md bg-blue-50"
+                                        : undefined
+                                    }
+                                  >
                                     <MenuItem
                                       as="link"
                                       href={subItem.url}
                                       isActive={pathname === subItem.url}
                                     >
                                       <span>{subItem.title}</span>
-                                    </MenuItem>
+                                      {"values" in subItem &&
+                                        subItem.values && (
+                                          <span
+                                            className={` ${subItem.values.vive === "positive" ? "bg-green-50 text-green-700" : subItem.values.vive === "neutral-1" ? "bg-blue-50 text-blue-700" : subItem.values.vive === "neutral-2" ? "bg-yellow-50 text-yellow-700" : "bg-red-50 text-red-700"} absolute right-2 rounded-full p-1 text-xs`}
+                                          >
+                                            {subItem.values.value}
+                                          </span>
+                                        )}
+                                    </MenuItem>{" "}
                                   </li>
                                 ))}
                               </ul>
