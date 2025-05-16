@@ -18,9 +18,11 @@ const ProductShow = () => {
     colors: ["#000000", "#333333", "#bbbbbb"],
     storages: ["16GB/1TB", "32GB/1TB"],
     images: [
-      "https://images.unsplash.com/photo-1516387938699-a93567ec168e?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGxhcHRvcHxlbnwwfHwwfHx8MA%3D%3D",
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGxhcHRvcHxlbnwwfHwwfHx8MA%3D%3D",
-      "https://images.unsplash.com/photo-1588702547923-7093a6c3ba33?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjR8fGxhcHRvcHxlbnwwfHwwfHx8MA%3D%3D",
+      "https://i.ibb.co/DfwWrrrQ/0-1-medium-1.jpg",
+      "https://i.ibb.co/SwW1ZdNV/0-1-medium-2.jpg",
+      "https://i.ibb.co/BKLJTzB1/0-1-medium-3.jpg",
+      "https://i.ibb.co/hF73GV8J/0-1-medium-4.jpg",
+
     ],
   };
 
