@@ -7,9 +7,9 @@ const dummyProducts: Product[] = new Array(8).fill(null).map((_, i) => ({
   id: `prod-${i}`,
   name: "iPhone 15 Pro Max",
   images: [
-    "/images/dummy/dummy.png",
-    "/images/dummy/dummy1.png",
-    "/images/dummy/dummy2.png",
+    "/images/dummy/dummy.jpg",
+    "/images/dummy/dummy1.jpg",
+    "/images/dummy/dummy2.jpg",
   ],
   price: 800,
   originalPrice: 1000,
