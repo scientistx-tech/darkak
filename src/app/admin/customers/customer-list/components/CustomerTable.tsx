@@ -1,3 +1,4 @@
+import { DeleteFilled, EyeFilled } from "@ant-design/icons";
 import { useState } from "react";
 
 interface Customer {
@@ -100,8 +101,12 @@ export const CustomerTable: React.FC = () => {
                 </button>
               </td>
               <td className="flex space-x-2 p-2">
-                <button className="text-blue-500">👁️</button>
-                <button className="text-red-500">🗑️</button>
+                <button className="text-blue-500">
+                  <EyeFilled />{" "}
+                </button>
+                <button className="text-red-500">
+                  <DeleteFilled />{" "}
+                </button>
               </td>
             </tr>
           ))}
