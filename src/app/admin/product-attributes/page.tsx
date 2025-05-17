@@ -1,62 +1,68 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  useDeleteProductAttributeMutation,
+  useGetProductAttributesQuery,
+} from "@/redux/services/admin/adminProductApis";
+import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
+import { MdDelete, MdOutlineEdit } from "react-icons/md";
+import { toast } from "react-toastify";
+import AddAttributes from "./AddAttributes";
 
 export default function AttributeSetup() {
-  const [currentLanguage, setCurrentLanguage] = useState("English(EN)");
+  const [isEditable, setIsEditable] = useState<{
+    status: boolean;
+    value: {
+      id: string;
+      title: string;
+    };
+  }>({ status: false, value: { id: "", title: "" } });
+  const { data, isLoading, error, refetch } = useGetProductAttributesQuery({});
+  const [deleteProductAttribute] = useDeleteProductAttributeMutation();
+
+  console.log(data, "att data");
+
+  const handleDelete = async (attributeId: string) => {
+    try {
+      await deleteProductAttribute(attributeId).unwrap();
+      toast.success("Attribute deleted successfully!");
+      refetch();
+    } catch (err) {
+      toast.error("Failed to delete Attribute.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="">
         <h1 className="mb-6 flex items-center gap-2 text-2xl font-bold">
-          <span className="text-yellow-600">📋</span> Attribute Setup
+          <span className="text-yellow-600">📋</span>{" "}
+          {isEditable.status ? "Edit Attribute" : "Attribute Setup"}
         </h1>
 
-        {/* Language Tabs */}
-        <div className="mb-6 flex gap-6">
-          {["English(EN)", "Bangla(BD)"].map((lang, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentLanguage(lang)}
-              className={`pb-2 font-medium ${
-                currentLanguage === lang
-                  ? "border-b-2 border-blue-600 text-blue-600"
-                  : "text-gray-500"
-              }`}
-            >
-              {lang}
-            </button>
-          ))}
-        </div>
-
-        {/* Form Input */}
-        <div className="mb-6 rounded-xl bg-white p-6 shadow">
-          <label className="mb-2 block font-medium text-gray-700">
-            Attribute Name<span className="ml-1 text-red-500">*</span>{" "}
-            {`(${currentLanguage === "English(EN)" ? "EN" : "BD"})`}
-          </label>
-          <input
-            type="text"
-            placeholder="Enter Attribute Name"
-            className="mb-4 w-full rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-
-          <div className="flex justify-end gap-4">
-            <button className="rounded-lg bg-gray-200 px-4 py-2 text-black">
-              Reset
-            </button>
-            <button className="rounded-lg bg-blue-600 px-4 py-2 text-white">
-              Submit
-            </button>
-          </div>
-        </div>
-
+        <AddAttributes
+          refetch={refetch}
+          value={isEditable.value}
+          setIsEditable={setIsEditable}
+        />
         {/* Attribute List */}
         <div className="rounded-xl bg-white p-6 shadow">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-semibold">
               Attribute list{" "}
               <span className="rounded-full bg-gray-200 px-2 py-1 text-sm">
-                2
+                {data?.data?.length}
               </span>
             </h2>
             <div className="relative">
@@ -71,36 +77,72 @@ export default function AttributeSetup() {
             </div>
           </div>
 
-          <table className="w-full border-t border-gray-200 text-left">
-            <thead>
-              <tr className="text-gray-600">
-                <th className="py-2">SL</th>
-                <th className="py-2">Attribute Name</th>
-                <th className="py-2">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                { id: 1, name: "Size" },
-                { id: 2, name: "Type" },
-              ].map((attr) => (
-                <tr key={attr.id} className="border-t border-gray-200">
-                  <td className="py-3">{attr.id}</td>
-                  <td className="py-3">{attr.name}</td>
-                  <td className="py-3">
-                    <div className="flex gap-2">
-                      <button className="text-blue-600 hover:underline">
-                        ✏️
-                      </button>
-                      <button className="text-red-600 hover:underline">
-                        🗑️
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {error ? (
+            <p className="px-6 text-red-500">
+              Error Occurs during Loading Attributes.
+            </p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
+                  <TableHead>SL</TableHead>
+                  <TableHead>Title</TableHead>
+                  <TableHead className="text-center">Product Count</TableHead>
+                  <TableHead className="text-center">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoading &&
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell colSpan={5}>
+                        <Skeleton className="h-8" />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+
+                {!isLoading &&
+                  data?.data?.map(
+                    (
+                      doc: {
+                        id: string;
+                        title: string;
+                        _count: { products: number };
+                      },
+                      i: string,
+                    ) => (
+                      <TableRow key={i} className="h-auto">
+                        <TableCell>{doc.id}</TableCell>
+
+                        <TableCell>{doc.title}</TableCell>
+                        <TableCell className="text-center">
+                          {doc._count.products}
+                        </TableCell>
+
+                        <TableCell>
+                          <div className="flex items-center justify-center gap-x-2">
+                            <button
+                              onClick={() => {
+                                setIsEditable({ status: true, value: doc });
+                              }}
+                              // className="bg-blue text-white"
+                            >
+                              <MdOutlineEdit className="h-8 w-8 cursor-pointer rounded border-2 border-blue-500 p-1 text-blue-500" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(doc.id)}
+                              className=""
+                            >
+                              <MdDelete className="h-8 w-8 rounded border-2 border-red-500 p-1 text-red-500" />
+                            </button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ),
+                  )}
+              </TableBody>
+            </Table>
+          )}
         </div>
       </div>
     </div>
