@@ -1,61 +1,35 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PlusOutlined, MinusOutlined, DeleteOutlined } from "@ant-design/icons";
 import Image from "next/image";
 import { Modal, message } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import product1 from "@/Data/Demo/product-2-1.png";
-import product2 from "@/Data/Demo/product-2-3.png";
-import product3 from "@/Data/Demo/product-2-4.png";
 import ShopNowButton from "@/components/Button/ShopNowButton";
-
-interface CartItem {
-  id: number;
-  name: string;
-  brand: string;
-  model: string;
-  image: any;
-  quantity: number;
-  unitPrice: number;
-}
+import { Cart } from "@/types/client/myCartTypes";
+import { useGetMyCartQuery } from "@/redux/services/client/myCart";
 
 const CartPage: React.FC = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: "Product Name 1",
-      brand: "Product Brand",
-      model: "Product Model",
-      image: product1,
-      quantity: 1,
-      unitPrice: 1200,
-    },
-    {
-      id: 2,
-      name: "Product Name 2",
-      brand: "Product Brand",
-      model: "Product Model",
-      image: product2,
-      quantity: 1,
-      unitPrice: 900,
-    },
-    {
-      id: 3,
-      name: "Product Name 3",
-      brand: "Product Brand",
-      model: "Product Model",
-      image: product3,
-      quantity: 1,
-      unitPrice: 113050,
-    },
-  ]);
+  const [cartItems, setCartItems] = useState<Cart[]>();
+ const { data, isLoading, isError } = useGetMyCartQuery();
+   // For Delete Modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
+  // Message For Coupon / Voucher
+  const [messageApi, contextHolder] = message.useMessage();
+  useEffect(() => {
+    if (data) {
+      setCartItems(data.cart);
+    }
+  }, [data]);
 
+  if (isLoading) return <div>Loading cart...</div>;
+  if (isError) return <div>Failed to load cart.</div>;
   const increaseQty = (id: number) => {
     setCartItems((prev) =>
-      prev.map((item) =>
+      prev?.map((item) =>
         item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
       ),
     );
@@ -63,7 +37,7 @@ const CartPage: React.FC = () => {
 
   const decreaseQty = (id: number) => {
     setCartItems((prev) =>
-      prev.map((item) =>
+      prev?.map((item) =>
         item.id === id && item.quantity > 1
           ? { ...item, quantity: item.quantity - 1 }
           : item,
@@ -71,14 +45,12 @@ const CartPage: React.FC = () => {
     );
   };
 
-  const subTotal = cartItems.reduce(
-    (total, item) => total + item.unitPrice * item.quantity,
+  const subTotal = cartItems?.reduce(
+    (total, item) => total + item.product.price * item.quantity,
     0,
   );
 
-  // For Delete Modal
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
+
 
   const showModal = (id: number) => {
     setItemToDelete(id);
@@ -87,7 +59,7 @@ const CartPage: React.FC = () => {
 
   const handleOk = () => {
     if (itemToDelete !== null) {
-      setCartItems((prev) => prev.filter((item) => item.id !== itemToDelete));
+      setCartItems((prev) => prev?.filter((item) => item.id !== itemToDelete));
       setItemToDelete(null);
     }
     setIsModalOpen(false);
@@ -100,8 +72,7 @@ const CartPage: React.FC = () => {
 
   const router = useRouter();
 
-  // Message For Coupon / Voucher
-  const [messageApi, contextHolder] = message.useMessage();
+
   const coupon = () => {
     messageApi.open({
       type: "success",
@@ -147,32 +118,36 @@ const CartPage: React.FC = () => {
           </div>
 
           {/* Cart Items */}
-          {cartItems.map((item) => (
+          {cartItems?.map((item) => (
             <div
               key={item.id}
               className="mt-3 flex items-center justify-between rounded-md bg-[#E6EFFF]"
             >
-              <div className="flex w-[19%] items-center justify-center rounded-md py-2 md:w-[12%] xl:w-[10%]">
-                <Image
-                  src={item.image}
-                  alt="product image"
-                  className="h-[50px] w-[50px] rounded-md md:h-[80px] md:w-[80px]"
-                />
+              <div className="relative flex w-[19%] items-center justify-center rounded-md py-2 md:w-[12%] xl:w-[10%]">
+                <div className="relative h-[50px] w-[50px] md:h-[80px] md:w-[80px]">
+                  <Image
+                    src={item.product.thumbnail}
+                    alt="product image"
+                    fill
+                    className="rounded-md object-cover"
+                  />
+                </div>
               </div>
               <div className="flex w-[42%] flex-col items-start justify-start rounded-md px-6 py-2 xl:w-[40%]">
                 <p className="text-base font-bold text-primaryBlue md:text-xl">
-                  {item.name}
+                  {item.product.title}
                 </p>
                 <p className="hidden text-sm md:block xl:text-base">
-                  <span className="text-black">Brand:</span> {item.brand}
+                  <span className="text-black">Brand:</span>{" "}
+                  {item.product.brand.title}
                 </p>
                 <p className="text-sm xl:hidden xl:text-base">
-                  <span className="text-black">Model:</span> {item.model}
+                  <span className="text-black">Model:</span>
                 </p>
               </div>
               <div className="hidden w-[12%] items-center justify-center rounded-md py-2 xl:flex xl:w-[10%]">
                 <p>
-                  <span className="text-black">Model:</span> {item.model}
+                  <span className="text-black">Model:</span>
                 </p>
               </div>
               <div className="flex w-[19%] items-center justify-center rounded-md py-2 md:w-[12%] xl:w-[10%]">
@@ -195,11 +170,11 @@ const CartPage: React.FC = () => {
                 </div>
               </div>
               <div className="hidden w-[12%] items-center justify-center rounded-md py-2 text-black md:flex xl:w-[10%]">
-                {item.unitPrice} TK
+                {item.product.price} TK
               </div>
               <div className="flex w-[19%] flex-col items-center justify-evenly rounded-md py-2 md:w-[12%] md:flex-row xl:w-[10%]">
                 <p className="font-medium text-primaryDarkBlue">
-                  {item.unitPrice * item.quantity} TK
+                  {item.product.price * item.quantity} TK
                 </p>
                 <button
                   onClick={() => showModal(item.id)}
