@@ -95,7 +95,7 @@ const ProductsSection = () => {
       )}
 
       {/* Product Grid */}
-      <div className="grid w-full grid-cols-1 gap-7 md:grid-cols-2 lg:w-4/5 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid w-full gap-7 grid-cols-2 lg:w-4/5 lg:grid-cols-3 xl:grid-cols-4">
         {dummyProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
