@@ -50,19 +50,19 @@ const SortBy = () => {
   }, []);
 
   return (
-    <div className="mt-[77px] flex items-center justify-between bg-[#5694FF] px-[64px] py-4">
+    <div className="mt-10 md:mt-16 lg:mt-[77px] flex items-center justify-between bg-[#5694FF] px-3 md:px-6 lg:px-[64px] py-4">
       <div>
-        <p className="text-3xl font-semibold text-white">Phone & accessories</p>
+        <p className="text-sm md:text-xl lg:text-3xl font-semibold text-white">Phone & accessories</p>
       </div>
-      <div className="flex items-center gap-x-6 text-white">
-        <p className="text-[24px] font-semibold">Sort By</p>
+      <div className="flex items-center gap-x-2 md:gap-x-4 lg:gap-x-6 text-white">
+        <p className="text-sm md:text-xl lg:text-3xl font-semibold">Sort By</p>
         <div className="relative inline-block text-left" ref={dropdownRef}>
           <button
             onClick={(e) => {
               e.stopPropagation();
               toggleDropdown();
             }}
-            className="inline-flex items-center rounded-full bg-white px-8 py-3 text-center text-base font-medium text-[#003084]"
+            className="inline-flex items-center rounded-full bg-white px-2 md:px-4 lg:px-8 py-1 md:py-2 lg:py-3 text-center text-xs lg:text-base font-medium text-[#003084]"
             type="button"
           >
             {sortingItem}
@@ -74,8 +74,8 @@ const SortBy = () => {
           </button>
 
           {isOpen && (
-            <div className="absolute right-0 z-10 mt-2 w-44 divide-y divide-gray-100 rounded-lg bg-white shadow-sm">
-              <ul className="py-2 text-md text-[#003084]">
+            <div className="absolute right-0 mt-2 w-32 lg:w-44 divide-y divide-gray-100 rounded-lg bg-white shadow-sm z-50">
+              <ul className="py-2 text-xs md:text-base text-[#003084]">
                 {sortingItems.map((item) => (
                   <li
                     key={item.id}

@@ -28,7 +28,7 @@ const rows = [brands.slice(0, 5), brands.slice(5, 11), brands.slice(11, 16)];
 
 export default function Brands() {
   return (
-    <div className="mt-[77px] w-full space-y-4">
+    <div className="mt-10 md:mt-16 lg:mt-[77px] w-full space-y-4">
       {rows.map((row, index) => (
         <div
           key={index}
@@ -40,7 +40,7 @@ export default function Brands() {
             <button
               key={brand.id}
               type="button"
-              className="rounded-full bg-[#E6EFFF] px-20 py-5 text-sm font-medium text-[#4B4E55] hover:bg-[#cad6ec] md:text-base"
+              className="rounded-full bg-[#E6EFFF] px-5 md:px-12 lg:px-20 py-2 md:py-3 lg:py-5 text-sm font-medium text-[#4B4E55] hover:bg-[#cad6ec] md:text-base"
             >
               {brand.name}
             </button>
