@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 
 const Price = () => {
-
     const [open, setOpen] = useState<boolean>(true);
 
     const handleOpenClose = () => {
