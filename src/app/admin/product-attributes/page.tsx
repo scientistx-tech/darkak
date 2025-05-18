@@ -21,6 +21,8 @@ import { toast } from "react-toastify";
 import AddAttributes from "./AddAttributes";
 
 export default function AttributeSetup() {
+  const [queryParams, setQueryParams] = useState({});
+  const [search, setSearch] = useState("");
   const [isEditable, setIsEditable] = useState<{
     status: boolean;
     value: {
@@ -28,10 +30,11 @@ export default function AttributeSetup() {
       title: string;
     };
   }>({ status: false, value: { id: "", title: "" } });
-  const { data, isLoading, error, refetch } = useGetProductAttributesQuery({});
-  const [deleteProductAttribute] = useDeleteProductAttributeMutation();
 
-  console.log(data, "att data");
+  // redux hooks
+  const { data, isLoading, error, refetch } =
+    useGetProductAttributesQuery(queryParams);
+  const [deleteProductAttribute] = useDeleteProductAttributeMutation();
 
   const handleDelete = async (attributeId: string) => {
     try {
@@ -69,6 +72,14 @@ export default function AttributeSetup() {
               <input
                 type="text"
                 placeholder="Search by Attribute Name"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setQueryParams((prev) => ({
+                    ...prev,
+                    search: e.target.value,
+                  }));
+                }}
                 className="rounded-lg border border-gray-300 px-4 py-2 pr-10 focus:outline-none"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">

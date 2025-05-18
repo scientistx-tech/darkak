@@ -137,7 +137,7 @@ export default function ProductForm() {
   const { data: categoriesData } = useGetCategoriesQuery();
   const { data: subCategoriesData } = useGetSubCategoriesQuery();
   const { data: subSubCategoriesData } = useGetSubSubCategoriesQuery();
-  const { data: brandsData } = useGetBrandsQuery();
+  const { data: brandsData } = useGetBrandsQuery({});
   const { data: attributesData } = useGetProductAttributesQuery({});
   const [uploadImages] = useUploadImagesMutation();
   const [createProduct] = useCreateProductMutation();
@@ -448,7 +448,7 @@ export default function ProductForm() {
             >
               <option>Select Brand</option>
               {brandsData &&
-                brandsData?.data?.map((brand) => (
+                brandsData?.data?.map((brand: any) => (
                   <option key={brand.id} value={brand.id}>
                     {brand?.title}
                   </option>
@@ -1044,7 +1044,7 @@ export default function ProductForm() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
             <label className="text-sm font-medium text-gray-700">
-              Meta Title
+              Meta Title <span className="text-red-500">*</span>
             </label>
             <input
               name="meta_title"
@@ -1056,7 +1056,7 @@ export default function ProductForm() {
           </div>
           <div className="flex-1 rounded-lg">
             <label className="mb-1 block text-sm font-semibold text-gray-700">
-              Meta Image
+              Meta Image <span className="text-red-500">*</span>
             </label>
             <p className="mb-2 text-xs text-blue-600">
               Ratio 1:1 (500 x 500 px)
@@ -1143,6 +1143,7 @@ export default function ProductForm() {
                 {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
               </label>
               <CustomEditor
+                key={currentTab}
                 value={formData.description}
                 onChange={handleEditorChange("description")}
               />
@@ -1154,18 +1155,20 @@ export default function ProductForm() {
                 {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
               </label>
               <CustomEditor
-                value={formData.description}
+                key={currentTab}
+                value={formData.specification}
                 onChange={handleEditorChange("specification")}
               />
             </div>
           ) : (
             <div className="flex flex-col gap-2">
               <label htmlFor="warranty_details">
-                warranty_details
+                Warranty details
                 {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
               </label>
               <CustomEditor
-                value={formData.description}
+                key={currentTab}
+                value={formData.warranty_details}
                 onChange={handleEditorChange("warranty_details")}
               />
             </div>

@@ -27,7 +27,7 @@ const brandSchema = yup.object().shape({
 });
 
 const AllOrderList = () => {
-  const { data, isLoading, error, refetch } = useGetBrandsQuery();
+  const { data, isLoading, error, refetch } = useGetBrandsQuery({});
   const [deleteBrand] = useDeleteBrandMutation();
   const [updateBrand, { isLoading: isUpdating }] = useUpdateBrandMutation();
 
@@ -194,7 +194,7 @@ const AllOrderList = () => {
                 ))}
 
               {!isLoading &&
-                data?.data?.map((doc) => (
+                data?.data?.map((doc: any) => (
                   <TableRow key={doc.id}>
                     <TableCell className="pl-5 sm:pl-6 xl:pl-7.5">
                       {editingId === doc.id ? (
