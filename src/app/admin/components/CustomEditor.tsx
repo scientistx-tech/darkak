@@ -1,10 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { CKEditor, useCKEditorCloud } from "@ckeditor/ckeditor5-react";
 import licenseKey from "@/ckLicense";
 
-const CustomEditor = () => {
+const CustomEditor = ({
+  value,
+  onChange,
+}: {
+  value?: string;
+  onChange?: (val: string) => void;
+}) => {
   const cloud = useCKEditorCloud({
     version: "45.0.0",
     premium: true,
@@ -43,7 +49,7 @@ const CustomEditor = () => {
   return (
     <CKEditor
       editor={ClassicEditor}
-      //   data="<p>Hello world!</p>"
+      data={value || ""}
       config={{
         licenseKey: licenseKey,
         plugins: [
@@ -94,11 +100,10 @@ const CustomEditor = () => {
           ],
         },
       }}
-      // onReady={(editor) => {
-      //   const editableElement = editor.ui.view.editable.element;
-      //   editableElement.style.height = "200px";
-      //   editableElement.style.overflow = "auto";
-      // }}
+      onChange={(_, editor) => {
+        const data = editor.getData();
+        if (onChange) onChange(data);
+      }}
     />
   );
 };

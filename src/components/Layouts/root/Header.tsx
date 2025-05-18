@@ -30,6 +30,7 @@ import HeadLineText from "./HeadLineText";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "@/redux/slices/authSlice";
+import HeaderDropdown from "./HeaderDropdown";
 
 import logo from "@/Data/Icon/PNG.png";
 import { auth } from "@/utils/firebase";
@@ -202,28 +203,19 @@ const Header: React.FC = () => {
             <Image alt="Darkak-Logo" src={logo} height={50} className="" />
           </Link>
 
-          <div className="hidden grid-flow-col gap-8 md:grid">
+          <div className="hidden grid-flow-col items-center gap-8 md:grid">
+            {/* Home Link */}
             <NavLink href="/" className="font-serif text-lg hover:text-primary">
               Home
             </NavLink>
+            <div className="relative font-serif text-lg">
+              <HeaderDropdown />
+            </div>
 
-            {/* <NavLink
-              href="/shop"
-              className={`font-serif text-lg hover:text-primary`}
-            >
-              Shop
-            </NavLink> */}
-
-            <NavLink
-              href="/category"
-              className={`font-serif text-lg hover:text-primary`}
-            >
-              Category
-            </NavLink>
-
+            {/* Contact Us Link */}
             <NavLink
               href="/contact-us"
-              className={`font-serif text-lg hover:text-primary`}
+              className="font-serif text-lg hover:text-primary"
             >
               Contact Us
             </NavLink>
@@ -334,7 +326,7 @@ const Header: React.FC = () => {
         <div className="flex h-full flex-col justify-between px-5 py-6 text-gray-800 shadow-lg backdrop-blur-md">
           <div className="w-full">
             {/* Header */}
-            <div className="mb-6 h-[50px] flex items-center justify-between bg-primaryBlue">
+            <div className="mb-6 flex h-[50px] items-center justify-between bg-primaryBlue">
               <Link href="/" onClick={onClose} className="ml-5">
                 <Image alt="Darkak-Logo" src={logo} height={35} className="" />
               </Link>

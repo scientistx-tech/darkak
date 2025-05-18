@@ -13,12 +13,15 @@ import { useGetMyCartQuery } from "@/redux/services/client/myCart";
 
 const CartPage: React.FC = () => {
   const [cartItems, setCartItems] = useState<Cart[]>();
- const { data, isLoading, isError } = useGetMyCartQuery();
-   // For Delete Modal
+  const { data, isLoading, isError } = useGetMyCartQuery();
+  // For Delete Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<number | null>(null);
   // Message For Coupon / Voucher
   const [messageApi, contextHolder] = message.useMessage();
+
+  const router = useRouter();
+
   useEffect(() => {
     if (data) {
       setCartItems(data.cart);
@@ -50,8 +53,6 @@ const CartPage: React.FC = () => {
     0,
   );
 
-
-
   const showModal = (id: number) => {
     setItemToDelete(id);
     setIsModalOpen(true);
@@ -69,9 +70,6 @@ const CartPage: React.FC = () => {
     setIsModalOpen(false);
     setItemToDelete(null);
   };
-
-  const router = useRouter();
-
 
   const coupon = () => {
     messageApi.open({

@@ -14,7 +14,19 @@ export const metadata: Metadata = {
     template: "%s | Darkak",
     default: "Darkak",
   },
-  description: "Next.js admin dashboard toolkit...",
+  description: "Looking for premium quality bags, stylish watches, and the latest electronics in Bangladesh? Darkak Mart offers a wide range of directly imported, top-tier products. Explore our exclusive collections at darkak.com.bd.",
+  keywords: [
+    "Darkak",
+    "Darkak Mart",
+    "Darkak.com.bd",
+    "Darkak Bangladesh",
+    "Darkak bags",
+    "Darkak watches",
+    "Darkak electronics",
+    "premium quality bags",
+    "stylish watches",
+    "latest electronics",
+  ],
 };
 
 export default function RootLayout({ children }: PropsWithChildren) {

@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Image from "next/image";
+import * as Switch from "@radix-ui/react-switch";
 import React, { useState } from "react";
 
 import {
@@ -20,6 +21,17 @@ import { toast } from "react-toastify";
 import * as yup from "yup";
 import Button from "../../components/Button";
 import { CiCirclePlus } from "react-icons/ci";
+import {
+  useDeleteProductMutation,
+  useGetProductsQuery,
+} from "@/redux/services/admin/adminProductApis";
+import {
+  useGetCategoriesQuery,
+  useGetSubCategoriesQuery,
+  useGetSubSubCategoriesQuery,
+} from "@/redux/services/admin/adminCategoryApis";
+import { useRouter } from "next/navigation";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 // Yup schema
 const brandSchema = yup.object().shape({
@@ -27,10 +39,33 @@ const brandSchema = yup.object().shape({
 });
 
 const ProductList = () => {
-  const { data, isLoading, error, refetch } = useGetBrandsQuery();
-  const [deleteBrand] = useDeleteBrandMutation();
+  const [queryParams, setQueryParams] = useState({});
+  const { data, isLoading, error, refetch } = useGetProductsQuery(queryParams);
+  const { data: brandsData } = useGetBrandsQuery();
+  const {
+    data: categoriesData,
+    isLoading: isCategoriesLoading,
+    error: categoriesError,
+    refetch: refetchCategories,
+  } = useGetCategoriesQuery();
+
+  const {
+    data: subCategoriesData,
+    isLoading: isSubCategoriesLoading,
+    error: subCategoriesError,
+    refetch: refetchSubCategories,
+  } = useGetSubCategoriesQuery();
+  const {
+    data: subSubCategoriesData,
+    isLoading: isSubSubCategoriesLoading,
+    error: subSubCategoriesError,
+    refetch: refetchSubSubCategories,
+  } = useGetSubSubCategoriesQuery();
+
+  const [deleteProduct] = useDeleteProductMutation();
   const [updateBrand, { isLoading: isUpdating }] = useUpdateBrandMutation();
 
+  const [search, setSearch] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<{
     title: string;
@@ -39,52 +74,59 @@ const ProductList = () => {
     title: "",
     icon: null,
   });
+  const [filters, setFilters] = useState({
+    brandId: "",
+    categoryId: "",
+    subCategoryId: "",
+    subSubCategoryId: "",
+  });
+  const router = useRouter();
 
-  const handleDelete = async (brandId: number) => {
+  const handleDelete = async (productId: number) => {
     try {
-      await deleteBrand(brandId).unwrap();
-      toast.success("Brand deleted successfully!");
+      await deleteProduct(productId).unwrap();
+      toast.success("Product deleted successfully!");
       refetch();
     } catch (err) {
-      toast.error("Failed to delete brand.");
+      toast.error("Failed to delete Product.");
     }
   };
 
-  const handleEdit = (doc: any) => {
-    setEditingId(doc.id);
-    setEditData({ title: doc.title, icon: null });
-  };
+  // const handleEdit = (doc: any) => {
+  //   setEditingId(doc.id);
+  //   setEditData({ title: doc.title, icon: null });
+  // };
 
-  const handleUpdate = async (brandId: number) => {
-    try {
-      // Validate using Yup
-      await brandSchema.validate(editData);
+  // const handleUpdate = async (brandId: number) => {
+  //   try {
+  //     // Validate using Yup
+  //     await brandSchema.validate(editData);
 
-      const formData = new FormData();
-      formData.append("title", editData.title);
-      if (editData.icon) {
-        formData.append("icon", editData.icon);
-      }
+  //     const formData = new FormData();
+  //     formData.append("title", editData.title);
+  //     if (editData.icon) {
+  //       formData.append("icon", editData.icon);
+  //     }
 
-      await updateBrand({ categoryId: String(brandId), formData }).unwrap();
-      toast.success("Brand updated successfully!");
-      setEditingId(null);
-      refetch();
-    } catch (err: any) {
-      if (err.name === "ValidationError") {
-        toast.error(err.message);
-      } else {
-        toast.error("Failed to update brand.");
-      }
-    }
-  };
+  //     await updateBrand({ categoryId: String(brandId), formData }).unwrap();
+  //     toast.success("Brand updated successfully!");
+  //     setEditingId(null);
+  //     refetch();
+  //   } catch (err: any) {
+  //     if (err.name === "ValidationError") {
+  //       toast.error(err.message);
+  //     } else {
+  //       toast.error("Failed to update brand.");
+  //     }
+  //   }
+  // };
 
   return (
     <div className="min-h-screen">
       <h2 className="mb-4 flex items-center gap-2 text-xl font-bold">
         🏠 In House Product List{" "}
         <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">
-          194
+          {data?.data.length || 0}
         </span>
       </h2>
 
@@ -93,38 +135,111 @@ const ProductList = () => {
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3 xl:grid-cols-4">
           <div>
             <label className="mb-1 block text-sm font-medium">Brand</label>
-            <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm">
+            <select
+              value={filters.brandId}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, brandId: e.target.value }))
+              }
+              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            >
               <option>Select from dropdown</option>
+              {brandsData &&
+                brandsData?.data?.map((subCat) => (
+                  <option key={subCat.id} value={subCat.id}>
+                    {subCat?.title}
+                  </option>
+                ))}
             </select>
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium">Category</label>
-            <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm">
+            <select
+              value={filters.categoryId}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, categoryId: e.target.value }))
+              }
+              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            >
               <option>Select from dropdown</option>
+              {categoriesData &&
+                categoriesData?.data?.map((subCat) => (
+                  <option key={subCat.id} value={subCat.id}>
+                    {subCat?.title}
+                  </option>
+                ))}
             </select>
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium">
               Sub Category
             </label>
-            <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm">
+            <select
+              value={filters.subCategoryId}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, subCategoryId: e.target.value }))
+              }
+              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            >
               <option>Select from dropdown</option>
+              {subCategoriesData &&
+                subCategoriesData?.data?.map((subCat) => (
+                  <option key={subCat.id} value={subCat.id}>
+                    {subCat?.title}
+                  </option>
+                ))}
             </select>
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium">
               Sub Sub Category
             </label>
-            <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm">
+            <select
+              value={filters.subSubCategoryId}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, subSubCategoryId: e.target.value }))
+              }
+              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            >
               <option>Select from dropdown</option>
+              {subSubCategoriesData &&
+                subSubCategoriesData?.data?.map((subCat) => (
+                  <option key={subCat.id} value={subCat.id}>
+                    {subCat?.title}
+                  </option>
+                ))}
             </select>
           </div>
         </div>
         <div className="flex justify-end gap-3">
-          <button className="rounded bg-gray-100 px-4 py-2 text-gray-700 hover:bg-gray-200">
+          <button
+            className="rounded bg-gray-100 px-4 py-2 text-gray-700 hover:bg-gray-200"
+            onClick={() => {
+              setFilters({
+                brandId: "",
+                categoryId: "",
+                subCategoryId: "",
+                subSubCategoryId: "",
+              });
+              setQueryParams({});
+            }}
+          >
             Reset
           </button>
-          <button className="rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800">
+          <button
+            className="rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
+            onClick={() =>
+              setQueryParams({
+                ...(filters.brandId && { brandId: filters.brandId }),
+                ...(filters.categoryId && { categoryId: filters.categoryId }),
+                ...(filters.subCategoryId && {
+                  subCategoryId: filters.subCategoryId,
+                }),
+                ...(filters.subSubCategoryId && {
+                  subSubCategoryId: filters.subSubCategoryId,
+                }),
+              })
+            }
+          >
             Show data
           </button>
         </div>
@@ -138,6 +253,14 @@ const ProductList = () => {
             <input
               type="text"
               placeholder="Search brand"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setQueryParams((prev) => ({
+                  ...prev,
+                  search: e.target.value,
+                }));
+              }}
               className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none"
             />
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -159,7 +282,7 @@ const ProductList = () => {
           </div>
           {/* more buttons*/}
           <div className="flex items-center gap-x-2">
-            <button className="flex items-center gap-2 rounded-md border-2 border-blue-400 px-4 py-2 text-sm font-medium text-blue-400">
+            {/* <button className="flex items-center gap-2 rounded-md border-2 border-blue-400 px-4 py-2 text-sm font-medium text-blue-400">
               <img
                 width={20}
                 height={20}
@@ -167,29 +290,36 @@ const ProductList = () => {
                 alt=""
               />
               Export
-            </button>
-            <button className="rounded-md bg-cyan-500 px-4 py-2 text-sm font-medium text-white">
+            </button> */}
+            {/* <button className="rounded-md bg-cyan-500 px-4 py-2 text-sm font-medium text-white">
               Limited Stocks
-            </button>
-            <button className="flex items-center gap-x-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white">
+            </button> */}
+            <button
+              onClick={() => router.push("/admin/product/add-product")}
+              className="flex items-center gap-x-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white"
+            >
               <CiCirclePlus className="text-lg font-bold" />
               <p>Add New Product</p>
             </button>
           </div>
         </div>
         {error ? (
-          <p className="px-6 text-red-500">Error loading brands.</p>
+          <p className="px-6 text-red-500">Error loading Products.</p>
         ) : (
           <Table>
             <TableHeader>
               <TableRow className="border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
-                <TableHead className="min-w-[120px] pl-5 sm:pl-6 xl:pl-7.5">
-                  Icon
-                </TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Product Count</TableHead>
-                <TableHead>Edit</TableHead>
-                <TableHead>Delete</TableHead>
+                <TableHead>SL</TableHead>
+                <TableHead className="">Thumbnail</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead> Sub Category</TableHead>
+                <TableHead>Sub Sub Category</TableHead>
+                <TableHead>Brand</TableHead>
+                <TableHead>Price</TableHead>
+                <TableHead>Stock</TableHead>
+                <TableHead>Published</TableHead>
+                <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -202,85 +332,65 @@ const ProductList = () => {
                   </TableRow>
                 ))}
 
-              {!isLoading &&
-                data?.data?.map((doc) => (
+              {!isLoading && data?.data.length <= 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={7}
+                    className="py-8 text-center text-red-500"
+                  >
+                    No Data to Show
+                  </TableCell>
+                </TableRow>
+              ) : (
+                data?.data?.map((doc: any, i: number) => (
                   <TableRow key={doc.id}>
-                    <TableCell className="pl-5 sm:pl-6 xl:pl-7.5">
-                      {editingId === doc.id ? (
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) =>
-                            setEditData({
-                              ...editData,
-                              icon: e.target.files?.[0] || null,
-                            })
-                          }
-                        />
-                      ) : (
-                        <Image
-                          src={doc.icon}
-                          className="aspect-[6/5] w-15 rounded-[5px] object-cover"
-                          width={60}
-                          height={50}
-                          alt={`${doc.title} image`}
-                        />
-                      )}
-                    </TableCell>
+                    <TableCell>{i + 1}</TableCell>
 
                     <TableCell>
-                      {editingId === doc.id ? (
-                        <input
-                          type="text"
-                          className="w-full rounded-md border px-2 py-1"
-                          value={editData.title}
-                          onChange={(e) =>
-                            setEditData({ ...editData, title: e.target.value })
-                          }
-                        />
-                      ) : (
-                        doc.title
-                      )}
+                      <Image
+                        src={doc.thumbnail}
+                        className="aspect-[6/5] w-15 rounded-[5px] object-cover"
+                        width={60}
+                        height={60}
+                        alt={`${doc.title} image`}
+                      />
                     </TableCell>
 
-                    <TableCell>{doc._count.products}</TableCell>
-
+                    <TableCell>{doc.title}</TableCell>
+                    <TableCell>{doc.category.title}</TableCell>
+                    <TableCell>{doc.subCategory.title}</TableCell>
+                    <TableCell>{doc.subSubCategory.title}</TableCell>
+                    <TableCell>{doc.brand.title}</TableCell>
+                    <TableCell>{doc.price}</TableCell>
+                    <TableCell>{doc.stock}</TableCell>
                     <TableCell>
-                      {editingId === doc.id ? (
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={() => handleUpdate(doc.id)}
-                            className="bg-green-600 text-white"
-                          >
-                            {isUpdating ? "plz wait.." : "save"}
-                          </Button>
-                          <Button
-                            onClick={() => setEditingId(null)}
-                            className="bg-gray-500 text-white"
-                          >
-                            Cancel
-                          </Button>
-                        </div>
-                      ) : (
-                        <Button
-                          onClick={() => handleEdit(doc)}
-                          className="bg-blue text-white"
-                        >
-                          Edit
-                        </Button>
-                      )}
+                      <Switch.Root
+                        checked={doc.status === "approved"}
+                        onCheckedChange={(checked) => {
+                          // handle status change here
+                        }}
+                        className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors data-[state=checked]:bg-blue-600"
+                      >
+                        <Switch.Thumb className="block h-4 w-4 rounded-full bg-white shadow-lg transition-transform data-[state=checked]:translate-x-5" />
+                      </Switch.Root>
                     </TableCell>
-
                     <TableCell>
                       <Button
                         onClick={() => handleDelete(doc.id)}
-                        className="bg-red-500 text-white"
+                        className="mr-2 bg-red-50 p-1 text-red-700"
                       >
-                        Delete
+                        <FaTrashAlt className="" />
+                      </Button>
+                      <Button
+                        onClick={() => handleDelete(doc.id)}
+                        className="mr-2 bg-green-50 p-1 text-green-700"
+                      >
+                        <FaEdit className="" />
                       </Button>
                     </TableCell>
                   </TableRow>
-                ))}
+                ))
+              )}
             </TableBody>
           </Table>
         )}

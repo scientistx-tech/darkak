@@ -42,7 +42,8 @@ const ProductsSection = () => {
   };
 
   return (
-    <section className="relative mt-4 flex w-full flex-col gap-x-7 p-4 md:mt-12 md:p-6 lg:mt-[62px] lg:flex-row lg:p-8 xl:p-10">
+    <section className="mt-4 md:mt-6 md:p-6 lg:flex items-start w-full gap-x-7 p-4 lg:p-8 xl:p-10">
+    {/* <section className="relative mt-4 md:mt-12 md:p-6 lg:mt-[62px] flex w-full flex-col gap-x-7 p-4 lg:flex-row lg:p-8 xl:p-10"> */}
       {/* Hamburger Button */}
       <div className="mb-4 block lg:hidden">
         <button
@@ -87,7 +88,7 @@ const ProductsSection = () => {
                 </svg>
               </button>
             </div>
-            <div className="p-4 overflow-y-auto h-full">
+            <div className="pt-4 px-4 pb-20 overflow-y-auto h-full">
               <LeftSidebar />
             </div>
           </div>
@@ -95,7 +96,7 @@ const ProductsSection = () => {
       )}
 
       {/* Product Grid */}
-      <div className="grid w-full grid-cols-1 gap-7 md:grid-cols-2 lg:w-4/5 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid w-full gap-7 grid-cols-2 lg:w-4/5 lg:grid-cols-3 xl:grid-cols-4">
         {dummyProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

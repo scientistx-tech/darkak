@@ -58,3 +58,60 @@ export interface Venue {
 export interface VenueResponse {
   venue: Venue;
 }
+
+type DeliveryInfo = {
+  delivery_time: string;
+  delivery_charge: string;
+  delivery_time_outside: string;
+  delivery_charge_outside: string;
+  return_days: string;
+  multiply?: string;
+};
+
+type AttributeOption = {
+  title: string;
+  image?: string;
+  price?: number | string;
+  stock?: number | string;
+  key?: string;
+  sku?: string;
+};
+
+type AttributeItem = {
+  title: string;
+  options: AttributeOption[];
+};
+
+type DiscountType = "flat" | "percentage";
+
+export type Product = {
+  title: string;
+  short_description: string;
+  meta_title: string;
+  meta_image: string;
+  video_link: string;
+  thumbnail: string;
+  price: string;
+  discount_type: string;
+  discount: string;
+  tax_amount: string;
+  tax_type: string;
+  available: string;
+  warranty: string;
+  region: string;
+  stock: string;
+  minOrder: string;
+  unit: string;
+  code: string;
+  specification: string;
+  description: string;
+  warranty_details: string;
+  categoryId: string;
+  subCategoryId: string;
+  subSubCategoryId: string;
+  brandId: string;
+  keywords: string[];
+  images: string[];
+  delivery_info: DeliveryInfo;
+  items: AttributeItem[];
+};

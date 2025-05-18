@@ -5,6 +5,7 @@ import Button from "../../components/Button";
 import { toast } from "react-toastify";
 import SelectField from "@/app/(root)/user/profile/components/SelectField";
 import { useUploadFormDataBrandMutation } from "@/redux/services/admin/adminBrandApis";
+import Image from "next/image";
 
 function AddBrandData() {
   const [title, setTitle] = useState("");
@@ -112,10 +113,12 @@ function AddBrandData() {
         >
           {previewImage ? (
             <div className="relative h-full w-full">
-              <img
+              <Image
                 src={previewImage}
                 alt="Preview"
                 className="h-full w-full rounded-lg object-contain py-3"
+                width={150}
+                height={150}
               />
               <button
                 type="button"
@@ -133,11 +136,11 @@ function AddBrandData() {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center">
-              <img
+              <Image
                 width={30}
                 height={30}
                 src="/images/icon/icon-image.png"
-                alt=""
+                alt="image-icon"
               />
               <p className="mt-2 text-sm text-gray-500">
                 Drag and drop an image, or{" "}

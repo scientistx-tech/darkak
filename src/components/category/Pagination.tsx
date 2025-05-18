@@ -62,8 +62,11 @@ const Pagination: React.FC<PaginationProps> = ({
 
   return (
     <div className="flex flex-col items-center justify-between gap-4 rounded-md bg-blue-50 px-4 py-4 shadow-sm sm:flex-row sm:px-8 md:px-16">
+      {/* empty div */}
+      <div className="w-1/3 hidden lg:block"></div>
+      
       {/* Pagination Controls */}
-      <div className="flex flex-wrap items-center justify-center gap-2">
+      <div className="w-full lg:w-1/3 flex flex-wrap items-center justify-center gap-2">
         <button
           onClick={() => onPageChange(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
@@ -110,7 +113,7 @@ const Pagination: React.FC<PaginationProps> = ({
       </div>
 
       {/* Status Text */}
-      <div className="text-center text-xs text-gray-600 sm:text-sm">
+      <div className="w-full lg:w-1/3 text-center text-xs text-gray-600 sm:text-sm">
         Showing {currentPage * itemsPerPage - (itemsPerPage - 1)} to{" "}
         {Math.min(currentPage * itemsPerPage, totalItemCount)} of{" "}
         {totalItemCount} ({totalPages} Pages)

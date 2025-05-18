@@ -236,7 +236,12 @@ export const NAV_DATA = [
       {
         title: "Subscribers",
         icon: PiUserSoundFill,
-        items: [],
+        items: [
+          {
+            title: "View Subscriber",
+            url: "/admin/vendors/add-new-vendor",
+          },
+        ],
       },
     ],
   },
