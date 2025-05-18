@@ -98,6 +98,9 @@ export type Product = {
   tax_type: string;
   available: string;
   warranty: string;
+  warranty_time: string;
+  meta_keywords: string[];
+  meta_description: string;
   region: string;
   stock: string;
   minOrder: string;
@@ -110,6 +113,7 @@ export type Product = {
   subCategoryId: string;
   subSubCategoryId: string;
   brandId: string;
+  drafted: boolean;
   keywords: string[];
   images: string[];
   delivery_info: DeliveryInfo;
