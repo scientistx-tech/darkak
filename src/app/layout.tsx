@@ -72,14 +72,14 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Darkak", url: "https://www.darkak.com.bd" }],
   openGraph: {
-    title: "Darkak Mart",
+    title: "Exclusive & Premium Quality: Explore Darkak Mart for multiple types Imported Goods in BD.",
     description:
       "Looking for premium quality bags, stylish watches, and the latest electronics in Bangladesh? Darkak Mart offers a wide range of directly imported, top-tier products. Explore our exclusive collections at darkak.com.bd.",
-    url: "https://www.darkak.com.bd",
+    url: "https://www.darkak.com.bd/",
     siteName: "Darkak Mart",
     images: [
       {
-        url: "https://sportsbuzzs.com/og-image.jpg", // Update with your image URL
+        url: "https://www.darkak.com.bd/opengraph-image.jpeg", // Update with your image URL
         width: 1200,
         height: 630,
         alt: "Darkak Mart - Best online store Bangladesh",
@@ -93,7 +93,7 @@ export const metadata: Metadata = {
     title: "Darkak Mart",
     description:
       "Looking for premium quality bags, stylish watches, and the latest electronics in Bangladesh? Darkak Mart offers a wide range of directly imported, top-tier products. Explore our exclusive collections at darkak.com.bd.",
-    images: ["https://sportsbuzzs.com/og-image.jpg"], // Same as OG image
+    images: ["https://www.darkak.com.bd/opengraph-image.jpeg"], // Same as OG image
   },
   metadataBase: new URL("https://www.darkak.com.bd"),
 };
