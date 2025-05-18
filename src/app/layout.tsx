@@ -72,7 +72,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Darkak", url: "https://www.darkak.com.bd" }],
   openGraph: {
-    title: "Sports Buzz",
+    title: "Darkak Mart",
     description:
       "Looking for premium quality bags, stylish watches, and the latest electronics in Bangladesh? Darkak Mart offers a wide range of directly imported, top-tier products. Explore our exclusive collections at darkak.com.bd.",
     url: "https://www.darkak.com.bd",
