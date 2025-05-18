@@ -70,6 +70,32 @@ export const metadata: Metadata = {
   "BD bag mart", "electronic mart BD", "imported gadgets BD", "china product bd", "buy online BD",
   "bd tech store", "bd fashion mart"
   ],
+  authors: [{ name: "Darkak", url: "https://www.darkak.com.bd" }],
+  openGraph: {
+    title: "Sports Buzz",
+    description:
+      "Looking for premium quality bags, stylish watches, and the latest electronics in Bangladesh? Darkak Mart offers a wide range of directly imported, top-tier products. Explore our exclusive collections at darkak.com.bd.",
+    url: "https://www.darkak.com.bd",
+    siteName: "Darkak Mart",
+    images: [
+      {
+        url: "https://sportsbuzzs.com/og-image.jpg", // Update with your image URL
+        width: 1200,
+        height: 630,
+        alt: "Darkak Mart - Best online store Bangladesh",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Darkak Mart",
+    description:
+      "Looking for premium quality bags, stylish watches, and the latest electronics in Bangladesh? Darkak Mart offers a wide range of directly imported, top-tier products. Explore our exclusive collections at darkak.com.bd.",
+    images: ["https://sportsbuzzs.com/og-image.jpg"], // Same as OG image
+  },
+  metadataBase: new URL("https://www.darkak.com.bd"),
 };
 
 export default function RootLayout({ children }: PropsWithChildren) {
