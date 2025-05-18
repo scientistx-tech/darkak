@@ -91,6 +91,59 @@ export const adminApi = baseApi.injectEndpoints({
       }),
     }),
 
+    // change product status
+
+    updateDraftStatus: builder.mutation<
+      any,
+      {
+        id: string;
+        data: { status: boolean };
+      }
+    >({
+      query: ({ id, data }: { id: string; data: { status: boolean } }) => ({
+        url: `/admin/product/update/drafted/${id}`,
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: data,
+      }),
+    }),
+
+    updateTodaysDealStatus: builder.mutation<
+      any,
+      {
+        id: string;
+        data: { status: boolean };
+      }
+    >({
+      query: ({ id, data }: { id: string; data: { status: boolean } }) => ({
+        url: `/admin/product/update/deal/${id}`,
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: data,
+      }),
+    }),
+
+    updateFeatureStatus: builder.mutation<
+      any,
+      {
+        id: string;
+        data: { status: boolean };
+      }
+    >({
+      query: ({ id, data }: { id: string; data: { status: boolean } }) => ({
+        url: `/admin/product/update/feature/${id}`,
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: data,
+      }),
+    }),
+
     // image uploads
 
     uploadImages: builder.mutation<any, FormData>({
@@ -112,4 +165,7 @@ export const {
   useGetProductsQuery,
   useUploadImagesMutation,
   useDeleteProductMutation,
+  useUpdateFeatureStatusMutation,
+  useUpdateTodaysDealStatusMutation,
+  useUpdateDraftStatusMutation,
 } = adminApi;
