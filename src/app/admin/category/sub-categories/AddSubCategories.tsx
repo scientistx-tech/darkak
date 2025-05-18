@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -22,6 +22,16 @@ type AddDataProps = {
         }[]
       | undefined;
   }[];
+
+  value?: {
+    id: string;
+    title: string;
+    categoryId: string;
+  };
+  setIsEditable?: (arg: {
+    status: boolean;
+    value: { id: string; title: string; categoryId: string };
+  }) => void;
 };
 
 // Validation schema using Yup
@@ -30,7 +40,12 @@ const schema = yup.object().shape({
   categoryId: yup.string().required("Main Category is required"),
 });
 
-function AddSubCategories({ refetch, categories }: AddDataProps) {
+function AddSubCategories({
+  refetch,
+  categories,
+  value,
+  setIsEditable,
+}: AddDataProps) {
   const [currentLanguage, setCurrentLanguage] = useState("en");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -47,10 +62,19 @@ function AddSubCategories({ refetch, categories }: AddDataProps) {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      title: "",
-      categoryId: "",
+      title: value?.title || "",
+      categoryId: value?.categoryId || "",
     },
   });
+
+  useEffect(() => {
+    if (value) {
+      reset({
+        title: value.title || "",
+        categoryId: value.categoryId || "",
+      });
+    }
+  }, [value, reset]);
 
   const onSubmit = async (data: any) => {
     // const formData = new FormData();
@@ -66,6 +90,12 @@ function AddSubCategories({ refetch, categories }: AddDataProps) {
     try {
       await uploadFormData(formData).unwrap();
       toast.success("Sub Category created successfully!");
+      if (setIsEditable) {
+        setIsEditable({
+          status: false,
+          value: { id: "", title: "", categoryId: "" },
+        });
+      }
       refetch(); // Refetch the data after successful submission
       reset(); // Reset the form after successful submission
     } catch (error) {
@@ -76,8 +106,10 @@ function AddSubCategories({ refetch, categories }: AddDataProps) {
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <div className="text-xl font-semibold">Add Sub Category</div>
-
+      <h1 className="mb-6 flex items-center gap-2 text-2xl font-bold">
+        <span className="text-yellow-600">📋</span>{" "}
+        {value?.id ? "Edit Sub Category" : "Sub Category Setup"}
+      </h1>
       {/* Language Tabs */}
       <div className="my-5 flex items-center gap-x-5">
         <div
@@ -133,13 +165,7 @@ function AddSubCategories({ refetch, categories }: AddDataProps) {
                 onChange={(value: string) => {
                   field.onChange(value); // Update the value in the form
                 }}
-                value={
-                  categories
-                    ?.find(
-                      (category: any) => category.id.toString() === field.value,
-                    )
-                    ?.id.toString() || "" // Ensure the selected value is a string
-                } // Ensure the selected value is displayed correctly
+                value={field.value}
               />
             )}
           />
@@ -152,9 +178,30 @@ function AddSubCategories({ refetch, categories }: AddDataProps) {
       </div>
 
       {/* Submit Button */}
-      <div>
+      <div className="flex items-center gap-3">
+        {value?.id && (
+          <Button
+            onClick={() => {
+              if (setIsEditable) {
+                setIsEditable({
+                  status: false,
+                  value: { id: "", title: "", categoryId: "" },
+                });
+              }
+            }}
+            className="bg-red-500"
+          >
+            Cancel
+          </Button>
+        )}
         <Button onClick={handleSubmit(onSubmit)} disabled={isLoading}>
-          {isLoading ? "Submitting..." : "Submit"}
+          {value?.id
+            ? isLoading
+              ? "Updating..."
+              : "Update"
+            : isLoading
+              ? "Submiting..."
+              : "Submit"}
         </Button>
       </div>
     </div>

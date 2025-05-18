@@ -41,7 +41,7 @@ const brandSchema = yup.object().shape({
 const ProductList = () => {
   const [queryParams, setQueryParams] = useState({});
   const { data, isLoading, error, refetch } = useGetProductsQuery(queryParams);
-  const { data: brandsData } = useGetBrandsQuery();
+  const { data: brandsData } = useGetBrandsQuery({});
   const {
     data: categoriesData,
     isLoading: isCategoriesLoading,
@@ -144,7 +144,7 @@ const ProductList = () => {
             >
               <option>Select from dropdown</option>
               {brandsData &&
-                brandsData?.data?.map((subCat) => (
+                brandsData?.data?.map((subCat: any) => (
                   <option key={subCat.id} value={subCat.id}>
                     {subCat?.title}
                   </option>

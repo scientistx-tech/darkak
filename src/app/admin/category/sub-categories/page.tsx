@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import Button from "../../components/Button";
 // import AddData from "./AddData";
 import {
@@ -28,6 +28,14 @@ import AddData from "../categories/AddData";
 import AddSubCategories from "./AddSubCategories";
 
 function CategoryTable() {
+  const [isEditable, setIsEditable] = useState<{
+    status: boolean;
+    value: {
+      id: string;
+      title: string;
+      categoryId: string;
+    };
+  }>({ status: false, value: { id: "", title: "", categoryId: "" } });
   const {
     data: categoriesData,
     isLoading: isCategoriesLoading,
@@ -66,6 +74,8 @@ function CategoryTable() {
               : []
           }
           refetch={refetch}
+          value={isEditable.value}
+          setIsEditable={setIsEditable}
         />
       </div>
       <div className="flex justify-between px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
@@ -111,12 +121,21 @@ function CategoryTable() {
                   <TableCell>{doc?.category?.title}</TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-x-2">
-                      <Link
-                        href={`/admin/category/sub-categories/${doc.id}`}
+                      <button
+                        onClick={() => {
+                          setIsEditable({
+                            status: true,
+                            value: {
+                              id: String(doc.id),
+                              title: doc.title,
+                              categoryId: String(doc.categoryId),
+                            },
+                          });
+                        }}
                         // className="bg-blue text-white"
                       >
                         <MdOutlineEdit className="h-8 w-8 cursor-pointer rounded border-2 border-blue-500 p-1 text-blue-500" />
-                      </Link>
+                      </button>
                       <button onClick={() => handleDelete(doc.id)} className="">
                         <MdDelete className="h-8 w-8 rounded border-2 border-red-500 p-1 text-red-500" />
                       </button>
