@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export const ImageInput: React.FC<{
   label: string;
   onChange: (file: File | null) => void;
@@ -22,7 +24,9 @@ export const ImageInput: React.FC<{
           }`}
         >
           {preview ? (
-            <img
+            <Image
+              width={150}
+              height={150}
               src={preview}
               alt="Preview"
               className={`rounded-[10px] object-cover ${

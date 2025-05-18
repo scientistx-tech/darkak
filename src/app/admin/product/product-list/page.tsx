@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Image from "next/image";
+import * as Switch from "@radix-ui/react-switch";
 import React, { useState } from "react";
 
 import {
@@ -30,6 +31,7 @@ import {
   useGetSubSubCategoriesQuery,
 } from "@/redux/services/admin/adminCategoryApis";
 import { useRouter } from "next/navigation";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 // Yup schema
 const brandSchema = yup.object().shape({
@@ -302,20 +304,22 @@ const ProductList = () => {
           </div>
         </div>
         {error ? (
-          <p className="px-6 text-red-500">Error loading brands.</p>
+          <p className="px-6 text-red-500">Error loading Products.</p>
         ) : (
           <Table>
             <TableHeader>
               <TableRow className="border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
                 <TableHead>SL</TableHead>
-                <TableHead className="min-w-[120px] pl-5 sm:pl-6 xl:pl-7.5">
-                  Product Thumbnail
-                </TableHead>
-                <TableHead>Product Name</TableHead>
+                <TableHead className="">Thumbnail</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead> Sub Category</TableHead>
+                <TableHead>Sub Sub Category</TableHead>
+                <TableHead>Brand</TableHead>
                 <TableHead>Price</TableHead>
-                <TableHead>Discount</TableHead>
                 <TableHead>Stock</TableHead>
-                <TableHead>Delete</TableHead>
+                <TableHead>Published</TableHead>
+                <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -338,7 +342,7 @@ const ProductList = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                data?.data?.map((doc: any, i: string) => (
+                data?.data?.map((doc: any, i: number) => (
                   <TableRow key={doc.id}>
                     <TableCell>{i + 1}</TableCell>
 
@@ -347,24 +351,41 @@ const ProductList = () => {
                         src={doc.thumbnail}
                         className="aspect-[6/5] w-15 rounded-[5px] object-cover"
                         width={60}
-                        height={50}
+                        height={60}
                         alt={`${doc.title} image`}
                       />
                     </TableCell>
 
                     <TableCell>{doc.title}</TableCell>
-
+                    <TableCell>{doc.category.title}</TableCell>
+                    <TableCell>{doc.subCategory.title}</TableCell>
+                    <TableCell>{doc.subSubCategory.title}</TableCell>
+                    <TableCell>{doc.brand.title}</TableCell>
                     <TableCell>{doc.price}</TableCell>
-
-                    <TableCell>{doc.discount}</TableCell>
                     <TableCell>{doc.stock}</TableCell>
-
+                    <TableCell>
+                      <Switch.Root
+                        checked={doc.status === "approved"}
+                        onCheckedChange={(checked) => {
+                          // handle status change here
+                        }}
+                        className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors data-[state=checked]:bg-blue-600"
+                      >
+                        <Switch.Thumb className="block h-4 w-4 rounded-full bg-white shadow-lg transition-transform data-[state=checked]:translate-x-5" />
+                      </Switch.Root>
+                    </TableCell>
                     <TableCell>
                       <Button
                         onClick={() => handleDelete(doc.id)}
-                        className="bg-red-500 text-white"
+                        className="mr-2 bg-red-50 p-1 text-red-700"
                       >
-                        Delete
+                        <FaTrashAlt className="" />
+                      </Button>
+                      <Button
+                        onClick={() => handleDelete(doc.id)}
+                        className="mr-2 bg-green-50 p-1 text-green-700"
+                      >
+                        <FaEdit className="" />
                       </Button>
                     </TableCell>
                   </TableRow>

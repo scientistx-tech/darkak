@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Select from "react-select";
+import Image from "next/image";
 
 function AddSlider() {
   const [title, setTitle] = useState("");
@@ -56,8 +57,8 @@ function AddSlider() {
   };
 
   return (
-    <div className="mx-auto mt-6 rounded-lg bg-white p-6 shadow-md max-w-xl">
-      <h2 className="text-2xl font-semibold mb-4">Add New Slider</h2>
+    <div className="mx-auto mt-6 max-w-xl rounded-lg bg-white p-6 shadow-md">
+      <h2 className="mb-4 text-2xl font-semibold">Add New Slider</h2>
 
       <Input
         placeholder="Title"
@@ -84,7 +85,6 @@ function AddSlider() {
         className="mb-3"
       />
 
-
       {/* Product selector */}
       <div className="mb-3">
         <label className="mb-1 block text-sm font-medium text-gray-700">
@@ -104,10 +104,12 @@ function AddSlider() {
         className="mt-3"
       />
       {previewBanner && (
-        <img
+        <Image
+          width={150}
+          height={150}
           src={previewBanner}
           alt="Banner Preview"
-          className="mt-3 h-40 w-full object-cover rounded"
+          className="mt-3 h-40 w-full rounded object-cover"
         />
       )}
 
