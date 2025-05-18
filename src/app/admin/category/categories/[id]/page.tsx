@@ -8,6 +8,7 @@ import { useUpdateCategoryMutation } from "@/redux/services/admin/adminCategoryA
 import SelectField from "@/app/(root)/user/profile/components/SelectField";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface EditDataProps {
   params: Promise<{ id: string }>;
@@ -138,10 +139,12 @@ function EditData({ params }: EditDataProps) {
         >
           {previewImage ? (
             <div className="relative h-full w-full">
-              <img
+              <Image
                 src={previewImage}
                 alt="Preview"
                 className="h-full w-full rounded-lg object-contain py-3"
+                width={150}
+                height={150}
               />
               <button
                 type="button"
@@ -159,11 +162,11 @@ function EditData({ params }: EditDataProps) {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center">
-              <img
+              <Image
                 width={30}
                 height={30}
                 src="/images/icon/icon-image.png"
-                alt=""
+                alt="image-icon"
               />
               <p className="mt-2 text-sm text-gray-500">
                 Drag and drop an image, or{" "}

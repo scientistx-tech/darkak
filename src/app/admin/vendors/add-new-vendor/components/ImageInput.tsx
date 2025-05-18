@@ -25,6 +25,8 @@ export const ImageInput: React.FC<{
         >
           {preview ? (
             <Image
+              width={150}
+              height={150}
               src={preview}
               alt="Preview"
               className={`rounded-[10px] object-cover ${

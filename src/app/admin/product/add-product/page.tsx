@@ -20,6 +20,7 @@ import Image from "next/image";
 import { toast } from "react-toastify";
 import { Router } from "next/router";
 import { useRouter } from "next/navigation";
+import { FaTrashAlt } from "react-icons/fa";
 
 const CustomEditor = dynamic(
   () => import("@/app/admin/components/CustomEditor"),
@@ -79,16 +80,14 @@ type ProductFormData = {
   subCategoryId: string;
   subSubCategoryId: string;
   brandId: string;
-  keywords: string[];
+  keywords: string;
   images: string[];
   delivery_info: DeliveryInfo;
   items: AttributeItem[];
 };
 
 export default function ProductForm() {
-  const [formData, setFormData] = useState<
-    Omit<ProductFormData, "keywords"> & { keywords: string }
-  >({
+  const [formData, setFormData] = useState<ProductFormData>({
     title: "",
     short_description: "",
     meta_title: "",
@@ -101,7 +100,7 @@ export default function ProductForm() {
     tax_amount: "",
     tax_type: "include",
     available: "in-stock",
-    warranty: "",
+    warranty: "darkak",
     region: "BD",
     stock: "",
     minOrder: "1",
@@ -122,7 +121,8 @@ export default function ProductForm() {
       delivery_time_outside: "",
       delivery_charge_outside: "",
       return_days: "",
-    },
+      multiply: "",
+    } as DeliveryInfo,
     items: [],
   });
   const [currentLanguage, setCurrentLanguage] = useState("en");
@@ -131,29 +131,12 @@ export default function ProductForm() {
   const [thumbnailUploading, setThumbnailUploading] = useState(false);
   const [imagesUploading, setImagesUploading] = useState(false);
   const [metaImageUploading, setMetaImageUploading] = useState(false);
-
   const [currentTab, setCurrentTab] = useState<string>("desc");
 
   // load all categories, sub categories, sub sub categories and brands
-  const {
-    data: categoriesData,
-    isLoading: isCategoriesLoading,
-    error: categoriesError,
-    refetch: refetchCategories,
-  } = useGetCategoriesQuery();
-
-  const {
-    data: subCategoriesData,
-    isLoading: isSubCategoriesLoading,
-    error: subCategoriesError,
-    refetch: refetchSubCategories,
-  } = useGetSubCategoriesQuery();
-  const {
-    data: subSubCategoriesData,
-    isLoading: isSubSubCategoriesLoading,
-    error: subSubCategoriesError,
-    refetch: refetchSubSubCategories,
-  } = useGetSubSubCategoriesQuery();
+  const { data: categoriesData } = useGetCategoriesQuery();
+  const { data: subCategoriesData } = useGetSubCategoriesQuery();
+  const { data: subSubCategoriesData } = useGetSubSubCategoriesQuery();
   const { data: brandsData } = useGetBrandsQuery();
   const { data: attributesData } = useGetProductAttributesQuery({});
   const [uploadImages] = useUploadImagesMutation();
@@ -248,6 +231,28 @@ export default function ProductForm() {
   // import type { DiscountType } from 'path-to-discount-type-definition';
 
   const handleSubmit = async () => {
+    if (
+      !formData.title ||
+      !formData.short_description ||
+      !formData.meta_title ||
+      !formData.meta_image ||
+      !formData.thumbnail ||
+      !formData.price ||
+      !formData.unit ||
+      !formData.categoryId ||
+      !formData.subCategoryId ||
+      !formData.subSubCategoryId ||
+      !formData.brandId ||
+      !formData.keywords ||
+      !formData.delivery_info.delivery_time ||
+      !formData.delivery_info.delivery_charge ||
+      !formData.delivery_info.delivery_time_outside ||
+      !formData.delivery_info.delivery_charge_outside ||
+      !formData.delivery_info.return_days
+    ) {
+      toast.error("Filled all required field first");
+      return;
+    }
     const payload = {
       title: formData.title,
       code: formData.code || productSKU,
@@ -287,21 +292,18 @@ export default function ProductForm() {
         return_days: formData.delivery_info.return_days,
         multiply: multiplyShipping ? "true" : "false",
       },
-      items: formData.items.map((item) => {
-        const attr = attributesData?.data.find(
-          (a: { id: string; title: string }) => a.id === item.attributeId,
-        );
-        return {
-          attributeId: attr?.id,
-          title: attr?.title || item.title || "",
-          options: item.options.map((opt) => ({
-            title: opt.title,
-            price: parseFloat((opt.price ?? "0").toString()),
-            stock: parseInt((opt.stock ?? "0").toString()),
-            sku: `${productSKU}-${opt.title}`,
-          })),
-        };
-      }),
+      items: formData.items.map((item) => ({
+        attributeId: item.attributeId || "",
+        title: item.title || "",
+        options: item.options.map((opt) => ({
+          ...opt,
+          price:
+            typeof opt.price === "string" ? parseFloat(opt.price) : opt.price,
+          stock:
+            typeof opt.stock === "string" ? parseInt(opt.stock) : opt.stock,
+          sku: `${productSKU}-${opt.title}`,
+        })),
+      })),
     };
 
     console.log("Prepared Payload:", payload);
@@ -341,7 +343,8 @@ export default function ProductForm() {
         <div className="flex flex-col gap-y-3">
           <div className="flex flex-col gap-2">
             <label htmlFor="title">
-              Product Name {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+              Product Name {`( ${currentLanguage === "en" ? "EN" : "BD"})`}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <input
               name="title"
@@ -354,7 +357,8 @@ export default function ProductForm() {
 
           <div className="flex flex-col gap-2">
             <label htmlFor="title">
-              Description {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+              Description {`( ${currentLanguage === "en" ? "EN" : "BD"})`}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <textarea
               name="short_description"
@@ -394,7 +398,7 @@ export default function ProductForm() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Sub Category
+              Sub Category <span className="text-red-500">*</span>
             </label>
             <select
               name="subCategoryId"
@@ -414,7 +418,7 @@ export default function ProductForm() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Sub Sub Category
+              Sub Sub Category <span className="text-red-500">*</span>
             </label>
             <select
               name="subSubCategoryId"
@@ -508,7 +512,7 @@ export default function ProductForm() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Warranty <span className="text-red-500">*</span>
+              Warranty
             </label>
             <select
               name="warranty"
@@ -523,7 +527,7 @@ export default function ProductForm() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Region <span className="text-red-500">*</span>
+              Region
             </label>
             <select
               name="region"
@@ -539,7 +543,7 @@ export default function ProductForm() {
         <div>
           <label className="flex items-center gap-1 text-sm font-medium text-gray-700">
             Search tags
-            <span className="cursor-help text-gray-400">ⓘ</span>
+            <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -576,7 +580,7 @@ export default function ProductForm() {
             </label>
             <input
               name="delivery_charge"
-              type="string"
+              type="number"
               value={formData.delivery_info.delivery_charge}
               onChange={handleDeliveryChange}
               className="mt-1 block w-full rounded-md border border-gray-300 p-2"
@@ -602,7 +606,7 @@ export default function ProductForm() {
             </label>
             <input
               name="delivery_charge_outside"
-              type="string"
+              type="number"
               value={formData.delivery_info.delivery_charge_outside}
               onChange={handleDeliveryChange}
               className="mt-1 block w-full rounded-md border border-gray-300 p-2"
@@ -645,8 +649,7 @@ export default function ProductForm() {
 
           <div>
             <label className="text-sm font-medium text-gray-700">
-              Minimum order qty <span className="text-red-500">*</span>{" "}
-              <span className="text-gray-400">ⓘ</span>
+              Minimum order quantity
             </label>
             <input
               type="number"
@@ -659,8 +662,7 @@ export default function ProductForm() {
 
           <div>
             <label className="text-sm font-medium text-gray-700">
-              Current stock qty <span className="text-red-500">*</span>{" "}
-              <span className="text-gray-400">ⓘ</span>
+              Current stock quantity
             </label>
             <input
               name="stock"
@@ -673,8 +675,7 @@ export default function ProductForm() {
 
           <div>
             <label className="text-sm font-medium text-gray-700">
-              Discount Type <span className="text-red-500">*</span>{" "}
-              <span className="text-gray-400">ⓘ</span>
+              Discount Type
             </label>
             <select
               name="discount_type"
@@ -689,8 +690,7 @@ export default function ProductForm() {
 
           <div>
             <label className="text-sm font-medium text-gray-700">
-              Discount amount ($) <span className="text-red-500">*</span>{" "}
-              <span className="text-gray-400">ⓘ</span>
+              Discount amount
             </label>
             <input
               name="discount"
@@ -703,8 +703,7 @@ export default function ProductForm() {
 
           <div>
             <label className="text-sm font-medium text-gray-700">
-              Tax amount (%) <span className="text-red-500">*</span>{" "}
-              <span className="text-gray-400">ⓘ</span>
+              Tax amount (%)
             </label>
             <input
               type="number"
@@ -717,7 +716,7 @@ export default function ProductForm() {
 
           <div>
             <label className="text-sm font-medium text-gray-700">
-              Tax Type <span className="text-red-500">*</span>{" "}
+              Tax Type
             </label>
             <select
               name="tax_type"
@@ -905,7 +904,7 @@ export default function ProductForm() {
                 value={attribute.attributeId || ""}
                 onChange={(e) => {
                   const updatedItems = [...formData.items];
-                  updatedItems[attributeIndex].attributeId = e.target.value; // <-- store id
+                  updatedItems[attributeIndex].attributeId = e.target.value;
                   setFormData((prev) => ({ ...prev, items: updatedItems }));
                 }}
                 className="w-1/3 rounded-md border border-gray-300 p-2"
@@ -926,7 +925,7 @@ export default function ProductForm() {
                   updatedItems.splice(attributeIndex, 1);
                   setFormData((prev) => ({ ...prev, items: updatedItems }));
                 }}
-                className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+                className="rounded bg-red-50 px-4 py-2 text-red-700 hover:bg-red-100"
               >
                 Remove Attribute
               </button>
@@ -934,7 +933,10 @@ export default function ProductForm() {
 
             {/* Attribute Options */}
             {attribute.options.map((option, optionIndex) => (
-              <div key={optionIndex} className="mt-4 flex items-center gap-4">
+              <div
+                key={optionIndex}
+                className="mt-4 flex items-center gap-4 rounded-md border border-gray-3 p-2"
+              >
                 <div className="flex w-full flex-col gap-1">
                   <label htmlFor="option_title">Option Title</label>
                   <input
@@ -989,9 +991,9 @@ export default function ProductForm() {
                     updatedItems[attributeIndex].options.splice(optionIndex, 1);
                     setFormData((prev) => ({ ...prev, items: updatedItems }));
                   }}
-                  className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+                  className=""
                 >
-                  Remove Option
+                  <FaTrashAlt className="text-xl text-red-600 hover:text-red-500" />
                 </button>
               </div>
             ))}
@@ -1007,7 +1009,7 @@ export default function ProductForm() {
                 });
                 setFormData((prev) => ({ ...prev, items: updatedItems }));
               }}
-              className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+              className="mt-4 rounded border border-blue-700 bg-blue-50 px-4 py-2 text-blue-700 hover:bg-blue-100"
             >
               Add Option
             </button>
@@ -1022,14 +1024,14 @@ export default function ProductForm() {
               items: [
                 ...prev.items,
                 {
-                  attributeId: "", // <-- initialize attributeId
+                  attributeId: "", // <-- always present!
                   title: "",
                   options: [],
                 },
               ],
             }));
           }}
-          className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+          className="rounded border-2 border-green-500 bg-green-50 px-4 py-2 text-green-700 hover:bg-green-100"
         >
           Add Attribute
         </button>
@@ -1176,6 +1178,7 @@ export default function ProductForm() {
           type="button"
           onClick={handleSubmit}
           className="rounded bg-blue-600 px-4 py-2 text-white shadow"
+          disabled={imagesUploading || metaImageUploading || thumbnailUploading}
         >
           Submit
         </button>
