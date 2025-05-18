@@ -59,6 +59,8 @@ type ProductFormData = {
   short_description: string;
   meta_title: string;
   meta_image: string;
+  meta_description: string;
+  meta_keywords: string;
   video_link: string;
   thumbnail: string;
   price: string;
@@ -68,11 +70,13 @@ type ProductFormData = {
   tax_type: string;
   available: string;
   warranty: string;
+  warranty_time: string;
   region: string;
   stock: string;
   minOrder: string;
   unit: string;
   code: string;
+  drafted: boolean;
   specification: string;
   description: string;
   warranty_details: string;
@@ -86,12 +90,212 @@ type ProductFormData = {
   items: AttributeItem[];
 };
 
+const countryCodes = [
+  "AF",
+  "AL",
+  "DZ",
+  "AS",
+  "AD",
+  "AO",
+  "AI",
+  "AQ",
+  "AG",
+  "AR",
+  "AM",
+  "AW",
+  "AU",
+  "AT",
+  "AZ",
+  "BS",
+  "BH",
+  "BD",
+  "BB",
+  "BY",
+  "BE",
+  "BZ",
+  "BJ",
+  "BM",
+  "BT",
+  "BO",
+  "BA",
+  "BW",
+  "BR",
+  "BN",
+  "BG",
+  "BF",
+  "BI",
+  "KH",
+  "CM",
+  "CA",
+  "CV",
+  "CF",
+  "TD",
+  "CL",
+  "CN",
+  "CO",
+  "KM",
+  "CG",
+  "CD",
+  "CR",
+  "CI",
+  "HR",
+  "CU",
+  "CY",
+  "CZ",
+  "DK",
+  "DJ",
+  "DM",
+  "DO",
+  "EC",
+  "EG",
+  "SV",
+  "GQ",
+  "ER",
+  "EE",
+  "ET",
+  "FJ",
+  "FI",
+  "FR",
+  "GA",
+  "GM",
+  "GE",
+  "DE",
+  "GH",
+  "GR",
+  "GD",
+  "GT",
+  "GN",
+  "GW",
+  "GY",
+  "HT",
+  "HN",
+  "HU",
+  "IS",
+  "IN",
+  "ID",
+  "IR",
+  "IQ",
+  "IE",
+  "IL",
+  "IT",
+  "JM",
+  "JP",
+  "JO",
+  "KZ",
+  "KE",
+  "KI",
+  "KR",
+  "KW",
+  "KG",
+  "LA",
+  "LV",
+  "LB",
+  "LS",
+  "LR",
+  "LY",
+  "LI",
+  "LT",
+  "LU",
+  "MG",
+  "MW",
+  "MY",
+  "MV",
+  "ML",
+  "MT",
+  "MH",
+  "MR",
+  "MU",
+  "MX",
+  "FM",
+  "MD",
+  "MC",
+  "MN",
+  "ME",
+  "MA",
+  "MZ",
+  "MM",
+  "NA",
+  "NR",
+  "NP",
+  "NL",
+  "NZ",
+  "NI",
+  "NE",
+  "NG",
+  "NO",
+  "OM",
+  "PK",
+  "PW",
+  "PA",
+  "PG",
+  "PY",
+  "PE",
+  "PH",
+  "PL",
+  "PT",
+  "QA",
+  "RO",
+  "RU",
+  "RW",
+  "KN",
+  "LC",
+  "VC",
+  "WS",
+  "SM",
+  "ST",
+  "SA",
+  "SN",
+  "RS",
+  "SC",
+  "SL",
+  "SG",
+  "SK",
+  "SI",
+  "SB",
+  "SO",
+  "ZA",
+  "ES",
+  "LK",
+  "SD",
+  "SR",
+  "SE",
+  "CH",
+  "SY",
+  "TW",
+  "TJ",
+  "TZ",
+  "TH",
+  "TL",
+  "TG",
+  "TO",
+  "TT",
+  "TN",
+  "TR",
+  "TM",
+  "UG",
+  "UA",
+  "AE",
+  "GB",
+  "US",
+  "UY",
+  "UZ",
+  "VU",
+  "VA",
+  "VE",
+  "VN",
+  "YE",
+  "ZM",
+  "ZW",
+];
+
 export default function ProductForm() {
   const [formData, setFormData] = useState<ProductFormData>({
     title: "",
     short_description: "",
     meta_title: "",
     meta_image: "",
+    meta_description: "",
+    meta_keywords: "",
     video_link: "",
     thumbnail: "",
     price: "",
@@ -101,6 +305,7 @@ export default function ProductForm() {
     tax_type: "include",
     available: "in-stock",
     warranty: "darkak",
+    warranty_time: "",
     region: "BD",
     stock: "",
     minOrder: "1",
@@ -114,6 +319,7 @@ export default function ProductForm() {
     subSubCategoryId: "",
     brandId: "",
     keywords: "",
+    drafted: false,
     images: [],
     delivery_info: {
       delivery_time: "",
@@ -137,7 +343,7 @@ export default function ProductForm() {
   const { data: categoriesData } = useGetCategoriesQuery();
   const { data: subCategoriesData } = useGetSubCategoriesQuery();
   const { data: subSubCategoriesData } = useGetSubSubCategoriesQuery();
-  const { data: brandsData } = useGetBrandsQuery();
+  const { data: brandsData } = useGetBrandsQuery({});
   const { data: attributesData } = useGetProductAttributesQuery({});
   const [uploadImages] = useUploadImagesMutation();
   const [createProduct] = useCreateProductMutation();
@@ -227,10 +433,7 @@ export default function ProductForm() {
     }
   };
 
-  // Import DiscountType at the top of your file if not already imported
-  // import type { DiscountType } from 'path-to-discount-type-definition';
-
-  const handleSubmit = async () => {
+  const handleSubmit = async (isDraft: boolean) => {
     if (
       !formData.title ||
       !formData.short_description ||
@@ -268,6 +471,7 @@ export default function ProductForm() {
       tax_type: formData.tax_type,
       available: formData.available,
       warranty: formData.warranty,
+      warranty_time: formData.warranty_time,
       region: formData.region,
       stock: formData.stock || "0",
       minOrder: formData.minOrder || "1",
@@ -275,9 +479,15 @@ export default function ProductForm() {
       specification: formData.specification,
       description: formData.description,
       warranty_details: formData.warranty_details,
+      meta_description: formData.meta_description,
+      meta_keywords: formData.meta_keywords
+        .split(",")
+        .map((k) => k.trim())
+        .filter(Boolean),
       categoryId: formData.categoryId,
       subCategoryId: formData.subCategoryId,
       subSubCategoryId: formData.subSubCategoryId,
+      drafted: isDraft,
       brandId: formData.brandId,
       keywords: formData.keywords
         .split(",")
@@ -301,7 +511,12 @@ export default function ProductForm() {
             typeof opt.price === "string" ? parseFloat(opt.price) : opt.price,
           stock:
             typeof opt.stock === "string" ? parseInt(opt.stock) : opt.stock,
-          sku: `${productSKU}-${opt.title}`,
+          sku:
+            opt.sku !== undefined
+              ? String(opt.sku)
+              : opt.stock !== undefined
+                ? String(opt.stock)
+                : "",
         })),
       })),
     };
@@ -448,7 +663,7 @@ export default function ProductForm() {
             >
               <option>Select Brand</option>
               {brandsData &&
-                brandsData?.data?.map((brand) => (
+                brandsData?.data?.map((brand: any) => (
                   <option key={brand.id} value={brand.id}>
                     {brand?.title}
                   </option>
@@ -527,6 +742,21 @@ export default function ProductForm() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
+              Warranty Time
+            </label>
+            <div className="relative mt-1 flex items-center gap-2">
+              <input
+                type="text"
+                name="warranty_time"
+                className="w-full rounded-md border border-gray-300 p-2"
+                value={formData.warranty_time}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
               Region
             </label>
             <select
@@ -535,7 +765,11 @@ export default function ProductForm() {
               value={formData.region}
               className="mt-1 block w-full rounded-md border border-gray-300 p-2"
             >
-              <option value="BD">BD</option>
+              {countryCodes.map((country) => (
+                <option key={country} value={country}>
+                  {country}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -985,6 +1219,22 @@ export default function ProductForm() {
                   />
                 </div>
 
+                <div className="flex w-full flex-col gap-1">
+                  <label htmlFor="item_sku">Code</label>
+                  <input
+                    type="string"
+                    placeholder="sku"
+                    value={option.sku}
+                    onChange={(e) => {
+                      const updatedItems = [...formData.items];
+                      updatedItems[attributeIndex].options[optionIndex].sku =
+                        e.target.value;
+                      setFormData((prev) => ({ ...prev, items: updatedItems }));
+                    }}
+                    className="w-full rounded-md border border-gray-300 p-2"
+                  />
+                </div>
+
                 <button
                   onClick={() => {
                     const updatedItems = [...formData.items];
@@ -1044,19 +1294,75 @@ export default function ProductForm() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
             <label className="text-sm font-medium text-gray-700">
-              Meta Title
+              Meta Title <span className="text-red-500">*</span>
             </label>
             <input
               name="meta_title"
-              type="string"
+              type="text"
               value={formData.meta_title}
+              onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+              maxLength={70}
+            />
+            <div className="mt-1 flex items-center justify-between">
+              <span className="text-xs text-gray-500">
+                Title should be between 50-60 characters.
+              </span>
+              <span
+                className={`text-xs font-semibold ${
+                  formData.meta_title.length < 50 ||
+                  formData.meta_title.length > 60
+                    ? "text-red-500"
+                    : "text-green-600"
+                }`}
+              >
+                {formData.meta_title.length} chars
+              </span>
+            </div>
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              Meta Description <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="meta_description"
+              type="text"
+              value={formData.meta_description}
+              onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+              maxLength={180}
+            />
+            <div className="mt-1 flex items-center justify-between">
+              <span className="text-xs text-gray-500">
+                Description should be between 150-160 characters.
+              </span>
+              <span
+                className={`text-xs font-semibold ${
+                  formData.meta_description.length < 150 ||
+                  formData.meta_description.length > 160
+                    ? "text-red-500"
+                    : "text-green-600"
+                }`}
+              >
+                {formData.meta_description.length} chars
+              </span>
+            </div>
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              Meta Keywords <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="meta_keywords"
+              type="string"
+              value={formData.meta_keywords}
               onChange={handleChange}
               className="mt-1 w-full rounded-md border p-2"
             />
           </div>
           <div className="flex-1 rounded-lg">
             <label className="mb-1 block text-sm font-semibold text-gray-700">
-              Meta Image
+              Meta Image <span className="text-red-500">*</span>
             </label>
             <p className="mb-2 text-xs text-blue-600">
               Ratio 1:1 (500 x 500 px)
@@ -1143,6 +1449,7 @@ export default function ProductForm() {
                 {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
               </label>
               <CustomEditor
+                key={currentTab}
                 value={formData.description}
                 onChange={handleEditorChange("description")}
               />
@@ -1154,18 +1461,20 @@ export default function ProductForm() {
                 {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
               </label>
               <CustomEditor
-                value={formData.description}
+                key={currentTab}
+                value={formData.specification}
                 onChange={handleEditorChange("specification")}
               />
             </div>
           ) : (
             <div className="flex flex-col gap-2">
               <label htmlFor="warranty_details">
-                warranty_details
+                Warranty details
                 {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
               </label>
               <CustomEditor
-                value={formData.description}
+                key={currentTab}
+                value={formData.warranty_details}
                 onChange={handleEditorChange("warranty_details")}
               />
             </div>
@@ -1173,14 +1482,30 @@ export default function ProductForm() {
         </div>
       </div>
 
-      <div className="text- mt-5">
+      <div className="mt-5 flex items-center justify-end gap-3">
         <button
           type="button"
-          onClick={handleSubmit}
+          onClick={() => handleSubmit(true)}
+          className="rounded bg-yellow-600 px-4 py-2 text-white shadow"
+          disabled={imagesUploading || metaImageUploading || thumbnailUploading}
+        >
+          Draft
+        </button>
+        <button
+          type="button"
+          onClick={() => handleSubmit(false)}
           className="rounded bg-blue-600 px-4 py-2 text-white shadow"
           disabled={imagesUploading || metaImageUploading || thumbnailUploading}
         >
-          Submit
+          Publish
+        </button>
+        <button
+          type="button"
+          // onClick={handleSubmit}
+          className="cursor-not-allowed rounded bg-teal-600 px-4 py-2 text-white shadow"
+          disabled={imagesUploading || metaImageUploading || thumbnailUploading}
+        >
+          Schedule
         </button>
       </div>
     </div>

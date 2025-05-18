@@ -28,22 +28,16 @@ export const adminApi = baseApi.injectEndpoints({
       }),
     }),
 
-    getBrands: builder.query<
-      {
-        totalPage: number;
-        data: {
-          id: number;
-          title: string;
-          icon: string;
-          _count: { products: number };
-        }[];
+    getBrands: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/admin/brand/get${queryString}`,
+          method: "GET",
+        };
       },
-      void
-    >({
-      query: () => ({
-        url: `/admin/brand/get`,
-        method: "GET",
-      }),
     }),
   }),
 });

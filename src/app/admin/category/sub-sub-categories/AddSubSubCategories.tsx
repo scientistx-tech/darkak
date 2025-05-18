@@ -151,13 +151,7 @@ function AddSubSubCategories({
                 onChange={(value: string) => {
                   field.onChange(value); // Update the value in the form
                 }}
-                value={
-                  categories
-                    ?.find(
-                      (category: any) => category.id.toString() === field.value,
-                    )
-                    ?.id.toString() || "" // Ensure the selected value is a string
-                } // Ensure the selected value is displayed correctly
+                value={field.value}
               />
             )}
           />
@@ -184,13 +178,7 @@ function AddSubSubCategories({
                 onChange={(value: string) => {
                   field.onChange(value); // Update the value in the form
                 }}
-                value={
-                  categories
-                    ?.find(
-                      (category: any) => category.id.toString() === field.value,
-                    )
-                    ?.id.toString() || "" // Ensure the selected value is a string
-                } // Ensure the selected value is displayed correctly
+                value={field.value}
               />
             )}
           />

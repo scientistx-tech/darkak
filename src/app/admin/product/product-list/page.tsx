@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/table";
 import Image from "next/image";
 import * as Switch from "@radix-ui/react-switch";
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
+import { Button, Modal } from "antd";
 import {
   useGetBrandsQuery,
   useDeleteBrandMutation,
@@ -19,11 +19,14 @@ import {
 } from "@/redux/services/admin/adminBrandApis";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import Button from "../../components/Button";
+import ButtonSelf from "../../components/Button";
 import { CiCirclePlus } from "react-icons/ci";
 import {
   useDeleteProductMutation,
   useGetProductsQuery,
+  useUpdateDraftStatusMutation,
+  useUpdateFeatureStatusMutation,
+  useUpdateTodaysDealStatusMutation,
 } from "@/redux/services/admin/adminProductApis";
 import {
   useGetCategoriesQuery,
@@ -31,7 +34,8 @@ import {
   useGetSubSubCategoriesQuery,
 } from "@/redux/services/admin/adminCategoryApis";
 import { useRouter } from "next/navigation";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaBarcode, FaEdit, FaEye, FaTrashAlt } from "react-icons/fa";
+import axios from "axios";
 
 // Yup schema
 const brandSchema = yup.object().shape({
@@ -41,7 +45,8 @@ const brandSchema = yup.object().shape({
 const ProductList = () => {
   const [queryParams, setQueryParams] = useState({});
   const { data, isLoading, error, refetch } = useGetProductsQuery(queryParams);
-  const { data: brandsData } = useGetBrandsQuery();
+  const { data: brandsData } = useGetBrandsQuery({});
+
   const {
     data: categoriesData,
     isLoading: isCategoriesLoading,
@@ -64,7 +69,14 @@ const ProductList = () => {
 
   const [deleteProduct] = useDeleteProductMutation();
   const [updateBrand, { isLoading: isUpdating }] = useUpdateBrandMutation();
+  const [changeDealStatus] = useUpdateTodaysDealStatusMutation();
+  const [changeFeatureStatus] = useUpdateFeatureStatusMutation();
+  const [changePublishedStatus] = useUpdateDraftStatusMutation();
 
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(
+    null,
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<{
@@ -82,10 +94,27 @@ const ProductList = () => {
   });
   const router = useRouter();
 
+  useEffect(() => {
+    refetch();
+  }, []);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = (id: any) => {
+    handleDelete(id);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   const handleDelete = async (productId: number) => {
     try {
       await deleteProduct(productId).unwrap();
       toast.success("Product deleted successfully!");
+      setIsModalOpen(false);
       refetch();
     } catch (err) {
       toast.error("Failed to delete Product.");
@@ -144,7 +173,7 @@ const ProductList = () => {
             >
               <option>Select from dropdown</option>
               {brandsData &&
-                brandsData?.data?.map((subCat) => (
+                brandsData?.data?.map((subCat: any) => (
                   <option key={subCat.id} value={subCat.id}>
                     {subCat?.title}
                   </option>
@@ -310,15 +339,14 @@ const ProductList = () => {
             <TableHeader>
               <TableRow className="border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
                 <TableHead>SL</TableHead>
-                <TableHead className="">Thumbnail</TableHead>
+                <TableHead>Thumbnail</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead> Sub Category</TableHead>
-                <TableHead>Sub Sub Category</TableHead>
-                <TableHead>Brand</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Stock</TableHead>
+                <TableHead>Added By</TableHead>
+                <TableHead>Info</TableHead>
+                <TableHead>Total Stock</TableHead>
                 <TableHead>Published</TableHead>
+                <TableHead>Today&apos;s Deal</TableHead>
+                <TableHead>Featured</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -357,36 +385,128 @@ const ProductList = () => {
                     </TableCell>
 
                     <TableCell>{doc.title}</TableCell>
-                    <TableCell>{doc.category.title}</TableCell>
-                    <TableCell>{doc.subCategory.title}</TableCell>
-                    <TableCell>{doc.subSubCategory.title}</TableCell>
-                    <TableCell>{doc.brand.title}</TableCell>
-                    <TableCell>{doc.price}</TableCell>
+                    <TableCell>
+                      {doc.user.isAdmin
+                        ? "Admin"
+                        : doc.user.isModerator
+                          ? "Moderator"
+                          : "Seller"}
+                    </TableCell>
+                    <TableCell className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <p className="font-bold">Num of Sale:</p>
+                        <p>{doc._count.order_items}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <p className="font-bold">Base Price:</p>
+                        <p>{doc.price}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <p className="font-bold">Rating:</p>
+                        <p>{doc._count.review} </p>
+                      </div>
+                    </TableCell>
                     <TableCell>{doc.stock}</TableCell>
                     <TableCell>
                       <Switch.Root
-                        checked={doc.status === "approved"}
-                        onCheckedChange={(checked) => {
-                          // handle status change here
+                        checked={!doc.drafted}
+                        onCheckedChange={async (checked) => {
+                          console.log(checked);
+
+                          try {
+                            const res = await changePublishedStatus({
+                              id: doc.id,
+                              data: { status: !checked },
+                            }).unwrap();
+                            refetch();
+                            toast.success("Published status updated!");
+                          } catch (err) {
+                            toast.error("Failed to update published status");
+                          }
                         }}
-                        className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors data-[state=checked]:bg-blue-600"
+                        className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-400 transition-colors data-[state=checked]:bg-teal-600"
                       >
-                        <Switch.Thumb className="block h-4 w-4 rounded-full bg-white shadow-lg transition-transform data-[state=checked]:translate-x-5" />
+                        <Switch.Thumb className="block h-4 w-4 rounded-full bg-white shadow-lg transition-transform data-[state=checked]:translate-x-6" />
                       </Switch.Root>
                     </TableCell>
                     <TableCell>
-                      <Button
+                      <Switch.Root
+                        checked={doc.deal}
+                        onCheckedChange={async (checked) => {
+                          try {
+                            const res = await changeDealStatus({
+                              id: doc.id,
+                              data: { status: checked },
+                            }).unwrap();
+                            refetch();
+                            toast.success("Todays Deal status updated!");
+                          } catch (err) {
+                            toast.error("Failed to update deal status");
+                          }
+                        }}
+                        className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-400 transition-colors data-[state=checked]:bg-teal-600"
+                      >
+                        <Switch.Thumb className="block h-4 w-4 rounded-full bg-white shadow-lg transition-transform data-[state=checked]:translate-x-6" />
+                      </Switch.Root>
+                    </TableCell>
+                    <TableCell>
+                      <Switch.Root
+                        checked={doc.feature}
+                        onCheckedChange={async (checked) => {
+                          try {
+                            const res = await changeFeatureStatus({
+                              id: doc.id,
+                              data: { status: checked },
+                            }).unwrap();
+                            refetch();
+                            toast.success("Featured status updated!");
+                          } catch (err) {
+                            toast.error("Failed to update feature status");
+                          }
+                        }}
+                        className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-400 transition-colors data-[state=checked]:bg-teal-600"
+                      >
+                        <Switch.Thumb className="block h-4 w-4 rounded-full bg-white shadow-lg transition-transform data-[state=checked]:translate-x-6" />
+                      </Switch.Root>
+                    </TableCell>
+                    <TableCell className="">
+                      <ButtonSelf
+                        // onClick={() => handleDelete(doc.id)}
+                        className="mr-2 bg-red-50 p-1 text-blue-700"
+                      >
+                        <FaBarcode className="" />
+                      </ButtonSelf>
+                      <ButtonSelf
+                        // onClick={() => handleDelete(doc.id)}
+                        className="mr-2 bg-red-50 p-1 text-yellow-700"
+                      >
+                        <FaEye className="" />
+                      </ButtonSelf>
+
+                      <>
+                        <Button
+                          type="default"
+                          onClick={() => {
+                            setSelectedProductId(doc.id);
+                            setIsModalOpen(true);
+                          }}
+                          className="mr-2 border-none bg-red-50 p-1 text-red-700 shadow-none hover:bg-red-100 hover:text-red-800"
+                        >
+                          <FaTrashAlt className="" />
+                        </Button>
+                      </>
+                      {/* <Button
                         onClick={() => handleDelete(doc.id)}
                         className="mr-2 bg-red-50 p-1 text-red-700"
                       >
                         <FaTrashAlt className="" />
-                      </Button>
-                      <Button
+                      </Button> */}
+                      <ButtonSelf
                         onClick={() => handleDelete(doc.id)}
                         className="mr-2 bg-green-50 p-1 text-green-700"
                       >
                         <FaEdit className="" />
-                      </Button>
+                      </ButtonSelf>
                     </TableCell>
                   </TableRow>
                 ))
@@ -395,6 +515,18 @@ const ProductList = () => {
           </Table>
         )}
       </div>
+      <Modal
+        title="Product Delete"
+        closable={{ "aria-label": "Custom Close Button" }}
+        open={isModalOpen}
+        onOk={() => {
+          if (selectedProductId) handleOk(selectedProductId);
+        }}
+        onCancel={handleCancel}
+        centered
+      >
+        <p className="text-base">Are you sure?</p>
+      </Modal>
     </div>
   );
 };

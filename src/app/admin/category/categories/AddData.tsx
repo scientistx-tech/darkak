@@ -8,18 +8,38 @@ import Image from "next/image";
 
 type AddDataProps = {
   refetch: () => void;
+  value?: {
+    id: string;
+    title: string;
+    icon: string;
+    serial: string;
+  };
+  setIsEditable?: (arg: {
+    status: boolean;
+    value: { id: string; title: string; icon: string; serial: string };
+  }) => void;
 };
 
-function AddData({ refetch }: AddDataProps) {
-  const [title, setTitle] = useState("");
+function AddData({ refetch, value, setIsEditable }: AddDataProps) {
+  console.log("value", value);
+
+  const [title, setTitle] = useState(value?.title || "");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [currentLanguage, setCurrentLanguage] = useState("en");
-  const [selectedCategoryPriority, setSelectedCategoryPriority] =
-    useState("Select Priority");
+  const [selectedCategoryPriority, setSelectedCategoryPriority] = useState(
+    value?.serial || "Select Priority",
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [uploadFormData, { isLoading }] = useUploadFormDataMutation();
+
+  React.useEffect(() => {
+    if (value?.title !== undefined && value?.serial !== undefined) {
+      setTitle(value?.title);
+      setSelectedCategoryPriority(value.serial);
+    }
+  }, [value?.title]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -47,6 +67,12 @@ function AddData({ refetch }: AddDataProps) {
     try {
       await uploadFormData(formData).unwrap();
       toast.success("Category created successfully!");
+      if (setIsEditable) {
+        setIsEditable({
+          status: false,
+          value: { id: "", title: "", icon: "", serial: "" },
+        });
+      }
       refetch();
       setTitle("");
       setSelectedCategoryPriority("Select Priority");
@@ -66,7 +92,10 @@ function AddData({ refetch }: AddDataProps) {
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <div className="text-xl font-semibold">Add Category</div>
+      <h1 className="mb-6 flex items-center gap-2 text-2xl font-bold">
+        <span className="text-yellow-600">📋</span>{" "}
+        {value?.id ? "Edit Category" : "Category Setup"}
+      </h1>
 
       {/* language tabs */}
       <div className="my-5 flex items-center gap-x-5">
@@ -177,9 +206,30 @@ function AddData({ refetch }: AddDataProps) {
           />
         </label>
       </div>
-      <div>
+      <div className="flex items-center gap-3">
+        {value?.id && (
+          <Button
+            onClick={() => {
+              if (setIsEditable) {
+                setIsEditable({
+                  status: false,
+                  value: { id: "", title: "", icon: "", serial: "" },
+                });
+              }
+            }}
+            className="bg-red-500"
+          >
+            Cancel
+          </Button>
+        )}
         <Button onClick={handleSubmit} disabled={isLoading}>
-          {isLoading ? "Submitting..." : "Submit"}
+          {value?.id
+            ? isLoading
+              ? "Updating..."
+              : "Update"
+            : isLoading
+              ? "Submiting..."
+              : "Submit"}
         </Button>
       </div>
     </div>

@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   useGetBrandsQuery,
@@ -27,7 +27,9 @@ const brandSchema = yup.object().shape({
 });
 
 function BrandTable() {
-  const { data, isLoading, error, refetch } = useGetBrandsQuery();
+  const [queryParams, setQueryParams] = useState({});
+  const [search, setSearch] = useState("");
+  const { data, isLoading, error, refetch } = useGetBrandsQuery(queryParams);
   const [deleteBrand] = useDeleteBrandMutation();
   const [updateBrand, { isLoading: isUpdating }] = useUpdateBrandMutation();
 
@@ -39,6 +41,10 @@ function BrandTable() {
     title: "",
     icon: null,
   });
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   const handleDelete = async (brandId: number) => {
     try {
@@ -98,6 +104,14 @@ function BrandTable() {
             <input
               type="text"
               placeholder="Search brand"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setQueryParams((prev) => ({
+                  ...prev,
+                  search: e.target.value,
+                }));
+              }}
               className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none"
             />
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -167,7 +181,7 @@ function BrandTable() {
                 ))}
 
               {!isLoading &&
-                data?.data?.map((doc) => (
+                data?.data?.map((doc: any) => (
                   <TableRow key={doc.id}>
                     <TableCell className="pl-5 sm:pl-6 xl:pl-7.5">
                       {editingId === doc.id ? (
