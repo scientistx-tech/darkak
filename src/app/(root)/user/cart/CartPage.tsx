@@ -9,9 +9,13 @@ import { useRouter } from "next/navigation";
 
 import ShopNowButton from "@/components/Button/ShopNowButton";
 import { Cart } from "@/types/client/myCartTypes";
-import { useGetMyCartQuery } from "@/redux/services/client/myCart";
+import {
+  useDeleteCartMutation,
+  useGetMyCartQuery,
+} from "@/redux/services/client/myCart";
 
 const CartPage: React.FC = () => {
+  const [deleteCart, { isLoading: isDeleting }] = useDeleteCartMutation();
   const [cartItems, setCartItems] = useState<Cart[]>();
   const { data, isLoading, isError } = useGetMyCartQuery();
   // For Delete Modal
@@ -58,10 +62,18 @@ const CartPage: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleOk = () => {
+  const handleOk = async () => {
     if (itemToDelete !== null) {
-      setCartItems((prev) => prev?.filter((item) => item.id !== itemToDelete));
-      setItemToDelete(null);
+      try {
+        await deleteCart(itemToDelete).unwrap(); // call API with ID
+        setCartItems((prev) =>
+          prev?.filter((item) => item.id !== itemToDelete),
+        ); // update UI
+        setItemToDelete(null);
+      } catch (error) {
+        console.error("Delete failed:", error);
+        // Optional: show toast or notification
+      }
     }
     setIsModalOpen(false);
   };
