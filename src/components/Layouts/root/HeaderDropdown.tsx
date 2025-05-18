@@ -16,7 +16,7 @@ export default function HeaderDropdown() {
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
-              className="h-5 w-5 text-white transition-transform duration-300 group-hover/bouton:rotate-90"
+              className="h-5 w-5 rotate-90 text-white transition-transform duration-300 group-hover/bouton:-rotate-90 group-hover/bouton:text-primary"
             >
               <path
                 strokeLinecap="round"
