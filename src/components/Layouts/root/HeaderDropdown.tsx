@@ -90,7 +90,7 @@ export default function HeaderDropdown() {
       }}
     >
       <div className="group flex cursor-pointer items-center gap-2 py-3">
-        <p className="text-sm text-white">Category</p>
+        <p className="font-serif text-lg text-white">Category</p>
         <FaAngleDown
           className={`text-white transition-transform duration-300 ${
             isDropdownOpen ? "rotate-180" : "rotate-0"
