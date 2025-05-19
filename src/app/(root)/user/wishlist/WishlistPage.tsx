@@ -12,6 +12,8 @@ import {
   useDeleteWishListMutation,
 } from "@/redux/services/client/myWishList";
 import ClientLoading from "../../components/ClientLoading";
+import { setWish } from "@/redux/slices/authSlice";
+import { useDispatch } from "react-redux";
 
 const WishlistPage: React.FC = () => {
   const { data, isLoading, isError, refetch } = useGetMyWishListQuery({
@@ -20,6 +22,7 @@ const WishlistPage: React.FC = () => {
   });
   const [wishlist, setWishlist] = useState<WishlistItem[] | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const dispatch = useDispatch();
 
   const [deleteWishList, { isLoading: isDeleting }] =
     useDeleteWishListMutation();
@@ -38,6 +41,7 @@ const WishlistPage: React.FC = () => {
         setWishlist(
           (prev) => prev?.filter((item) => item.id !== deleteId) || null,
         );
+        dispatch(setWish(Math.random()));
         setDeleteId(null);
       } catch (error) {
         console.error("Failed to delete wishlist item:", error);
