@@ -67,7 +67,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Product Image */}
         <motion.img
           key={activeImage}
-          src={product.thumbnail}
+          src={
+            typeof product.Image[activeImage] === "string"
+              ? product.Image[activeImage]
+              : product.Image[activeImage]?.url || product.thumbnail
+          }
           alt={product.title}
           initial={{ opacity: 0.5, scale: 0.98 }}
           animate={{ opacity: 1 }}
