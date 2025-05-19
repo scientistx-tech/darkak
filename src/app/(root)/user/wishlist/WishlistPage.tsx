@@ -14,7 +14,7 @@ import {
 import ClientLoading from "../../components/ClientLoading";
 
 const WishlistPage: React.FC = () => {
-  const { data, isLoading, isError } = useGetMyWishListQuery({
+  const { data, isLoading, isError, refetch } = useGetMyWishListQuery({
     page: 1,
     limit: 10,
   });
@@ -27,6 +27,9 @@ const WishlistPage: React.FC = () => {
   useEffect(() => {
     setWishlist(data?.data || null);
   }, [data]);
+  useEffect(() => {
+    refetch();
+  }, []);
 
   const handleDelete = async () => {
     if (deleteId !== null) {
