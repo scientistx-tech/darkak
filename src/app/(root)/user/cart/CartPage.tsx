@@ -14,6 +14,8 @@ import {
   useGetMyCartQuery,
 } from "@/redux/services/client/myCart";
 import ClientLoading from "../../components/ClientLoading";
+import { setCart } from "@/redux/slices/authSlice";
+import { useDispatch } from "react-redux";
 
 const CartPage: React.FC = () => {
   const [deleteCart, { isLoading: isDeleting }] = useDeleteCartMutation();
@@ -24,6 +26,7 @@ const CartPage: React.FC = () => {
   const [itemToDelete, setItemToDelete] = useState<number | null>(null);
   // Message For Coupon / Voucher
   const [messageApi, contextHolder] = message.useMessage();
+  const dispatch = useDispatch();
 
   const router = useRouter();
 
@@ -87,6 +90,7 @@ const CartPage: React.FC = () => {
         setCartItems((prev) =>
           prev?.filter((item) => item.id !== itemToDelete),
         ); // update UI
+        dispatch(setCart(Math.random()));
         setItemToDelete(null);
       } catch (error) {
         console.error("Delete failed:", error);
