@@ -48,6 +48,6 @@ export interface CartResponse {
 }
 export interface AddToCartPayload {
   quantity: number;
-  productId: number;
+  productId: number | string;
   optionIds?: number[]; // optional
 }

@@ -34,8 +34,15 @@ import HeaderDropdown from "./HeaderDropdown";
 
 import logo from "@/Data/Icon/PNG.png";
 import { auth } from "@/utils/firebase";
+import { useGetMyCartQuery } from "@/redux/services/client/myCart";
+import { useGetMyWishListQuery } from "@/redux/services/client/myWishList";
 
 const Header: React.FC = () => {
+  const { data: cart } = useGetMyCartQuery();
+  const { data: wishlist } = useGetMyWishListQuery({
+    page: 1,
+    limit: 100,
+  });
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.auth.user);
 
@@ -264,7 +271,9 @@ const Header: React.FC = () => {
                     : "bg-white"
                 }`}
               >
-                <p className="text-[10px] font-semibold">12</p>
+                <p className="text-[10px] font-semibold">
+                  {wishlist ? wishlist.data.length : "0"}
+                </p>
               </div>
             </Link>
 
@@ -284,7 +293,9 @@ const Header: React.FC = () => {
                     : "bg-white"
                 }`}
               >
-                <p className="text-[10px] font-semibold">3</p>
+                <p className="text-[10px] font-semibold">
+                  {cart ? cart.cart.length : "0"}
+                </p>
               </div>
             </Link>
           </div>

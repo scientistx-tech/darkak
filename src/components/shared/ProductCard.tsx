@@ -44,7 +44,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       )}
 
       {/* Top Right Icons */}
-      <RightIcons hovered={hovered} success={success}></RightIcons>
+      <RightIcons productId={product.id} hovered={hovered} success={success}></RightIcons>
 
       {/* Image Container with polygon background */}
       <div

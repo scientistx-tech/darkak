@@ -1,12 +1,13 @@
 "use client";
 import { Product } from "@/app/(root)/types/ProductType";
+import { useAddToCartMutation } from "@/redux/services/client/myCart";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaShoppingCart } from "react-icons/fa";
-
+import { toast } from "react-toastify";
 const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
   const router = useRouter();
-
+  const [addToCart, { isLoading }] = useAddToCartMutation();
   const hasDiscount = !!product?.discount && Number(product.discount) > 0;
   const price = Number(product?.price) || 0;
   const discount = Number(product?.discount) || 0;
@@ -20,6 +21,19 @@ const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
       discountPrice = price - (price * discount) / 100;
     }
   }
+const handleAddToCart = async (e: React.MouseEvent<HTMLDivElement>) => {
+  e.stopPropagation(); // Prevent navigation to product detail page
+  try {
+    const result = await addToCart({
+      productId: product.id,
+      quantity: 1,
+      // optionIds,
+    }).unwrap();
+    toast.success("Item added to cart!");
+  } catch (error: any) {
+    toast.error(error?.data?.message || "Failed to add to cart");
+  }
+};
   return (
     <div
       onClick={() => {
@@ -68,11 +82,34 @@ const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
             </p>
           </Link>
 
-          <Link href="/cart">
-            <div className="cursor-pointer rounded-full bg-secondaryWhite px-4 py-2 text-sm text-secondaryBlue hover:text-primaryBlue md:px-4 lg:text-base">
+          <div
+           onClick={(e) => handleAddToCart(e)}
+            className="cursor-pointer rounded-full bg-secondaryWhite px-4 py-2 text-sm text-secondaryBlue hover:text-primaryBlue md:px-4 lg:text-base"
+          >
+            {isLoading ? (
+              <svg
+                className="h-4 w-4 animate-spin text-primaryBlue"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8z"
+                ></path>
+              </svg>
+            ) : (
               <FaShoppingCart />
-            </div>
-          </Link>
+            )}
+          </div>
         </div>
       </div>
     </div>

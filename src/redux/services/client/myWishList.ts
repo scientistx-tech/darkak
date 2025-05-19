@@ -9,7 +9,7 @@ export const myWishListApi = baseApi.injectEndpoints({
     >({
       query: ({ page, limit }) => `/user/wish/get?page=${page}&limit=${limit}`,
     }),
-    addToWishList: builder.mutation<{ message: string }, { productId: number }>(
+    addToWishList: builder.mutation<{ message: string }, { productId: number | string }>(
       {
         query: ({ productId }) => ({
           url: `/user/wish/create`,
