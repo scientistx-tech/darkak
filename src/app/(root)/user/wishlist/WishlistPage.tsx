@@ -11,9 +11,13 @@ import {
   useGetMyWishListQuery,
   useDeleteWishListMutation,
 } from "@/redux/services/client/myWishList";
+import ClientLoading from "../../components/ClientLoading";
 
 const WishlistPage: React.FC = () => {
-  const { data, isLoading } = useGetMyWishListQuery({ page: 1, limit: 10 });
+  const { data, isLoading, isError } = useGetMyWishListQuery({
+    page: 1,
+    limit: 10,
+  });
   const [wishlist, setWishlist] = useState<WishlistItem[] | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
@@ -37,7 +41,22 @@ const WishlistPage: React.FC = () => {
       }
     }
   };
-
+  if (isLoading) return <ClientLoading></ClientLoading>;
+  if (isError) return <div>Failed to load cart.!</div>;
+  if (!wishlist || wishlist.length === 0) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <p className="text-2xl font-bold text-primaryBlue">
+            Your wishlist is empty!
+          </p>
+          <Link href="/" className="text-xl text-primaryBlue underline">
+            Go to Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="w-full">
       <div className="flex h-[60px] w-full items-center justify-center bg-gradient-to-r from-[#00153B] to-[#00286EF2] md:h-[100px]">

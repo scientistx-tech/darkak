@@ -13,6 +13,7 @@ import {
   useDeleteCartMutation,
   useGetMyCartQuery,
 } from "@/redux/services/client/myCart";
+import ClientLoading from "../../components/ClientLoading";
 
 const CartPage: React.FC = () => {
   const [deleteCart, { isLoading: isDeleting }] = useDeleteCartMutation();
@@ -32,8 +33,22 @@ const CartPage: React.FC = () => {
     }
   }, [data]);
 
-  if (isLoading) return <div>Loading cart...</div>;
-  if (isError) return <div>Failed to load cart.</div>;
+  if (isLoading) return <ClientLoading></ClientLoading>;
+  if (isError) return <div>Failed to load cart.!</div>;
+  if(!cartItems || cartItems.length === 0){
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <p className="text-2xl font-bold text-primaryBlue">
+            Your cart is empty!
+          </p>
+          <Link href="/" className="text-xl text-primaryBlue underline">
+            Go to Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
   const increaseQty = (id: number) => {
     setCartItems((prev) =>
       prev?.map((item) =>
