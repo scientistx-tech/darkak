@@ -1,11 +1,43 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import ReactImageMagnify from "react-image-magnify";
 import { BsWhatsapp } from "react-icons/bs";
 import DeliveryDetails from "./DeliveryDetails";
+import Image from "next/image";
 
-const ProductShow = () => {
+const ProductShow = ({
+  data,
+  slug,
+}: {
+  data: {
+    product: {
+      title: string;
+      brand: {
+        title: string;
+      };
+      Image: {
+        url: string;
+      }[];
+      discount: string;
+      discount_type: string;
+      available: string;
+      price: string;
+      code: string;
+      warranty_time: string;
+      warranty: string;
+      delivery_info: {
+        delivery_time: string;
+        delivery_charge: number;
+        return_days: string;
+        delivery_time_outside: string;
+        delivery_charge_outside: number;
+      };
+      items: {}[];
+    };
+  };
+  slug: string;
+}) => {
   const product = {
     brand: "APPLE",
     name: "MacBook Pro M2 Max 14-inch 12-CPU 30-GPU",
@@ -22,76 +54,155 @@ const ProductShow = () => {
       "https://i.ibb.co/SwW1ZdNV/0-1-medium-2.jpg",
       "https://i.ibb.co/BKLJTzB1/0-1-medium-3.jpg",
       "https://i.ibb.co/hF73GV8J/0-1-medium-4.jpg",
-
     ],
   };
 
-  const [selectedImage, setSelectedImage] = useState(product.images[0]);
+  console.log(data, "single dtaa");
+
+  const [selectedImage, setSelectedImage] = useState(
+    data?.product?.Image[0]?.url,
+  );
   const [color, setColor] = useState(product.colors[0]);
   const [storage, setStorage] = useState(product.storages[0]);
   const [quantity, setQuantity] = useState(1);
+  const [selectedOptions, setSelectedOptions] = useState<{
+    [itemId: number]: number;
+  }>({});
+
+  const hasDiscount =
+    !!data?.product?.discount && Number(data.product.discount) > 0;
+  const price = Number(data?.product?.price) || 0;
+  const discount = Number(data?.product?.discount) || 0;
+  const discountType = data?.product?.discount_type;
+  let discountPrice = price;
+
+  if (hasDiscount) {
+    if (discountType === "flat") {
+      discountPrice = price - discount;
+    } else if (discountType === "percentage") {
+      discountPrice = price - (price * discount) / 100;
+    }
+  }
+
+  const fallbackImage = "/images/fallback.png";
+
+  console.log(data?.product.items, "items");
+
+  useEffect(() => {
+    if (data?.product?.Image && data.product.Image.length > 0) {
+      setSelectedImage(data.product.Image[0].url);
+    } else {
+      setSelectedImage(fallbackImage);
+    }
+    if (data?.product?.items) {
+      const initialSelected: { [itemId: number]: number } = {};
+      data.product.items.forEach((item: any) => {
+        if (item.options && item.options.length > 0) {
+          initialSelected[item.id] = item.options[0].id;
+        }
+      });
+      setSelectedOptions(initialSelected);
+    }
+  }, [data?.product?.items, data?.product?.Image]);
 
   return (
     <div className="py-6">
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         {/* Image Section */}
-        <div className="h-min rounded-md border p-2">
-          <div className="relative">
+        <div className="rounded-md border p-4">
+          <div className="relative mx-auto w-full max-w-md">
             <ReactImageMagnify
               {...{
                 smallImage: {
                   alt: product.name,
-                  isFluidWidth: true,
+                  isFluidWidth: false,
+                  width: 400,
+                  height: 400,
                   src: selectedImage,
                 },
                 largeImage: {
                   src: selectedImage,
-                  width: 1200,
-                  height: 1200,
+                  width: 900, // Still high-resolution but reasonable
+                  height: 900,
                 },
-                enlargedImageContainerStyle: { background: "#fff", zIndex: 99 },
+                enlargedImageContainerDimensions: {
+                  width: "180%", // More zoom than default but not overkill
+                  height: "100%",
+                },
+                enlargedImageContainerStyle: {
+                  background: "#fff",
+                  border: "1px solid #ccc",
+                  borderRadius: "0.5rem",
+                  zIndex: 99,
+                },
+                enlargedImagePosition: "beside",
+                isHintEnabled: true,
+                hintTextMouse: "Hover to zoom",
+                lensStyle: {
+                  backgroundColor: "rgba(255,255,255,0.4)",
+                  border: "1px solid #ccc",
+                },
+                lensDimensions: {
+                  width: 80, // You can make it 80 or even 60 for finer zoom control
+                  height: 60,
+                },
               }}
             />
-            <div className="absolute left-0 top-6 rounded-r-full bg-secondaryBlue px-3 py-2 text-xs text-white">
-              {product.discount} OFF
-            </div>
+            {data?.product.discount && (
+              <div className="absolute left-0 top-6 rounded-r-full bg-secondaryBlue px-3 py-2 text-xs text-white shadow-md">
+                {data?.product.discount}
+                {data?.product?.discount_type === "flat" ? "৳" : "%"} OFF
+              </div>
+            )}
           </div>
-          <div className="mt-4 flex gap-3">
-            {product.images.map((img, idx) => (
-              <img
+
+          <div className="mt-6 flex flex-wrap justify-center gap-4">
+            {data?.product?.Image.map((img: any, idx: number) => (
+              <Image
                 key={idx}
-                onClick={() => setSelectedImage(img)}
-                src={img}
-                className={`h-16 w-16 cursor-pointer border object-cover ${selectedImage === img ? "border-primaryBlue" : ""}`}
+                onClick={() => setSelectedImage(img.url)}
+                width={80}
+                height={80}
+                src={img?.url}
+                className={`h-20 w-20 cursor-pointer rounded-md border object-cover transition-transform duration-200 ${
+                  selectedImage === img
+                    ? "scale-105 border-primaryBlue shadow-md"
+                    : "border-gray-200 hover:scale-105"
+                }`}
                 alt={`thumb-${idx}`}
               />
             ))}
           </div>
         </div>
-
         {/* Details Section */}
         <div>
           <p className="text-sm uppercase text-[#4B4E55]">
-            Brand: {product.brand}
+            Brand: {data?.product?.brand?.title}
           </p>
           <h1 className="mt-2 text-2xl font-semibold text-[#4B4E55]">
-            {product.name}
+            {data?.product?.title}
           </h1>
 
           <div className="mt-4 flex gap-2">
-            <span className="rounded-full bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue line-through">
-              {product.price}
+            <span
+              className={`rounded-full bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue ${
+                hasDiscount ? "line-through" : ""
+              }`}
+            >
+              {price} BDT
             </span>
+            {hasDiscount && (
+              <span className="rounded-full bg-secondaryWhite px-4 py-2 text-sm font-semibold text-primaryBlue">
+                {discountPrice} BDT
+              </span>
+            )}
             <span className="rounded-full bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue">
-              {product.discountPrice}
-            </span>
-            <span className="rounded-full bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue">
-              {product.status}
+              {data?.product?.available}
             </span>
           </div>
 
           <p className="mt-4 inline-block rounded-full bg-secondaryWhite px-4 py-2 text-sm">
-            Product Code: {product.code}
+            Product Code: {data?.product.code}
           </p>
 
           <a
@@ -104,12 +215,39 @@ const ProductShow = () => {
             Message on Whatsapp
           </a>
 
-          <p className="mt-6 text-lg font-semibold text-[#323232]">
-            {product.warranty}
-          </p>
+          <div className="mt-6 text-lg font-semibold text-[#323232]">
+            <p className="inline text-sm text-gray-500">Warranty:</p>{" "}
+            {data?.product.warranty} <p>{data?.product.warranty_time}</p>
+          </div>
+
+          {data?.product?.items.map((item: any, i: number) => (
+            <div key={item.id} className="mt-4 flex items-center gap-4">
+              <p className="text-sm font-medium">{item?.title}:</p>
+              <div className="flex gap-3">
+                {item.options.map((option: any, idx: number) => (
+                  <div
+                    key={option.id}
+                    onClick={() =>
+                      setSelectedOptions((prev) => ({
+                        ...prev,
+                        [item.id]: option.id,
+                      }))
+                    }
+                    className={`cursor-pointer rounded-full border-2 px-4 py-0.5 transition-colors duration-200 ${
+                      selectedOptions[item.id] === option.id
+                        ? "border-primaryBlue bg-primaryBlue text-white"
+                        : "border-blue-300 bg-white text-primaryBlue"
+                    }`}
+                  >
+                    {option.title}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
 
           {/* Color */}
-          <div className="mt-4 flex items-center gap-4">
+          {/* <div className="mt-4 flex items-center gap-4">
             <p className="text-sm font-medium">Color: </p>
             <div className="mt-2 flex gap-3">
               {product.colors.map((clr, idx) => (
@@ -124,27 +262,7 @@ const ProductShow = () => {
                 />
               ))}
             </div>
-          </div>
-
-          {/* Storage */}
-          <div className="mt-4 flex items-center gap-4">
-            <p className="text-sm font-medium">Storage:</p>
-            <div className="mt-2 flex gap-3 rounded-full bg-secondaryWhite">
-              {product.storages.map((stor, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setStorage(stor)}
-                  className={`rounded-full border px-4 py-2 text-sm shadow-1 transition-all duration-300 hover:shadow-primaryBlue ${
-                    storage === stor
-                      ? "bg-secondaryBlue text-white"
-                      : "bg-secondaryWhite text-primaryBlue"
-                  }`}
-                >
-                  {stor}
-                </button>
-              ))}
-            </div>
-          </div>
+          </div> */}
 
           {/* Quantity */}
           <div className="mt-6 flex items-center gap-4">
@@ -165,7 +283,9 @@ const ProductShow = () => {
               </button>
             </div>
           </div>
-          <DeliveryDetails></DeliveryDetails>
+          <DeliveryDetails
+            deliveryInfo={data?.product?.delivery_info}
+          ></DeliveryDetails>
           {/* Buttons */}
           <div className="mt-6 flex items-center gap-4">
             <motion.button
@@ -192,5 +312,3 @@ const ProductShow = () => {
 };
 
 export default ProductShow;
-
-

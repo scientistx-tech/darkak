@@ -4,21 +4,21 @@ import { Product } from "@/app/(root)/types/ProductType";
 import LeftSidebar from "@/components/category/leftSidebar/LeftSidebar";
 import CategoryFilter from "@/assets/svg/CategoryFilter";
 
-const dummyProducts: Product[] = new Array(7).fill(null).map((_, i) => ({
-  id: `prod-${i}`,
-  name: "iPhone 15 Pro Max",
-  images: [
-    "/images/dummy/dummy.png",
-    "/images/dummy/dummy1.png",
-    "/images/dummy/dummy2.png",
-  ],
-  price: 800,
-  originalPrice: 1000,
-  storage: "12GB/512GB",
-  discount: 20,
-  rating: 4.5,
-  reviews: 65,
-}));
+// const dummyProducts: Product[] = new Array(7).fill(null).map((_, i) => ({
+//   id: `prod-${i}`,
+//   name: "iPhone 15 Pro Max",
+//   images: [
+//     "/images/dummy/dummy.png",
+//     "/images/dummy/dummy1.png",
+//     "/images/dummy/dummy2.png",
+//   ],
+//   price: 800,
+//   originalPrice: 1000,
+//   storage: "12GB/512GB",
+//   discount: 20,
+//   rating: 4.5,
+//   reviews: 65,
+// }));
 
 const ProductsSection = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -42,13 +42,13 @@ const ProductsSection = () => {
   };
 
   return (
-    <section className="mt-4 md:mt-6 md:p-6 lg:flex items-start w-full gap-x-7 p-4 lg:p-8 xl:p-10">
-    {/* <section className="relative mt-4 md:mt-12 md:p-6 lg:mt-[62px] flex w-full flex-col gap-x-7 p-4 lg:flex-row lg:p-8 xl:p-10"> */}
+    <section className="mt-4 w-full items-start gap-x-7 p-4 md:mt-6 md:p-6 lg:flex lg:p-8 xl:p-10">
+      {/* <section className="relative mt-4 md:mt-12 md:p-6 lg:mt-[62px] flex w-full flex-col gap-x-7 p-4 lg:flex-row lg:p-8 xl:p-10"> */}
       {/* Hamburger Button */}
       <div className="mb-4 block lg:hidden">
         <button
           onClick={() => setIsSidebarOpen(true)}
-          className="flex items-center gap-2 rounded-md text-[#003084] px-4 py-2"
+          className="flex items-center gap-2 rounded-md px-4 py-2 text-[#003084]"
         >
           Filter
           <CategoryFilter />
@@ -67,9 +67,7 @@ const ProductsSection = () => {
           className="fixed inset-0 z-99 bg-black bg-opacity-30 lg:hidden"
           onClick={handleBackdropClick}
         >
-          <div
-            className="absolute left-0 top-0 h-full w-4/5 max-w-xs bg-white shadow-md transform transition-transform duration-300 ease-in-out"
-          >
+          <div className="absolute left-0 top-0 h-full w-4/5 max-w-xs transform bg-white shadow-md transition-transform duration-300 ease-in-out">
             <div className="flex items-center justify-between border-b p-4">
               <h2 className="text-lg font-semibold">Filters</h2>
               <button onClick={closeSidebar}>
@@ -88,7 +86,7 @@ const ProductsSection = () => {
                 </svg>
               </button>
             </div>
-            <div className="pt-4 px-4 pb-20 overflow-y-auto h-full">
+            <div className="h-full overflow-y-auto px-4 pb-20 pt-4">
               <LeftSidebar />
             </div>
           </div>
@@ -96,11 +94,11 @@ const ProductsSection = () => {
       )}
 
       {/* Product Grid */}
-      <div className="grid w-full gap-7 grid-cols-2 lg:w-4/5 lg:grid-cols-3 xl:grid-cols-4">
+      {/* <div className="grid w-full gap-7 grid-cols-2 lg:w-4/5 lg:grid-cols-3 xl:grid-cols-4">
         {dummyProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
-      </div>
+      </div> */}
     </section>
   );
 };

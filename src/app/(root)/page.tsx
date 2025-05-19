@@ -22,7 +22,7 @@ function page() {
         <Index />
       </MotionRevealWrapper>
 
-      <div className="container mx-auto px-2 py-6 md:px-4 md:py-12 space-y-10">
+      <div className="container mx-auto space-y-10 px-2 py-6 md:px-4 md:py-12">
         <MotionRevealWrapper>
           <Categories />
         </MotionRevealWrapper>
@@ -47,9 +47,9 @@ function page() {
           <ThardBanner />
         </MotionRevealWrapper>
 
-        <MotionRevealWrapper>
+        {/* <MotionRevealWrapper>
           <NewArrival />
-        </MotionRevealWrapper>
+        </MotionRevealWrapper> */}
 
         <MotionRevealWrapper>
           <FourthBanner />

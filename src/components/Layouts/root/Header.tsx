@@ -321,7 +321,7 @@ const Header: React.FC = () => {
         onClose={onClose}
         open={open}
         className="custom-drawer"
-        bodyStyle={{ padding: 0 }}
+        styles={{ body: { padding: 0 } }}
       >
         <div className="flex h-full flex-col justify-between px-5 py-6 text-gray-800 shadow-lg backdrop-blur-md">
           <div className="w-full">
