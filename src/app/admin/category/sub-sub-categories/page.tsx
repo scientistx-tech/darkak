@@ -50,8 +50,8 @@ function CategoryTable() {
       await deleteCategory(categoryId).unwrap();
       toast.success("Sub Sub Category deleted successfully!");
       refetchSubSubCategories();
-    } catch (err) {
-      toast.error("Failed to delete Sub Sub category.");
+    } catch (err:any) {
+      toast.error(err.data.message);
     }
   };
 
@@ -145,7 +145,7 @@ function CategoryTable() {
                   <TableCell>{i + 1}</TableCell>
                   <TableCell>{doc.title}</TableCell>
                   <TableCell>{doc.subCategory.title}</TableCell>
-                  <TableCell>{doc.categoryId}</TableCell>
+                  <TableCell>{doc.category.title}</TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-x-2">
                       <Link

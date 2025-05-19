@@ -147,6 +147,10 @@ export const adminApi = baseApi.injectEndpoints({
             title: string;
             categoryId: number;
           };
+          category: {
+            title: string;
+            id: number;
+          };
         }[];
       },
       void
