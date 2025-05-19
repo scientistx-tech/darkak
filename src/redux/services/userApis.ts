@@ -23,6 +23,16 @@ export const authApi = baseApi.injectEndpoints({
         method: "PUT",
       }),
     }),
+    updateUserAddress: builder.mutation<
+      AuthResponse,
+      { area: string; division: string; sub_district: string; district: string }
+    >({
+      query: (body) => ({
+        url: `/user/update/address`,
+        body: body,
+        method: "PUT",
+      }),
+    }),
     updateUserProfilePicture: builder.mutation<any, FormData>({
       query: (body) => ({
         url: `/user/upload-picture`,
@@ -33,5 +43,8 @@ export const authApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useUpdateUserMutation, useUpdateUserProfilePictureMutation } =
-  authApi;
+export const {
+  useUpdateUserMutation,
+  useUpdateUserAddressMutation,
+  useUpdateUserProfilePictureMutation,
+} = authApi;

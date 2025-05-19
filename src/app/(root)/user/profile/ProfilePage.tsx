@@ -24,11 +24,12 @@ const ProfilePage: React.FC = () => {
 
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState("personal");
 
   useEffect(() => {
     if (data?.image) {
-      setImagePreview(data.image); // Show image from server
+      setImagePreview(data.image);
     }
   }, [data]);
 
@@ -37,7 +38,8 @@ const ProfilePage: React.FC = () => {
     if (!file) return;
 
     setProfileImage(file);
-    setImagePreview(URL.createObjectURL(file)); // Preview immediately
+    setImagePreview(URL.createObjectURL(file));
+    setIsUploading(true);
 
     const formData = new FormData();
     formData.append("image", file);
@@ -49,6 +51,8 @@ const ProfilePage: React.FC = () => {
     } catch (error: any) {
       console.error("Upload error:", error);
       toast.error("Failed to upload profile picture.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -73,18 +77,24 @@ const ProfilePage: React.FC = () => {
               className="h-[200px] w-[200px] rounded-full border-[5px] border-primaryBlue object-cover"
             />
             <label className="absolute bottom-2 right-2 cursor-pointer rounded-full bg-white p-2 shadow-md">
-              <FaCamera className="text-gray-600" />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
+              {isUploading ? (
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600" />
+              ) : (
+                <>
+                  <FaCamera className="text-gray-600" />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                </>
+              )}
             </label>
           </div>
 
           {/* Menu */}
-          <div className=" w-full">
+          <div className="w-full">
             <MenuItems setActiveTab={setActiveTab} activeTab={activeTab} />
           </div>
         </div>
@@ -109,7 +119,7 @@ const ProfilePage: React.FC = () => {
             )}
             {activeTab === "edit" && (
               <motion.div key="edit" {...animationProps}>
-                <EditProfile refetch={refetch} />
+                <EditProfile refetch={refetch} data={data}/>
               </motion.div>
             )}
             {activeTab === "notification" && (

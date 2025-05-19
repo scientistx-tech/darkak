@@ -26,6 +26,9 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({
   isLoading,
   isError,
 }) => {
+  
+  // console.log(data);
+  
   if (isLoading) return <ClientLoading />;
   if (isError || !data)
     return <p className="text-red-500">Failed to load user data.</p>;
