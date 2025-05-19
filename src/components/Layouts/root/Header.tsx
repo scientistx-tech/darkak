@@ -465,7 +465,7 @@ const Header: React.FC = () => {
                 <div className="relative flex flex-col items-center hover:text-primary">
                   <HeartOutlined className="text-xl" />
                   <span className="absolute -top-1 right-7 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primaryBlue text-[10px] text-white">
-                    12
+                    {wishlist ? wishlist.data.length : "0"}
                   </span>
                   <span className="mt-1">Wishlist</span>
                 </div>
@@ -474,7 +474,7 @@ const Header: React.FC = () => {
                 <div className="relative flex flex-col items-center hover:text-primary">
                   <ShoppingCartOutlined className="text-xl" />
                   <span className="absolute -top-1 right-7 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primaryBlue text-[10px] text-white">
-                    3
+                    {cart ? cart.cart.length : "0"}
                   </span>
                   <span className="mt-1">Cart</span>
                 </div>
