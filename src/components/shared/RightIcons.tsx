@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { motion } from "framer-motion";
 import { FaHeart, FaEye, FaRandom, FaShoppingCart } from "react-icons/fa";
@@ -6,25 +7,38 @@ import Link from "next/link";
 import { toast } from "react-toastify";
 import { Tooltip } from "antd";
 import { useAddToWishListMutation } from "@/redux/services/client/myWishList";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { setWish } from "@/redux/slices/authSlice";
 
 interface RightIconsProps {
   hovered: boolean;
   success: () => void;
   productId: number | string;
+  slug: string;
 }
 
 export default function RightIcons({
   hovered,
   success,
   productId,
+  slug,
 }: RightIconsProps) {
   const [addToWishList, { isLoading }] = useAddToWishListMutation();
+  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
   const handleAddToWishlist = async (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation(); // Prevent parent click actions
     try {
       const result = await addToWishList({ productId }).unwrap();
       toast.success("Item added to wishlist!");
+      dispatch(setWish(Math.random()));
     } catch (error: any) {
+      //console.log(error);
+      if (error?.status === 401) {
+        return router.replace("/auth/login");
+      }
       toast.error(error?.data?.message || "Failed to add to wishlist");
     }
   };
@@ -65,7 +79,7 @@ export default function RightIcons({
         )}
       </div>
       {/* </Link> */}
-      <Link href="/product">
+      <Link href={`/product/${slug}`}>
         <FaEye className="cursor-pointer transition-all duration-300 hover:scale-110 hover:text-primaryBlue" />
       </Link>
 
@@ -99,7 +113,9 @@ export default function RightIcons({
             <div
               className="cursor-pointer text-lg transition-transform hover:scale-125 hover:text-white"
               onClick={() => {
-                navigator.clipboard.writeText(window.location.href);
+                navigator.clipboard.writeText(
+                  `${window.location.href}/product/${slug}`,
+                );
                 success();
               }}
             >

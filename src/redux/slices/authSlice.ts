@@ -7,11 +7,15 @@ import Cookies from "js-cookie";
 interface AuthState {
   user: User | null;
   token: string | undefined;
+  cart: number;
+  wish: number;
 }
 
 const initialState: AuthState = {
   user: null,
   token: Cookies.get("token"),
+  cart: 0,
+  wish: 0,
 };
 
 const authSlice = createSlice({
@@ -31,8 +35,15 @@ const authSlice = createSlice({
     updateUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
     },
+    setCart: (state, action: PayloadAction<number>) => {
+      state.cart = action.payload;
+    },
+    setWish: (state, action: PayloadAction<number>) => {
+      state.wish = action.payload;
+    },
   },
 });
 
-export const { clearUser, setUser, updateUser } = authSlice.actions;
+export const { clearUser, setUser, updateUser, setCart, setWish } =
+  authSlice.actions;
 export default authSlice.reducer;

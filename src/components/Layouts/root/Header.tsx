@@ -38,13 +38,15 @@ import { useGetMyCartQuery } from "@/redux/services/client/myCart";
 import { useGetMyWishListQuery } from "@/redux/services/client/myWishList";
 
 const Header: React.FC = () => {
-  const { data: cart } = useGetMyCartQuery();
-  const { data: wishlist } = useGetMyWishListQuery({
+  const { data: cart, refetch: cartRefetch } = useGetMyCartQuery();
+  const { data: wishlist, refetch: wishRefetch } = useGetMyWishListQuery({
     page: 1,
     limit: 100,
   });
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.auth.user);
+  const carts = useSelector((state: RootState) => state.auth.cart);
+  const wishs = useSelector((state: RootState) => state.auth.wish);
 
   const pathname = usePathname();
   const [selectedLang, setSelectedLang] = useState("English");
@@ -90,6 +92,12 @@ const Header: React.FC = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [lastScrollY]);
+  useEffect(() => {
+    wishRefetch();
+  }, [wishs]);
+  useEffect(() => {
+    cartRefetch();
+  }, [carts]);
 
   //  For Drawer
   const [open, setOpen] = useState(false);
