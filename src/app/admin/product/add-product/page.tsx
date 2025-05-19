@@ -337,6 +337,7 @@ export default function ProductForm() {
   const [thumbnailUploading, setThumbnailUploading] = useState(false);
   const [imagesUploading, setImagesUploading] = useState(false);
   const [metaImageUploading, setMetaImageUploading] = useState(false);
+  const [optionImageUploading, setOptionImageUploading] = useState(false);
   const [currentTab, setCurrentTab] = useState<string>("desc");
 
   // load all categories, sub categories, sub sub categories and brands
@@ -398,6 +399,7 @@ export default function ProductForm() {
         optionIndex !== undefined
       ) {
         // Upload image for a specific option
+        setOptionImageUploading(true);
         const imgForm = new FormData();
         imgForm.append("images", files[0]);
         const res = await uploadImages(imgForm).unwrap();
@@ -446,6 +448,7 @@ export default function ProductForm() {
       setThumbnailUploading(false);
       setMetaImageUploading(false);
       setImagesUploading(false);
+      setOptionImageUploading(false);
       e.target.value = ""; // Reset input
     }
   };
@@ -534,6 +537,7 @@ export default function ProductForm() {
               : opt.stock !== undefined
                 ? String(opt.stock)
                 : "",
+          image: opt.image || "",
         })),
       })),
     };
@@ -1188,111 +1192,150 @@ export default function ProductForm() {
                 key={optionIndex}
                 className="mt-4 flex items-center gap-4 rounded-md border border-gray-3 p-2"
               >
-                <div className="flex w-full flex-col gap-1">
-                  <label htmlFor="option_title">Option Title</label>
-                  <input
-                    type="text"
-                    placeholder="Option Title"
-                    value={option.title}
-                    onChange={(e) => {
-                      const updatedItems = [...formData.items];
-                      updatedItems[attributeIndex].options[optionIndex].title =
-                        e.target.value;
-                      setFormData((prev) => ({ ...prev, items: updatedItems }));
-                    }}
-                    className="w-full rounded-md border border-gray-300 p-2"
-                  />
-                </div>
+                <div className="flex w-full flex-col gap-4">
+                  {/* title,price,stock */}
+                  <div className="flex items-center gap-4">
+                    <div className="flex w-full flex-col gap-1">
+                      <label htmlFor="option_title">Option Title</label>
+                      <input
+                        type="text"
+                        placeholder="Option Title"
+                        value={option.title}
+                        onChange={(e) => {
+                          const updatedItems = [...formData.items];
+                          updatedItems[attributeIndex].options[
+                            optionIndex
+                          ].title = e.target.value;
+                          setFormData((prev) => ({
+                            ...prev,
+                            items: updatedItems,
+                          }));
+                        }}
+                        className="w-full rounded-md border border-gray-300 p-2"
+                      />
+                    </div>
 
-                <div className="flex w-full flex-col gap-1">
-                  <label htmlFor="option_price">Price</label>
-                  <input
-                    type="number"
-                    placeholder="Price"
-                    value={option.price}
-                    onChange={(e) => {
-                      const updatedItems = [...formData.items];
-                      updatedItems[attributeIndex].options[optionIndex].price =
-                        parseFloat(e.target.value);
-                      setFormData((prev) => ({ ...prev, items: updatedItems }));
-                    }}
-                    className="w-full rounded-md border border-gray-300 p-2"
-                  />
-                </div>
+                    <div className="flex w-full flex-col gap-1">
+                      <label htmlFor="option_price">Price</label>
+                      <input
+                        type="number"
+                        placeholder="Price"
+                        value={option.price}
+                        onChange={(e) => {
+                          const updatedItems = [...formData.items];
+                          updatedItems[attributeIndex].options[
+                            optionIndex
+                          ].price = parseFloat(e.target.value);
+                          setFormData((prev) => ({
+                            ...prev,
+                            items: updatedItems,
+                          }));
+                        }}
+                        className="w-full rounded-md border border-gray-300 p-2"
+                      />
+                    </div>
 
-                <div className="flex w-full flex-col gap-1">
-                  <label htmlFor="stock">Stock</label>
-                  <input
-                    type="number"
-                    placeholder="stock"
-                    value={option.stock}
-                    onChange={(e) => {
-                      const updatedItems = [...formData.items];
-                      updatedItems[attributeIndex].options[optionIndex].stock =
-                        parseFloat(e.target.value);
-                      setFormData((prev) => ({ ...prev, items: updatedItems }));
-                    }}
-                    className="w-full rounded-md border border-gray-300 p-2"
-                  />
-                </div>
-
-                <div className="flex w-full flex-col gap-1">
-                  <label htmlFor="item_sku">Code</label>
-                  <input
-                    type="string"
-                    placeholder="sku"
-                    value={option.sku}
-                    onChange={(e) => {
-                      const updatedItems = [...formData.items];
-                      updatedItems[attributeIndex].options[optionIndex].sku =
-                        e.target.value;
-                      setFormData((prev) => ({ ...prev, items: updatedItems }));
-                    }}
-                    className="w-full rounded-md border border-gray-300 p-2"
-                  />
-                </div>
-                <div className="relative flex h-32 items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="absolute inset-0 cursor-pointer opacity-0"
-                    onChange={(e) => handleImageUpload(e, "option_image")}
-                    style={{ zIndex: 1 }}
-                  />
-                  <div className="relative z-10 text-center text-sm text-gray-500">
-                    {formData.items ? (
-                      <div className="flex flex-row items-center gap-2">
-                        <Image
-                          className="rounded object-cover"
-                          src={formData.thumbnail}
-                          alt="thumbnail"
-                          width={150}
-                          height={150}
-                          priority
+                    <div className="flex w-full flex-col gap-1">
+                      <label htmlFor="stock">Stock</label>
+                      <input
+                        type="number"
+                        placeholder="stock"
+                        value={option.stock}
+                        onChange={(e) => {
+                          const updatedItems = [...formData.items];
+                          updatedItems[attributeIndex].options[
+                            optionIndex
+                          ].stock = parseFloat(e.target.value);
+                          setFormData((prev) => ({
+                            ...prev,
+                            items: updatedItems,
+                          }));
+                        }}
+                        className="w-full rounded-md border border-gray-300 p-2"
+                      />
+                    </div>
+                    <div className="flex w-full flex-col gap-1">
+                      <label htmlFor="item_sku">Code</label>
+                      <input
+                        type="string"
+                        placeholder="sku"
+                        value={option.sku}
+                        onChange={(e) => {
+                          const updatedItems = [...formData.items];
+                          updatedItems[attributeIndex].options[
+                            optionIndex
+                          ].sku = e.target.value;
+                          setFormData((prev) => ({
+                            ...prev,
+                            items: updatedItems,
+                          }));
+                        }}
+                        className="w-full rounded-md border border-gray-300 p-2"
+                      />
+                    </div>
+                  </div>
+                  {/*  image */}
+                  <div className="flex items-center gap-4">
+                    <div className="flex w-full flex-col gap-1">
+                      <label htmlFor="option_image">Option Image</label>
+                      <div className="relative flex h-20 w-full items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="absolute inset-0 cursor-pointer opacity-0"
+                          onChange={(e) =>
+                            handleImageUpload(
+                              e,
+                              "option_image",
+                              attributeIndex,
+                              optionIndex,
+                            )
+                          }
+                          style={{ zIndex: 1 }}
                         />
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setFormData((prev) => ({ ...prev, thumbnail: "" }));
-                          }}
-                          className="mt-2 rounded bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600"
-                          style={{ zIndex: 20, position: "relative" }}
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ) : (
-                      <>
-                        <p className="text-blue-600">
-                          {thumbnailUploading ? (
-                            <p className="mt-3">Uploading...</p>
+                        <div className="relative z-10 text-center text-sm text-gray-500">
+                          {option.image ? (
+                            <div className="flex flex-row items-center gap-1">
+                              <Image
+                                className="rounded object-cover"
+                                src={option.image}
+                                alt="option"
+                                width={60}
+                                height={60}
+                              />
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const updatedItems = [...formData.items];
+                                  updatedItems[attributeIndex].options[
+                                    optionIndex
+                                  ].image = "";
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    items: updatedItems,
+                                  }));
+                                }}
+                                className="mt-1 rounded bg-red-500 px-2 py-0.5 text-xs text-white hover:bg-red-600"
+                                style={{ zIndex: 20, position: "relative" }}
+                              >
+                                Remove
+                              </button>
+                            </div>
                           ) : (
-                            <p>Click to Upload</p>
+                            <>
+                              <p className="text-blue-600">
+                                {optionImageUploading ? (
+                                  <p className="mt-3">Uploading...</p>
+                                ) : (
+                                  <p>Click to Upload</p>
+                                )}
+                              </p>
+                            </>
                           )}
-                        </p>
-                      </>
-                    )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -1548,7 +1591,12 @@ export default function ProductForm() {
           type="button"
           onClick={() => handleSubmit(true)}
           className="rounded bg-yellow-600 px-4 py-2 text-white shadow"
-          disabled={imagesUploading || metaImageUploading || thumbnailUploading}
+          disabled={
+            imagesUploading ||
+            metaImageUploading ||
+            thumbnailUploading ||
+            optionImageUploading
+          }
         >
           Draft
         </button>
@@ -1556,7 +1604,12 @@ export default function ProductForm() {
           type="button"
           onClick={() => handleSubmit(false)}
           className="rounded bg-blue-600 px-4 py-2 text-white shadow"
-          disabled={imagesUploading || metaImageUploading || thumbnailUploading}
+          disabled={
+            imagesUploading ||
+            metaImageUploading ||
+            thumbnailUploading ||
+            optionImageUploading
+          }
         >
           Publish
         </button>
@@ -1564,7 +1617,12 @@ export default function ProductForm() {
           type="button"
           // onClick={handleSubmit}
           className="cursor-not-allowed rounded bg-teal-600 px-4 py-2 text-white shadow"
-          disabled={imagesUploading || metaImageUploading || thumbnailUploading}
+          disabled={
+            imagesUploading ||
+            metaImageUploading ||
+            thumbnailUploading ||
+            optionImageUploading
+          }
         >
           Schedule
         </button>

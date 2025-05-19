@@ -33,41 +33,55 @@ const ProductShow = ({
         delivery_time_outside: string;
         delivery_charge_outside: number;
       };
-      items: {}[];
+      items: {
+        id: number;
+        title: string;
+        options: {
+          id: number;
+          title: string;
+          image?: string;
+        }[];
+      }[];
     };
   };
   slug: string;
 }) => {
-  const product = {
-    brand: "APPLE",
-    name: "MacBook Pro M2 Max 14-inch 12-CPU 30-GPU",
-    discount: "5%",
-    price: "99,99,99 BDT",
-    discountPrice: "88,88,88 BDT",
-    code: "AVC1234",
-    status: "In stock",
-    warranty: "DARKAK 1 year warranty",
-    colors: ["#000000", "#333333", "#bbbbbb"],
-    storages: ["16GB/1TB", "32GB/1TB"],
-    images: [
-      "https://i.ibb.co/DfwWrrrQ/0-1-medium-1.jpg",
-      "https://i.ibb.co/SwW1ZdNV/0-1-medium-2.jpg",
-      "https://i.ibb.co/BKLJTzB1/0-1-medium-3.jpg",
-      "https://i.ibb.co/hF73GV8J/0-1-medium-4.jpg",
-    ],
-  };
-
-  console.log(data, "single dtaa");
-
-  const [selectedImage, setSelectedImage] = useState(
-    data?.product?.Image[0]?.url,
-  );
-  const [color, setColor] = useState(product.colors[0]);
-  const [storage, setStorage] = useState(product.storages[0]);
   const [quantity, setQuantity] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState<{
     [itemId: number]: number;
   }>({});
+
+  // 1. Find the color item and check if all options have image
+  const colorItem = data?.product?.items?.find(
+    (item: any) => item.title?.toLowerCase() === "color",
+  );
+
+  const colorOptionImages =
+    colorItem &&
+    Array.isArray(colorItem.options) &&
+    colorItem.options.length > 0
+      ? colorItem.options.every((opt: any) => !!opt.image)
+        ? colorItem.options.map((opt: any) => opt.image)
+        : null
+      : null;
+
+  //  Decide which images to show
+  const productImages =
+    colorOptionImages && colorOptionImages.length > 0
+      ? colorOptionImages
+      : data?.product?.Image?.map((img: any) => img.url) || [];
+
+  const fallbackImage = "/images/fallback.png";
+
+  //  Selected image state
+  const [selectedImage, setSelectedImage] = useState<string>(
+    productImages[0] || fallbackImage,
+  );
+
+  //  Update selectedImage if productImages change
+  useEffect(() => {
+    setSelectedImage(productImages[0] || fallbackImage);
+  }, [JSON.stringify(productImages)]);
 
   const hasDiscount =
     !!data?.product?.discount && Number(data.product.discount) > 0;
@@ -83,10 +97,6 @@ const ProductShow = ({
       discountPrice = price - (price * discount) / 100;
     }
   }
-
-  const fallbackImage = "/images/fallback.png";
-
-  console.log(data?.product.items, "items");
 
   useEffect(() => {
     if (data?.product?.Image && data.product.Image.length > 0) {
@@ -114,7 +124,7 @@ const ProductShow = ({
             <ReactImageMagnify
               {...{
                 smallImage: {
-                  alt: product.name,
+                  alt: data?.product.title,
                   isFluidWidth: false,
                   width: 400,
                   height: 400,
@@ -156,20 +166,19 @@ const ProductShow = ({
             )}
           </div>
 
-          <div className="mt-6 flex flex-wrap justify-center gap-4">
-            {data?.product?.Image.map((img: any, idx: number) => (
-              <Image
+          <div className="mt-4 flex justify-center gap-3">
+            {productImages.map((img, idx) => (
+              <img
                 key={idx}
-                onClick={() => setSelectedImage(img.url)}
-                width={80}
-                height={80}
-                src={img?.url}
-                className={`h-20 w-20 cursor-pointer rounded-md border object-cover transition-transform duration-200 ${
+                onClick={() => setSelectedImage(img)}
+                src={img}
+                className={`h-16 w-16 cursor-pointer rounded border object-cover ${
                   selectedImage === img
-                    ? "scale-105 border-primaryBlue shadow-md"
-                    : "border-gray-200 hover:scale-105"
+                    ? "border-primaryBlue ring-2 ring-primaryBlue"
+                    : ""
                 }`}
                 alt={`thumb-${idx}`}
+                style={{ transition: "box-shadow 0.2s" }}
               />
             ))}
           </div>
@@ -221,9 +230,9 @@ const ProductShow = ({
           </div>
 
           {data?.product?.items.map((item: any, i: number) => (
-            <div key={item.id} className="mt-4 flex items-center gap-4">
+            <div key={item.id} className="mt-4 flex gap-4">
               <p className="text-sm font-medium">{item?.title}:</p>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 {item.options.map((option: any, idx: number) => (
                   <div
                     key={option.id}
