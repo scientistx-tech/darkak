@@ -382,7 +382,9 @@ export default function ProductForm() {
 
   const handleImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    type: "images" | "thumbnail" | "meta_image" = "images",
+    type: "images" | "thumbnail" | "meta_image" | "option_image" = "images",
+    attributeIndex?: number,
+    optionIndex?: number,
   ) => {
     e.preventDefault && e.preventDefault();
 
@@ -390,7 +392,22 @@ export default function ProductForm() {
     if (!files.length) return;
 
     try {
-      if (type === "images") {
+      if (
+        type === "option_image" &&
+        attributeIndex !== undefined &&
+        optionIndex !== undefined
+      ) {
+        // Upload image for a specific option
+        const imgForm = new FormData();
+        imgForm.append("images", files[0]);
+        const res = await uploadImages(imgForm).unwrap();
+        const url = res[0];
+        setFormData((prev) => {
+          const updatedItems = [...prev.items];
+          updatedItems[attributeIndex].options[optionIndex].image = url;
+          return { ...prev, items: updatedItems };
+        });
+      } else if (type === "images") {
         // Upload all images in one request
         setImagesUploading(true);
         const imgForm = new FormData();
@@ -1233,6 +1250,50 @@ export default function ProductForm() {
                     }}
                     className="w-full rounded-md border border-gray-300 p-2"
                   />
+                </div>
+                <div className="relative flex h-32 items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="absolute inset-0 cursor-pointer opacity-0"
+                    onChange={(e) => handleImageUpload(e, "option_image")}
+                    style={{ zIndex: 1 }}
+                  />
+                  <div className="relative z-10 text-center text-sm text-gray-500">
+                    {formData.items ? (
+                      <div className="flex flex-row items-center gap-2">
+                        <Image
+                          className="rounded object-cover"
+                          src={formData.thumbnail}
+                          alt="thumbnail"
+                          width={150}
+                          height={150}
+                          priority
+                        />
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setFormData((prev) => ({ ...prev, thumbnail: "" }));
+                          }}
+                          className="mt-2 rounded bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600"
+                          style={{ zIndex: 20, position: "relative" }}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-blue-600">
+                          {thumbnailUploading ? (
+                            <p className="mt-3">Uploading...</p>
+                          ) : (
+                            <p>Click to Upload</p>
+                          )}
+                        </p>
+                      </>
+                    )}
+                  </div>
                 </div>
 
                 <button

@@ -7,21 +7,21 @@ import laptop from "@/Data/Demo/Rectangle 130 (1).png";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-const dummyProducts: Product[] = new Array(7).fill(null).map((_, i) => ({
-  id: `prod-${i}`,
-  name: "iPhone 15 Pro Max",
-  images: [
-    "/images/dummy/dummy.png",
-    "/images/dummy/dummy1.png",
-    "/images/dummy/dummy2.png",
-  ],
-  price: 800,
-  originalPrice: 1000,
-  storage: "12GB/512GB",
-  discount: 20,
-  rating: 4.5,
-  reviews: 65,
-}));
+// const dummyProducts: Product[] = new Array(7).fill(null).map((_, i) => ({
+//   id: `prod-${i}`,
+//   name: "iPhone 15 Pro Max",
+//   images: [
+//     "/images/dummy/dummy.png",
+//     "/images/dummy/dummy1.png",
+//     "/images/dummy/dummy2.png",
+//   ],
+//   price: 800,
+//   originalPrice: 1000,
+//   storage: "12GB/512GB",
+//   discount: 20,
+//   rating: 4.5,
+//   reviews: 65,
+// }));
 
 const NewArrival: React.FC = () => {
   const [screen, setScreen] = useState("md");
@@ -53,7 +53,7 @@ const NewArrival: React.FC = () => {
     <main className="mt-10">
       <div>
         <div className="h-[50px]">
-          <div className="flex items-center gap-6 justify-between md:justify-start">
+          <div className="flex items-center justify-between gap-6 md:justify-start">
             <h2 className="text-2xl font-semibold text-primaryDarkBlue">
               NEW ARRIVAL
             </h2>
@@ -61,7 +61,7 @@ const NewArrival: React.FC = () => {
           </div>
         </div>
 
-        {screen === "sm" || screen === "md" ? (
+        {/* {screen === "sm" || screen === "md" ? (
           <motion.div
             className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:gap-8"
             initial={{ opacity: 0, y: 30 }}
@@ -88,7 +88,7 @@ const NewArrival: React.FC = () => {
               ))}
             </motion.div>
 
-            {/* Banner animation */}
+           
             <motion.div
               className="absolute right-0 top-0 mt-[-50px] hidden w-[236px] flex-col justify-between rounded-xl bg-[#4C84FF] p-6 text-white md:flex md:h-[425px] lg:w-[238px] xl:h-[450px] xl:w-[240px] 2xl:w-[270px] 3xl:w-[365px]"
               initial={{ opacity: 0, x: 50 }}
@@ -110,7 +110,7 @@ const NewArrival: React.FC = () => {
               </div>
             </motion.div>
           </div>
-        )}
+        )} */}
       </div>
     </main>
   );

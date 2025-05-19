@@ -1,38 +1,54 @@
-'use client';
-import { useRef, RefObject } from 'react';
-import { motion } from 'framer-motion';
+"use client";
+import { useRef, RefObject, useState } from "react";
+import { motion } from "framer-motion";
 
 const tabs = [
-  { id: 'specification', label: 'Specification' },
-  { id: 'description', label: 'Description' },
-  { id: 'warranty', label: 'Warranty' },
+  { id: "specification", label: "Specification" },
+  { id: "description", label: "Description" },
+  { id: "warranty", label: "Warranty" },
 ] as const;
 
-type TabId = (typeof tabs)[number]['id'];
+type TabId = (typeof tabs)[number]["id"];
 
 // Allow refs to possibly be null (which is always the case with useRef)
 type SectionRefs = Record<TabId, RefObject<HTMLDivElement | null>>;
 
-export const ProductTabs = () => {
+export const ProductTabs = ({
+  data,
+}: {
+  data: {
+    specification: string;
+    description: string;
+    warranty_details: string;
+  };
+}) => {
   const sectionRefs: SectionRefs = {
     specification: useRef(null),
     description: useRef(null),
     warranty: useRef(null),
   };
+  const [activeTab, setActiveTab] = useState<TabId>("specification");
 
   const scrollToSection = (id: TabId) => {
-    sectionRefs[id]?.current?.scrollIntoView({ behavior: 'smooth' });
+    sectionRefs[id]?.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className="flex w-full flex-col gap-4">
       {/* Tabs */}
-      <div className=" flex gap-2 bg-secondaryWhite">
+      <div className="flex gap-2 bg-secondaryWhite">
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => scrollToSection(tab.id)}
-            className={` ${"Specification" === tab.label ? 'bg-primaryBlue hover:bg-primaryDarkBlue text-white':''} text-primaryDarkBlue text-center py-2 rounded-md w-full hover:bg-primaryBlue hover:text-white`}
+            onClick={() => {
+              scrollToSection(tab.id);
+              setActiveTab(tab.id);
+            }}
+            className={`w-full rounded-md py-2 text-center transition-colors duration-200 ${
+              activeTab === tab.id
+                ? "bg-primaryBlue text-white hover:bg-primaryDarkBlue"
+                : "text-primaryDarkBlue hover:bg-primaryBlue hover:text-white"
+            }`}
           >
             {tab.label}
           </button>
@@ -40,53 +56,44 @@ export const ProductTabs = () => {
       </div>
 
       {/* Sections */}
-      <div className=" space-y-6">
+      <div className="space-y-6">
         <motion.div
           ref={sectionRefs.specification}
           id="specification"
-          className="bg-secondaryWhite p-4 shadow-secondaryBlue shadow-sm rounded-md min-h-[200px]"
+          className="min-h-[200px] rounded-md p-4 shadow-sm shadow-secondaryBlue"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
         >
-          <h3 className="font-semibold mb-2">Specification</h3>
-          <p>CPU: Apple M3, RAM: 8GB, SSD: 256GB, GPU: 10-core</p>
+          <h3 className="mb-2 font-semibold">Specification</h3>
+          <div dangerouslySetInnerHTML={{ __html: data?.specification }} />
         </motion.div>
 
         <motion.div
           ref={sectionRefs.description}
           id="description"
-          className="bg-white p-4 shadow-secondaryBlue shadow-sm rounded-md"
+          className="rounded-md bg-white p-4 shadow-sm shadow-secondaryBlue"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
           viewport={{ once: true }}
         >
-          <h3 className="bg-primaryBlue text-white px-4 py-2 rounded-md mb-2 w-full">
-            Description
-          </h3>
-          <p className="text-gray-700 font-semibold">
-            MacBook Air M3 15-Inch 8GB/256GB 8 Core CPU 10 Core GPU
-          </p>
-          <p className="text-gray-600 mt-2">
-            With a 60 percent performance boost compared to previous models...
-          </p>
+          <h3 className="mb-2 font-semibold">Specification</h3>
+          <div dangerouslySetInnerHTML={{ __html: data?.description }} />
         </motion.div>
 
         <motion.div
           ref={sectionRefs.warranty}
           id="warranty"
-          className="bg-primaryWhite p-4 shadow-secondaryBlue shadow-sm rounded-md min-h-[100px]"
+          className="min-h-[100px] rounded-md bg-primaryWhite p-4 shadow-sm shadow-secondaryBlue"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
           viewport={{ once: true }}
         >
-          <h3 className="bg-primaryBlue text-white px-4 py-2 rounded-md mb-2 w-full">
-          Warranty
-          </h3>
-          <p>1 Year Apple Limited Warranty. 90 days technical support.</p>
+          <h3 className="mb-2 font-semibold">Specification</h3>
+          <div dangerouslySetInnerHTML={{ __html: data?.warranty_details }} />
         </motion.div>
       </div>
     </div>
