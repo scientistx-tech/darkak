@@ -13,16 +13,20 @@ import {
   useDeleteCartMutation,
   useGetMyCartQuery,
 } from "@/redux/services/client/myCart";
+import ClientLoading from "../../components/ClientLoading";
+import { setCart } from "@/redux/slices/authSlice";
+import { useDispatch } from "react-redux";
 
 const CartPage: React.FC = () => {
   const [deleteCart, { isLoading: isDeleting }] = useDeleteCartMutation();
   const [cartItems, setCartItems] = useState<Cart[]>();
-  const { data, isLoading, isError } = useGetMyCartQuery();
+  const { data, isLoading, isError, refetch } = useGetMyCartQuery();
   // For Delete Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<number | null>(null);
   // Message For Coupon / Voucher
   const [messageApi, contextHolder] = message.useMessage();
+  const dispatch = useDispatch();
 
   const router = useRouter();
 
@@ -31,9 +35,26 @@ const CartPage: React.FC = () => {
       setCartItems(data.cart);
     }
   }, [data]);
+  useEffect(() => {
+    refetch();
+  }, []);
 
-  if (isLoading) return <div>Loading cart...</div>;
-  if (isError) return <div>Failed to load cart.</div>;
+  if (isLoading) return <ClientLoading></ClientLoading>;
+  if (isError) return <div>Failed to load cart.!</div>;
+  if (!cartItems || cartItems.length === 0) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <p className="text-2xl font-bold text-primaryBlue">
+            Your cart is empty!
+          </p>
+          <Link href="/" className="text-xl text-primaryBlue underline">
+            Go to Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
   const increaseQty = (id: number) => {
     setCartItems((prev) =>
       prev?.map((item) =>
@@ -69,6 +90,7 @@ const CartPage: React.FC = () => {
         setCartItems((prev) =>
           prev?.filter((item) => item.id !== itemToDelete),
         ); // update UI
+        dispatch(setCart(Math.random()));
         setItemToDelete(null);
       } catch (error) {
         console.error("Delete failed:", error);

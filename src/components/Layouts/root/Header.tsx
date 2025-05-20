@@ -34,10 +34,19 @@ import HeaderDropdown from "./HeaderDropdown";
 
 import logo from "@/Data/Icon/PNG.png";
 import { auth } from "@/utils/firebase";
+import { useGetMyCartQuery } from "@/redux/services/client/myCart";
+import { useGetMyWishListQuery } from "@/redux/services/client/myWishList";
 
 const Header: React.FC = () => {
+  const { data: cart, refetch: cartRefetch } = useGetMyCartQuery();
+  const { data: wishlist, refetch: wishRefetch } = useGetMyWishListQuery({
+    page: 1,
+    limit: 100,
+  });
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.auth.user);
+  const carts = useSelector((state: RootState) => state.auth.cart);
+  const wishs = useSelector((state: RootState) => state.auth.wish);
 
   const pathname = usePathname();
   const [selectedLang, setSelectedLang] = useState("English");
@@ -83,6 +92,12 @@ const Header: React.FC = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [lastScrollY]);
+  useEffect(() => {
+    wishRefetch();
+  }, [wishs]);
+  useEffect(() => {
+    cartRefetch();
+  }, [carts]);
 
   //  For Drawer
   const [open, setOpen] = useState(false);
@@ -264,7 +279,9 @@ const Header: React.FC = () => {
                     : "bg-white"
                 }`}
               >
-                <p className="text-[10px] font-semibold">12</p>
+                <p className="text-[10px] font-semibold">
+                  {wishlist ? wishlist.data.length : "0"}
+                </p>
               </div>
             </Link>
 
@@ -284,7 +301,9 @@ const Header: React.FC = () => {
                     : "bg-white"
                 }`}
               >
-                <p className="text-[10px] font-semibold">3</p>
+                <p className="text-[10px] font-semibold">
+                  {cart ? cart.cart.length : "0"}
+                </p>
               </div>
             </Link>
           </div>
@@ -446,7 +465,7 @@ const Header: React.FC = () => {
                 <div className="relative flex flex-col items-center hover:text-primary">
                   <HeartOutlined className="text-xl" />
                   <span className="absolute -top-1 right-7 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primaryBlue text-[10px] text-white">
-                    12
+                    {wishlist ? wishlist.data.length : "0"}
                   </span>
                   <span className="mt-1">Wishlist</span>
                 </div>
@@ -455,7 +474,7 @@ const Header: React.FC = () => {
                 <div className="relative flex flex-col items-center hover:text-primary">
                   <ShoppingCartOutlined className="text-xl" />
                   <span className="absolute -top-1 right-7 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primaryBlue text-[10px] text-white">
-                    3
+                    {cart ? cart.cart.length : "0"}
                   </span>
                   <span className="mt-1">Cart</span>
                 </div>

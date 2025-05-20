@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import NavLink from "@/components/shared/NavLink";
 import { FaAngleDown } from "react-icons/fa";
 
 import img1 from "@/Data/Demo/product-2-1.png";
@@ -89,18 +90,21 @@ export default function HeaderDropdown() {
         setHoveredSub(null);
       }}
     >
-      <div className="group flex cursor-pointer items-center gap-2 py-3">
-        <p className="text-sm text-white">Category</p>
+      <NavLink
+        href="/category"
+        className="group flex cursor-pointer items-center gap-2 font-serif text-lg hover:text-primary"
+      >
+        Category
         <FaAngleDown
           className={`text-white transition-transform duration-300 ${
             isDropdownOpen ? "rotate-180" : "rotate-0"
           }`}
         />
-      </div>
+      </NavLink>
 
       {isDropdownOpen && (
-        <div className="absolute left-0 top-full z-50  ">
-          <div className="pt-4 mt-4 flex w-[900px] rounded-lg bg-white p-6 shadow-2xl">
+        <div className="absolute left-0 top-full z-50">
+          <div className="mt-4 flex w-[900px] rounded-lg bg-white p-6 pt-4 shadow-2xl">
             {/* Main Categories */}
             <div className="w-1/3 border-r pr-4">
               <p className="mb-3 text-lg text-black opacity-60">

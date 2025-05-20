@@ -239,7 +239,7 @@ export const NAV_DATA = [
         items: [
           {
             title: "View Subscriber",
-            url: "/admin/vendors/add-new-vendor",
+            url: "/admin/subscribers/subscribers-list",
           },
         ],
       },
