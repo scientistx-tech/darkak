@@ -56,7 +56,7 @@ const ProductShow = ({
     (item: any) => item.title?.toLowerCase() === "color",
   );
 
-  console.log("colorItem", colorItem);
+  // console.log("colorItem", colorItem);
 
   const colorOptionImages =
     colorItem &&
@@ -67,7 +67,7 @@ const ProductShow = ({
         : null
       : null;
 
-  console.log("colorOptionImages", colorOptionImages);
+  // console.log("colorOptionImages", colorOptionImages);
 
   //  Decide which images to show
   const productImages =
@@ -75,7 +75,8 @@ const ProductShow = ({
       ? colorOptionImages
       : data?.product?.Image?.map((img: any) => img.url) || [];
 
-  console.log(productImages, "productIm");
+  // console.log(productImages, "productIm");
+  console.log("datt for items", data);
 
   const fallbackImage = "/images/fallback.png";
 
@@ -234,9 +235,10 @@ const ProductShow = ({
             Message on Whatsapp
           </a>
 
-          <div className="mt-6 text-lg font-semibold text-[#323232]">
+          <div className="mt-6 text-sm font-semibold text-[#323232]">
             <p className="inline text-sm text-gray-500">Warranty Type:</p>{" "}
-            {data?.product.warranty} <p>{data?.product.warranty_time}</p>
+            {data?.product.warranty}{" "}
+            <p className="inline animate-pulse">{`(${data?.product.warranty_time})`}</p>
           </div>
 
           {data?.product?.items.map((item: any, i: number) => (
