@@ -21,8 +21,6 @@ type AddDataProps = {
 };
 
 function AddData({ refetch, value, setIsEditable }: AddDataProps) {
-  console.log("value", value);
-
   const [title, setTitle] = useState(value?.title || "");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
