@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     template: "%s | Darkak",
     default: "Darkak",
   },
+  
   description: "Looking for premium quality bags, stylish watches, and the latest electronics in Bangladesh? Darkak Mart offers a wide range of directly imported, top-tier products. Explore our exclusive collections at darkak.com.bd.",
   keywords: [
     "online shopping Bangladesh", "e-commerce Bangladesh", "buy online Bangladesh", "shop online Bangladesh",
