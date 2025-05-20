@@ -38,8 +38,6 @@ const itemVariants = {
 const RecommendedProducts: React.FC = () => {
   const { data, error, isLoading, refetch } = useGetNewArivalProductsQuery({});
 
-  console.log("res data", data);
-
   return (
     <motion.section
       className="py-10"

@@ -49,8 +49,6 @@ const ProductList = () => {
   const [queryParams, setQueryParams] = useState({});
   const { data, isLoading, error, refetch } = useGetProductsQuery(queryParams);
 
-  console.log("data", data);
-
   const { data: brandsData } = useGetBrandsQuery({});
 
   const {
@@ -427,8 +425,6 @@ const ProductList = () => {
                       <Switch.Root
                         checked={!doc.drafted}
                         onCheckedChange={async (checked) => {
-                          console.log(checked);
-
                           try {
                             const res = await changePublishedStatus({
                               id: doc.id,
@@ -547,8 +543,6 @@ const ProductList = () => {
           </div>
         )}
       </div>
-
-
       {/* <div className="pb-4 pt-4">
           <ResponsivePaginationComponent
             total={totalPages}

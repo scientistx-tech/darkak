@@ -9,7 +9,14 @@ import { useUploadFormDataSliderMutation } from "@/redux/services/admin/adminSli
 import { toast } from "react-toastify";
 import { useGetProductsQuery } from "@/redux/services/admin/adminProductApis";
 
-function AddSlider({ header }: { header: string }) {
+function AddSlider({
+  header,
+  refetch,
+}: {
+  header: string;
+  refetch: () => void;
+}) {
+  const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [offerName, setOfferName] = useState("");
   const [details, setDetails] = useState("");
@@ -22,12 +29,10 @@ function AddSlider({ header }: { header: string }) {
   const [createSlider] = useUploadFormDataSliderMutation();
   const {
     data: productData,
-    isLoading,
+    isLoading: productLoading,
     error,
-    refetch,
+    refetch: productRefetch,
   } = useGetProductsQuery({});
-
-  console.log(productData, "pro duc");
 
   // Example product options
   const productOptions = [
@@ -66,6 +71,7 @@ function AddSlider({ header }: { header: string }) {
       toast.error("Please fill in all fields and upload a banner image.");
       return;
     }
+    setIsLoading(true);
 
     const formData = new FormData();
     formData.append("title", title);
@@ -76,6 +82,7 @@ function AddSlider({ header }: { header: string }) {
     try {
       await createSlider(formData).unwrap();
       toast.success("Succesfully Added Slider");
+      refetch();
     } catch (error) {
       toast.error("Something went wrong, try again");
       console.log("slider createion error", error);
@@ -85,6 +92,7 @@ function AddSlider({ header }: { header: string }) {
       setDetails("");
       setProductId("");
       setPreviewImage(null);
+      setIsLoading(false);
     }
   };
 
@@ -200,7 +208,9 @@ function AddSlider({ header }: { header: string }) {
       )}
 
       <div className="mt-4">
-        <Button onClick={handleSubmit}>Submit Slider</Button>
+        <Button onClick={handleSubmit}>
+          {isLoading ? "Submitting.." : "Submit"}
+        </Button>
       </div>
     </div>
   );

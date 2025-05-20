@@ -36,24 +36,6 @@ function SliderTable() {
     refetch,
   } = useGetAllSlidersQuery({});
   const [deleteSlider] = useDeleteSliderMutation();
-  const [sliders, setSliders] = useState([
-    {
-      id: 1,
-      title: "Summer Sale",
-      offerName: "50% OFF",
-      details: "All summer items",
-      productId: "123",
-      bannerUrl: "https://via.placeholder.com/400x200",
-    },
-    {
-      id: 2,
-      title: "Winter Deals",
-      offerName: "Up to 30%",
-      details: "Winter clothing",
-      productId: "456",
-      bannerUrl: "https://via.placeholder.com/400x200",
-    },
-  ]);
 
   const handleOk = (id: any) => {
     handleDelete(id);
@@ -64,8 +46,6 @@ function SliderTable() {
   };
 
   const handleDelete = async (sliderId: number) => {
-    console.log(sliderId, "2");
-
     try {
       await deleteSlider(sliderId).unwrap();
       toast.success("Slider deleted successfully!");
@@ -102,7 +82,7 @@ function SliderTable() {
         </div>
       </div>
       <div className="">
-        <AddSlider header={activeTab} />
+        <AddSlider refetch={refetch} header={activeTab} />
 
         <div className="mt-5 bg-white p-6 shadow-1">
           <div className="flex justify-between px-6 py-4">
@@ -155,8 +135,6 @@ function SliderTable() {
                       <Button
                         type="default"
                         onClick={() => {
-                          console.log(slider.id, "1");
-
                           setSelectedProductId(slider.id);
                           setIsModalOpen(true);
                         }}

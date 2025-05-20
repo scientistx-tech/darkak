@@ -7,8 +7,8 @@ import { BiGitCompare } from "react-icons/bi";
 import { CiShare2 } from "react-icons/ci";
 
 const ProductBreadcrumb = () => {
-  const pathname = usePathname(); 
-  const segments = pathname.split("/").filter(Boolean); 
+  const pathname = usePathname();
+  const segments = pathname.split("/").filter(Boolean);
   const [isCompared, setIsCompared] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -27,7 +27,7 @@ const ProductBreadcrumb = () => {
   };
 
   return (
-    <div >
+    <div>
       <div className="flex items-center justify-between py-3">
         {/* Breadcrumbs */}
         <nav className="flex items-center space-x-1 text-sm text-[#4B4E55]">
@@ -37,7 +37,7 @@ const ProductBreadcrumb = () => {
           {segments.map((seg, idx) => {
             const href = "/" + segments.slice(0, idx + 1).join("/");
             const isLast = idx === segments.length - 1;
-            
+
             return (
               <span key={idx} className="flex items-center space-x-1">
                 <span>/</span>
@@ -46,7 +46,10 @@ const ProductBreadcrumb = () => {
                     {decodeURIComponent(seg)}
                   </span>
                 ) : (
-                  <Link href={href} className="capitalize hover:text-primaryDarkBlue">
+                  <Link
+                    href={href}
+                    className="capitalize hover:text-primaryDarkBlue"
+                  >
                     {decodeURIComponent(seg)}
                   </Link>
                 )}
@@ -57,13 +60,13 @@ const ProductBreadcrumb = () => {
 
         {/* Action Buttons */}
         <div className="flex items-center space-x-2">
-          <button
+          {/* <button
             onClick={handleCompare}
             className="flex items-center space-x-1 rounded-full bg-secondaryWhite px-3 py-1.5 text-secondaryBlue transition hover:bg-blue-100"
           >
             <BiGitCompare className="h-4 w-4 text-primaryDarkBlue" />
             <span>{isCompared ? "Compared" : "Add to Compare"}</span>
-          </button>
+          </button> */}
 
           <button
             onClick={handleShare}
