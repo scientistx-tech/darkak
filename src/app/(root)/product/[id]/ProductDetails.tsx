@@ -7,7 +7,8 @@ import RelatedProductsSwiper from "./components/RelatedProductsSwiper";
 import { CustomerReviews } from "./components/CustomerReviews";
 import { ProductTabs } from "./components/ProductTabs";
 import { useParams } from "next/navigation";
-import { useGetSingleProductDetailsQuery } from "@/redux/services/client/products";
+import { useGetSinglePublicProductDetailsQuery } from "@/redux/services/client/products";
+import ClientLoading from "../../components/ClientLoading";
 
 export default function ProductDetails() {
   const params = useParams();
@@ -17,9 +18,9 @@ export default function ProductDetails() {
   }
 
   const { data, error, isLoading, refetch } =
-    useGetSingleProductDetailsQuery(slug);
+    useGetSinglePublicProductDetailsQuery(slug);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <ClientLoading></ClientLoading>;
   if (error) return <div>Error loading product.</div>;
   if (!data) return <div>No product found.</div>;
 

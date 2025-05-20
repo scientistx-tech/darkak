@@ -3,7 +3,7 @@ import { AddToCartPayload, CartResponse } from "@/types/client/myCartTypes";
 
 export const myCartApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getSingleProductDetails: builder.query({
+    getSinglePublicProductDetails: builder.query({
       query: (slug) => ({
         url: `/public/product/${slug}`,
         method: "GET",
@@ -30,5 +30,7 @@ export const myCartApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetSingleProductDetailsQuery, useGetNewArivalProductsQuery } =
-  myCartApi;
+export const {
+  useGetSinglePublicProductDetailsQuery,
+  useGetNewArivalProductsQuery,
+} = myCartApi;
