@@ -56,6 +56,8 @@ const ProductShow = ({
     (item: any) => item.title?.toLowerCase() === "color",
   );
 
+  console.log("colorItem", colorItem);
+
   const colorOptionImages =
     colorItem &&
     Array.isArray(colorItem.options) &&
@@ -65,11 +67,15 @@ const ProductShow = ({
         : null
       : null;
 
+  console.log("colorOptionImages", colorOptionImages);
+
   //  Decide which images to show
   const productImages =
     colorOptionImages && colorOptionImages.length > 0
       ? colorOptionImages
       : data?.product?.Image?.map((img: any) => img.url) || [];
+
+  console.log(productImages, "productIm");
 
   const fallbackImage = "/images/fallback.png";
 
@@ -194,19 +200,23 @@ const ProductShow = ({
 
           <div className="mt-4 flex gap-2">
             <span
-              className={`rounded-full bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue ${
+              className={`rounded bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue shadow-1 ${
                 hasDiscount ? "line-through" : ""
               }`}
             >
               {price} BDT
             </span>
             {hasDiscount && (
-              <span className="rounded-full bg-secondaryWhite px-4 py-2 text-sm font-semibold text-primaryBlue">
+              <span className="rounded bg-secondaryWhite px-4 py-2 text-sm font-semibold text-primaryBlue shadow-1">
                 {discountPrice} BDT
               </span>
             )}
-            <span className="rounded-full bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue">
-              {data?.product?.available}
+            <span className="rounded bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue shadow-1">
+              {data?.product?.available === "in-stock"
+                ? "In Stock"
+                : data?.product?.available === "pre-order"
+                  ? "Pre Order"
+                  : "Online Order"}
             </span>
           </div>
 
@@ -225,7 +235,7 @@ const ProductShow = ({
           </a>
 
           <div className="mt-6 text-lg font-semibold text-[#323232]">
-            <p className="inline text-sm text-gray-500">Warranty:</p>{" "}
+            <p className="inline text-sm text-gray-500">Warranty Type:</p>{" "}
             {data?.product.warranty} <p>{data?.product.warranty_time}</p>
           </div>
 
@@ -236,15 +246,18 @@ const ProductShow = ({
                 {item.options.map((option: any, idx: number) => (
                   <div
                     key={option.id}
-                    onClick={() =>
+                    onClick={() => {
                       setSelectedOptions((prev) => ({
                         ...prev,
                         [item.id]: option.id,
-                      }))
-                    }
+                      }));
+                      if (option.image) {
+                        setSelectedImage(option.image);
+                      }
+                    }}
                     className={`cursor-pointer rounded-full border-2 px-4 py-0.5 transition-colors duration-200 ${
                       selectedOptions[item.id] === option.id
-                        ? "border-primaryBlue bg-primaryBlue text-white"
+                        ? "border-primaryBlue bg-primaryBlue text-white shadow-2"
                         : "border-blue-300 bg-white text-primaryBlue"
                     }`}
                   >

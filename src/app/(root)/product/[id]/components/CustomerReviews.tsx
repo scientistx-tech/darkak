@@ -50,12 +50,12 @@ export const CustomerReviews = () => {
         <p className="text-sm text-gray-400">
           Be the first to share your experience with this product!
         </p>
-        <button
+        {/* <button
           className="mt-4 rounded bg-primaryBlue px-6 py-2 text-white transition hover:bg-primaryDarkBlue"
-          // onClick={handleWriteReview} // You can add a handler to open a review modal/form
+          onClick={handleWriteReview} // You can add a handler to open a review modal/form
         >
           Write a Review
-        </button>
+        </button> */}
       </div>
     </div>
   );

@@ -79,7 +79,7 @@ export const ProductTabs = ({
           transition={{ duration: 0.5, delay: 0.1 }}
           viewport={{ once: true }}
         >
-          <h3 className="mb-2 font-semibold">Specification</h3>
+          <h3 className="mb-2 font-semibold">Description</h3>
           <div dangerouslySetInnerHTML={{ __html: data?.description }} />
         </motion.div>
 
@@ -92,7 +92,7 @@ export const ProductTabs = ({
           transition={{ duration: 0.5, delay: 0.2 }}
           viewport={{ once: true }}
         >
-          <h3 className="mb-2 font-semibold">Specification</h3>
+          <h3 className="mb-2 font-semibold">Warranty</h3>
           <div dangerouslySetInnerHTML={{ __html: data?.warranty_details }} />
         </motion.div>
       </div>
