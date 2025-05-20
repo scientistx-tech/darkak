@@ -352,9 +352,9 @@ const ProductList = () => {
             </TableHeader>
             <TableBody>
               {isLoading &&
-                Array.from({ length: 5 }).map((_, i) => (
+                Array.from({ length: 10 }).map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell colSpan={5}>
+                    <TableCell colSpan={10}>
                       <Skeleton className="h-8" />
                     </TableCell>
                   </TableRow>
@@ -363,7 +363,7 @@ const ProductList = () => {
               {!isLoading && data?.data.length <= 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={7}
+                    colSpan={10}
                     className="py-8 text-center text-red-500"
                   >
                     No Data to Show
@@ -477,7 +477,7 @@ const ProductList = () => {
                         <FaBarcode className="" />
                       </ButtonSelf>
                       <ButtonSelf
-                        // onClick={() => handleDelete(doc.id)}
+                        onClick={() => router.push(`/product/${doc.slug}`)}
                         className="mr-2 bg-red-50 p-1 text-yellow-700"
                       >
                         <FaEye className="" />
@@ -495,14 +495,11 @@ const ProductList = () => {
                           <FaTrashAlt className="" />
                         </Button>
                       </>
-                      {/* <Button
-                        onClick={() => handleDelete(doc.id)}
-                        className="mr-2 bg-red-50 p-1 text-red-700"
-                      >
-                        <FaTrashAlt className="" />
-                      </Button> */}
+
                       <ButtonSelf
-                        onClick={() => handleDelete(doc.id)}
+                        onClick={() =>
+                          router.push(`/admin/product/edit/${doc.id}`)
+                        }
                         className="mr-2 bg-green-50 p-1 text-green-700"
                       >
                         <FaEdit className="" />

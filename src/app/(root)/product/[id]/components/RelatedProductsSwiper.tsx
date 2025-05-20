@@ -66,7 +66,6 @@ export default function RelatedProductsSwiper({ data }: { data: [] }) {
         {data.map((product: any) => (
           <div className="keen-slider__slide py-4" key={product.id}>
             <ProductCard product={product} />
-            <p>hello</p>
           </div>
         ))}
       </motion.div>

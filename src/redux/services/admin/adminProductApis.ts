@@ -1,5 +1,10 @@
-import { Product } from "@/types/apiTypes";
+import { Product, UpdateProduct } from "@/types/apiTypes";
 import baseApi from "../../baseApi";
+
+interface UpdateProductPayload {
+  id: string;
+  data: UpdateProduct;
+}
 
 export const adminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -84,6 +89,27 @@ export const adminApi = baseApi.injectEndpoints({
       },
     }),
 
+    getSingleProductDetails: builder.query({
+      query: (id) => ({
+        url: `/admin/product/details/${id}`,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+    }),
+
+    updateProduct: builder.mutation<any, UpdateProductPayload>({
+      query: ({ id, data }) => ({
+        url: `/admin/product/update/${id}`,
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }),
+    }),
+
     deleteProduct: builder.mutation<any, number>({
       query: (productId) => ({
         url: `/admin/product/delete/${productId}`,
@@ -163,6 +189,8 @@ export const {
   useUpdateProductAttributeMutation,
   useCreateProductMutation,
   useGetProductsQuery,
+  useGetSingleProductDetailsQuery,
+  useUpdateProductMutation,
   useUploadImagesMutation,
   useDeleteProductMutation,
   useUpdateFeatureStatusMutation,

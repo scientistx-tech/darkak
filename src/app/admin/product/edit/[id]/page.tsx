@@ -1,6 +1,10 @@
 "use client";
-
-import React, { useState } from "react";
+import {
+  useGetSingleProductDetailsQuery,
+  useUpdateProductMutation,
+} from "@/redux/services/admin/adminProductApis";
+import { useParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   useDeleteSubSubCategoryMutation,
@@ -288,7 +292,9 @@ const countryCodes = [
   "ZW",
 ];
 
-export default function ProductForm() {
+const ProductEdit = () => {
+  const params = useParams();
+  const { id } = params;
   const [formData, setFormData] = useState<ProductFormData>({
     title: "",
     short_description: "",
@@ -299,17 +305,17 @@ export default function ProductForm() {
     video_link: "",
     thumbnail: "",
     price: "",
-    discount_type: "flat",
+    discount_type: "",
     discount: "",
     tax_amount: "",
-    tax_type: "include",
-    available: "in-stock",
-    warranty: "darkak",
+    tax_type: "",
+    available: "",
+    warranty: "",
     warranty_time: "",
-    region: "BD",
+    region: "",
     stock: "",
-    minOrder: "1",
-    unit: "kg",
+    minOrder: "",
+    unit: "",
     code: "",
     specification: "",
     description: "",
@@ -346,10 +352,82 @@ export default function ProductForm() {
   const { data: subSubCategoriesData } = useGetSubSubCategoriesQuery();
   const { data: brandsData } = useGetBrandsQuery({});
   const { data: attributesData } = useGetProductAttributesQuery({});
+  const {
+    data: productData,
+    error,
+    isLoading,
+    refetch,
+  } = useGetSingleProductDetailsQuery(id);
   const [uploadImages] = useUploadImagesMutation();
   const [createProduct] = useCreateProductMutation();
+  const [updateProduct, { isLoading: loadingUpadate }] =
+    useUpdateProductMutation();
 
   const router = useRouter();
+
+  useEffect(() => {
+    if (productData?.product) {
+      const p = productData.product;
+      setFormData({
+        title: p.title,
+        short_description: p.short_description,
+        meta_title: p.meta_title,
+        meta_image: p.meta_image,
+        meta_description: p.meta_description,
+        meta_keywords: p.keywords.map((k: any) => k.key).join(","),
+        video_link: p.video_link,
+        thumbnail: p.thumbnail,
+        price: String(p.price),
+        discount_type: p.discount_type,
+        discount: String(p.discount),
+        tax_amount: String(p.tax_amount),
+        tax_type: p.tax_type,
+        available: p.available,
+        warranty: p.warranty,
+        warranty_time: p.warranty_time || "",
+        region: p.region,
+        stock: String(p.stock),
+        minOrder: String(p.minOrder),
+        unit: p.unit,
+        code: p.code,
+        specification: p.specification,
+        description: p.description,
+        warranty_details: p.warranty_details,
+        categoryId: String(p.categoryId),
+        subCategoryId: String(p.subCategoryId),
+        subSubCategoryId: String(p.subSubCategoryId),
+        brandId: String(p.brandId),
+        keywords: p.keywords.map((k: any) => k.key).join(","),
+        images: p.Image.map((img: any) => img.url),
+        delivery_info: {
+          delivery_time: p.delivery_info.delivery_time,
+          delivery_charge: String(p.delivery_info.delivery_charge),
+          delivery_time_outside: p.delivery_info.delivery_time_outside,
+          delivery_charge_outside: String(
+            p.delivery_info.delivery_charge_outside,
+          ),
+          return_days: String(p.delivery_info.return_days),
+          multiply: p.delivery_info.multiply ? "true" : "false",
+        },
+        items: p.items.map((item: any) => ({
+          attributeId: String(item.id),
+          title: item.title,
+          options: item.options
+            .filter((opt: any) => opt.productId === p.id) // Filter correct product
+            .map((opt: any) => ({
+              title: opt.title,
+              price: opt.price,
+              stock: opt.stock,
+              sku: opt.sku,
+              image: opt.image,
+            })),
+        })),
+        drafted: p.drafted,
+      });
+      setProductSKU(p.code); // Optional
+      setMultiplyShipping(p.delivery_info.multiply);
+    }
+  }, [productData]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -545,9 +623,11 @@ export default function ProductForm() {
     console.log("Prepared Payload:", payload);
     // Send payload to API
     try {
-      const res = await createProduct(payload).unwrap();
-      console.log(res, "pro res");
-      toast.success("Successfully Product created");
+      await updateProduct({
+        id: productData.product.id,
+        data: payload,
+      }).unwrap();
+      toast.success("Product updated successfully");
       router.push("/admin/product/product-list");
     } catch (error) {
       console.error(error);
@@ -558,7 +638,7 @@ export default function ProductForm() {
   return (
     <div className="mx-auto w-full">
       <h1 className="mb-4 flex items-center gap-2 text-xl font-bold">
-        🛍️ Add Product
+        🛍️ Edit Product
       </h1>
 
       {/* name and desc */}
@@ -989,24 +1069,24 @@ export default function ProductForm() {
         </div>
 
         {/* <div>
-          <label className="flex items-center gap-1 text-sm font-medium text-gray-700">
-            Shipping cost multiply with quantity
-            <span className="text-gray-400">ⓘ</span>
-          </label>
-          <div className="mt-2">
-            <label className="inline-flex cursor-pointer items-center">
-              <input
-                type="checkbox"
-                className="peer sr-only"
-                checked={multiplyShipping}
-                onChange={() => setMultiplyShipping(!multiplyShipping)}
-              />
-              <div className="peer relative h-6 w-11 rounded-full bg-gray-200 transition-all peer-checked:bg-blue-600 peer-focus:outline-none">
-                <span className="absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-5" />
-              </div>
+            <label className="flex items-center gap-1 text-sm font-medium text-gray-700">
+              Shipping cost multiply with quantity
+              <span className="text-gray-400">ⓘ</span>
             </label>
-          </div>
-        </div> */}
+            <div className="mt-2">
+              <label className="inline-flex cursor-pointer items-center">
+                <input
+                  type="checkbox"
+                  className="peer sr-only"
+                  checked={multiplyShipping}
+                  onChange={() => setMultiplyShipping(!multiplyShipping)}
+                />
+                <div className="peer relative h-6 w-11 rounded-full bg-gray-200 transition-all peer-checked:bg-blue-600 peer-focus:outline-none">
+                  <span className="absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-5" />
+                </div>
+              </label>
+            </div>
+          </div> */}
       </div>
 
       {/* thumbnail and images */}
@@ -1590,7 +1670,7 @@ export default function ProductForm() {
       </div>
 
       <div className="mt-5 flex items-center justify-end gap-3">
-        <button
+        {/* <button
           type="button"
           onClick={() => handleSubmit(true)}
           className="rounded bg-yellow-600 px-4 py-2 text-white shadow"
@@ -1602,7 +1682,7 @@ export default function ProductForm() {
           }
         >
           Draft
-        </button>
+        </button> */}
         <button
           type="button"
           onClick={() => handleSubmit(false)}
@@ -1614,9 +1694,9 @@ export default function ProductForm() {
             optionImageUploading
           }
         >
-          Publish
+          {loadingUpadate ? "Updating.." : "Update"}
         </button>
-        <button
+        {/* <button
           type="button"
           // onClick={handleSubmit}
           className="cursor-not-allowed rounded bg-teal-600 px-4 py-2 text-white shadow"
@@ -1628,8 +1708,10 @@ export default function ProductForm() {
           }
         >
           Schedule
-        </button>
+        </button> */}
       </div>
     </div>
   );
-}
+};
+
+export default ProductEdit;

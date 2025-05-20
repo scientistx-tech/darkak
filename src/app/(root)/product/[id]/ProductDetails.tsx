@@ -27,7 +27,7 @@ export default function ProductDetails() {
     <div className="container mx-auto px-2 md:px-4">
       <ProductBreadcrumb />
       <ProductShow data={data} slug={slug} />
-      {/* <RelatedProductsSwiper data={data.related} /> */}
+      <RelatedProductsSwiper data={data.related} />
       <div className="w-[100%] gap-6 px-2 py-10 lg:flex">
         <div className="w-full lg:w-[65%]">
           <ProductTabs data={data.product} />
