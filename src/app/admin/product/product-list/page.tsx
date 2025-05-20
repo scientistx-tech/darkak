@@ -37,6 +37,8 @@ import { useRouter } from "next/navigation";
 import { FaBarcode, FaEdit, FaEye, FaTrashAlt } from "react-icons/fa";
 import axios from "axios";
 
+import ResponsivePaginationComponent from "react-responsive-pagination";
+
 // Yup schema
 const brandSchema = yup.object().shape({
   title: yup.string().required("Title is required"),
@@ -512,6 +514,15 @@ const ProductList = () => {
           </Table>
         )}
       </div>
+
+
+      {/* <div className="pb-4 pt-4">
+          <ResponsivePaginationComponent
+            total={totalPages}
+            current={page}
+            onPageChange={(page) => setPage(page)}
+          />
+        </div> */}
       <Modal
         title="Product Delete"
         closable={{ "aria-label": "Custom Close Button" }}
