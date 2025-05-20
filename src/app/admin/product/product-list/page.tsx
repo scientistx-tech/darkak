@@ -45,8 +45,12 @@ const brandSchema = yup.object().shape({
 });
 
 const ProductList = () => {
+  const [currentPage, setCurrentPage] = useState(1);
   const [queryParams, setQueryParams] = useState({});
   const { data, isLoading, error, refetch } = useGetProductsQuery(queryParams);
+
+  console.log("data", data);
+
   const { data: brandsData } = useGetBrandsQuery({});
 
   const {
@@ -95,6 +99,14 @@ const ProductList = () => {
     subSubCategoryId: "",
   });
   const router = useRouter();
+
+  useEffect(() => {
+    setQueryParams((prev) => ({
+      ...prev,
+      page: currentPage,
+    }));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentPage]);
 
   useEffect(() => {
     refetch();
@@ -258,7 +270,9 @@ const ProductList = () => {
           </button>
           <button
             className="rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
-            onClick={() =>
+            onClick={() => {
+              setCurrentPage(1);
+
               setQueryParams({
                 ...(filters.brandId && { brandId: filters.brandId }),
                 ...(filters.categoryId && { categoryId: filters.categoryId }),
@@ -268,8 +282,8 @@ const ProductList = () => {
                 ...(filters.subSubCategoryId && {
                   subSubCategoryId: filters.subSubCategoryId,
                 }),
-              })
-            }
+              });
+            }}
           >
             Show data
           </button>
@@ -512,6 +526,25 @@ const ProductList = () => {
               )}
             </TableBody>
           </Table>
+        )}
+        {data?.totalPage > 1 && (
+          <div className="mt-6 flex justify-center gap-2">
+            {Array.from({ length: data.totalPage }, (_, i) => i + 1).map(
+              (page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`rounded px-4 py-2 text-sm font-medium ${
+                    currentPage === page
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                  }`}
+                >
+                  {page}
+                </button>
+              ),
+            )}
+          </div>
         )}
       </div>
 

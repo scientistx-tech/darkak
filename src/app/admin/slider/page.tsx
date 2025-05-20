@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import Button from "../components/Button";
+import { Button, Modal } from "antd";
+import ButtonSelf from "../components/Button";
 import {
   Table,
   TableBody,
@@ -11,12 +12,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import ModalLayout from "@/components/Layouts/ModalLayout";
 import AddSlider from "./AddSlider";
+import {
+  useDeleteSliderMutation,
+  useGetAllSlidersQuery,
+} from "@/redux/services/admin/adminSliderApis";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 function SliderTable() {
   const [isOpen, setIsOpen] = useState(false);
   const [editingData, setEditingData] = useState<any | null>(null);
+  const [activeTab, setActiveTab] = useState("Add Slider");
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(
+    null,
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const {
+    data: slidersData,
+    isLoading,
+    error,
+    refetch,
+  } = useGetAllSlidersQuery({});
+  const [deleteSlider] = useDeleteSliderMutation();
   const [sliders, setSliders] = useState([
     {
       id: 1,
@@ -36,96 +55,136 @@ function SliderTable() {
     },
   ]);
 
-  const handleSave = (slider: any) => {
-    if (editingData) {
-      setSliders((prev) =>
-        prev.map((s) => (s.id === editingData.id ? { ...s, ...slider } : s)),
-      );
-    } else {
-      setSliders((prev) => [...prev, { ...slider, id: Date.now() }]);
-    }
-    setIsOpen(false);
-    setEditingData(null);
+  const handleOk = (id: any) => {
+    handleDelete(id);
   };
 
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleDelete = async (sliderId: number) => {
+    console.log(sliderId, "2");
+
+    try {
+      await deleteSlider(sliderId).unwrap();
+      toast.success("Slider deleted successfully!");
+      setIsModalOpen(false);
+      refetch();
+    } catch (err) {
+      toast.error("Failed to delete slider.");
+    }
+  };
   return (
-    <ModalLayout
-      isOpen={isOpen}
-      onChange={() => {
-        setIsOpen(false);
-        setEditingData(null);
-      }}
-      modalComponent={<AddSlider />}
-    >
-      <div className="rounded-[10px] bg-white shadow-md dark:bg-gray-dark">
-        <div className="flex justify-between px-6 py-4">
-          <h2 className="text-2xl font-bold text-dark dark:text-white">
-            All Sliders
-          </h2>
-          <Button
+    <div>
+      <div className="flex items-center gap-3">
+        <div className="rounded-md bg-slate-200 shadow-1">
+          <button
             onClick={() => {
               setIsOpen(true);
               setEditingData(null);
+              setActiveTab("Add Slider");
             }}
+            className={`px-6 py-2 ${activeTab === "Add Slider" && "rounded-md border border-slate-800 bg-slate-300 text-black shadow-md"} `}
           >
             Add Slider
-          </Button>
+          </button>
+          <button
+            onClick={() => {
+              setIsOpen(true);
+              setEditingData(null);
+              setActiveTab("Add Banner");
+            }}
+            className={`px-6 py-2 ${activeTab === "Add Banner" && "rounded-md border border-slate-800 bg-slate-300 text-black shadow-md"} `}
+          >
+            Add Banner
+          </button>
         </div>
-
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Banner</TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>Offer</TableHead>
-              <TableHead>Details</TableHead>
-              <TableHead>Product ID</TableHead>
-              <TableHead>Edit</TableHead>
-              <TableHead>Delete</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sliders.map((slider) => (
-              <TableRow key={slider.id}>
-                <TableCell>
-                  <Image
-                    src={slider.bannerUrl}
-                    alt={slider.title}
-                    width={100}
-                    height={50}
-                    className="rounded-md"
-                  />
-                </TableCell>
-                <TableCell>{slider.title}</TableCell>
-                <TableCell>{slider.offerName}</TableCell>
-                <TableCell>{slider.details}</TableCell>
-                <TableCell>{slider.productId}</TableCell>
-                <TableCell>
-                  <Button
-                    className="bg-blue text-white"
-                    onClick={() => {
-                      setEditingData(slider);
-                      setIsOpen(true);
-                    }}
-                  >
-                    Edit
-                  </Button>
-                </TableCell>
-
-                <TableCell>
-                  <Button
-                    className="bg-red-500 text-white"
-                    
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
       </div>
-    </ModalLayout>
+      <div className="">
+        <AddSlider header={activeTab} />
+
+        <div className="mt-5 bg-white p-6 shadow-1">
+          <div className="flex justify-between px-6 py-4">
+            <h2 className="text-2xl font-bold text-dark dark:text-white">
+              All Sliders
+            </h2>
+          </div>
+
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Title</TableHead>
+                <TableHead>Banner</TableHead>
+                <TableHead>Offer</TableHead>
+                <TableHead>Details</TableHead>
+                <TableHead>Product ID</TableHead>
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {slidersData?.data?.map((slider: any) => (
+                <TableRow key={slider.id}>
+                  <TableCell>{slider.title}</TableCell>
+                  <TableCell>
+                    {slider.banner !== "null" ? (
+                      <Image
+                        src={slider.banner}
+                        alt={slider.title}
+                        width={100}
+                        height={50}
+                        className="rounded-md"
+                      />
+                    ) : (
+                      "N/A"
+                    )}
+                  </TableCell>
+                  <TableCell>{slider.offerName}</TableCell>
+                  <TableCell>{slider.details}</TableCell>
+                  <TableCell>{slider.productId}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <ButtonSelf
+                        // onClick={() =>
+                        //   router.push(`/admin/product/edit/${doc.id}`)
+                        // }
+                        className="mr-2 bg-green-50 p-1 text-green-700"
+                      >
+                        <FaEdit className="" />
+                      </ButtonSelf>
+                      <Button
+                        type="default"
+                        onClick={() => {
+                          console.log(slider.id, "1");
+
+                          setSelectedProductId(slider.id);
+                          setIsModalOpen(true);
+                        }}
+                        className="mr-2 border-none bg-red-50 p-1 text-red-700 shadow-none hover:bg-red-100 hover:text-red-800"
+                      >
+                        <FaTrashAlt className="" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+      <Modal
+        title="Product Delete"
+        closable={{ "aria-label": "Custom Close Button" }}
+        open={isModalOpen}
+        onOk={() => {
+          if (selectedProductId) handleOk(selectedProductId);
+        }}
+        onCancel={handleCancel}
+        centered
+      >
+        <p className="text-base">Are you sure?</p>
+      </Modal>
+    </div>
   );
 }
 
