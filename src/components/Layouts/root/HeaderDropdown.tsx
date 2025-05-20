@@ -4,81 +4,25 @@ import Link from "next/link";
 import Image from "next/image";
 import NavLink from "@/components/shared/NavLink";
 import { FaAngleDown } from "react-icons/fa";
+import { useGetProductCategoriesQuery } from "@/redux/services/client/categories";
+import { motion, AnimatePresence } from "framer-motion";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
-import img1 from "@/Data/Demo/product-2-1.png";
-import img2 from "@/Data/Demo/product-2-3.png";
-import img3 from "@/Data/Demo/product-2-4.png";
-import img4 from "@/Data/Demo/menu-product-img-1.jpg";
+const shimmer = "animate-pulse bg-secondaryLiteBlue rounded-md h-6 mb-2";
 
 export default function HeaderDropdown() {
   const [hoveredMain, setHoveredMain] = useState<string | null>(null);
   const [hoveredSub, setHoveredSub] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const categories = [
-    {
-      name: "Main Categories 1",
-      img: img1,
-      sub: [
-        {
-          name: "Sub Category 1",
-          img: img2,
-          sub: [
-            { name: "Sub Sub Category 1", img: img3, href: "#" },
-            { name: "Sub Sub Category 2", img: img4, href: "#" },
-            { name: "Sub Sub Category 3", img: img3, href: "#" },
-            { name: "Sub Sub Category 4", img: img2, href: "#" },
-          ],
-        },
-        {
-          name: "Sub Category 2",
-          img: img2,
-          sub: [
-            { name: "Sub Sub Category 2", img: img4, href: "#" },
-            { name: "Sub Sub Category 3", img: img3, href: "#" },
-          ],
-        },
-      ],
-    },
-    {
-      name: "Main Categories 2",
-      img: img4,
-      sub: [
-        {
-          name: "Sub Category 3",
-          img: img2,
-          sub: [
-            { name: "Sub Sub Category 7", img: img3, href: "#" },
-            { name: "Sub Sub Category 8", img: img4, href: "#" },
-            { name: "Sub Sub Category 9", img: img3, href: "#" },
-            { name: "Sub Sub Category 10", img: img2, href: "#" },
-          ],
-        },
-      ],
-    },
+  const {
+    data: categories,
+    isLoading,
+    error,
+  } = useGetProductCategoriesQuery("");
 
-    {
-      name: "Main Categories 3",
-      img: img3,
-      sub: [
-        {
-          name: "Sub Category 4",
-          img: img2,
-          sub: [],
-        },
-        {
-          name: "Sub Category 5",
-          img: img2,
-          sub: [
-            { name: "Sub Sub Category 11", img: img3, href: "#" },
-            { name: "Sub Sub Category 12", img: img4, href: "#" },
-            { name: "Sub Sub Category 13", img: img3, href: "#" },
-            { name: "Sub Sub Category 14", img: img2, href: "#" },
-          ],
-        },
-      ],
-    },
-  ];
+  const bgColor = "bg-primaryWhite";
+  const textColor = "text-primaryDarkBlue";
 
   return (
     <div
@@ -92,97 +36,134 @@ export default function HeaderDropdown() {
     >
       <NavLink
         href="/category"
-        className="group flex cursor-pointer items-center gap-2 font-serif text-lg hover:text-primary"
+        className="group flex cursor-pointer items-center gap-2 font-serif text-lg text-secondaryWhite transition-colors duration-300 hover:text-secondaryBlue"
       >
         Category
         <FaAngleDown
-          className={`text-white transition-transform duration-300 ${
+          className={`transition-transform duration-300 ${
             isDropdownOpen ? "rotate-180" : "rotate-0"
           }`}
         />
       </NavLink>
 
-      {isDropdownOpen && (
-        <div className="absolute left-0 top-full z-50">
-          <div className="mt-4 flex w-[900px] rounded-lg bg-white p-6 pt-4 shadow-2xl">
-            {/* Main Categories */}
-            <div className="w-1/3 border-r pr-4">
-              <p className="mb-3 text-lg text-black opacity-60">
-                Main Categories
-              </p>
-              {categories.map((cat) => (
-                <div
-                  key={cat.name}
-                  onMouseEnter={() => {
-                    setHoveredMain(cat.name);
-                    setHoveredSub(null);
-                  }}
-                  className={`flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-black hover:bg-gray-100 ${
-                    hoveredMain === cat.name ? "bg-gray-100" : ""
-                  }`}
+      <AnimatePresence>
+        {isDropdownOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="absolute left-0 top-full z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.98 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.2 }}
+              className={`mt-4 flex w-[900px] rounded-xl ${bgColor} p-6 pt-4 shadow-2xl`}
+            >
+              {/* Main Categories */}
+              <div className="w-1/3 border-r border-secondaryLiteBlue pr-4">
+                <p
+                  className={`mb-3 text-base font-semibold opacity-70 ${textColor}`}
                 >
-                  <Image src={cat.img} alt={cat.name} width={32} height={32} />
-                  <span className="text-sm">{cat.name}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Sub Categories */}
-            <div className="w-1/3 border-r pl-4 pr-4">
-              <p className="mb-3 text-lg text-black opacity-60">
-                Sub Categories
-              </p>
-              {hoveredMain &&
-                categories
-                  .find((c) => c.name === hoveredMain)
-                  ?.sub.map((sub) => (
+                  Main Categories
+                </p>
+                {isLoading ? (
+                  [...Array(5)].map((_, i) => (
+                    <div key={i} className={shimmer} />
+                  ))
+                ) : error ? (
+                  <p className="text-sm text-red-500">Failed to load.</p>
+                ) : (
+                  categories?.map((cat) => (
                     <div
-                      key={sub.name}
-                      onMouseEnter={() => setHoveredSub(sub.name)}
-                      className={`flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-black hover:bg-gray-100 ${
-                        hoveredSub === sub.name ? "bg-gray-100" : ""
+                      key={cat.title}
+                      onMouseEnter={() => {
+                        setHoveredMain(cat.title);
+                        setHoveredSub(null);
+                      }}
+                      className={`flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 transition-all hover:bg-secondaryLiteBlue ${
+                        hoveredMain === cat.title
+                          ? "bg-secondaryLiteBlue"
+                          : "bg-transparent"
                       }`}
                     >
                       <Image
-                        src={sub.img}
-                        alt={sub.name}
+                        src={cat.icon}
+                        alt={cat.title}
                         width={28}
                         height={28}
+                        className="rounded-md"
                       />
-                      <span className="text-sm">{sub.name}</span>
+                      <span className={`text-sm ${textColor}`}>
+                        {cat.title}
+                      </span>
                     </div>
-                  ))}
-            </div>
+                  ))
+                )}
+              </div>
 
-            {/* Sub-Sub Categories */}
-            <div className="w-1/3 pl-4 pr-4">
-              <p className="mb-3 text-lg text-black opacity-60">
-                Sub Sub Categories
-              </p>
-              {hoveredMain &&
-                hoveredSub &&
-                categories
-                  .find((c) => c.name === hoveredMain)
-                  ?.sub.find((s) => s.name === hoveredSub)
-                  ?.sub.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="flex items-center gap-3 rounded-md px-3 py-2 text-black hover:bg-gray-100"
-                    >
-                      <Image
-                        src={item.img}
-                        alt={item.name}
-                        width={28}
-                        height={28}
-                      />
-                      <span className="text-sm">{item.name}</span>
-                    </Link>
-                  ))}
-            </div>
-          </div>
-        </div>
-      )}
+              {/* Sub Categories */}
+              <div className="w-1/3 border-r border-secondaryLiteBlue px-4">
+                <p
+                  className={`mb-3 text-base font-semibold opacity-70 ${textColor}`}
+                >
+                  Sub Categories
+                </p>
+                {isLoading
+                  ? [...Array(4)].map((_, i) => (
+                      <div key={i} className={shimmer} />
+                    ))
+                  : hoveredMain &&
+                    categories
+                      ?.find((c) => c.title === hoveredMain)
+                      ?.sub_category.map((sub) => (
+                        <div
+                          key={sub.title}
+                          onMouseEnter={() => setHoveredSub(sub.title)}
+                          className={`cursor-pointer rounded-md px-3 py-2 transition-all hover:bg-secondaryLiteBlue ${
+                            hoveredSub === sub.title
+                              ? "bg-secondaryLiteBlue"
+                              : "bg-transparent"
+                          }`}
+                        >
+                          <span className={`text-sm ${textColor}`}>
+                            {sub.title}
+                          </span>
+                        </div>
+                      ))}
+              </div>
+
+              {/* Sub-Sub Categories */}
+              <div className="w-1/3 pl-4">
+                <p
+                  className={`mb-3 text-base font-semibold opacity-70 ${textColor}`}
+                >
+                  Sub Sub Categories
+                </p>
+                {isLoading
+                  ? [...Array(3)].map((_, i) => (
+                      <div key={i} className={shimmer} />
+                    ))
+                  : hoveredMain &&
+                    hoveredSub &&
+                    categories
+                      ?.find((c) => c.title === hoveredMain)
+                      ?.sub_category.find((s) => s.title === hoveredSub)
+                      ?.sub_sub_category.map((item) => (
+                        <div
+                          key={item.title}
+                          className="cursor-pointer rounded-md px-3 py-2 transition-all hover:bg-secondaryLiteBlue"
+                        >
+                          <span className={`text-sm ${textColor}`}>
+                            {item.title}
+                          </span>
+                        </div>
+                      ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
