@@ -493,7 +493,6 @@ const ProductEdit = () => {
         const imgForm = new FormData();
         files.forEach((file) => imgForm.append("images", file));
         const res = await uploadImages(imgForm).unwrap();
-        console.log(res, "res");
 
         const uploadedUrls = res || [];
         setFormData((prev) => ({
@@ -516,7 +515,6 @@ const ProductEdit = () => {
           imgForm.append("images", files[0]);
           const res = await uploadImages(imgForm).unwrap();
           const url = res[0];
-          console.log(url, "url");
           setFormData((prev) => ({ ...prev, meta_image: url }));
         }
       }
@@ -620,7 +618,6 @@ const ProductEdit = () => {
       })),
     };
 
-    console.log("Prepared Payload:", payload);
     // Send payload to API
     try {
       await updateProduct({

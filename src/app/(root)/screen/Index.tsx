@@ -5,90 +5,127 @@ import Image from "next/image";
 import img1 from "@/Data/Demo/Product-banner-1.jpg";
 import img2 from "@/Data/Demo/Product-banner-2.jpg";
 import img3 from "@/Data/Demo/Product-banner-3.webp";
+import { useGetPublicSlidersQuery } from "@/redux/services/client/sliderApis";
+import ClientLoading from "../components/ClientLoading";
 
 // Slide data: image + text per slide
 const slides = [
   {
-    no: "01",
-    image: img1,
-    title: "Save Up to 30% on First Purchase",
-    subtitle: "Unlocking the Power of Connection",
-    tag: "HOT DEALS AVAILABLE",
-    button: "Discover More",
+    banner: img1,
+    offer_name: "Save Up to 30% on First Purchase",
+    details: "Unlocking the Power of Connection",
+    title: "HOT DEALS AVAILABLE",
+    // button: "Discover More",
   },
   {
-    no: "02",
-    image: img2,
-    title: "Upgrade Your Lifestyle Today",
-    subtitle: "Smart gadgets at unbeatable prices",
-    tag: "LIMITED TIME OFFER",
-    button: "Shop Now",
+    banner: img2,
+    offer_name: "Upgrade Your Lifestyle Today",
+    details: "Smart gadgets at unbeatable prices",
+    title: "LIMITED TIME OFFER",
   },
   {
-    no: "03",
-    image: img3,
-    title: "Tech that Empowers You",
-    subtitle: "Explore innovation with every click",
-    tag: "EXCLUSIVE LAUNCH",
-    button: "Explore Deals",
+    baner: img3,
+    offer_name: "Tech that Empowers You",
+    details: "Explore innovation with every click",
+    ttile: "EXCLUSIVE LAUNCH",
+    // button: "Explore Deals",
   },
 ];
 
 const Slider: React.FC = () => {
+  const {
+    data: sliderData,
+    error,
+    isLoading,
+    refetch,
+  } = useGetPublicSlidersQuery({});
+
+  const sliderWithBanner =
+    sliderData?.filter(
+      (slider: any) =>
+        typeof slider.banner === "string" &&
+        slider.banner.trim() !== "" &&
+        slider.banner !== "null",
+    ) || [];
+
+  const finalSlides = sliderWithBanner.length > 0 ? sliderWithBanner : slides;
+
   const [index, setIndex] = useState(0);
 
   // Auto slide every 5 seconds
   useEffect(() => {
+    if (!finalSlides || finalSlides.length === 0) return;
+
     const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % slides.length);
+      setIndex((prev) => (prev + 1) % finalSlides.length);
     }, 7000);
+
     return () => clearInterval(timer);
-  }, []);
+  }, [finalSlides]);
+
+  useEffect(() => {
+    if (index >= (finalSlides?.length || 0)) {
+      setIndex(0);
+    }
+  }, [finalSlides, index]);
 
   const handleDotClick = (i: number) => {
     setIndex(i);
   };
 
-  const current = slides[index];
+  const current = finalSlides && finalSlides[index];
+
+  if (isLoading) return <ClientLoading></ClientLoading>;
 
   return (
-    <div className="w-full bg-[#E6EFFF] overflow-hidden font-montserrat">
-      <div className="md:h-[calc(100vh-150px)] flex flex-col md:flex-row items-center md:justify-between px-6 md:px-16 py-12 gap-8">
+    <div className="w-full overflow-hidden bg-[#E6EFFF] font-montserrat">
+      <div className="flex flex-col items-center gap-8 px-6 py-12 md:h-[calc(100vh-150px)] md:flex-row md:justify-between md:px-16">
         {/* Left Content */}
         <div className="flex-1 text-center md:text-left">
-          <h4 className="text-sm font-semibold uppercase text-black tracking-wider">
-            {current.tag}
+          <h4 className="text-sm font-semibold uppercase tracking-wider text-black">
+            {current?.offer_name}
           </h4>
-          <h1 className="md:h-[100px] mt-4 text-4xl md:text-5xl font-medium text-gray-800">
-            {current.title}
+          <h1 className="mt-4 text-4xl font-medium text-gray-800 md:h-[100px] md:text-5xl">
+            {current?.title}
           </h1>
-          <p className="md:mt-4 text-lg text-gray-700">{current.subtitle}</p>
-          <button className="mt-3 md:mt-6 px-6 py-2 rounded-full bg-[#003084] text-white font-semibold hover:bg-blue-600 transition">
-            {current.button}
+          <p className="text-lg text-gray-700 md:mt-4">{current?.details}</p>
+          <button className="mt-3 rounded-full bg-[#003084] px-6 py-2 font-semibold text-white transition hover:bg-blue-600 md:mt-6">
+            Explore More
           </button>
 
-          <p className="hidden md:block absolute mt-[62px] text-white left-[20%] text-[150px] font-montserrat"> {current.no}</p>
+          <p className="absolute left-[20%] mt-[62px] hidden font-montserrat text-[150px] text-white md:block">
+            {" "}
+            {index + 1}
+          </p>
         </div>
 
         {/* Right Image */}
-        <div className="flex-1 ">
-          <Image
-            src={current.image}
-            alt={`Slide ${index}`}
-            className="w-full h-[200px] md:h-[400px] rounded-xl object-contain"
-            priority
-          />
+        <div className="flex-1">
+          {current?.banner ? (
+            <Image
+              src={current.banner}
+              alt={`Slide ${index}`}
+              className="h-[200px] w-full rounded-xl object-contain md:h-[400px]"
+              width={400}
+              height={200}
+              priority
+            />
+          ) : (
+            <div className="flex h-[200px] items-center justify-center text-gray-500 md:h-[400px]">
+              No image
+            </div>
+          )}
         </div>
       </div>
 
       {/* Dots */}
-      <div className="flex justify-center mt-4 pb-6">
-        {slides.map((_, i) => (
+      <div className="mt-4 flex justify-center pb-6">
+        {finalSlides?.map((_: any, i: number) => (
           <button
             key={i}
             onClick={() => handleDotClick(i)}
-            className={`w-3 h-3 mx-1 rounded-full transition-all duration-300 ${
-              i === index ? "bg-[#003084] scale-110" : "bg-gray-300"
+            className={`mx-1 h-3 w-3 rounded-full transition-all duration-300 ${
+              i === index ? "scale-110 bg-[#003084]" : "bg-gray-300"
             }`}
           />
         ))}

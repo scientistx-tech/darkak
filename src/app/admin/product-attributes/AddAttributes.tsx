@@ -40,8 +40,6 @@ const AddAttributes = ({
     }
     const data = { title };
     try {
-      console.log(value, "value");
-
       if (value && value.id) {
         await updateProductAttribute({ id: value.id, data }).unwrap();
         toast.success("Attribute Updated successfully!");

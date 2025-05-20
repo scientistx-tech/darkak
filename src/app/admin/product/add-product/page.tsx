@@ -415,7 +415,6 @@ export default function ProductForm() {
         const imgForm = new FormData();
         files.forEach((file) => imgForm.append("images", file));
         const res = await uploadImages(imgForm).unwrap();
-        console.log(res, "res");
 
         const uploadedUrls = res || [];
         setFormData((prev) => ({
@@ -438,7 +437,6 @@ export default function ProductForm() {
           imgForm.append("images", files[0]);
           const res = await uploadImages(imgForm).unwrap();
           const url = res[0];
-          console.log(url, "url");
           setFormData((prev) => ({ ...prev, meta_image: url }));
         }
       }
@@ -542,11 +540,9 @@ export default function ProductForm() {
       })),
     };
 
-    console.log("Prepared Payload:", payload);
     // Send payload to API
     try {
       const res = await createProduct(payload).unwrap();
-      console.log(res, "pro res");
       toast.success("Successfully Product created");
       router.push("/admin/product/product-list");
     } catch (error) {
