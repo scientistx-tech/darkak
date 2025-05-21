@@ -164,21 +164,32 @@ const CartCheckout: React.FC = () => {
   const [products, setProducts] = useState(initialProducts);
 
   const updateQuantity = (id: number, type: "inc" | "dec") => {
-    const updated = products.map((item) => {
+    console.log("id", id, "type", type);
+    const updated = checkoutItems.map((item: any) => {
       if (item.id === id) {
         let newQty = type === "inc" ? item.quantity + 1 : item.quantity - 1;
         return { ...item, quantity: newQty < 1 ? 1 : newQty };
       }
       return item;
     });
-    setProducts(updated);
+    setCheckoutItems(updated);
   };
 
-  const subtotal = products.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0,
-  );
+  const subtotal = checkoutItems.reduce((acc: number, item: any) => {
+    const price = item.product?.price ?? 0;
+    const discount = item.product?.discount ?? 0;
+    const discountType = item.product?.discount_type ?? "flat";
 
+    let finalPrice = price;
+
+    if (discountType === "percentage") {
+      finalPrice = price - (price * discount) / 100;
+    } else if (discountType === "flat") {
+      finalPrice = price - discount;
+    }
+
+    return acc + finalPrice * item.quantity;
+  }, 0);
   console.log("cartitem", checkoutItems);
 
   const handleCheckout = async () => {
@@ -461,7 +472,20 @@ const CartCheckout: React.FC = () => {
 
               <div className="flex flex-col items-center gap-2">
                 <div className="font-semibold text-black">
-                  {item?.product?.price * item.quantity}
+                  {(() => {
+                    const price = item?.product?.price ?? 0;
+                    const discount = item?.product?.discount ?? 0;
+                    const discountType = item?.product?.discount_type ?? "flat";
+                    let finalPrice = price;
+
+                    if (discountType === "percentage") {
+                      finalPrice = price - (price * discount) / 100;
+                    } else if (discountType === "flat") {
+                      finalPrice = price - discount;
+                    }
+
+                    return finalPrice * item.quantity;
+                  })()}
                 </div>
 
                 <div className="flex">

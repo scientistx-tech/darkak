@@ -22,7 +22,7 @@ function page() {
         <Index />
       </MotionRevealWrapper>
 
-      <div className="container mx-auto px-2 md:px-4">
+      <div className="container mx-auto flex flex-col gap-y-5 px-2 md:px-4">
         <MotionRevealWrapper>
           <Categories />
         </MotionRevealWrapper>

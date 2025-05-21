@@ -73,7 +73,7 @@ const Banner: React.FC = () => {
   console.log("slider", sliderGroups);
   // ✅ Else: Show dynamic sliders without banners
   return (
-    <div className="mt-5 w-full md:mt-16 md:space-y-6">
+    <div className="w-full md:space-y-6">
       {sliderGroups.slice(0, 2).map((group, rowIndex) => (
         <div
           key={rowIndex}

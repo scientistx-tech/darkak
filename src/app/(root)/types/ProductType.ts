@@ -8,7 +8,7 @@ export interface Product {
   storage: string;
   discount: number; // percentage
   rating: number;
-  reviews: [];
+  review: [];
   thumbnail: string;
   discount_type: string;
   items: {
@@ -16,4 +16,5 @@ export interface Product {
       id: number;
     }[];
   }[];
+  avgRate: number;
 }

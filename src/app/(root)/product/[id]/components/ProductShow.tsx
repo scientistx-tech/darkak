@@ -5,6 +5,12 @@ import ReactImageMagnify from "react-image-magnify";
 import { BsWhatsapp } from "react-icons/bs";
 import DeliveryDetails from "./DeliveryDetails";
 import Image from "next/image";
+import { AppDispatch, RootState } from "@/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { useAddToCartMutation } from "@/redux/services/client/myCart";
+import { setCart } from "@/redux/slices/authSlice";
 
 const ProductShow = ({
   data,
@@ -12,6 +18,7 @@ const ProductShow = ({
 }: {
   data: {
     product: {
+      id: number;
       title: string;
       brand: {
         title: string;
@@ -50,6 +57,13 @@ const ProductShow = ({
   const [selectedOptions, setSelectedOptions] = useState<{
     [itemId: number]: number;
   }>({});
+
+  const [addToCart, { isLoading }] = useAddToCartMutation();
+
+  const user = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const router = useRouter();
 
   // 1. Find the color item and check if all options have image
   const colorItem = data?.product?.items?.find(
@@ -122,6 +136,74 @@ const ProductShow = ({
     }
   }, [data?.product?.items, data?.product?.Image]);
 
+  const buildCartObject = (product: any) => {
+    const cart = {
+      id: Math.floor(Math.random() * 100000), // Random ID, replace if needed
+      userId: user?.id,
+      productId: product.id,
+      quantity: 1,
+      date: new Date().toISOString(),
+      cart_items: [],
+      product: {
+        title: product.title,
+        thumbnail: product.thumbnail,
+        stock: product.stock,
+        minOrder: product.minOrder,
+        price: product.price,
+        discount: product.discount,
+        discount_type: product.discount_type,
+      },
+    };
+
+    // Extract first option from each item (if any)
+    const selectedOptions = product.items
+      ?.map((item: any) => item.options?.[0])
+      .filter(Boolean);
+    cart.cart_items = selectedOptions.map((option: any) => ({ option }));
+
+    return cart;
+  };
+
+  const handleBuyNow = async () => {
+    const cartObject = buildCartObject(data?.product);
+    console.log("cartobject", cartObject);
+    try {
+      localStorage.setItem("checkout_items", JSON.stringify([cartObject]));
+      // dispatch(setCart(Math.random()));
+      // toast.success("Item added to cart!");
+      router.push("/easy-checkout");
+    } catch (error: any) {
+      if (error?.status === 401) {
+        return router.replace("/auth/login");
+      }
+      toast.error(error?.data?.message || "Failed to add to cart");
+    }
+  };
+
+  const handleAddToCart = async (e: any) => {
+    e.stopPropagation(); // Prevent navigation to product detail page
+
+    const optionIds = data?.product?.items?.length
+      ? data?.product?.items
+          .map((item: any) => item.options?.[0]?.id)
+          .filter(Boolean)
+      : [];
+
+    try {
+      const result = await addToCart({
+        productId: data?.product?.id,
+        quantity: 1,
+        optionIds,
+      }).unwrap();
+      dispatch(setCart(Math.random()));
+      toast.success("Item added to cart!");
+    } catch (error: any) {
+      if (error?.status === 401) {
+        return router.replace("/auth/login");
+      }
+      toast.error(error?.data?.message || "Failed to add to cart");
+    }
+  };
   return (
     <div className="py-6">
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
@@ -312,19 +394,18 @@ const ProductShow = ({
           ></DeliveryDetails>
           {/* Buttons */}
           <div className="mt-6 flex items-center gap-4">
-            <motion.button
-              whileTap={{ scale: 0.9 }}
+            <button
               className="rounded-full border-2 bg-primaryBlue px-8 py-2 text-white transition-all duration-300 hover:border-primaryBlue hover:bg-secondaryWhite hover:text-primaryDarkBlue"
-              onClick={() => alert("Buying...")}
+              onClick={handleBuyNow}
             >
               BUY NOW
-            </motion.button>
+            </button>
 
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="rounded-full border-2 border-primaryBlue px-8 py-2 text-primaryDarkBlue"
-              onClick={() => alert("Added to cart")}
+              onClick={(e) => handleAddToCart(e)}
             >
               ADD TO CART
             </motion.button>

@@ -46,10 +46,10 @@ const initialProducts = [
 const EasyCheckout: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "online">("cash");
   const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState<any>("");
   const [email, setEmail] = useState("");
   const [division, setDivision] = useState("");
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState<any>("");
   const [district, setDistrict] = useState("");
   const [subDistrict, setSubDistrict] = useState("");
   const [area, setArea] = useState("");
@@ -61,6 +61,17 @@ const EasyCheckout: React.FC = () => {
   const pathname = usePathname();
 
   const user = useSelector((state: RootState) => state.auth.user);
+
+  useEffect(() => {
+    if (user) {
+      setFullName(user?.name);
+      setEmail(user?.email);
+      setPhone(user?.phone);
+      setAddress(user?.address);
+    }
+  }, []);
+
+  console.log("user", user);
 
   const { data, isLoading, isError, refetch } = useGetMyCartQuery();
   const [createOrder] = useOrderSingleProductMutation();
@@ -161,20 +172,32 @@ const EasyCheckout: React.FC = () => {
   const [products, setProducts] = useState(initialProducts);
 
   const updateQuantity = (id: number, type: "inc" | "dec") => {
-    const updated = products.map((item) => {
+    console.log("id", id, "type", type);
+    const updated = checkoutItems.map((item: any) => {
       if (item.id === id) {
         let newQty = type === "inc" ? item.quantity + 1 : item.quantity - 1;
         return { ...item, quantity: newQty < 1 ? 1 : newQty };
       }
       return item;
     });
-    setProducts(updated);
+    setCheckoutItems(updated);
   };
 
-  const subtotal = products.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0,
-  );
+  const subtotal = checkoutItems.reduce((acc: number, item: any) => {
+    const price = item.product?.price ?? 0;
+    const discount = item.product?.discount ?? 0;
+    const discountType = item.product?.discount_type ?? "flat";
+
+    let finalPrice = price;
+
+    if (discountType === "percentage") {
+      finalPrice = price - (price * discount) / 100;
+    } else if (discountType === "flat") {
+      finalPrice = price - discount;
+    }
+
+    return acc + finalPrice * item.quantity;
+  }, 0);
 
   console.log("cartitem", checkoutItems);
 
@@ -458,7 +481,20 @@ const EasyCheckout: React.FC = () => {
 
               <div className="flex flex-col items-center gap-2">
                 <div className="font-semibold text-black">
-                  {item?.product?.price * item.quantity}
+                  {(() => {
+                    const price = item?.product?.price ?? 0;
+                    const discount = item?.product?.discount ?? 0;
+                    const discountType = item?.product?.discount_type ?? "flat";
+                    let finalPrice = price;
+
+                    if (discountType === "percentage") {
+                      finalPrice = price - (price * discount) / 100;
+                    } else if (discountType === "flat") {
+                      finalPrice = price - discount;
+                    }
+
+                    return finalPrice * item.quantity;
+                  })()}
                 </div>
 
                 <div className="flex">

@@ -43,7 +43,7 @@ const BestSelling: React.FC = () => {
 
   return (
     <motion.section
-      className="container mx-auto mt-10 px-2"
+      className="container mx-auto mt-20 px-2"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
