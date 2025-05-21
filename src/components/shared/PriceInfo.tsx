@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { FaShoppingCart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { Rating } from "react-simple-star-rating";
+
 const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
   const router = useRouter();
   const [addToCart, { isLoading }] = useAddToCartMutation();
@@ -127,23 +129,24 @@ const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
           {/* ({product.storage}) */}
         </h3>
         <div className="flex flex-wrap items-center justify-center text-sm text-secondaryBlue">
-          <p>
-            {/* {Array(Math.round(product.rating))
-              .fill("")
-              .map((_, i) => (
-                <span key={i}>★</span>
-              ))} */}
-            ★★★★★
-          </p>
+          <Rating
+            readonly
+            size={18}
+            initialValue={product?.avgRate}
+            SVGstyle={{ display: "inline-block" }}
+            fillColor="#facc15" // Tailwind yellow-400
+            emptyColor="#d1d5db" // Tailwind gray-300
+          />
+
           <span className="ml-2 text-gray-500">
-            ({product.reviews ? product.reviews.length : 0} Reviews)
+            ({product.review ? product.review.length : 0} Reviews)
           </span>
         </div>
 
         {/* Buttons */}
         <div className="flex items-center justify-evenly">
           <div onClick={(e) => handleBuyNow(e)}>
-            <p className="text-primbg-primaryWhite scale-90 cursor-pointer rounded-full bg-primaryBlue px-4 py-1 text-sm font-normal text-secondaryWhite transition-all duration-300 hover:bg-primaryDarkBlue hover:text-white md:scale-100 md:px-6 md:font-semibold lg:text-base">
+            <p className="text-primbg-primaryWhite scale-90 cursor-pointer rounded-full bg-primaryBlue px-4 py-1 text-sm font-normal text-secondaryWhite transition-all duration-300 hover:bg-primaryDarkBlue hover:text-white md:scale-100 md:px-4 md:font-semibold lg:text-sm">
               BUY NOW
             </p>
           </div>

@@ -50,7 +50,7 @@ const NewArrival: React.FC = () => {
   }, []);
 
   return (
-    <main className="mt-10">
+    <main className="mt-15">
       <div>
         <div className="h-[50px]">
           <div className="flex items-center justify-between gap-6 md:justify-start">

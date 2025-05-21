@@ -40,7 +40,7 @@ const RecommendedProducts: React.FC = () => {
 
   return (
     <motion.section
-      className="py-10"
+      className="mt-15"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
