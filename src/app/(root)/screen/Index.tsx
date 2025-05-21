@@ -24,7 +24,7 @@ const slides = [
     title: "LIMITED TIME OFFER",
   },
   {
-    baner: img3,
+    baner: img1,
     offer_name: "Tech that Empowers You",
     details: "Explore innovation with every click",
     ttile: "EXCLUSIVE LAUNCH",
