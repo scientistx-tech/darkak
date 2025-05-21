@@ -48,7 +48,11 @@ const Slider: React.FC = () => {
         slider.banner !== "null",
     ) || [];
 
+  console.log(sliderWithBanner, "sli with ban");
+
   const finalSlides = sliderWithBanner.length > 0 ? sliderWithBanner : slides;
+
+  console.log(finalSlides, "fin sli");
 
   const [index, setIndex] = useState(0);
 

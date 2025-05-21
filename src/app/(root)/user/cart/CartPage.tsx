@@ -280,7 +280,18 @@ const CartPage: React.FC = () => {
               Continue Shopping
             </button>
 
-            <ShopNowButton link="/easy-checkout" text="Check Out" />
+            <button
+              className="rounded-full bg-blue-950 px-6 py-2 text-white"
+              onClick={() => {
+                localStorage.setItem(
+                  "checkout_items",
+                  JSON.stringify(cartItems),
+                );
+                router.push("/cart-checkout");
+              }}
+            >
+              Checkout
+            </button>
           </div>
         </div>
 

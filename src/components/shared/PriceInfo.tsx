@@ -2,11 +2,11 @@
 import { Product } from "@/app/(root)/types/ProductType";
 import { useAddToCartMutation } from "@/redux/services/client/myCart";
 import { setCart } from "@/redux/slices/authSlice";
-import { AppDispatch } from "@/redux/store";
+import { AppDispatch, RootState } from "@/redux/store";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaShoppingCart } from "react-icons/fa";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
   const router = useRouter();
@@ -15,6 +15,11 @@ const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
   const price = Number(product?.price) || 0;
   const discount = Number(product?.discount) || 0;
   const discountType = product?.discount_type;
+
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  console.log("user", user);
+
   const dispatch = useDispatch<AppDispatch>();
   let discountPrice = price;
 
@@ -25,13 +30,66 @@ const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
       discountPrice = price - (price * discount) / 100;
     }
   }
+
+  const buildCartObject = (product: any) => {
+    const cart = {
+      id: Math.floor(Math.random() * 100000), // Random ID, replace if needed
+      userId: user?.id,
+      productId: product.id,
+      quantity: 1,
+      date: new Date().toISOString(),
+      cart_items: [],
+      product: {
+        title: product.title,
+        thumbnail: product.thumbnail,
+        stock: product.stock,
+        minOrder: product.minOrder,
+        price: product.price,
+        discount: product.discount,
+        discount_type: product.discount_type,
+      },
+    };
+
+    // Extract first option from each item (if any)
+    const selectedOptions = product.items
+      ?.map((item: any) => item.options?.[0])
+      .filter(Boolean);
+    cart.cart_items = selectedOptions.map((option: any) => ({ option }));
+
+    return cart;
+  };
+  // console.log("product fro card", product);
+
+  const handleBuyNow = async (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation(); // Prevent navigation to product detail page
+
+    const cartObject = buildCartObject(product);
+    console.log("cartobject", cartObject);
+    try {
+      localStorage.setItem("checkout_items", JSON.stringify([cartObject]));
+      dispatch(setCart(Math.random()));
+      // toast.success("Item added to cart!");
+      router.push("/easy-checkout");
+    } catch (error: any) {
+      if (error?.status === 401) {
+        return router.replace("/auth/login");
+      }
+      toast.error(error?.data?.message || "Failed to add to cart");
+    }
+  };
+
   const handleAddToCart = async (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation(); // Prevent navigation to product detail page
+
+    const optionIds = product?.items?.length
+      ? product?.items.map((item: any) => item.options?.[0]?.id).filter(Boolean)
+      : [];
+
     try {
       const result = await addToCart({
         productId: product.id,
         quantity: 1,
-        // optionIds,
+        optionIds,
       }).unwrap();
       dispatch(setCart(Math.random()));
       toast.success("Item added to cart!");
@@ -84,11 +142,11 @@ const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
 
         {/* Buttons */}
         <div className="flex items-center justify-evenly">
-          <Link href="/easy-checkout">
+          <div onClick={(e) => handleBuyNow(e)}>
             <p className="text-primbg-primaryWhite scale-90 cursor-pointer rounded-full bg-primaryBlue px-4 py-1 text-sm font-normal text-secondaryWhite transition-all duration-300 hover:bg-primaryDarkBlue hover:text-white md:scale-100 md:px-6 md:font-semibold lg:text-base">
               BUY NOW
             </p>
-          </Link>
+          </div>
 
           <div
             onClick={(e) => handleAddToCart(e)}

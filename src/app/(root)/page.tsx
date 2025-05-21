@@ -22,7 +22,7 @@ function page() {
         <Index />
       </MotionRevealWrapper>
 
-      <div className="container mx-auto space-y-10 px-2 py-6 md:px-4 md:py-12">
+      <div className="container mx-auto px-2 md:px-4">
         <MotionRevealWrapper>
           <Categories />
         </MotionRevealWrapper>
@@ -35,25 +35,25 @@ function page() {
           <RecommendedSection />
         </MotionRevealWrapper>
 
-        <MotionRevealWrapper>
+        {/* <MotionRevealWrapper>
           <SecondaryBanner />
-        </MotionRevealWrapper>
+        </MotionRevealWrapper> */}
 
         <MotionRevealWrapper>
           <BestSelling />
         </MotionRevealWrapper>
 
-        <MotionRevealWrapper>
+        {/* <MotionRevealWrapper>
           <ThardBanner />
-        </MotionRevealWrapper>
+        </MotionRevealWrapper> */}
 
         {/* <MotionRevealWrapper>
           <NewArrival />
         </MotionRevealWrapper> */}
 
-        <MotionRevealWrapper>
+        {/* <MotionRevealWrapper>
           <FourthBanner />
-        </MotionRevealWrapper>
+        </MotionRevealWrapper> */}
 
         <MotionRevealWrapper>
           <BestDeals />
