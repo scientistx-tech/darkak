@@ -36,54 +36,32 @@ const Banner: React.FC = () => {
   }, [slidersWithoutBanner]);
 
   // ✅ If no sliders without banner, show static fallback layout
-  if (slidersWithoutBanner.length === 0) {
-    return (
-      <div className="mt-5 w-full md:mt-16 md:space-y-6">
-        <div className="flex w-full flex-col gap-0 md:flex-row md:gap-10">
-          <BannerCart
-            bgColour="#00153B"
-            image="https://res.cloudinary.com/duizghnhr/image/upload/v1747779781/prtselruymh7odbhhtjm.jpg"
-            position="left"
-            title="SUMMER DEALS"
-            description="GET 10% OFF"
-            text="On ASUS LAPTOP"
-            link="/"
-          />
-          <BannerCart
-            bgColour="#323232"
-            image="https://res.cloudinary.com/duizghnhr/image/upload/v1747779781/prtselruymh7odbhhtjm.jpg"
-            position="right"
-            title="HOT DEALS"
-            description="GET 13% OFF"
-            text="On SAMSUNG PHONE"
-            link="/shop"
-          />
-        </div>
-
-        <div className="flex w-full flex-col gap-0 md:flex-row md:gap-10">
-          <BannerCart
-            bgColour="#5694FF"
-            image="https://res.cloudinary.com/duizghnhr/image/upload/v1747779781/prtselruymh7odbhhtjm.jpg"
-            position="right"
-            title="HOT DEALS"
-            description="GET 33% OFF"
-            text="On SAMSUNG PHONE"
-            link="/"
-          />
-
-          <BannerCart
-            bgColour="#07d38b"
-            image="https://res.cloudinary.com/duizghnhr/image/upload/v1747779781/prtselruymh7odbhhtjm.jpg"
-            position="left"
-            title="SUMMER DEALS"
-            description="GET 21% OFF"
-            text="On ASUS LAPTOP"
-            link="/"
-          />
-        </div>
-      </div>
-    );
-  }
+  // if (slidersWithoutBanner.length === 0) {
+  //   return (
+  //     <div className="mt-5 w-full md:mt-16 md:space-y-6">
+  //       <div className="flex w-full flex-col gap-0 md:flex-row md:gap-10">
+  //         <BannerCart
+  //           bgColour="#00153B"
+  //           image="https://res.cloudinary.com/duizghnhr/image/upload/v1747779781/prtselruymh7odbhhtjm.jpg"
+  //           position="left"
+  //           title="SUMMER DEALS"
+  //           description="GET 10% OFF"
+  //           text="On ASUS LAPTOP"
+  //           link="/"
+  //         />
+  //         <BannerCart
+  //           bgColour="#323232"
+  //           image="https://res.cloudinary.com/duizghnhr/image/upload/v1747779781/prtselruymh7odbhhtjm.jpg"
+  //           position="right"
+  //           title="HOT DEALS"
+  //           description="GET 13% OFF"
+  //           text="On SAMSUNG PHONE"
+  //           link="/shop"
+  //         />
+  //       </div>
+  //     </div>
+  //   );
+  // }
   const bgColors = [
     "#00153B",
     "#323232",
@@ -92,11 +70,11 @@ const Banner: React.FC = () => {
     "#ff6b6b",
     "#ffa502",
   ];
-
+  console.log("slider", sliderGroups);
   // ✅ Else: Show dynamic sliders without banners
   return (
     <div className="mt-5 w-full md:mt-16 md:space-y-6">
-      {sliderGroups.map((group, rowIndex) => (
+      {sliderGroups.slice(0, 2).map((group, rowIndex) => (
         <div
           key={rowIndex}
           className="flex w-full flex-col gap-0 md:flex-row md:gap-10"
