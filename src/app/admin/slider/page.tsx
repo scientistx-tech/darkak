@@ -57,30 +57,6 @@ function SliderTable() {
   };
   return (
     <div>
-      <div className="flex items-center gap-3">
-        <div className="rounded-md bg-slate-200 shadow-1">
-          <button
-            onClick={() => {
-              setIsOpen(true);
-              setEditingData(null);
-              setActiveTab("Add Slider");
-            }}
-            className={`px-6 py-2 ${activeTab === "Add Slider" && "rounded-md border border-slate-800 bg-slate-300 text-black shadow-md"} `}
-          >
-            Add Slider
-          </button>
-          <button
-            onClick={() => {
-              setIsOpen(true);
-              setEditingData(null);
-              setActiveTab("Add Banner");
-            }}
-            className={`px-6 py-2 ${activeTab === "Add Banner" && "rounded-md border border-slate-800 bg-slate-300 text-black shadow-md"} `}
-          >
-            Add Banner
-          </button>
-        </div>
-      </div>
       <div className="">
         <AddSlider refetch={refetch} header={activeTab} />
 
@@ -97,7 +73,9 @@ function SliderTable() {
                 <TableHead>Title</TableHead>
                 <TableHead>Banner</TableHead>
                 <TableHead>Offer</TableHead>
+                <TableHead>Type</TableHead>
                 <TableHead>Details</TableHead>
+                <TableHead>Priority</TableHead>
                 <TableHead>Product ID</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
@@ -119,8 +97,10 @@ function SliderTable() {
                       "N/A"
                     )}
                   </TableCell>
-                  <TableCell>{slider.offerName}</TableCell>
+                  <TableCell>{slider.offer_name}</TableCell>
+                  <TableCell>{slider.type}</TableCell>
                   <TableCell>{slider.details}</TableCell>
+                  <TableCell>{slider.index}</TableCell>
                   <TableCell>{slider.productId}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">

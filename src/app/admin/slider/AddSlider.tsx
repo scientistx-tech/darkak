@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useUploadFormDataSliderMutation } from "@/redux/services/admin/adminSliderApis";
 import { toast } from "react-toastify";
 import { useGetProductsQuery } from "@/redux/services/admin/adminProductApis";
+import { setPriority } from "os";
 
 function AddSlider({
   header,
@@ -20,6 +21,8 @@ function AddSlider({
   const [title, setTitle] = useState("");
   const [offerName, setOfferName] = useState("");
   const [details, setDetails] = useState("");
+  const [type, setType] = useState("");
+  const [priority, setPriority] = useState<any>(null);
   const [productId, setProductId] = useState("");
   const [bannerFile, setBannerFile] = useState<any>(null);
   const [previewBanner, setPreviewBanner] = useState<string | null>(null);
@@ -67,9 +70,16 @@ function AddSlider({
   };
 
   const handleSubmit = async () => {
-    if (!title || !offerName || !details || !productId) {
+    if (!title || !offerName || !details || !productId || !priority || !type) {
       toast.error("Please fill in all fields and upload a banner image.");
       return;
+    }
+
+    if (type === "slider") {
+      if (!imageFile) {
+        toast.error("Image needed for Slider");
+        return;
+      }
     }
     setIsLoading(true);
 
@@ -79,18 +89,24 @@ function AddSlider({
     formData.append("details", details);
     formData.append("productId", productId);
     formData.append("banner", imageFile as File);
+    formData.append("index", priority);
+    formData.append("type", type);
     try {
       await createSlider(formData).unwrap();
       toast.success("Succesfully Added Slider");
       refetch();
     } catch (error) {
-      toast.error("Something went wrong, try again");
+      toast.error(
+        "Priority and Offer name cannot be duplicate. Enter another one.",
+      );
       console.log("slider createion error", error);
     } finally {
       setTitle("");
       setOfferName("");
       setDetails("");
       setProductId("");
+      setType("");
+      setPriority("");
       setPreviewImage(null);
       setIsLoading(false);
     }
@@ -121,9 +137,17 @@ function AddSlider({
           onChange={(e) => setDetails(e.target.value)}
           className="mb-3"
         />
+        <Input
+          type="number"
+          placeholder="Priority"
+          value={priority}
+          onChange={(e) => setPriority(Number(e.target.value))}
+          className="mb-3"
+        />
         {/* Product selector */}
         <div className="h-[50px] w-full rounded bg-gray-4">
           <select
+            value={productId}
             onChange={(e) => setProductId(e.target?.value || "")}
             className="h-full w-full rounded bg-slate-100"
           >
@@ -135,77 +159,87 @@ function AddSlider({
             ))}
           </select>
         </div>
+        {/* type */}
+        <div className="h-[50px] w-full rounded bg-gray-4">
+          <select
+            value={type}
+            onChange={(e) => setType(e.target?.value || "")}
+            className="h-full w-full rounded bg-slate-100"
+          >
+            <option value="">Select Type</option>
+            <option value="slider">Slider</option>
+            <option value="banner">Banner</option>
+          </select>
+        </div>
       </div>
 
-      {header === "Add Slider" && (
-        <div
-          className="mt-4"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => {
-            e.preventDefault();
-            const file = e.dataTransfer.files[0];
-            if (file) {
-              setImageFile(file);
-              const reader = new FileReader();
-              reader.onloadend = () => {
-                setPreviewImage(reader.result as string);
-              };
-              reader.readAsDataURL(file);
-            }
-          }}
+      <div
+        className="mt-4"
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          const file = e.dataTransfer.files[0];
+          if (file) {
+            setImageFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              setPreviewImage(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+          }
+        }}
+      >
+        <label
+          htmlFor="file-upload"
+          className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-500 hover:bg-gray-50"
         >
-          <label
-            htmlFor="file-upload"
-            className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-500 hover:bg-gray-50"
-          >
-            {previewImage ? (
-              <div className="relative h-full w-full">
-                <Image
-                  src={previewImage}
-                  alt="Preview"
-                  className="h-full w-full rounded-lg object-contain py-3"
-                  width={150}
-                  height={150}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setImageFile(null);
-                    setPreviewImage(null);
-                    if (fileInputRef.current) {
-                      fileInputRef.current.value = "";
-                    }
-                  }}
-                  className="absolute right-2 top-2 rounded bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600"
-                >
-                  Remove
-                </button>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center">
-                <Image
-                  width={30}
-                  height={30}
-                  src="/images/icon/icon-image.png"
-                  alt="image-icon"
-                />
-                <p className="my-2 text-sm text-gray-500">
-                  Drag and drop an image, or{" "}
-                  <span className="text-blue-500">Upload</span>
-                </p>
-              </div>
-            )}
-            <input
-              id="file-upload"
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              ref={fileInputRef}
-              className="hidden"
-            />
-          </label>
-        </div>
-      )}
+          {previewImage ? (
+            <div className="relative h-full w-full">
+              <Image
+                src={previewImage}
+                alt="Preview"
+                className="h-full w-full rounded-lg object-contain py-3"
+                width={150}
+                height={150}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setImageFile(null);
+                  setPreviewImage(null);
+                  if (fileInputRef.current) {
+                    fileInputRef.current.value = "";
+                  }
+                }}
+                className="absolute right-2 top-2 rounded bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600"
+              >
+                Remove
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center">
+              <Image
+                width={30}
+                height={30}
+                src="/images/icon/icon-image.png"
+                alt="image-icon"
+              />
+              <p className="my-2 text-sm text-gray-500">
+                Drag and drop an image, or{" "}
+                <span className="text-blue-500">Upload</span>
+              </p>
+            </div>
+          )}
+          <input
+            id="file-upload"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            ref={fileInputRef}
+            className="hidden"
+          />
+        </label>
+      </div>
 
       <div className="mt-4">
         <Button onClick={handleSubmit}>
