@@ -4,7 +4,7 @@ export const adminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     deleteSlider: builder.mutation<any, number>({
       query: (sliderId) => ({
-        url: `/admin/brand/delete/${sliderId}`,
+        url: `/admin/slider/delete/${sliderId}`,
         method: "DELETE",
       }),
     }),

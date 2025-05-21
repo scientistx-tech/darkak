@@ -30,7 +30,6 @@ export const LoyaltyFilterSection: React.FC = () => {
   const handleFilter = async () => {
     try {
       await loyaltyFilterSchema.validate(formData, { abortEarly: false });
-      console.log("Filter Data:", formData);
       setErrors({});
     } catch (err) {
       if (err instanceof Yup.ValidationError) {

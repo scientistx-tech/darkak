@@ -47,7 +47,6 @@ export const FilterSection: React.FC = () => {
   const handleFilter = async () => {
     try {
       await filterSchema.validate(formData, { abortEarly: false });
-      console.log("Filter Data:", formData);
       setErrors({});
     } catch (err) {
       if (err instanceof Yup.ValidationError) {

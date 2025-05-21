@@ -133,8 +133,8 @@ const ProductShow = ({
                 smallImage: {
                   alt: data?.product.title,
                   isFluidWidth: false,
-                  width: 400,
-                  height: 400,
+                  width: 500,
+                  height: 500,
                   src: selectedImage,
                 },
                 largeImage: {

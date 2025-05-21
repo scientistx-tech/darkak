@@ -8,7 +8,7 @@ import ShopNowButton from "@/components/Button/ShopNowButton";
 
 interface BannerCardProps {
   bgColour: string;
-  image: StaticImageData;
+  image: string | StaticImageData; // ✅ Accept both string and static image import
   position: "left" | "right";
   title: string;
   description: string;
@@ -28,7 +28,7 @@ const BannerCart: React.FC<BannerCardProps> = ({
   return (
     <div
       className={clsx(
-        "mb-4 flex items-center justify-between overflow-hidden rounded-xl text-white",
+        "relative mb-4 flex w-full items-center justify-between overflow-hidden rounded-xl py-3 pr-5 text-white",
       )}
       style={{ backgroundColor: bgColour }}
     >
@@ -43,14 +43,20 @@ const BannerCart: React.FC<BannerCardProps> = ({
         <p className={clsx(position === "left" ? "text-2xl" : "text-xl")}>
           {text}
         </p>
+
         <div className="h-[10px] w-full"></div>
 
         <ShopNowButton link={link} text="Shop Now" />
       </div>
 
-      <div className="w-[40%]">
-        <Image src={image} alt="Product Image" className="h-auto w-full" />
-      </div>
+      <Image
+        src={image}
+        alt="Product Image"
+        className="object-cover"
+        width={200}
+        height={300}
+        // sizes="(max-width: 768px) 100vw, 50vw"
+      />
     </div>
   );
 };

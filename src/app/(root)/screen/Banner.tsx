@@ -1,56 +1,125 @@
-import BannerCart from "@/components/shared/BannerCart";
-import React from "react";
+"use client";
 
-import img1 from "@/Data/Demo/Rectangle 130.png";
-import img2 from "@/Data/Demo/Rectangle 131.png";
-import img3 from "@/Data/Demo/Rectangle 130 (1).png";
-import img4 from "@/Data/Demo/Rectangle 131 (1).png";
+import React, { useEffect } from "react";
+import BannerCart from "@/components/shared/BannerCart";
+import { useGetPublicSlidersQuery } from "@/redux/services/client/sliderApis";
 
 const Banner: React.FC = () => {
+  const {
+    data: sliderData,
+    error,
+    isLoading,
+    refetch,
+  } = useGetPublicSlidersQuery({});
+
+  // ✅ Filter sliders WITHOUT banners
+  const slidersWithoutBanner =
+    sliderData?.filter(
+      (slider: any) =>
+        !slider.banner ||
+        slider.banner === "null" ||
+        slider.banner.trim() === "",
+    ) || [];
+
+  // ✅ Group slidersWithoutBanner in rows of 2
+  const sliderGroups = [];
+  for (let i = 0; i < slidersWithoutBanner.length; i += 2) {
+    sliderGroups.push(slidersWithoutBanner.slice(i, i + 2));
+  }
+
+  useEffect(() => {
+    if (slidersWithoutBanner.length === 0) {
+      console.log("✅ No API sliders without banner — showing static layout");
+    } else {
+      console.log("✅ Showing dynamic API-based sliders (without banner)");
+    }
+  }, [slidersWithoutBanner]);
+
+  // ✅ If no sliders without banner, show static fallback layout
+  if (slidersWithoutBanner.length === 0) {
+    return (
+      <div className="mt-5 w-full md:mt-16 md:space-y-6">
+        <div className="flex w-full flex-col gap-0 md:flex-row md:gap-10">
+          <BannerCart
+            bgColour="#00153B"
+            image="https://res.cloudinary.com/duizghnhr/image/upload/v1747779781/prtselruymh7odbhhtjm.jpg"
+            position="left"
+            title="SUMMER DEALS"
+            description="GET 10% OFF"
+            text="On ASUS LAPTOP"
+            link="/"
+          />
+          <BannerCart
+            bgColour="#323232"
+            image="https://res.cloudinary.com/duizghnhr/image/upload/v1747779781/prtselruymh7odbhhtjm.jpg"
+            position="right"
+            title="HOT DEALS"
+            description="GET 13% OFF"
+            text="On SAMSUNG PHONE"
+            link="/shop"
+          />
+        </div>
+
+        <div className="flex w-full flex-col gap-0 md:flex-row md:gap-10">
+          <BannerCart
+            bgColour="#5694FF"
+            image="https://res.cloudinary.com/duizghnhr/image/upload/v1747779781/prtselruymh7odbhhtjm.jpg"
+            position="right"
+            title="HOT DEALS"
+            description="GET 33% OFF"
+            text="On SAMSUNG PHONE"
+            link="/"
+          />
+
+          <BannerCart
+            bgColour="#07d38b"
+            image="https://res.cloudinary.com/duizghnhr/image/upload/v1747779781/prtselruymh7odbhhtjm.jpg"
+            position="left"
+            title="SUMMER DEALS"
+            description="GET 21% OFF"
+            text="On ASUS LAPTOP"
+            link="/"
+          />
+        </div>
+      </div>
+    );
+  }
+  const bgColors = [
+    "#00153B",
+    "#323232",
+    "#5694FF",
+    "#07d38b",
+    "#ff6b6b",
+    "#ffa502",
+  ];
+
+  // ✅ Else: Show dynamic sliders without banners
   return (
-    <div className="mt-5 w-full md:space-y-6 md:mt-16">
-      <div className="flex w-full flex-col gap-0 md:flex-row md:gap-10">
-        <BannerCart
-          bgColour="#00153B"
-          image={img1}
-          position="left"
-          title="SUMMER DEALS"
-          description="GET 10% OFF"
-          text="On ASUS LAPTOP"
-          link="/"
-        />
-        <BannerCart
-          bgColour="#323232"
-          image={img2}
-          position="right"
-          title="HOT DEALS"
-          description="GET 13% OFF"
-          text="On SAMSUNG PHONE"
-          link="/shop"
-        />
-      </div>
+    <div className="mt-5 w-full md:mt-16 md:space-y-6">
+      {sliderGroups.map((group, rowIndex) => (
+        <div
+          key={rowIndex}
+          className="flex w-full flex-col gap-0 md:flex-row md:gap-10"
+        >
+          {group.map((slide: any, colIndex: number) => {
+            const index = rowIndex * 2 + colIndex; // flat index
+            const bgColour = bgColors[index % bgColors.length]; // cycle through colors
 
-      <div className="flex w-full flex-col gap-0 md:flex-row md:gap-10">
-        <BannerCart
-          bgColour="#5694FF"
-          image={img4}
-          position="right"
-          title="HOT DEALS"
-          description="GET 33% OFF"
-          text="On SAMSUNG PHONE"
-          link="/"
-        />
-
-        <BannerCart
-          bgColour="#07d38b"
-          image={img3}
-          position="left"
-          title="SUMMER DEALS"
-          description="GET 21% OFF"
-          text="On ASUS LAPTOP"
-          link="/"
-        />
-      </div>
+            return (
+              <BannerCart
+                key={colIndex}
+                bgColour={bgColour}
+                image={slide.product?.thumbnail || "/images/fallback.jpg"}
+                position={colIndex % 2 === 0 ? "left" : "right"}
+                title={slide.title || "Deal"}
+                description={slide.offer_name || "Don't miss out!"}
+                text={slide.details || "Shop the best products now!"}
+                link={`/product/${slide?.product?.slug || ""}`}
+              />
+            );
+          })}
+        </div>
+      ))}
     </div>
   );
 };

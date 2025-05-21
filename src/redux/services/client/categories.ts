@@ -8,7 +8,6 @@ export const categoryApi = baseApi.injectEndpoints({
       onQueryStarted: async (_arg, { queryFulfilled }) => {
         try {
           const { data } = await queryFulfilled;
-          console.log("Product Categories:", data);
         } catch (error) {
           console.error("Error fetching categories:", error);
         }

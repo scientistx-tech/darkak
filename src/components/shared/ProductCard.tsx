@@ -11,8 +11,6 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  console.log("product", product, product.Image);
-
   const [hovered, setHovered] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
 
