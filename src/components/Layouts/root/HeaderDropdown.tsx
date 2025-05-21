@@ -1,19 +1,23 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import NavLink from "@/components/shared/NavLink";
-import { FaAngleDown } from "react-icons/fa";
+import { FaAngleDown, FaAngleRight } from "react-icons/fa";
 import { useGetProductCategoriesQuery } from "@/redux/services/client/categories";
-import { motion, AnimatePresence } from "framer-motion";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
+import img1 from "@/Data/Demo/product-2-1.png";
+import img2 from "@/Data/Demo/product-2-3.png";
+import img3 from "@/Data/Demo/product-2-4.png";
 
 const shimmer = "animate-pulse bg-secondaryLiteBlue rounded-md h-6 mb-2";
 
-export default function HeaderDropdown() {
+export default function Test() {
   const [hoveredMain, setHoveredMain] = useState<string | null>(null);
   const [hoveredSub, setHoveredSub] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [subCategoryTop, setSubCategoryTop] = useState<number>(0);
+  const mainRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const {
     data: categories,
@@ -21,8 +25,18 @@ export default function HeaderDropdown() {
     error,
   } = useGetProductCategoriesQuery("");
 
-  const bgColor = "bg-primaryWhite";
-  const textColor = "text-primaryDarkBlue";
+  const handleMainHover = (catName: string) => {
+    setHoveredMain(catName);
+    setHoveredSub(null);
+
+    const mainItem = mainRefs.current[catName];
+    if (mainItem) {
+      const { top } = mainItem.getBoundingClientRect();
+      const containerTop =
+        mainItem.offsetParent?.getBoundingClientRect().top || 0;
+      setSubCategoryTop(top - containerTop);
+    }
+  };
 
   return (
     <div
@@ -35,7 +49,7 @@ export default function HeaderDropdown() {
       }}
     >
       <NavLink
-        href="/category"
+        href="#"
         className="group flex cursor-pointer items-center gap-2 font-serif text-lg text-secondaryWhite transition-colors duration-300 hover:text-secondaryBlue"
       >
         Category
@@ -46,124 +60,107 @@ export default function HeaderDropdown() {
         />
       </NavLink>
 
-      <AnimatePresence>
-        {isDropdownOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="absolute left-0 top-full z-50"
-          >
-            <motion.div
-              initial={{ scale: 0.98 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.2 }}
-              className={`mt-4 flex w-[900px] rounded-xl ${bgColor} p-6 pt-4 shadow-2xl`}
-            >
-              {/* Main Categories */}
-              <div className="w-1/3 border-r border-secondaryLiteBlue pr-4">
-                <p
-                  className={`mb-3 text-base font-semibold opacity-70 ${textColor}`}
+      {isDropdownOpen && (
+        <div className="absolute left-[-50px] top-full z-50 flex bg-transparent">
+          {/* Main Categories */}
+          <div className="mt-4 flex min-w-[200px] flex-col rounded bg-primaryBlue p-4 text-white shadow-lg">
+            {isLoading ? (
+              [...Array(5)].map((_, i) => <div key={i} className={shimmer} />)
+            ) : error ? (
+              <p className="text-sm text-red-500">Failed to load.</p>
+            ) : (
+              categories?.map((cat) => (
+                <div
+                  key={cat.title}
+                  ref={(el) => {
+                    mainRefs.current[cat.title] = el;
+                  }}
+                  onMouseEnter={() => handleMainHover(cat.title)}
+                  className={`flex cursor-pointer items-center justify-between px-3 py-2 transition-all duration-200 ${
+                    hoveredMain === cat.title
+                      ? "bg-secondaryBlue"
+                      : "hover:bg-secondaryBlue"
+                  }`}
                 >
-                  Main Categories
-                </p>
-                {isLoading ? (
-                  [...Array(5)].map((_, i) => (
+                  <Link href="/" className="w-full flex items-center gap-2">
+                    <Image
+                      src={cat.icon}
+                      alt={cat.title}
+                      width={28}
+                      height={28}
+                      className="rounded-md"
+                    />
+                    {cat.title}
+                  </Link>
+                  <FaAngleRight />
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Subcategories */}
+          {hoveredMain && (
+            <div
+              className="absolute left-[200px] z-50 min-w-[200px] rounded bg-primaryBlue p-4 text-white shadow-lg"
+              style={{ top: subCategoryTop }}
+            >
+              {isLoading
+                ? [...Array(4)].map((_, i) => (
                     <div key={i} className={shimmer} />
                   ))
-                ) : error ? (
-                  <p className="text-sm text-red-500">Failed to load.</p>
-                ) : (
-                  categories?.map((cat) => (
-                    <div
-                      key={cat.title}
-                      onMouseEnter={() => {
-                        setHoveredMain(cat.title);
-                        setHoveredSub(null);
-                      }}
-                      className={`flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 transition-all hover:bg-secondaryLiteBlue ${
-                        hoveredMain === cat.title
-                          ? "bg-secondaryLiteBlue"
-                          : "bg-transparent"
-                      }`}
-                    >
-                      <Image
-                        src={cat.icon}
-                        alt={cat.title}
-                        width={28}
-                        height={28}
-                        className="rounded-md"
-                      />
-                      <span className={`text-sm ${textColor}`}>
-                        {cat.title}
-                      </span>
-                    </div>
+                : hoveredMain &&
+                  categories
+                    ?.find((c) => c.title === hoveredMain)
+                    ?.sub_category.map((sub) => (
+                      <div
+                        key={sub.title}
+                        onMouseEnter={() => {
+                          if (sub.sub_sub_category) setHoveredSub(sub.title);
+                          else setHoveredSub(null);
+                        }}
+                        className={`flex cursor-pointer items-center justify-between px-3 py-2 transition-all duration-200 hover:bg-secondaryBlue ${
+                          hoveredSub === sub.title
+                            ? "bg-secondaryBlue"
+                            : "hover:bg-secondaryBlue"
+                        }`}
+                      >
+                        <Link href="/" className="w-full">
+                          {sub.title}
+                        </Link>
+                        {sub.sub_sub_category && <FaAngleRight />}
+                      </div>
+                    ))}
+            </div>
+          )}
+
+          {/* Sub-subcategories */}
+          {hoveredMain && hoveredSub && (
+            <div
+              className="absolute left-[400px] z-50 min-w-[200px] rounded bg-primaryBlue p-4 text-white shadow-lg"
+              style={{ top: subCategoryTop }}
+            >
+              {isLoading
+                ? [...Array(3)].map((_, i) => (
+                    <div key={i} className={shimmer} />
                   ))
-                )}
-              </div>
-
-              {/* Sub Categories */}
-              <div className="w-1/3 border-r border-secondaryLiteBlue px-4">
-                <p
-                  className={`mb-3 text-base font-semibold opacity-70 ${textColor}`}
-                >
-                  Sub Categories
-                </p>
-                {isLoading
-                  ? [...Array(4)].map((_, i) => (
-                      <div key={i} className={shimmer} />
-                    ))
-                  : hoveredMain &&
-                    categories
-                      ?.find((c) => c.title === hoveredMain)
-                      ?.sub_category.map((sub) => (
-                        <div
-                          key={sub.title}
-                          onMouseEnter={() => setHoveredSub(sub.title)}
-                          className={`cursor-pointer rounded-md px-3 py-2 transition-all hover:bg-secondaryLiteBlue ${
-                            hoveredSub === sub.title
-                              ? "bg-secondaryLiteBlue"
-                              : "bg-transparent"
-                          }`}
-                        >
-                          <span className={`text-sm ${textColor}`}>
-                            {sub.title}
-                          </span>
-                        </div>
-                      ))}
-              </div>
-
-              {/* Sub-Sub Categories */}
-              <div className="w-1/3 pl-4">
-                <p
-                  className={`mb-3 text-base font-semibold opacity-70 ${textColor}`}
-                >
-                  Sub Sub Categories
-                </p>
-                {isLoading
-                  ? [...Array(3)].map((_, i) => (
-                      <div key={i} className={shimmer} />
-                    ))
-                  : hoveredMain &&
-                    hoveredSub &&
-                    categories
-                      ?.find((c) => c.title === hoveredMain)
-                      ?.sub_category.find((s) => s.title === hoveredSub)
-                      ?.sub_sub_category.map((item) => (
-                        <div
-                          key={item.title}
-                          className="cursor-pointer rounded-md px-3 py-2 transition-all hover:bg-secondaryLiteBlue"
-                        >
-                          <span className={`text-sm ${textColor}`}>
-                            {item.title}
-                          </span>
-                        </div>
-                      ))}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                : hoveredMain &&
+                  hoveredSub &&
+                  categories
+                    ?.find((c) => c.title === hoveredMain)
+                    ?.sub_category.find((s) => s.title === hoveredSub)
+                    ?.sub_sub_category.map((item) => (
+                      <Link
+                        key={item.title}
+                        href="/"
+                        className="block rounded px-3 py-2 transition-all duration-200 hover:bg-secondaryBlue"
+                      >
+                        {item.title}
+                      </Link>
+                    ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

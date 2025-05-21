@@ -213,7 +213,7 @@ const Header: React.FC = () => {
         )}
 
         {/* Main Header */}
-        <div className="mx-auto flex h-[65px] w-full items-center justify-between bg-[#00286EF2] px-4 text-white md:h-[70px] md:px-6">
+        <div className="mx-auto flex h-[65px] w-full items-center justify-between bg-primaryBlue px-4 text-white md:h-[70px] md:px-6">
           <Link href="/" className="">
             <Image alt="Darkak-Logo" src={logo} height={50} className="" />
           </Link>
