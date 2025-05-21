@@ -11,4 +11,9 @@ export interface Product {
   reviews: [];
   thumbnail: string;
   discount_type: string;
+  items: {
+    options: {
+      id: number;
+    }[];
+  }[];
 }

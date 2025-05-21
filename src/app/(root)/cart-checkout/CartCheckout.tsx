@@ -14,7 +14,10 @@ import { useGetMyCartQuery } from "@/redux/services/client/myCart";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { useOrderSingleProductMutation } from "@/redux/services/client/checkout";
+import {
+  useOrderCartProductsMutation,
+  useOrderSingleProductMutation,
+} from "@/redux/services/client/checkout";
 
 const initialProducts = [
   {
@@ -43,7 +46,7 @@ const initialProducts = [
   },
 ];
 
-const EasyCheckout: React.FC = () => {
+const CartCheckout: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "online">("cash");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -63,7 +66,7 @@ const EasyCheckout: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
 
   const { data, isLoading, isError, refetch } = useGetMyCartQuery();
-  const [createOrder] = useOrderSingleProductMutation();
+  const [createOrder] = useOrderCartProductsMutation();
 
   // ✅ Load checkout_items from localStorage when component mounts
   useEffect(() => {
@@ -179,6 +182,7 @@ const EasyCheckout: React.FC = () => {
   console.log("cartitem", checkoutItems);
 
   const handleCheckout = async () => {
+    const productIds = checkoutItems.map((item: any) => item.productId);
     const payload = {
       userId: user?.id,
       name: fullName,
@@ -189,8 +193,7 @@ const EasyCheckout: React.FC = () => {
       sub_district: subDistrict,
       area,
       paymentType: "cod",
-      productId: checkoutItems[0].productId,
-      quantity: checkoutItems[0].quantity,
+      cartIds: productIds,
       deliveryFee: 60,
       order_type: !checkoutItems[0].product?.user?.isSeller
         ? "in-house"
@@ -529,4 +532,4 @@ const EasyCheckout: React.FC = () => {
   );
 };
 
-export default EasyCheckout;
+export default CartCheckout;

@@ -24,7 +24,7 @@ const slides = [
     title: "LIMITED TIME OFFER",
   },
   {
-    baner: img3,
+    baner: img1,
     offer_name: "Tech that Empowers You",
     details: "Explore innovation with every click",
     ttile: "EXCLUSIVE LAUNCH",
@@ -48,7 +48,11 @@ const Slider: React.FC = () => {
         slider.banner !== "null",
     ) || [];
 
+  console.log(sliderWithBanner, "sli with ban");
+
   const finalSlides = sliderWithBanner.length > 0 ? sliderWithBanner : slides;
+
+  console.log(finalSlides, "fin sli");
 
   const [index, setIndex] = useState(0);
 

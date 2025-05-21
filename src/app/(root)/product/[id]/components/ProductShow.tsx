@@ -126,15 +126,15 @@ const ProductShow = ({
     <div className="py-6">
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         {/* Image Section */}
-        <div className="rounded-md border p-4">
+        <div className="rounded-md p-4">
           <div className="relative mx-auto w-full max-w-md">
             <ReactImageMagnify
               {...{
                 smallImage: {
                   alt: data?.product.title,
                   isFluidWidth: false,
-                  width: 500,
-                  height: 500,
+                  width: 550,
+                  height: 550,
                   src: selectedImage,
                 },
                 largeImage: {
