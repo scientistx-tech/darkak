@@ -2,9 +2,9 @@ import baseApi from "@/redux/baseApi";
 
 export const publicSliderApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getPublicSliders: builder.query({
-      query: () => ({
-        url: `/public/slider`,
+    getPublicSliders: builder.query<any, { type: string }>({
+      query: ({ type }) => ({
+        url: `/public/slider?sort=${type}`,
         method: "GET",
         headers: {
           "Content-Type": "application/json",

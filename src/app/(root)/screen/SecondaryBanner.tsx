@@ -1,33 +1,54 @@
+"use client";
+
+import React, { useEffect } from "react";
 import BannerCart from "@/components/shared/BannerCart";
-import React from "react";
+import { useGetPublicSlidersQuery } from "@/redux/services/client/sliderApis";
 
-import img1 from "@/Data/Demo/Rectangle 130 (1).png";
-import img2 from "@/Data/Demo/Rectangle 131 (1).png";
+const SecondaryBanner: React.FC = () => {
+  const {
+    data: sliderData,
+    error,
+    isLoading,
+    refetch,
+  } = useGetPublicSlidersQuery({ type: "banner" });
 
-export default function SecondaryBanner() {
+  function sortByIndex(sliders: any[]) {
+    return [...sliders].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
+  }
+  const sortedSliderData = sliderData ? sortByIndex(sliderData) : [];
+  const bgColors = [
+    "#00153B",
+    "#323232",
+    "#5694FF",
+    "#07d38b",
+    "#ff6b6b",
+    "#ffa502",
+  ];
+  console.log("sorted banner", sortedSliderData);
+  // ✅ Else: Show dynamic sliders without banners
   return (
-    <div className="mt-5 w-full md:space-y-6 md:mt-16">
-      <div className="flex w-full flex-col gap-0 md:flex-row md:gap-10">
-        <BannerCart
-          bgColour="#4d4d4d"
-          image={img2}
-          position="right"
-          title="HOT DEALS"
-          description="GET 33% OFF"
-          text="On SAMSUNG PHONE"
-          link="/"
-        />
-
-        <BannerCart
-          bgColour="#171717"
-          image={img1}
-          position="left"
-          title="SUMMER DEALS"
-          description="GET 21% OFF"
-          text="On ASUS LAPTOP"
-          link="/"
-        />
-      </div>
+    <div className="mt-15 flex w-full flex-col gap-4 md:flex-row md:gap-10">
+      {sortedSliderData.slice(2, 4).map((slide: any, idx: number) => {
+        const bgColour = bgColors[idx % bgColors.length];
+        return (
+          <div
+            key={idx}
+            className="flex w-full flex-col gap-0 md:flex-row md:gap-10"
+          >
+            <BannerCart
+              bgColour={bgColour}
+              image={slide.product?.thumbnail || "/images/fallback.jpg"}
+              position={idx % 2 === 0 ? "left" : "right"}
+              title={slide.title || "Deal"}
+              description={slide.offer_name || "Don't miss out!"}
+              text={slide.details || "Shop the best products now!"}
+              link={`/product/${slide?.product?.slug || ""}`}
+            />
+          </div>
+        );
+      })}
     </div>
   );
-}
+};
+
+export default SecondaryBanner;

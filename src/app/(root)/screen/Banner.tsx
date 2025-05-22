@@ -10,58 +10,12 @@ const Banner: React.FC = () => {
     error,
     isLoading,
     refetch,
-  } = useGetPublicSlidersQuery({});
+  } = useGetPublicSlidersQuery({ type: "banner" });
 
-  // ✅ Filter sliders WITHOUT banners
-  const slidersWithoutBanner =
-    sliderData?.filter(
-      (slider: any) =>
-        !slider.banner ||
-        slider.banner === "null" ||
-        slider.banner.trim() === "",
-    ) || [];
-
-  // ✅ Group slidersWithoutBanner in rows of 2
-  const sliderGroups = [];
-  for (let i = 0; i < slidersWithoutBanner.length; i += 2) {
-    sliderGroups.push(slidersWithoutBanner.slice(i, i + 2));
+  function sortByIndex(sliders: any[]) {
+    return [...sliders].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
   }
-
-  useEffect(() => {
-    if (slidersWithoutBanner.length === 0) {
-      console.log("✅ No API sliders without banner — showing static layout");
-    } else {
-      console.log("✅ Showing dynamic API-based sliders (without banner)");
-    }
-  }, [slidersWithoutBanner]);
-
-  // ✅ If no sliders without banner, show static fallback layout
-  // if (slidersWithoutBanner.length === 0) {
-  //   return (
-  //     <div className="mt-5 w-full md:mt-16 md:space-y-6">
-  //       <div className="flex w-full flex-col gap-0 md:flex-row md:gap-10">
-  //         <BannerCart
-  //           bgColour="#00153B"
-  //           image="https://res.cloudinary.com/duizghnhr/image/upload/v1747779781/prtselruymh7odbhhtjm.jpg"
-  //           position="left"
-  //           title="SUMMER DEALS"
-  //           description="GET 10% OFF"
-  //           text="On ASUS LAPTOP"
-  //           link="/"
-  //         />
-  //         <BannerCart
-  //           bgColour="#323232"
-  //           image="https://res.cloudinary.com/duizghnhr/image/upload/v1747779781/prtselruymh7odbhhtjm.jpg"
-  //           position="right"
-  //           title="HOT DEALS"
-  //           description="GET 13% OFF"
-  //           text="On SAMSUNG PHONE"
-  //           link="/shop"
-  //         />
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  const sortedSliderData = sliderData ? sortByIndex(sliderData) : [];
   const bgColors = [
     "#00153B",
     "#323232",
@@ -70,34 +24,29 @@ const Banner: React.FC = () => {
     "#ff6b6b",
     "#ffa502",
   ];
-  console.log("slider", sliderGroups);
+  console.log("sorted banner", sortedSliderData);
   // ✅ Else: Show dynamic sliders without banners
   return (
-    <div className="w-full md:space-y-6">
-      {sliderGroups.slice(0, 2).map((group, rowIndex) => (
-        <div
-          key={rowIndex}
-          className="flex w-full flex-col gap-0 md:flex-row md:gap-10"
-        >
-          {group.map((slide: any, colIndex: number) => {
-            const index = rowIndex * 2 + colIndex; // flat index
-            const bgColour = bgColors[index % bgColors.length]; // cycle through colors
-
-            return (
-              <BannerCart
-                key={colIndex}
-                bgColour={bgColour}
-                image={slide.product?.thumbnail || "/images/fallback.jpg"}
-                position={colIndex % 2 === 0 ? "left" : "right"}
-                title={slide.title || "Deal"}
-                description={slide.offer_name || "Don't miss out!"}
-                text={slide.details || "Shop the best products now!"}
-                link={`/product/${slide?.product?.slug || ""}`}
-              />
-            );
-          })}
-        </div>
-      ))}
+    <div className="mt-15 flex w-full flex-col gap-4 md:flex-row md:gap-10">
+      {sortedSliderData.slice(0, 2).map((slide: any, idx: number) => {
+        const bgColour = bgColors[idx % bgColors.length];
+        return (
+          <div
+            key={idx}
+            className="flex h-full w-full flex-col gap-0 md:flex-row md:gap-10"
+          >
+            <BannerCart
+              bgColour={bgColour}
+              image={slide.product?.thumbnail || "/images/fallback.jpg"}
+              position={idx % 2 === 0 ? "left" : "right"}
+              title={slide.title || "Deal"}
+              description={slide.offer_name || "Don't miss out!"}
+              text={slide.details || "Shop the best products now!"}
+              link={`/product/${slide?.product?.slug || ""}`}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 };

@@ -12,10 +12,7 @@ import { useRouter } from "next/navigation";
 import { useAddToCartMutation } from "@/redux/services/client/myCart";
 import { setCart } from "@/redux/slices/authSlice";
 
-const ProductShow = ({
-  data,
-  slug,
-}: {
+interface ProductShowProps {
   data: {
     product: {
       id: number;
@@ -51,27 +48,30 @@ const ProductShow = ({
       }[];
     };
   };
-  slug: string;
-}) => {
+  slug?: string;
+}
+
+const ProductShow = ({ data, slug }: ProductShowProps) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState<{
     [itemId: number]: number;
   }>({});
 
+  // redux query
   const [addToCart, { isLoading }] = useAddToCartMutation();
 
+  // redux state
   const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
 
   const router = useRouter();
 
-  // 1. Find the color item and check if all options have image
+  // Find the color item and check if all options have image
   const colorItem = data?.product?.items?.find(
     (item: any) => item.title?.toLowerCase() === "color",
   );
 
-  // console.log("colorItem", colorItem);
-
+  //make an array of color options
   const colorOptionImages =
     colorItem &&
     Array.isArray(colorItem.options) &&
@@ -81,16 +81,11 @@ const ProductShow = ({
         : null
       : null;
 
-  // console.log("colorOptionImages", colorOptionImages);
-
   //  Decide which images to show
   const productImages =
     colorOptionImages && colorOptionImages.length > 0
       ? colorOptionImages
       : data?.product?.Image?.map((img: any) => img.url) || [];
-
-  // console.log(productImages, "productIm");
-  console.log("datt for items", data);
 
   const fallbackImage = "/images/fallback.png";
 
@@ -104,6 +99,7 @@ const ProductShow = ({
     setSelectedImage(productImages[0] || fallbackImage);
   }, [JSON.stringify(productImages)]);
 
+  //  Check if product has discount
   const hasDiscount =
     !!data?.product?.discount && Number(data.product.discount) > 0;
   const price = Number(data?.product?.price) || 0;
@@ -111,6 +107,7 @@ const ProductShow = ({
   const discountType = data?.product?.discount_type;
   let discountPrice = price;
 
+  // Calculate discount price based on type
   if (hasDiscount) {
     if (discountType === "flat") {
       discountPrice = price - discount;
@@ -119,6 +116,8 @@ const ProductShow = ({
     }
   }
 
+  //  Set initial selected options
+  //  If product has images, set the first image as selected
   useEffect(() => {
     if (data?.product?.Image && data.product.Image.length > 0) {
       setSelectedImage(data.product.Image[0].url);
@@ -136,6 +135,8 @@ const ProductShow = ({
     }
   }, [data?.product?.items, data?.product?.Image]);
 
+  //  Build cart object
+  //  This function creates a cart object based on the product data
   const buildCartObject = (product: any) => {
     const cart = {
       id: Math.floor(Math.random() * 100000), // Random ID, replace if needed
@@ -164,6 +165,8 @@ const ProductShow = ({
     return cart;
   };
 
+  //  Handle Buy Now
+  //  This function handles the "Buy Now" button click
   const handleBuyNow = async () => {
     const cartObject = buildCartObject(data?.product);
     console.log("cartobject", cartObject);
@@ -180,6 +183,8 @@ const ProductShow = ({
     }
   };
 
+  //  Handle Add to Cart
+  //  This function handles the "Add to Cart" button click
   const handleAddToCart = async (e: any) => {
     e.stopPropagation(); // Prevent navigation to product detail page
 
@@ -208,24 +213,24 @@ const ProductShow = ({
     <div className="py-6">
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         {/* Image Section */}
-        <div className="rounded-md p-4">
-          <div className="relative mx-auto w-full max-w-md">
+        <div className="rounded-md p-2 md:p-4">
+          <div className="relative mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
             <ReactImageMagnify
               {...{
                 smallImage: {
                   alt: data?.product.title,
-                  isFluidWidth: false,
-                  width: 550,
-                  height: 550,
+                  isFluidWidth: true, // Responsive width
                   src: selectedImage,
+                  width: 400, // fallback for SSR
+                  height: 400,
                 },
                 largeImage: {
                   src: selectedImage,
-                  width: 900, // Still high-resolution but reasonable
+                  width: 900,
                   height: 900,
                 },
                 enlargedImageContainerDimensions: {
-                  width: "180%", // More zoom than default but not overkill
+                  width: "180%",
                   height: "100%",
                 },
                 enlargedImageContainerStyle: {
@@ -242,7 +247,7 @@ const ProductShow = ({
                   border: "1px solid #ccc",
                 },
                 lensDimensions: {
-                  width: 80, // You can make it 80 or even 60 for finer zoom control
+                  width: 80,
                   height: 60,
                 },
               }}
@@ -255,13 +260,13 @@ const ProductShow = ({
             )}
           </div>
 
-          <div className="mt-4 flex justify-center gap-3">
+          <div className="mt-4 flex flex-wrap justify-center gap-2 sm:gap-3">
             {productImages.map((img, idx) => (
               <img
                 key={idx}
                 onClick={() => setSelectedImage(img)}
                 src={img}
-                className={`h-16 w-16 cursor-pointer rounded border object-cover ${
+                className={`h-14 w-14 cursor-pointer rounded border object-cover sm:h-16 sm:w-16 md:h-20 md:w-20 ${
                   selectedImage === img
                     ? "border-primaryBlue ring-2 ring-primaryBlue"
                     : ""

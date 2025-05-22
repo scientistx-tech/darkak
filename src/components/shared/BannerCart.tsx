@@ -28,7 +28,7 @@ const BannerCart: React.FC<BannerCardProps> = ({
   return (
     <div
       className={clsx(
-        "relative mb-4 flex w-full items-center justify-between overflow-hidden rounded-xl py-3 pr-5 text-white",
+        "relative flex h-full w-full items-center justify-between overflow-hidden rounded-xl py-3 pr-5 text-white",
       )}
       style={{ backgroundColor: bgColour }}
     >
