@@ -278,11 +278,11 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
           </div>
         </div>
         {/* Details Section */}
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col justify-center items-center md:justify-start md:items-start">
           <p className="text-sm uppercase text-[#4B4E55]">
             Brand: {data?.product?.brand?.title}
           </p>
-          <h1 className="mt-2 text-2xl font-semibold text-[#4B4E55]">
+          <h1 className="mt-2 text-2xl font-semibold text-[#4B4E55]  text-center">
             {data?.product?.title}
           </h1>
 

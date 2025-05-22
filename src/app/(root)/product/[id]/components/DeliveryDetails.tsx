@@ -11,12 +11,12 @@ const DeliveryDetails = ({
   };
 }) => {
   return (
-    <section className="mt-8 rounded-2xl bg-secondaryWhite p-4 shadow-md">
+    <section className="w-full mt-8 rounded-2xl bg-secondaryWhite p-4 shadow-md  flex flex-col justify-center md:justify-start items-center md:items-start">
       <h2 className="mb-4 text-xl font-semibold text-primaryDarkBlue">
         Delivery Details
       </h2>
 
-      <div className="grid gap-2 text-sm text-primaryDarkBlue md:grid-cols-2">
+      <div className="w-full md:grid gap-2 text-sm text-primaryDarkBlue md:grid-cols-2 flex justify-center flex-col items-center">
         <div className="flex items-start gap-3">
           <FaShippingFast className="mt-1 text-lg text-primaryBlue" />
           <div>
