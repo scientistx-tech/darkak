@@ -54,14 +54,16 @@ const BannerCart: React.FC<BannerCardProps> = ({
         <ShopNowButton link={link} text="Shop Now" />
       </div>
 
-      <Image
-        src={image}
-        alt="Product Image"
-        className="object-cover"
-        width={200}
-        height={300}
-        // sizes="(max-width: 768px) 100vw, 50vw"
-      />
+      <div>
+        <Image
+          src={image}
+          alt="Product Image"
+          className="object-cover"
+          width={200}
+          height={300}
+          // sizes="(max-width: 768px) 100vw, 50vw"
+        />
+      </div>
     </div>
   );
 };
