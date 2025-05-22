@@ -35,9 +35,9 @@ function page() {
           <RecommendedSection />
         </MotionRevealWrapper>
 
-        {/* <MotionRevealWrapper>
+        <MotionRevealWrapper>
           <SecondaryBanner />
-        </MotionRevealWrapper> */}
+        </MotionRevealWrapper>
 
         <MotionRevealWrapper>
           <BestSelling />
@@ -51,9 +51,9 @@ function page() {
           <NewArrival />
         </MotionRevealWrapper> */}
 
-        {/* <MotionRevealWrapper>
+        <MotionRevealWrapper>
           <FourthBanner />
-        </MotionRevealWrapper> */}
+        </MotionRevealWrapper>
 
         <MotionRevealWrapper>
           <BestDeals />

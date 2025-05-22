@@ -10,7 +10,7 @@ const ThardBanner: React.FC = () => {
     error,
     isLoading,
     refetch,
-  } = useGetPublicSlidersQuery({});
+  } = useGetPublicSlidersQuery({ type: "banner" });
 
   // ✅ Filter sliders WITHOUT banners
   const slidersWithoutBanner =

@@ -38,30 +38,20 @@ const Slider: React.FC = () => {
     error,
     isLoading,
     refetch,
-  } = useGetPublicSlidersQuery({});
+  } = useGetPublicSlidersQuery({ type: "slider" });
 
-  const sliderWithBanner =
-    sliderData?.filter(
-      (slider: any) =>
-        typeof slider.banner === "string" &&
-        slider.banner.trim() !== "" &&
-        slider.banner !== "null",
-    ) || [];
+  console.log(sliderData, "slider data");
 
-  console.log(sliderWithBanner, "sli with ban");
-
-  const finalSlides = sliderWithBanner.length > 0 ? sliderWithBanner : slides;
-
-  console.log(finalSlides, "fin sli");
+  const finalSlides = sliderData?.length > 0 ? sliderData : [];
 
   const [index, setIndex] = useState(0);
 
   // Auto slide every 5 seconds
   useEffect(() => {
-    if (!finalSlides || finalSlides.length === 0) return;
+    if (!finalSlides || finalSlides?.length === 0) return;
 
     const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % finalSlides.length);
+      setIndex((prev) => (prev + 1) % finalSlides?.length);
     }, 7000);
 
     return () => clearInterval(timer);

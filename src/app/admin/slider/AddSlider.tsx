@@ -3,12 +3,11 @@
 import React, { useRef, useState } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import Select from "react-select";
 import Image from "next/image";
 import { useUploadFormDataSliderMutation } from "@/redux/services/admin/adminSliderApis";
 import { toast } from "react-toastify";
 import { useGetProductsQuery } from "@/redux/services/admin/adminProductApis";
-import { setPriority } from "os";
+import AsyncSelect from "react-select/async";
 
 function AddSlider({
   header,
@@ -28,6 +27,7 @@ function AddSlider({
   const [previewBanner, setPreviewBanner] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<null | File>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [createSlider] = useUploadFormDataSliderMutation();
   const {
@@ -35,26 +35,14 @@ function AddSlider({
     isLoading: productLoading,
     error,
     refetch: productRefetch,
-  } = useGetProductsQuery({});
+  } = useGetProductsQuery(searchTerm ? { search: searchTerm } : {});
 
-  // Example product options
-  const productOptions = [
-    { value: "1", label: "T-shirt - ID 1" },
-    { value: "2", label: "Sneakers - ID 2" },
-    { value: "3", label: "Saree - ID 3" },
-    { value: "4", label: "Watch - ID 4" },
-  ];
-
-  const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setBannerFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewBanner(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const loadProductOptions = async (inputValue: string) => {
+    setSearchTerm(inputValue);
+    // Wait for Redux to update productData
+    return (productData?.data || [])
+      .slice(0, 10)
+      .map((p: any) => ({ value: p.id, label: p.title }));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,6 +97,7 @@ function AddSlider({
       setPriority("");
       setPreviewImage(null);
       setIsLoading(false);
+      setSearchTerm("");
     }
   };
 
@@ -146,18 +135,34 @@ function AddSlider({
         />
         {/* Product selector */}
         <div className="h-[50px] w-full rounded bg-gray-4">
-          <select
-            value={productId}
-            onChange={(e) => setProductId(e.target?.value || "")}
-            className="h-full w-full rounded bg-slate-100"
-          >
-            <option value="">Select Product</option>
-            {productData?.data?.map((p: any, i: number) => (
-              <option key={i} value={p.id}>
-                {p.title}
-              </option>
-            ))}
-          </select>
+          <AsyncSelect
+            cacheOptions
+            defaultOptions={(productData?.data || [])
+              .slice(0, 10)
+              .map((p: any) => ({ value: p.id, label: p.title }))}
+            loadOptions={loadProductOptions}
+            value={
+              productId
+                ? {
+                    value: productId,
+                    label:
+                      productData?.data?.find((p: any) => p.id === productId)
+                        ?.title || "Selected Product",
+                  }
+                : null
+            }
+            onChange={(option: any) => {
+              setProductId(option?.value || "");
+              if (!option) setSearchTerm("");
+            }}
+            placeholder="Select Product"
+            isClearable
+            className="w-full bg-gray-4"
+            styles={{
+              container: (base) => ({ ...base, height: "50px" }),
+              control: (base) => ({ ...base, height: "50px" }),
+            }}
+          />
         </div>
         {/* type */}
         <div className="h-[50px] w-full rounded bg-gray-4">
