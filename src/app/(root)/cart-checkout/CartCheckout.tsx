@@ -10,14 +10,18 @@ import product1 from "@/Data/Demo/product-2-1.png";
 import product2 from "@/Data/Demo/product-2-3.png";
 import product3 from "@/Data/Demo/product-2-4.png";
 import SendButton from "@/components/Button/SendButton";
-import { useGetMyCartQuery } from "@/redux/services/client/myCart";
+import {
+  useDeleteCartMutation,
+  useGetMyCartQuery,
+} from "@/redux/services/client/myCart";
 import { RootState } from "@/redux/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import {
   useOrderCartProductsMutation,
   useOrderSingleProductMutation,
 } from "@/redux/services/client/checkout";
+import { setCart } from "@/redux/slices/authSlice";
 
 const initialProducts = [
   {
@@ -58,10 +62,11 @@ const CartCheckout: React.FC = () => {
   const [area, setArea] = useState("");
   const [agree, setAgree] = useState(true);
   const [checkoutItems, setCheckoutItems] = useState<any>([]);
-
+  const [deleteCart] = useDeleteCartMutation();
   const [api, contextHolder] = notification.useNotification();
   const router = useRouter();
   const pathname = usePathname();
+  const dispatch = useDispatch();
 
   const user = useSelector((state: RootState) => state.auth.user);
 
@@ -193,7 +198,7 @@ const CartCheckout: React.FC = () => {
   console.log("cartitem", checkoutItems);
 
   const handleCheckout = async () => {
-    const productIds = checkoutItems.map((item: any) => item.productId);
+    const productIds = checkoutItems.map((item: any) => item.id);
     const payload = {
       userId: user?.id,
       name: fullName,
@@ -212,10 +217,16 @@ const CartCheckout: React.FC = () => {
     };
     try {
       const res = await createOrder(payload).unwrap();
+      // await Promise.all(
+      //   productIds?.map(async (d: number) => {
+      //     await deleteCart(d).unwrap();
+      //   }),
+      // );
+      dispatch(setCart(Math.random()));
       toast.success("Successfully Placed Order");
       router.push(`/order-placed`);
-    } catch (error) {
-      toast.error("Something went wrong, try again.");
+    } catch (error: any) {
+      toast.error(error?.data?.message);
       console.log(error);
     }
   };
