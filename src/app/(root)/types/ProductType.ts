@@ -17,4 +17,5 @@ export interface Product {
     }[];
   }[];
   avgRate: number;
+  stock: number;
 }

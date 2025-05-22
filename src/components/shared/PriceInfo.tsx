@@ -144,42 +144,52 @@ const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
         </div>
 
         {/* Buttons */}
-        <div className="flex items-center justify-evenly">
-          <div onClick={(e) => handleBuyNow(e)}>
-            <p className="text-primbg-primaryWhite scale-90 cursor-pointer rounded-full bg-primaryBlue px-4 py-1 text-sm font-normal text-secondaryWhite transition-all duration-300 hover:bg-primaryDarkBlue hover:text-white md:scale-100 md:px-4 md:font-semibold lg:text-sm">
-              BUY NOW
-            </p>
+        {product?.stock === 0 ? (
+          <div className="flex items-center justify-evenly">
+            <div>
+              <p className="text-primbg-primaryWhite scale-90 cursor-pointer rounded-full bg-primaryBlue px-4 py-1 text-sm font-normal text-secondaryWhite transition-all duration-300 hover:bg-primaryDarkBlue hover:text-white md:scale-100 md:px-4 md:font-semibold lg:text-sm">
+                Pre Order
+              </p>
+            </div>
           </div>
+        ) : (
+          <div className="flex items-center justify-evenly">
+            <div onClick={(e) => handleBuyNow(e)}>
+              <p className="text-primbg-primaryWhite scale-90 cursor-pointer rounded-full bg-primaryBlue px-4 py-1 text-sm font-normal text-secondaryWhite transition-all duration-300 hover:bg-primaryDarkBlue hover:text-white md:scale-100 md:px-4 md:font-semibold lg:text-sm">
+                BUY NOW
+              </p>
+            </div>
 
-          <div
-            onClick={(e) => handleAddToCart(e)}
-            className="cursor-pointer rounded-full bg-secondaryWhite px-4 py-2 text-sm text-secondaryBlue hover:text-primaryBlue md:px-4 lg:text-base"
-          >
-            {isLoading ? (
-              <svg
-                className="h-4 w-4 animate-spin text-primaryBlue"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v8z"
-                ></path>
-              </svg>
-            ) : (
-              <FaShoppingCart />
-            )}
+            <div
+              onClick={(e) => handleAddToCart(e)}
+              className="cursor-pointer rounded-full bg-secondaryWhite px-4 py-2 text-sm text-secondaryBlue hover:text-primaryBlue md:px-4 lg:text-base"
+            >
+              {isLoading ? (
+                <svg
+                  className="h-4 w-4 animate-spin text-primaryBlue"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8z"
+                  ></path>
+                </svg>
+              ) : (
+                <FaShoppingCart />
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
