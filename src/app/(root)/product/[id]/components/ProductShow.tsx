@@ -211,7 +211,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
   };
   return (
     <div className="py-6">
-      <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
+      <div className="flex flex-col items-center justify-between gap-4 md:flex-row md:gap-10">
         {/* Image Section */}
         <div className="rounded-md p-2 md:p-4">
           <div className="relative mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
@@ -278,7 +278,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
           </div>
         </div>
         {/* Details Section */}
-        <div>
+        <div className="flex-1">
           <p className="text-sm uppercase text-[#4B4E55]">
             Brand: {data?.product?.brand?.title}
           </p>
@@ -308,19 +308,21 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
             </span>
           </div>
 
-          <p className="mt-4 inline-block rounded-full bg-secondaryWhite px-4 py-2 text-sm">
-            Product Code: {data?.product.code}
-          </p>
-
-          <a
-            href="https://wa.me/8801000000000"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 flex w-max items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-green-700"
-          >
-            <BsWhatsapp className="h-5 w-5" />
-            Message on Whatsapp
-          </a>
+          <div className="mt-2 flex items-center gap-4 md:mt-4">
+            {" "}
+            <p className="mt-4 inline-block rounded-full bg-secondaryWhite px-4 py-2 text-xs md:text-sm">
+              Product Code: {data?.product.code}
+            </p>
+            <a
+              href="https://wa.me/8801000000000"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 flex w-max items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-xs text-green-700 md:text-sm"
+            >
+              <BsWhatsapp className="h-5 w-5" />
+              Message on Whatsapp
+            </a>
+          </div>
 
           <div className="mt-6 text-sm font-semibold text-[#323232]">
             <p className="inline text-sm text-gray-500">Warranty Type:</p>{" "}
