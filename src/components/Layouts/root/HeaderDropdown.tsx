@@ -6,10 +6,6 @@ import NavLink from "@/components/shared/NavLink";
 import { FaAngleDown, FaAngleRight } from "react-icons/fa";
 import { useGetProductCategoriesQuery } from "@/redux/services/client/categories";
 
-import img1 from "@/Data/Demo/product-2-1.png";
-import img2 from "@/Data/Demo/product-2-3.png";
-import img3 from "@/Data/Demo/product-2-4.png";
-
 const shimmer = "animate-pulse bg-secondaryLiteBlue rounded-md h-6 mb-2";
 
 export default function Test() {
@@ -82,7 +78,7 @@ export default function Test() {
                       : "hover:bg-secondaryBlue"
                   }`}
                 >
-                  <Link href="/" className="w-full flex items-center gap-2">
+                  <Link href="/" className="flex w-full items-center gap-2">
                     <Image
                       src={cat.icon}
                       alt={cat.title}
@@ -99,19 +95,23 @@ export default function Test() {
           </div>
 
           {/* Subcategories */}
-          {hoveredMain && (
-            <div
-              className="absolute left-[200px] z-50 min-w-[200px] rounded bg-primaryBlue p-4 text-white shadow-lg"
-              style={{ top: subCategoryTop }}
-            >
-              {isLoading
-                ? [...Array(4)].map((_, i) => (
-                    <div key={i} className={shimmer} />
-                  ))
-                : hoveredMain &&
-                  categories
-                    ?.find((c) => c.title === hoveredMain)
-                    ?.sub_category.map((sub) => (
+          {(() => {
+            const selectedMainCategory = categories?.find(
+              (c) => c.title === hoveredMain,
+            );
+
+            if (!selectedMainCategory?.sub_category?.length) return null;
+
+            return (
+              <div
+                className="absolute left-[200px] z-50 min-w-[200px] bg-primaryBlue p-4 text-white shadow-lg"
+                style={{ top: subCategoryTop }}
+              >
+                {isLoading
+                  ? [...Array(4)].map((_, i) => (
+                      <div key={i} className={shimmer} />
+                    ))
+                  : selectedMainCategory.sub_category.map((sub) => (
                       <div
                         key={sub.title}
                         onMouseEnter={() => {
@@ -130,25 +130,28 @@ export default function Test() {
                         {sub.sub_sub_category && <FaAngleRight />}
                       </div>
                     ))}
-            </div>
-          )}
+              </div>
+            );
+          })()}
 
           {/* Sub-subcategories */}
-          {hoveredMain && hoveredSub && (
-            <div
-              className="absolute left-[400px] z-50 min-w-[200px] rounded bg-primaryBlue p-4 text-white shadow-lg"
-              style={{ top: subCategoryTop }}
-            >
-              {isLoading
-                ? [...Array(3)].map((_, i) => (
-                    <div key={i} className={shimmer} />
-                  ))
-                : hoveredMain &&
-                  hoveredSub &&
-                  categories
-                    ?.find((c) => c.title === hoveredMain)
-                    ?.sub_category.find((s) => s.title === hoveredSub)
-                    ?.sub_sub_category.map((item) => (
+          {(() => {
+            const selectedSubCategory = categories
+              ?.find((c) => c.title === hoveredMain)
+              ?.sub_category.find((s) => s.title === hoveredSub);
+
+            if (!selectedSubCategory?.sub_sub_category?.length) return null;
+
+            return (
+              <div
+                className="absolute left-[400px] z-50 min-w-[200px] bg-primaryBlue p-4 text-white shadow-lg"
+                style={{ top: subCategoryTop }}
+              >
+                {isLoading
+                  ? [...Array(3)].map((_, i) => (
+                      <div key={i} className={shimmer} />
+                    ))
+                  : selectedSubCategory.sub_sub_category.map((item) => (
                       <Link
                         key={item.title}
                         href="/"
@@ -157,8 +160,9 @@ export default function Test() {
                         {item.title}
                       </Link>
                     ))}
-            </div>
-          )}
+              </div>
+            );
+          })()}
         </div>
       )}
     </div>
