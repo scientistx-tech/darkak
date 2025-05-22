@@ -78,7 +78,7 @@ export default function Test() {
                       : "hover:bg-secondaryBlue"
                   }`}
                 >
-                  <Link href="/" className="flex w-full items-center gap-2">
+                  <Link href="/category" className="flex w-full items-center gap-2">
                     <Image
                       src={cat.icon}
                       alt={cat.title}
@@ -124,7 +124,7 @@ export default function Test() {
                             : "hover:bg-secondaryBlue"
                         }`}
                       >
-                        <Link href="/" className="w-full">
+                        <Link href="/category" className="w-full">
                           {sub.title}
                         </Link>
                         {sub.sub_sub_category && <FaAngleRight />}
@@ -154,7 +154,7 @@ export default function Test() {
                   : selectedSubCategory.sub_sub_category.map((item) => (
                       <Link
                         key={item.title}
-                        href="/"
+                        href="/category"
                         className="block rounded px-3 py-2 transition-all duration-200 hover:bg-secondaryBlue"
                       >
                         {item.title}

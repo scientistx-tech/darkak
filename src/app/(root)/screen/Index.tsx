@@ -74,6 +74,24 @@ const Slider: React.FC = () => {
   return (
     <div className="w-full overflow-hidden bg-[#E6EFFF] font-montserrat">
       <div className="flex flex-col items-center gap-8 px-6 py-12 md:h-[calc(100vh-150px)] md:flex-row md:justify-between md:px-16">
+        {/* mobile screen */}
+        <div className="flex-1 md:hidden">
+          {current?.banner ? (
+            <Image
+              src={current.banner}
+              alt={`Slide ${index}`}
+              className="h-[200px] w-full rounded-xl object-contain md:h-[400px]"
+              width={400}
+              height={200}
+              priority
+            />
+          ) : (
+            <div className="flex h-[200px] items-center justify-center text-gray-500 md:h-[400px]">
+              No image
+            </div>
+          )}
+        </div>
+
         {/* Left Content */}
         <div className="flex-1 text-center md:text-left">
           <h4 className="text-sm font-semibold uppercase tracking-wider text-black">
@@ -94,7 +112,7 @@ const Slider: React.FC = () => {
         </div>
 
         {/* Right Image */}
-        <div className="flex-1">
+        <div className="hidden flex-1 md:block">
           {current?.banner ? (
             <Image
               src={current.banner}
@@ -113,7 +131,7 @@ const Slider: React.FC = () => {
       </div>
 
       {/* Dots */}
-      <div className="mt-4 flex justify-center pb-6">
+      <div className="md:mt-4 flex justify-center pb-6">
         {finalSlides?.map((_: any, i: number) => (
           <button
             key={i}
