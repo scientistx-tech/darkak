@@ -4,53 +4,32 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import product1 from "@/Data/Demo/product-2-1.png";
-import product2 from "@/Data/Demo/product-2-3.png";
-import product3 from "@/Data/Demo/product-2-4.png";
+import {
+  useGetMyOrdersQuery,
+  useGetMyReviewsQuery,
+} from "@/redux/services/client/order";
+import ClientLoading from "@/app/(root)/components/ClientLoading";
 
 export default function ReviewHistory() {
+  const {
+    data: toReviewProducts,
+    isLoading,
+    isError,
+  } = useGetMyOrdersQuery({ page: 1, limit: 10, status: "pending" });
+  const { data } = useGetMyReviewsQuery({
+    page: 1,
+    limit: 10,
+  });
   const [activeTab, setActiveTab] = useState<
     "toReview" | "toFollowUp" | "history"
   >("toReview");
-
-  const toReviewProducts = [
-    { id: 1, image: product1, name: "Running Shoes", price: "29.99 TK" },
-    { id: 2, image: product2, name: "Handbag", price: "49.99 TK" },
-    { id: 3, image: product3, name: "Laptop", price: "49.99 TK" },
-    { id: 4, image: product1, name: "Running Shoes", price: "29.99 TK" },
-    { id: 5, image: product2, name: "Handbag", price: "49.99 TK" },
-    { id: 6, image: product3, name: "Laptop", price: "49.99 TK" },
-  ];
-
-  const toFollowUpReviews = [
-    {
-      id: 1,
-      image: product3,
-      name: "Camera Lens",
-      price: "19.99 TK",
-      userReview: "Good but can be better.",
-    },
-  ];
-
-  const historyReviews = [
-    {
-      id: 1,
-      image: product1,
-      name: "Running Shoes",
-      price: "29.99 TK",
-      userReview: "Amazing quality!",
-      rating: 5,
-    },
-    {
-      id: 2,
-      image: product2,
-      name: "Handbag",
-      price: "49.99 TK",
-      userReview: "Loved the design.",
-      rating: 4,
-    },
-  ];
-
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <ClientLoading></ClientLoading>
+      </div>
+    );
+  }
   return (
     <div className="mx-auto w-full max-w-5xl rounded-3xl border bg-gradient-to-tr from-[#ffffff80] via-[#ecf3ff90] to-[#ffffff80] p-2 py-4 shadow-2xl backdrop-blur-md md:p-10">
       <h2 className="mb-6 text-center text-2xl font-semibold text-primaryBlue md:mb-12 md:text-4xl">
@@ -81,14 +60,14 @@ export default function ReviewHistory() {
       {/* Content based on tab */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
         {activeTab === "toReview" &&
-          toReviewProducts.map((product) => (
+          toReviewProducts?.data.map((product) => (
             <div
               key={product.id}
               className="flex items-center justify-between rounded-2xl bg-white/80 p-6 text-center shadow-md backdrop-blur-md md:flex-col"
             >
               <Image
-                src={product.image}
-                alt={product.name}
+                src={product.product.thumbnail}
+                alt={product.product.title}
                 width={100}
                 height={100}
                 className="mb-4 rounded-lg object-cover"
@@ -96,16 +75,15 @@ export default function ReviewHistory() {
 
               <div>
                 <h3 className="text-lg font-semibold text-gray-700">
-                  {product.name}
+                  {product.product.title}
                 </h3>
                 <p className="mt-2 font-bold text-primaryBlue">
-                  {product.price}
+                  {product.product.price}
                 </p>
               </div>
 
               <Link
-                href="/user/review"
-                // href={`/review?id=${product.id}`}
+                href={`/user/review/${product.productId}`}                // href={`/review?id=${product.id}`}
                 className="mt-4 inline-block rounded-full bg-primaryBlue px-6 py-2 text-sm font-semibold text-white transition hover:bg-blue-600"
               >
                 Write Review
@@ -114,66 +92,102 @@ export default function ReviewHistory() {
           ))}
 
         {activeTab === "toFollowUp" &&
-          toFollowUpReviews.map((review) => (
+          data?.toReview.data.map((product) => (
             <div
-              key={review.id}
+              key={product.id}
               className="flex flex-col items-center rounded-2xl bg-white/80 p-6 text-center shadow-md backdrop-blur-md"
             >
               <Image
-                src={review.image}
-                alt={review.name}
+                src={product.thumbnail}
+                alt={product.title}
                 width={100}
                 height={100}
                 className="mb-4 rounded-lg object-cover"
               />
               <h3 className="text-lg font-semibold text-gray-700">
-                {review.name}
+                {product.title}
               </h3>
-              <p className="mt-2 font-bold text-primaryBlue">{review.price}</p>
+              <p className="mt-2 font-bold text-primaryBlue">{product.price}</p>
               <p className="mt-2 text-sm text-gray-500">
-                Your Review: {review.userReview}
+                {product.short_description || "No description available."}
               </p>
+
+              {/* Optional: Show a preview of existing review if available */}
+              {product.review && product.review?.length > 0 && (
+                <div className="mt-3 text-sm text-gray-600">
+                  <p className="font-medium">Saved Review:</p>
+                  <p className="mt-1 italic">"{product.review[0].message}"</p>
+                </div>
+              )}
+
               <Link
-                href={`/review?id=${review.id}&edit=true`}
+                href={`/user/review/${product.id}`}
                 className="mt-4 inline-block rounded-full bg-yellow-500 px-6 py-2 text-sm font-semibold text-white transition hover:bg-yellow-600"
               >
-                Edit Review
+                {product.review?.length ? "Edit Review" : "Write Review"}
               </Link>
             </div>
           ))}
 
         {activeTab === "history" &&
-          historyReviews.map((review) => (
-            <div
-              key={review.id}
-              className="flex flex-col items-center rounded-2xl bg-white/80 p-6 text-center shadow-md backdrop-blur-md"
-            >
-              <Image
-                src={review.image}
-                alt={review.name}
-                width={100}
-                height={100}
-                className="mb-4 rounded-lg object-cover"
-              />
-              <h3 className="text-lg font-semibold text-gray-700">
-                {review.name}
-              </h3>
-              <p className="mt-2 font-bold text-primaryBlue">{review.price}</p>
-              <div className="mt-2 flex items-center">
-                {Array.from({ length: review.rating }).map((_, idx) => (
-                  <span key={idx} className="text-lg text-yellow-400">
-                    ★
-                  </span>
-                ))}
-                {Array.from({ length: 5 - review.rating }).map((_, idx) => (
-                  <span key={idx} className="text-lg text-gray-300">
-                    ★
-                  </span>
-                ))}
+          data?.history.data.map((product) =>
+            product.review?.map((review) => (
+              <div
+                key={review.id}
+                className="flex flex-col items-center rounded-2xl bg-white/80 p-6 text-center shadow-md backdrop-blur-md"
+              >
+                <Image
+                  src={product.thumbnail}
+                  alt={product.title}
+                  width={100}
+                  height={100}
+                  className="mb-4 rounded-lg object-cover"
+                />
+                <h3 className="text-lg font-semibold text-gray-700">
+                  {product.title}
+                </h3>
+                <p className="mt-1 text-sm text-gray-500">
+                  Reviewed by: {review.name}
+                </p>
+                <p className="mt-1 text-xs text-gray-400">
+                  {new Date(review.date).toLocaleDateString()}
+                </p>
+                <p className="mt-2 font-bold text-primaryBlue">
+                  {product.price}
+                </p>
+                <div className="mt-2 flex items-center">
+                  {Array.from({ length: review.rate }).map((_, idx) => (
+                    <span key={idx} className="text-lg text-yellow-400">
+                      ★
+                    </span>
+                  ))}
+                  {Array.from({ length: 5 - review.rate }).map((_, idx) => (
+                    <span key={idx} className="text-lg text-gray-300">
+                      ★
+                    </span>
+                  ))}
+                </div>
+                <p className="mt-2 text-sm italic text-gray-500">
+                  "{review.message}"
+                </p>
+
+                {review.attachments.images.length > 0 && (
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    {review.attachments.images.map((img, index) => (
+                      <Image
+                        key={index}
+                        src={img}
+                        alt={`Review image ${index + 1}`}
+                        width={80}
+                        height={80}
+                        className="rounded object-cover"
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
-              <p className="mt-2 text-sm text-gray-500">{review.userReview}</p>
-            </div>
-          ))}
+            )),
+          )}
       </div>
     </div>
   );
