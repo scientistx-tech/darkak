@@ -626,9 +626,9 @@ const ProductEdit = () => {
       }).unwrap();
       toast.success("Product updated successfully");
       router.push("/admin/product/product-list");
-    } catch (error) {
+    } catch (error:any) {
       console.error(error);
-      toast.error("Something went wrong, try again");
+      toast.error(error?.data?.message);
     }
   };
 
