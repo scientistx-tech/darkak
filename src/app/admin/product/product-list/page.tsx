@@ -82,6 +82,8 @@ const ProductList = () => {
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [code, setCode] = useState("");
+  const [sku, setSku] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<{
     title: string;
@@ -292,36 +294,100 @@ const ProductList = () => {
         {/* search box and export button */}
         <div className="flex items-center justify-between pb-6">
           {/* search box */}
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search brand"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setQueryParams((prev) => ({
-                  ...prev,
-                  search: e.target.value,
-                }));
-              }}
-              className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none"
-            />
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-4.35-4.35M16.65 10.35a6.3 6.3 0 11-12.6 0 6.3 6.3 0 0112.6 0z"
-                />
-              </svg>
-            </span>
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search title"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setQueryParams((prev) => ({
+                    ...prev,
+                    search: e.target.value,
+                  }));
+                }}
+                className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none"
+              />
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-4.35-4.35M16.65 10.35a6.3 6.3 0 11-12.6 0 6.3 6.3 0 0112.6 0z"
+                  />
+                </svg>
+              </span>
+            </div>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search by code"
+                value={code}
+                onChange={(e) => {
+                  setCode(e.target.value);
+                  setQueryParams((prev) => ({
+                    ...prev,
+                    code: e.target.value,
+                  }));
+                }}
+                className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none"
+              />
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-4.35-4.35M16.65 10.35a6.3 6.3 0 11-12.6 0 6.3 6.3 0 0112.6 0z"
+                  />
+                </svg>
+              </span>
+            </div>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search by sku"
+                value={sku}
+                onChange={(e) => {
+                  setSku(e.target.value);
+                  setQueryParams((prev) => ({
+                    ...prev,
+                    optionCode: e.target.value,
+                  }));
+                }}
+                className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none"
+              />
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-4.35-4.35M16.65 10.35a6.3 6.3 0 11-12.6 0 6.3 6.3 0 0112.6 0z"
+                  />
+                </svg>
+              </span>
+            </div>
           </div>
           {/* more buttons*/}
           <div className="flex items-center gap-x-2">
