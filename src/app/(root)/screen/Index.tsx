@@ -7,30 +7,7 @@ import img2 from "@/Data/Demo/Product-banner-2.jpg";
 import img3 from "@/Data/Demo/Product-banner-3.webp";
 import { useGetPublicSlidersQuery } from "@/redux/services/client/sliderApis";
 import ClientLoading from "../components/ClientLoading";
-
-// Slide data: image + text per slide
-const slides = [
-  {
-    banner: img1,
-    offer_name: "Save Up to 30% on First Purchase",
-    details: "Unlocking the Power of Connection",
-    title: "HOT DEALS AVAILABLE",
-    // button: "Discover More",
-  },
-  {
-    banner: img2,
-    offer_name: "Upgrade Your Lifestyle Today",
-    details: "Smart gadgets at unbeatable prices",
-    title: "LIMITED TIME OFFER",
-  },
-  {
-    banner: img3,
-    offer_name: "Tech that Empowers You",
-    details: "Explore innovation with every click",
-    ttile: "EXCLUSIVE LAUNCH",
-    // button: "Explore Deals",
-  },
-];
+import Link from "next/link";
 
 const Slider: React.FC = () => {
   const {
@@ -101,9 +78,13 @@ const Slider: React.FC = () => {
             {current?.title}
           </h1>
           <p className="text-lg text-gray-700 md:mt-4">{current?.details}</p>
-          <button className="mt-3 rounded-full bg-[#003084] px-6 py-2 font-semibold text-white transition hover:bg-blue-600 md:mt-6">
+          <div className="h-5 md:h-10 w-full" />
+          <Link
+            href={`/product/${current?.product?.slug || ""}`}
+            className="mt-5 rounded-full bg-[#003084] px-6 py-3 font-semibold text-white transition hover:bg-blue-600 md:mt-6"
+          >
             Explore More
-          </button>
+          </Link>
 
           <p className="absolute left-[20%] mt-[62px] hidden font-montserrat text-[150px] text-white md:block">
             {" "}
@@ -131,7 +112,7 @@ const Slider: React.FC = () => {
       </div>
 
       {/* Dots */}
-      <div className="md:mt-4 flex justify-center pb-6">
+      <div className="flex justify-center pb-6 md:mt-4">
         {finalSlides?.map((_: any, i: number) => (
           <button
             key={i}

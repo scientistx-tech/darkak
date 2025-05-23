@@ -38,12 +38,12 @@ const BannerCart: React.FC<BannerCardProps> = ({
           position === "left" ? "w-full md:w-[55%]" : "w-full md:w-[45%]",
         )}
       >
-        <h2 className="text-sm md:text-base">{title}</h2>
-        <h1 className="text-lg font-bold md:text-2xl">{description}</h1>
+        <h2 className="text-sm md:text-base line-clamp-1">{title}</h2>
+        <h1 className="text-lg font-bold md:text-2xl h-[20px]">{description}</h1>
         <p
           className={clsx(
-            position === "left" ? "text-2xl" : "text-xl",
-            "line-clamp-2",
+            position === "left" ? "text-2xl" : "text-2xl",
+            "line-clamp-1",
           )}
         >
           {text}
