@@ -25,7 +25,7 @@ export default function ProductDetails() {
   if (!data) return <div>No product found.</div>;
 
   return (
-    <div className="container mx-auto px-2 md:px-4">
+    <div className="w-[90%] ml-[5%] ">
       <ProductBreadcrumb />
       <ProductShow data={data} slug={slug} />
       <RelatedProductsSwiper data={data.related} />

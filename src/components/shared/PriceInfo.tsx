@@ -117,7 +117,7 @@ const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
             </span>
           )}
           <span
-            className={`text-sm text-gray-600 ${
+            className={`text-sm text-gray-600 hidden sm:block ${
               hasDiscount ? "line-through" : ""
             }`}
           >
