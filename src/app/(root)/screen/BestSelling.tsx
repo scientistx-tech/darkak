@@ -4,25 +4,9 @@ import React from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import ProductCard from "@/components/shared/ProductCard";
-import { Product } from "../types/ProductType";
 import laptop from "@/Data/Demo/Rectangle 130 (1).png";
-import { useGetNewArivalProductsQuery } from "@/redux/services/client/products";
-
-// const dummyProducts: Product[] = new Array(7).fill(null).map((_, i) => ({
-//   id: `prod-${i}`,
-//   name: "iPhone 15 Pro Max",
-//   images: [
-//     "/images/dummy/dummy.png",
-//     "/images/dummy/dummy1.png",
-//     "/images/dummy/dummy2.png",
-//   ],
-//   price: 800,
-//   originalPrice: 1000,
-//   storage: "12GB/512GB",
-//   discount: 10,
-//   rating: 4.5,
-//   reviews: 65,
-// }));
+import { useGetBestSellingProductsQuery } from "@/redux/services/client/products";
+import Link from "next/link";
 
 const containerVariants = {
   hidden: {},
@@ -39,7 +23,9 @@ const itemVariants = {
 };
 
 const BestSelling: React.FC = () => {
-  const { data, error, isLoading, refetch } = useGetNewArivalProductsQuery({});
+  const { data, error, isLoading, refetch } = useGetBestSellingProductsQuery(
+    {},
+  );
 
   return (
     <motion.section
@@ -52,7 +38,9 @@ const BestSelling: React.FC = () => {
         <h2 className="text-2xl font-semibold text-primaryDarkBlue md:ml-[33%] lg:ml-[25%] xl:ml-[20%]">
           BEST SELLING PRODUCTS
         </h2>
-        <span className="cursor-pointer text-2xl">→</span>
+        <Link href="/category" className="">
+          <span className="cursor-pointer text-2xl ">→</span>
+        </Link>
       </div>
 
       <div className="relative grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:gap-8">
@@ -77,7 +65,7 @@ const BestSelling: React.FC = () => {
         </motion.div>
 
         {/* PRODUCT CARDS */}
-        {data?.data.map((product: any) => (
+        {data?.data.slice(0, 9).map((product: any) => (
           <motion.div key={product.id} variants={itemVariants}>
             <ProductCard product={product} />
           </motion.div>

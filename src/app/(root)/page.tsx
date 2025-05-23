@@ -12,8 +12,13 @@ import ThardBanner from "./screen/ThardBanner";
 import FourthBanner from "./screen/FourthBanner";
 import BestDeals from "./screen/BestDeals";
 import MotionRevealWrapper from "./components/MotionRevealWrapper";
+import MostVisitedProducts from "./screen/MostVisitedProducts";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 function page() {
+  const user = useSelector((state: RootState) => state.auth.user);
+
   return (
     <div className="w-full">
       <div className="h-[65px] w-full bg-[#E6EFFF] md:h-[109px]" />
@@ -38,6 +43,11 @@ function page() {
         <MotionRevealWrapper>
           <SecondaryBanner />
         </MotionRevealWrapper>
+        {user && (
+          <MotionRevealWrapper>
+            <MostVisitedProducts visitorId={user.id} />
+          </MotionRevealWrapper>
+        )}
 
         <MotionRevealWrapper>
           <BestSelling />
@@ -47,9 +57,9 @@ function page() {
           <ThardBanner />
         </MotionRevealWrapper> */}
 
-        {/* <MotionRevealWrapper>
+        <MotionRevealWrapper>
           <NewArrival />
-        </MotionRevealWrapper> */}
+        </MotionRevealWrapper>
 
         <MotionRevealWrapper>
           <FourthBanner />
