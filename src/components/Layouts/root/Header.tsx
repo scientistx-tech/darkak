@@ -238,7 +238,7 @@ const Header: React.FC = () => {
 
           <div className="hidden w-[30%] justify-center rounded-full bg-white md:flex">
             <input
-              className="w-[75%] rounded-bl-full rounded-tl-full p-1.5 pl-4 pr-3 outline-none"
+              className="w-[75%] text-black rounded-bl-full rounded-tl-full p-1.5 pl-4 pr-3 outline-none"
               placeholder="Search.."
             />
 
