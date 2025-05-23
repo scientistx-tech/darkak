@@ -6,24 +6,14 @@ import ProductCard from "@/components/shared/ProductCard";
 import laptop from "@/Data/Demo/Rectangle 130 (1).png";
 import Image from "next/image";
 import { motion } from "framer-motion";
-
-// const dummyProducts: Product[] = new Array(7).fill(null).map((_, i) => ({
-//   id: `prod-${i}`,
-//   name: "iPhone 15 Pro Max",
-//   images: [
-//     "/images/dummy/dummy.png",
-//     "/images/dummy/dummy1.png",
-//     "/images/dummy/dummy2.png",
-//   ],
-//   price: 800,
-//   originalPrice: 1000,
-//   storage: "12GB/512GB",
-//   discount: 20,
-//   rating: 4.5,
-//   reviews: 65,
-// }));
-
+import { useGetNewArivalProductsQuery } from "@/redux/services/client/products";
+import Link from "next/link";
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
 const NewArrival: React.FC = () => {
+  const { data, error, isLoading, refetch } = useGetNewArivalProductsQuery({});
   const [screen, setScreen] = useState("md");
 
   useEffect(() => {
@@ -57,19 +47,23 @@ const NewArrival: React.FC = () => {
             <h2 className="text-2xl font-semibold text-primaryDarkBlue">
               NEW ARRIVAL
             </h2>
-            <span className="cursor-pointer text-2xl">→</span>
+            <Link href="/category" className="">
+              <span className="cursor-pointer text-2xl">→</span>
+            </Link>
           </div>
         </div>
 
-        {/* {screen === "sm" || screen === "md" ? (
+        {screen === "sm" || screen === "md" ? (
           <motion.div
             className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:gap-8"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
-            {dummyProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {data?.data.map((product: any) => (
+              <motion.div key={product.id} variants={itemVariants}>
+                <ProductCard product={product} />
+              </motion.div>
             ))}
           </motion.div>
         ) : (
@@ -83,12 +77,13 @@ const NewArrival: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
-              {dummyProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+              {data?.data.map((product: any) => (
+                <motion.div key={product.id} variants={itemVariants}>
+                  <ProductCard product={product} />
+                </motion.div>
               ))}
             </motion.div>
 
-           
             <motion.div
               className="absolute right-0 top-0 mt-[-50px] hidden w-[236px] flex-col justify-between rounded-xl bg-[#4C84FF] p-6 text-white md:flex md:h-[425px] lg:w-[238px] xl:h-[450px] xl:w-[240px] 2xl:w-[270px] 3xl:w-[365px]"
               initial={{ opacity: 0, x: 50 }}
@@ -110,7 +105,7 @@ const NewArrival: React.FC = () => {
               </div>
             </motion.div>
           </div>
-        )} */}
+        )}
       </div>
     </main>
   );
