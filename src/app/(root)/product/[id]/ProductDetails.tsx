@@ -21,11 +21,26 @@ export default function ProductDetails() {
     useGetSinglePublicProductDetailsQuery(slug);
 
   if (isLoading) return <ClientLoading></ClientLoading>;
-  if (error) return <div>Error loading product.</div>;
+  if (error)
+    return (
+      <div className="flex h-[300px] w-full items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-5">
+          <p>Error loading product.</p>
+          <button
+            onClick={() => {
+              window.location.reload();
+            }}
+            className="rounded border-2 border-red-700 bg-red-100 px-5 py-1 text-red-700 transition-all duration-300 ease-in hover:bg-red-200"
+          >
+            Refresh
+          </button>
+        </div>
+      </div>
+    );
   if (!data) return <div>No product found.</div>;
 
   return (
-    <div className="w-[90%] ml-[5%] ">
+    <div className="ml-[5%] w-[90%]">
       <ProductBreadcrumb />
       <ProductShow data={data} slug={slug} />
       <RelatedProductsSwiper data={data.related} />

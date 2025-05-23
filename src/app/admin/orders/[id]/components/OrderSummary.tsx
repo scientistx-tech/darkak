@@ -104,12 +104,22 @@ export default function OrderSummary({ orderDetails }: any) {
                   alt=""
                 />
                 <div className="flex flex-col">
-                  <p className="text-sm font-bold text-gray-5">
-                    {item?.product?.title}
+                  <p className="text-sm font-bold text-slate-800">
+                    {`${item?.product?.title} (${item?.product?.code})`}
+                    <div className="ml-3 inline-block text-gray-6">
+                      <RxCross2 className="inline" />
+                      {item?.quantity}{" "}
+                    </div>
                   </p>
-                  <div className="text-sm text-gray-5">
-                    <RxCross2 className="inline" />
-                    {item?.quantity}
+                  <div className="flex items-center gap-2 text-sm text-gray-5">
+                    <div>
+                      {item?.options?.map((option: any, i: number) => (
+                        <div key={i} className="text-slate-900">
+                          <p className="inline">{option?.item?.title}:</p>{" "}
+                          {option?.title}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </td>

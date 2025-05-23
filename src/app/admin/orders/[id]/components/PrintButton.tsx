@@ -6,6 +6,7 @@ import OrderInvoicePDF from "./OrderInvoicePDF";
 import Image from "next/image";
 
 export default function PrintButton({ orderDetails }: { orderDetails: any }) {
+  console.log("orderDetails print", orderDetails);
   return (
     <PDFDownloadLink
       document={<OrderInvoicePDF orderDetails={orderDetails} />}
