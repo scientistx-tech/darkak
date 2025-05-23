@@ -41,13 +41,13 @@ function CategoryTable() {
     isLoading: isCategoriesLoading,
     error: categoriesError,
     refetch: refetchCategories,
-  } = useGetCategoriesQuery();
+  } = useGetCategoriesQuery({});
   const {
     data: subCategoriesData,
     isLoading,
     error,
     refetch,
-  } = useGetSubCategoriesQuery();
+  } = useGetSubCategoriesQuery({});
   const [deleteCategory] = useDeleteSubCategoryMutation();
 
   const handleDelete = async (categoryId: number) => {
@@ -66,7 +66,7 @@ function CategoryTable() {
         <AddSubCategories
           categories={
             Array.isArray(categoriesData?.data)
-              ? categoriesData.data.map((cat) => ({
+              ? categoriesData.data.map((cat: any) => ({
                   ...cat,
                   isActive: true,
                   _count: Array.isArray(cat._count) ? cat._count : [cat._count],
@@ -112,7 +112,7 @@ function CategoryTable() {
               ))}
 
             {!isLoading &&
-              subCategoriesData?.data?.map((doc, i) => (
+              subCategoriesData?.data?.map((doc: any, i: any) => (
                 <TableRow key={i} className="h-auto">
                   <TableCell>{i + 1}</TableCell>
 

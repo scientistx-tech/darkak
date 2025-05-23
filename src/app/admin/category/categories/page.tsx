@@ -32,7 +32,7 @@ function CategoryTable() {
       serial: string;
     };
   }>({ status: false, value: { id: "", title: "", icon: "", serial: "" } });
-  const { data, isLoading, error, refetch } = useGetCategoriesQuery();
+  const { data, isLoading, error, refetch } = useGetCategoriesQuery({});
   const [deleteCategory] = useDeleteCategoryMutation();
   const handleDelete = async (categoryId: number) => {
     try {
@@ -92,7 +92,7 @@ function CategoryTable() {
               ))}
 
             {!isLoading &&
-              data?.data?.map((doc, i) => (
+              data?.data?.map((doc: any, i: number) => (
                 <TableRow key={i} className="h-auto">
                   <TableCell>{doc.id}</TableCell>
                   <TableCell className="pl-5 sm:pl-6 xl:pl-7.5">

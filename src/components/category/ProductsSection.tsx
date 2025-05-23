@@ -3,6 +3,7 @@ import ProductCard from "@/components/shared/ProductCard";
 import { Product } from "@/app/(root)/types/ProductType";
 import LeftSidebar from "@/components/category/leftSidebar/LeftSidebar";
 import CategoryFilter from "@/assets/svg/CategoryFilter";
+import { useGetAllProductsQuery } from "@/redux/services/client/products";
 
 // const dummyProducts: Product[] = new Array(7).fill(null).map((_, i) => ({
 //   id: `prod-${i}`,
@@ -22,6 +23,8 @@ import CategoryFilter from "@/assets/svg/CategoryFilter";
 
 const ProductsSection = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const { data, error, isLoading, refetch } = useGetAllProductsQuery({});
 
   // Lock scroll when sidebar is open
   useEffect(() => {
@@ -94,11 +97,11 @@ const ProductsSection = () => {
       )}
 
       {/* Product Grid */}
-      {/* <div className="grid w-full gap-7 grid-cols-2 lg:w-4/5 lg:grid-cols-3 xl:grid-cols-4">
-        {dummyProducts.map((product) => (
+      <div className="grid w-full grid-cols-2 gap-4 lg:w-4/5 lg:grid-cols-3 xl:grid-cols-4">
+        {data?.data?.map((product: any) => (
           <ProductCard key={product.id} product={product} />
         ))}
-      </div> */}
+      </div>
     </section>
   );
 };

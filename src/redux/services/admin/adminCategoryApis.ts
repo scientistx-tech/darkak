@@ -28,23 +28,16 @@ export const adminApi = baseApi.injectEndpoints({
       }),
     }),
 
-    getCategories: builder.query<
-      {
-        totalPage: number;
-        data: {
-          id: number;
-          title: string;
-          serial: number;
-          icon: string;
-          _count: { products: number };
-        }[];
+    getCategories: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/admin/category/create${queryString}`,
+          method: "GET",
+        };
       },
-      void
-    >({
-      query: () => ({
-        url: `/admin/category/create`,
-        method: "GET",
-      }),
     }),
 
     // sub category
@@ -81,24 +74,16 @@ export const adminApi = baseApi.injectEndpoints({
       }),
     }),
 
-    getSubCategories: builder.query<
-      {
-        totalPage: number;
-        data: {
-          id: number;
-          title: string;
-          categoryId: number;
-          category: {
-            title: string;
-          };
-        }[];
+    getSubCategories: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/admin/category/sub-category${queryString}`,
+          method: "GET",
+        };
       },
-      void
-    >({
-      query: () => ({
-        url: `/admin/category/sub-category`,
-        method: "GET",
-      }),
     }),
 
     // sub sub category
@@ -135,30 +120,16 @@ export const adminApi = baseApi.injectEndpoints({
       }),
     }),
 
-    getSubSubCategories: builder.query<
-      {
-        totalPage: number;
-        data: {
-          id: number;
-          title: string;
-          categoryId: number;
-          subCategory: {
-            id: number;
-            title: string;
-            categoryId: number;
-          };
-          category: {
-            title: string;
-            id: number;
-          };
-        }[];
+    getSubSubCategories: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/admin/category/sub-sub-category${queryString}`,
+          method: "GET",
+        };
       },
-      void
-    >({
-      query: () => ({
-        url: `/admin/category/sub-sub-category`,
-        method: "GET",
-      }),
     }),
   }),
 });
