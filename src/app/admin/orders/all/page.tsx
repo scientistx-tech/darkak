@@ -141,7 +141,7 @@ const AllOrderList = () => {
                 </TableRow>
               ) : (
                 orderData?.data?.map((order: any, i: number) => (
-                  <TableRow key={order.id}>
+                  <TableRow key={order.id} className="text-black">
                     <TableCell>{i + 1}</TableCell>
                     <TableCell>{order?.orderId}</TableCell>
                     <TableCell>{order.date}</TableCell>
