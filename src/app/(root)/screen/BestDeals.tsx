@@ -36,7 +36,7 @@ const BestDeals: React.FC = () => {
 
   return (
     <motion.section
-      className="container mx-auto mt-15 px-2"
+      className="container mx-auto mt-0 px-2"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true }}

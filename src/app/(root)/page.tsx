@@ -16,7 +16,7 @@ import MostVisitedProducts from "./screen/MostVisitedProducts";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
-function page() {
+function Page() {
   const user = useSelector((state: RootState) => state.auth.user);
 
   return (
@@ -43,6 +43,7 @@ function page() {
         <MotionRevealWrapper>
           <SecondaryBanner />
         </MotionRevealWrapper>
+
         {user && (
           <MotionRevealWrapper>
             <MostVisitedProducts visitorId={user.id} />
@@ -73,4 +74,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
