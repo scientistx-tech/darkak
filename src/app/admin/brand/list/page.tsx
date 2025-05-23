@@ -20,6 +20,9 @@ import {
 import { toast } from "react-toastify";
 import * as yup from "yup";
 import Button from "../../components/Button";
+import Pagination from "@/components/shared/Pagination";
+import { current } from "@reduxjs/toolkit";
+import { set } from "react-hook-form";
 
 // Yup schema
 const brandSchema = yup.object().shape({
@@ -27,6 +30,8 @@ const brandSchema = yup.object().shape({
 });
 
 function BrandTable() {
+  const [currentPage, setCurrentPage] = useState(1);
+
   const [queryParams, setQueryParams] = useState({});
   const [search, setSearch] = useState("");
   const { data, isLoading, error, refetch } = useGetBrandsQuery(queryParams);
@@ -45,6 +50,13 @@ function BrandTable() {
   useEffect(() => {
     refetch();
   }, []);
+
+  useEffect(() => {
+    setQueryParams((prev) => ({
+      ...prev,
+      page: currentPage,
+    }));
+  }, [currentPage]);
 
   const handleDelete = async (brandId: number) => {
     try {
@@ -262,6 +274,12 @@ function BrandTable() {
             </TableBody>
           </Table>
         )}
+
+        <Pagination
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          totalPages={data?.totalPage}
+        />
       </div>
     </div>
   );

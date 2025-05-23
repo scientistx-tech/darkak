@@ -90,7 +90,7 @@ export default function OrderInvoicePDF({
             </Text>
           </View>
           <View>
-            <Text>Dhaka Bangladesh</Text>
+            <Text>Dhaka,Bangladesh</Text>
           </View>
         </View>
 

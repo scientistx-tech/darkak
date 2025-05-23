@@ -28,20 +28,20 @@ function CategoryTable() {
     isLoading: isCategoriesLoading,
     error: categoriesError,
     refetch: refetchCategories,
-  } = useGetCategoriesQuery();
+  } = useGetCategoriesQuery({});
 
   const {
     data: subCategoriesData,
     isLoading: isSubCategoriesLoading,
     error: subCategoriesError,
     refetch: refetchSubCategories,
-  } = useGetSubCategoriesQuery();
+  } = useGetSubCategoriesQuery({});
   const {
     data: subSubCategoriesData,
     isLoading: isSubSubCategoriesLoading,
     error: subSubCategoriesError,
     refetch: refetchSubSubCategories,
-  } = useGetSubSubCategoriesQuery();
+  } = useGetSubSubCategoriesQuery({});
 
   const [deleteCategory] = useDeleteSubSubCategoryMutation();
 
@@ -50,7 +50,7 @@ function CategoryTable() {
       await deleteCategory(categoryId).unwrap();
       toast.success("Sub Sub Category deleted successfully!");
       refetchSubSubCategories();
-    } catch (err:any) {
+    } catch (err: any) {
       toast.error(err.data.message);
     }
   };
@@ -61,7 +61,7 @@ function CategoryTable() {
         <AddSubSubCategories
           categories={
             categoriesData?.data
-              ? categoriesData.data.map((cat) => ({
+              ? categoriesData.data.map((cat: any) => ({
                   ...cat,
                   isActive: true,
                   _count: Array.isArray(cat._count) ? cat._count : [cat._count],
@@ -70,7 +70,7 @@ function CategoryTable() {
           }
           subCategories={
             subCategoriesData?.data
-              ? subCategoriesData.data.map((subCat) => ({
+              ? subCategoriesData.data.map((subCat: any) => ({
                   id: subCat.id ?? 0,
                   title: subCat.title ?? "",
                   categoryId: subCat.categoryId ?? 0,
@@ -140,7 +140,7 @@ function CategoryTable() {
               ))}
 
             {!isSubSubCategoriesLoading &&
-              subSubCategoriesData?.data?.map((doc, i) => (
+              subSubCategoriesData?.data?.map((doc: any, i: number) => (
                 <TableRow key={i} className="h-auto">
                   <TableCell>{i + 1}</TableCell>
                   <TableCell>{doc.title}</TableCell>
