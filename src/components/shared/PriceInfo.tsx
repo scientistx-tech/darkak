@@ -117,14 +117,18 @@ const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
             </span>
           )}
           <span
-            className={`text-sm text-gray-600 hidden sm:block ${
+            className={`hidden text-sm text-gray-600 sm:block ${
               hasDiscount ? "line-through" : ""
             }`}
           >
             {price} BDT
           </span>
         </div>
-        <h3 className="md:text-md line-clamp-2 text-center text-sm font-semibold text-primaryDarkBlue transition-all duration-300 group-hover:text-secondaryBlue">
+        <h3
+          className="truncate text-center text-sm font-semibold text-primaryDarkBlue transition-all duration-300 group-hover:text-secondaryBlue md:line-clamp-2 md:whitespace-normal"
+          style={{ maxWidth: "100%" }}
+          title={product.title}
+        >
           {product.title}
           {/* ({product.storage}) */}
         </h3>

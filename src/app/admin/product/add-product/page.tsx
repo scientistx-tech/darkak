@@ -545,9 +545,9 @@ export default function ProductForm() {
       const res = await createProduct(payload).unwrap();
       toast.success("Successfully Product created");
       router.push("/admin/product/product-list");
-    } catch (error) {
+    } catch (error:any) {
       console.error(error);
-      toast.error("Something went wrong, try again");
+      toast.error(error?.data?.message);
     }
   };
 

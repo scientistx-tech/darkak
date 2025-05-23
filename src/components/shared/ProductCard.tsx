@@ -24,6 +24,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     });
   };
 
+  // Combine thumbnail and images, ensuring no duplicates and thumbnail is first
+  const allImages = [
+    product.thumbnail,
+    ...(product.Image || []).map((img: any) =>
+      typeof img === "string" ? img : img?.url,
+    ),
+  ].filter((img, idx, arr) => img && arr.indexOf(img) === idx);
+
+  // Only use the first image for the slider
+  const sliderImages = allImages.slice(0, 6);
+
   return (
     <div
       className="relative mx-auto w-full max-w-sm overflow-hidden rounded-[20px] bg-primaryWhite shadow-md transition-all duration-300 md:h-[370px] xl:h-[400px] 2xl:h-[380px]"
@@ -70,11 +81,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Product Image */}
         <motion.img
           key={activeImage}
-          src={
-            typeof product.Image[activeImage] === "string"
-              ? product.Image[activeImage]
-              : product.Image[activeImage]?.url || product.thumbnail
-          }
+          src={sliderImages[activeImage] || product.thumbnail}
           alt={product.title}
           initial={{ opacity: 0.5, scale: 0.98 }}
           animate={{ opacity: 1 }}
@@ -85,7 +92,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
       {/* Image Indicators */}
       <div className="my-2 flex items-center justify-center gap-2">
-        {product.Image.map((_, i) => (
+        {sliderImages.map((_, i) => (
           <div
             key={i}
             onClick={() => setActiveImage(i)}

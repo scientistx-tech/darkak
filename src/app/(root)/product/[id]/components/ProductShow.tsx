@@ -23,6 +23,7 @@ interface ProductShowProps {
       Image: {
         url: string;
       }[];
+      thumbnail: string;
       discount: string;
       discount_type: string;
       available: string;
@@ -57,7 +58,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
     [itemId: number]: number;
   }>({});
 
-  // redux query
+  // redux hooks
   const [addToCart, { isLoading }] = useAddToCartMutation();
 
   // redux state
@@ -66,38 +67,48 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
 
   const router = useRouter();
 
-  // Find the color item and check if all options have image
-  const colorItem = data?.product?.items?.find(
-    (item: any) => item.title?.toLowerCase() === "color",
+  // Detect if device is mobile
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Collect all images: product images, thumbnail, color option images
+  const productImagesArr =
+    data?.product?.Image?.map((img: any) => img.url) || [];
+  const thumbnailImg = data?.product?.thumbnail ? [data.product.thumbnail] : [];
+  const colorOptionImagesArr =
+    data?.product?.items
+      ?.filter((item: any) => item.title?.toLowerCase() === "color")
+      .flatMap((item: any) =>
+        Array.isArray(item.options)
+          ? item.options.map((opt: any) => opt.image).filter(Boolean)
+          : [],
+      ) || [];
+
+  const allImages = Array.from(
+    new Set(
+      [...productImagesArr, ...thumbnailImg, ...colorOptionImagesArr].filter(
+        Boolean,
+      ),
+    ),
   );
-
-  //make an array of color options
-  const colorOptionImages =
-    colorItem &&
-    Array.isArray(colorItem.options) &&
-    colorItem.options.length > 0
-      ? colorItem.options.every((opt: any) => !!opt.image)
-        ? colorItem.options.map((opt: any) => opt.image)
-        : null
-      : null;
-
-  //  Decide which images to show
-  const productImages =
-    colorOptionImages && colorOptionImages.length > 0
-      ? colorOptionImages
-      : data?.product?.Image?.map((img: any) => img.url) || [];
 
   const fallbackImage = "/images/fallback.png";
 
   //  Selected image state
   const [selectedImage, setSelectedImage] = useState<string>(
-    productImages[0] || fallbackImage,
+    allImages[0] || fallbackImage,
   );
 
   //  Update selectedImage if productImages change
   useEffect(() => {
-    setSelectedImage(productImages[0] || fallbackImage);
-  }, [JSON.stringify(productImages)]);
+    setSelectedImage(allImages[0] || fallbackImage);
+  }, [JSON.stringify(allImages)]);
 
   //  Check if product has discount
   const hasDiscount =
@@ -214,44 +225,55 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row md:gap-10">
         {/* Image Section */}
         <div className="rounded-md p-2 md:p-4">
-          <div className="relative mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
-            <ReactImageMagnify
-              {...{
-                smallImage: {
-                  alt: data?.product.title,
-                  isFluidWidth: true, // Responsive width
-                  src: selectedImage,
-                  width: 400, // fallback for SSR
-                  height: 400,
-                },
-                largeImage: {
-                  src: selectedImage,
-                  width: 900,
-                  height: 900,
-                },
-                enlargedImageContainerDimensions: {
-                  width: "180%",
-                  height: "100%",
-                },
-                enlargedImageContainerStyle: {
-                  background: "#fff",
-                  border: "1px solid #ccc",
-                  borderRadius: "0.5rem",
-                  zIndex: 99,
-                },
-                enlargedImagePosition: "beside",
-                isHintEnabled: true,
-                hintTextMouse: "Hover to zoom",
-                lensStyle: {
-                  backgroundColor: "rgba(255,255,255,0.4)",
-                  border: "1px solid #ccc",
-                },
-                lensDimensions: {
-                  width: 80,
-                  height: 60,
-                },
-              }}
-            />
+          <div className="relative mx-auto w-full sm:max-w-sm md:max-w-md lg:max-w-lg">
+            {isMobile ? (
+              <Image
+                width={600}
+                height={600}
+                src={selectedImage}
+                alt={data?.product.title}
+                className="h-auto w-full rounded object-cover"
+                style={{ maxHeight: "60vh" }}
+              />
+            ) : (
+              <ReactImageMagnify
+                {...{
+                  smallImage: {
+                    alt: data?.product.title,
+                    isFluidWidth: true,
+                    src: selectedImage,
+                    width: 400,
+                    height: 400,
+                  },
+                  largeImage: {
+                    src: selectedImage,
+                    width: 900,
+                    height: 900,
+                  },
+                  enlargedImageContainerDimensions: {
+                    width: "180%",
+                    height: "100%",
+                  },
+                  enlargedImageContainerStyle: {
+                    background: "#fff",
+                    border: "1px solid #ccc",
+                    borderRadius: "0.5rem",
+                    zIndex: 99,
+                  },
+                  enlargedImagePosition: "beside",
+                  isHintEnabled: true,
+                  hintTextMouse: "Hover to zoom",
+                  lensStyle: {
+                    backgroundColor: "rgba(255,255,255,0.4)",
+                    border: "1px solid #ccc",
+                  },
+                  lensDimensions: {
+                    width: 80,
+                    height: 60,
+                  },
+                }}
+              />
+            )}
             {data?.product.discount && (
               <div className="absolute left-0 top-6 rounded-r-full bg-secondaryBlue px-3 py-2 text-xs text-white shadow-md">
                 {data?.product.discount}
@@ -260,29 +282,35 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
             )}
           </div>
 
-          <div className="mt-4 flex flex-wrap justify-center gap-2 sm:gap-3">
-            {productImages.map((img, idx) => (
+          <div
+            className="scrollbar-thin hide-scrollbar scrollbar-thumb-gray-300 scrollbar-track-gray-100 mx-auto mt-4 flex max-w-[320px] flex-row gap-x-3 overflow-x-auto py-2 sm:max-w-sm md:max-w-md lg:max-w-lg"
+            style={{ scrollSnapType: "x mandatory" }}
+          >
+            {allImages.map((img, idx) => (
               <img
                 key={idx}
                 onClick={() => setSelectedImage(img)}
                 src={img}
-                className={`h-14 w-14 cursor-pointer rounded border object-cover sm:h-16 sm:w-16 md:h-20 md:w-20 ${
+                className={`h-16 w-16 min-w-16 flex-shrink-0 cursor-pointer rounded border object-cover ${
                   selectedImage === img
                     ? "border-primaryBlue ring-2 ring-primaryBlue"
                     : ""
                 }`}
                 alt={`thumb-${idx}`}
-                style={{ transition: "box-shadow 0.2s" }}
+                style={{
+                  transition: "box-shadow 0.2s",
+                  scrollSnapAlign: "start",
+                }}
               />
             ))}
           </div>
         </div>
         {/* Details Section */}
-        <div className="flex-1 flex flex-col justify-center items-center md:justify-start md:items-start">
+        <div className="flex flex-1 flex-col items-center justify-center md:items-start md:justify-start">
           <p className="text-sm uppercase text-[#4B4E55]">
             Brand: {data?.product?.brand?.title}
           </p>
-          <h1 className="mt-2 text-2xl font-semibold text-[#4B4E55]  text-center">
+          <h1 className="mt-2 text-center text-2xl font-semibold text-[#4B4E55]">
             {data?.product?.title}
           </h1>
 
