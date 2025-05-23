@@ -21,6 +21,8 @@ import { toast } from "react-toastify";
 import { Router } from "next/router";
 import { useRouter } from "next/navigation";
 import { FaTrashAlt } from "react-icons/fa";
+import AsyncSelect from "react-select/async";
+import { useSelector } from "react-redux";
 
 const CustomEditor = dynamic(
   () => import("@/app/admin/components/CustomEditor"),
@@ -339,6 +341,22 @@ export default function ProductForm() {
   const [metaImageUploading, setMetaImageUploading] = useState(false);
   const [optionImageUploading, setOptionImageUploading] = useState(false);
   const [currentTab, setCurrentTab] = useState<string>("desc");
+  const [selectedBrand, setSelectedBrand] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
+  const [selectedSubCategory, setSelectedSubCategory] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
+  const [selectedSubSubCategory, setSelectedSubSubCategory] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
 
   // load all categories, sub categories, sub sub categories and brands
   const { data: categoriesData } = useGetCategoriesQuery({});
@@ -349,7 +367,77 @@ export default function ProductForm() {
   const [uploadImages] = useUploadImagesMutation();
   const [createProduct] = useCreateProductMutation();
 
+  const token = useSelector((state: any) => state.auth.token);
+
   const router = useRouter();
+
+  const loadBrandOptions = async (inputValue: string) => {
+    const res = await fetch(
+      `https://api.darkak.com.bd/api/admin/brand/get?search=${inputValue}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    const json = await res.json();
+    return json.data.map((item: any) => ({
+      value: item.id,
+      label: item.title,
+    }));
+  };
+
+  const loadCategoryOptions = async (inputValue: string) => {
+    const res = await fetch(
+      `https://api.darkak.com.bd/api/admin/category/create?search=${inputValue}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    const json = await res.json();
+    return json.data.map((item: any) => ({
+      value: item.id,
+      label: item.title,
+    }));
+  };
+
+  const loadSubCategoryOptions = async (inputValue: string) => {
+    const res = await fetch(
+      `https://api.darkak.com.bd/api/admin/category/sub-category?search=${inputValue}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    const json = await res.json();
+    return json.data.map((item: any) => ({
+      value: item.id,
+      label: item.title,
+    }));
+  };
+
+  const loadSubSubCategoryOptions = async (inputValue: string) => {
+    const res = await fetch(
+      `https://api.darkak.com.bd/api/admin/category/sub-sub-category?search=${inputValue}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    const json = await res.json();
+    return json.data.map((item: any) => ({
+      value: item.id,
+      label: item.title,
+    }));
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -615,80 +703,116 @@ export default function ProductForm() {
             <label className="block text-sm font-medium text-gray-700">
               Category <span className="text-red-500">*</span>
             </label>
-            <select
-              name="categoryId"
-              onChange={handleChange}
-              value={formData.categoryId}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            >
-              <option>Select category</option>
-              {categoriesData &&
-                categoriesData?.data?.map((cat: any) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat?.title}
-                  </option>
-                ))}
-            </select>
+            <AsyncSelect
+              cacheOptions
+              defaultOptions
+              loadOptions={loadCategoryOptions}
+              value={selectedCategory}
+              onChange={(option) => {
+                setSelectedCategory(option);
+                setFormData((prev) => ({
+                  ...prev,
+                  categoryId: option?.value || "",
+                }));
+              }}
+              placeholder="Select Category"
+              isClearable
+              styles={{
+                container: (base) => ({
+                  ...base,
+                  height: "40px",
+                  marginTop: "0.25rem",
+                }),
+                control: (base) => ({ ...base, height: "40px" }),
+              }}
+            />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Sub Category <span className="text-red-500">*</span>
             </label>
-            <select
-              name="subCategoryId"
-              onChange={handleChange}
-              value={formData.subCategoryId}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            >
-              <option>Select Sub Category</option>
-              {subCategoriesData &&
-                subCategoriesData?.data?.map((subCat: any) => (
-                  <option key={subCat.id} value={subCat.id}>
-                    {subCat?.title}
-                  </option>
-                ))}
-            </select>
+            <AsyncSelect
+              cacheOptions
+              defaultOptions
+              loadOptions={loadSubCategoryOptions}
+              value={selectedSubCategory}
+              onChange={(option) => {
+                setSelectedSubCategory(option);
+                setFormData((prev) => ({
+                  ...prev,
+                  subCategoryId: option?.value || "",
+                }));
+              }}
+              placeholder="Select Sub Category"
+              isClearable
+              styles={{
+                container: (base) => ({
+                  ...base,
+                  height: "40px",
+                  marginTop: "0.25rem",
+                }),
+                control: (base) => ({ ...base, height: "40px" }),
+              }}
+            />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Sub Sub Category <span className="text-red-500">*</span>
             </label>
-            <select
-              name="subSubCategoryId"
-              onChange={handleChange}
-              value={formData.subSubCategoryId}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            >
-              <option>Select Sub Sub Category</option>
-              {subSubCategoriesData &&
-                subSubCategoriesData?.data?.map((subSubCat: any) => (
-                  <option key={subSubCat.id} value={subSubCat.id}>
-                    {subSubCat?.title}
-                  </option>
-                ))}
-            </select>
+            <AsyncSelect
+              cacheOptions
+              defaultOptions
+              loadOptions={loadSubSubCategoryOptions}
+              value={selectedSubSubCategory}
+              onChange={(option) => {
+                setSelectedSubSubCategory(option);
+                setFormData((prev) => ({
+                  ...prev,
+                  subSubCategoryId: option?.value || "",
+                }));
+              }}
+              placeholder="Select Sub Sub Category"
+              isClearable
+              styles={{
+                container: (base) => ({
+                  ...base,
+                  height: "40px",
+                  marginTop: "0.25rem",
+                }),
+                control: (base) => ({ ...base, height: "40px" }),
+              }}
+            />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Brand <span className="text-red-500">*</span>
             </label>
-            <select
-              name="brandId"
-              onChange={handleChange}
-              value={formData.brandId}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            >
-              <option>Select Brand</option>
-              {brandsData &&
-                brandsData?.data?.map((brand: any) => (
-                  <option key={brand.id} value={brand.id}>
-                    {brand?.title}
-                  </option>
-                ))}
-            </select>
+            <AsyncSelect
+              cacheOptions
+              defaultOptions
+              loadOptions={loadBrandOptions}
+              value={selectedBrand}
+              onChange={(option) => {
+                setSelectedBrand(option);
+                setFormData((prev) => ({
+                  ...prev,
+                  brandId: option?.value || "",
+                }));
+              }}
+              placeholder="Select Brand"
+              isClearable
+              styles={{
+                container: (base) => ({
+                  ...base,
+                  height: "40px",
+                  marginTop: "0.25rem",
+                }),
+                control: (base) => ({ ...base, height: "40px" }),
+              }}
+            />
           </div>
 
           <div>
