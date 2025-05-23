@@ -347,9 +347,9 @@ const ProductEdit = () => {
   const [currentTab, setCurrentTab] = useState<string>("desc");
 
   // load all categories, sub categories, sub sub categories and brands
-  const { data: categoriesData } = useGetCategoriesQuery();
-  const { data: subCategoriesData } = useGetSubCategoriesQuery();
-  const { data: subSubCategoriesData } = useGetSubSubCategoriesQuery();
+  const { data: categoriesData } = useGetCategoriesQuery({});
+  const { data: subCategoriesData } = useGetSubCategoriesQuery({});
+  const { data: subSubCategoriesData } = useGetSubSubCategoriesQuery({});
   const { data: brandsData } = useGetBrandsQuery({});
   const { data: attributesData } = useGetProductAttributesQuery({});
   const {
@@ -626,7 +626,7 @@ const ProductEdit = () => {
       }).unwrap();
       toast.success("Product updated successfully");
       router.push("/admin/product/product-list");
-    } catch (error:any) {
+    } catch (error: any) {
       console.error(error);
       toast.error(error?.data?.message);
     }
@@ -704,7 +704,7 @@ const ProductEdit = () => {
             >
               <option>Select category</option>
               {categoriesData &&
-                categoriesData?.data?.map((cat) => (
+                categoriesData?.data?.map((cat: any) => (
                   <option key={cat.id} value={cat.id}>
                     {cat?.title}
                   </option>
@@ -724,7 +724,7 @@ const ProductEdit = () => {
             >
               <option>Select Sub Category</option>
               {subCategoriesData &&
-                subCategoriesData?.data?.map((subCat) => (
+                subCategoriesData?.data?.map((subCat: any) => (
                   <option key={subCat.id} value={subCat.id}>
                     {subCat?.title}
                   </option>
@@ -744,7 +744,7 @@ const ProductEdit = () => {
             >
               <option>Select Sub Sub Category</option>
               {subSubCategoriesData &&
-                subSubCategoriesData?.data?.map((subSubCat) => (
+                subSubCategoriesData?.data?.map((subSubCat: any) => (
                   <option key={subSubCat.id} value={subSubCat.id}>
                     {subSubCat?.title}
                   </option>
