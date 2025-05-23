@@ -40,6 +40,21 @@ export const authApi = baseApi.injectEndpoints({
         method: "PUT",
       }),
     }),
+    uploadMultipleImages: builder.mutation<any, FormData>({
+      query: (body) => ({
+        url: `/user/upload-multiple-images`,
+        body: body,
+        method: "POST",
+      }),
+    }),
+    uploadVideos: builder.mutation<any, FormData>({
+      query: (body) => ({
+        url: `/user/upload-video`,
+        body: body,
+        method: "POST",
+      }),
+    }),
+
   }),
 });
 
@@ -47,4 +62,6 @@ export const {
   useUpdateUserMutation,
   useUpdateUserAddressMutation,
   useUpdateUserProfilePictureMutation,
+  useUploadMultipleImagesMutation,
+  useUploadVideosMutation,
 } = authApi;

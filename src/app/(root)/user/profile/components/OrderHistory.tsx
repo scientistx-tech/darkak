@@ -1,48 +1,46 @@
 "use client";
 
 import React, { useState } from "react";
-import { FaTrash } from "react-icons/fa";
 import Image from "next/image";
-
-import product1 from "@/Data/Demo/product-2-1.png";
-import product2 from "@/Data/Demo/product-2-3.png";
-import product3 from "@/Data/Demo/product-2-4.png";
+import { useGetMyOrdersQuery } from "@/redux/services/client/order";
+import { OrderProduct } from "@/types/client/orderTypes";
 
 export default function OrderHistory() {
-  const [orders, setOrders] = useState([
-    {
-      id: 1,
-      image: product1,
-      name: "Product 1",
-      price: "2922.99 TK",
-      orderDate: "April 1, 2024",
-      deliveryStatus: "Delivered",
-    },
-    {
-      id: 2,
-      image: product2,
-      name: "Product 2",
-      price: "4922.99 TK",
-      orderDate: "Mar 28, 2024",
-      deliveryStatus: "Shipped",
-    },
-    {
-      id: 3,
-      image: product3,
-      name: "Product 3",
-      price: "1922.99 TK",
-      orderDate: "April 10, 2024",
-      deliveryStatus: "Pending",
-    },
-  ]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
-  const handleDelete = (id: number) => {
-    setOrders(orders.filter((order) => order.id !== id));
+  const { data, isLoading, isError } = useGetMyOrdersQuery({ page, limit });
+
+  if (isLoading) {
+    return (
+      <div className="text-center py-10 text-lg font-semibold text-primaryBlue">
+        Loading your orders...
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="text-center py-10 text-lg font-semibold text-red-500">
+        Failed to load order history. Please try again later.
+      </div>
+    );
+  }
+
+  const orders = data.data;
+  const totalPages = data.totalPages;
+
+  const handlePrev = () => {
+    if (page > 1) setPage((prev) => prev - 1);
+  };
+
+  const handleNext = () => {
+    if (page < totalPages) setPage((prev) => prev + 1);
   };
 
   return (
     <div className="mx-auto w-full max-w-4xl rounded-3xl border bg-gradient-to-tr from-[#ffffff80] via-[#ecf3ff90] to-[#ffffff80] p-2 shadow-2xl backdrop-blur-md md:p-10">
-      <h2 className="mb-6 md:mb-12 text-center text-2xl md:text-4xl font-semibold text-primaryBlue">
+      <h2 className="mb-6 text-center text-2xl font-semibold text-primaryBlue md:mb-12 md:text-4xl">
         Order History
       </h2>
 
@@ -55,51 +53,99 @@ export default function OrderHistory() {
       </div>
 
       <div className="space-y-6">
-        {orders.map((order) => (
+        {orders.map((order: OrderProduct) => (
           <div
             key={order.id}
             className="grid grid-cols-4 items-center rounded-2xl bg-white/60 p-2 shadow-md backdrop-blur-md md:p-4"
           >
             <div className="flex items-center space-x-4">
               <Image
-                src={order.image}
-                alt={order.name}
+                src={order.product.thumbnail}
+                alt={order.product.title}
                 width={50}
                 height={50}
                 className="rounded-lg object-cover"
               />
-              <span className="hidden font-medium md:block">{order.name}</span>
+              <span className="hidden font-medium md:block">
+                {order.product.title}
+              </span>
             </div>
+
             <div className="flex flex-col">
               <div className="font-medium text-black md:hidden">
-                {order.name}
+                {order.product.title}
               </div>
-              <div className="font-medium text-gray-700">{order.price}</div>
+              <div className="font-medium text-gray-700">
+                ৳ {order.product.price.toFixed(2)}
+              </div>
             </div>
-            <div className="text-gray-500">{order.orderDate}</div>
+
+            <div className="text-gray-500">
+              {new Date(order.order.date).toLocaleDateString("en-BD", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </div>
 
             <div className="flex items-center space-x-3">
               <span
                 className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                  order.deliveryStatus === "Delivered"
+                  order.order.status === "Delivered"
                     ? "bg-green-100 text-green-600"
-                    : order.deliveryStatus === "Shipped"
-                      ? "bg-orange-100 text-orange-600"
-                      : "bg-red-100 text-red-600"
+                    : order.order.status === "Shipped"
+                    ? "bg-orange-100 text-orange-600"
+                    : "bg-red-100 text-red-600"
                 }`}
               >
-                {order.deliveryStatus}
+                {order.order.status}
               </span>
-
-              <button
-                onClick={() => handleDelete(order.id)}
-                className="text-gray-400 hover:text-red-500"
-              >
-                <FaTrash size={16} />
-              </button>
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Pagination */}
+      <div className="mt-8 flex flex-col items-center justify-between gap-4 md:flex-row">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handlePrev}
+            disabled={page === 1}
+            className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span className="text-sm font-medium text-gray-700">
+            Page {page} of {totalPages}
+          </span>
+          <button
+            onClick={handleNext}
+            disabled={page === totalPages}
+            className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+
+        {/* Optional limit selector */}
+        <div className="flex items-center gap-2 text-sm">
+          <label htmlFor="limit" className="text-gray-600">
+            Orders per page:
+          </label>
+          <select
+            id="limit"
+            value={limit}
+            onChange={(e) => {
+              setPage(1);
+              setLimit(Number(e.target.value));
+            }}
+            className="rounded-md border border-gray-300 bg-white px-2 py-1 text-gray-700"
+          >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+          </select>
+        </div>
       </div>
     </div>
   );
