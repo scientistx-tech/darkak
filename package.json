@@ -16,6 +16,7 @@
     "@radix-ui/colors": "^3.0.0",
     "@radix-ui/react-dialog": "^1.1.13",
     "@radix-ui/react-switch": "^1.2.4",
+    "@react-pdf/renderer": "^4.3.0",
     "@reduxjs/toolkit": "^2.7.0",
     "antd": "^5.24.4",
     "apexcharts": "^3.45.2",

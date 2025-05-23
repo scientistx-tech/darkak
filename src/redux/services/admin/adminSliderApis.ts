@@ -1,3 +1,4 @@
+import { get } from "http";
 import baseApi from "../../baseApi";
 
 export const adminApi = baseApi.injectEndpoints({
@@ -10,12 +11,35 @@ export const adminApi = baseApi.injectEndpoints({
     }),
 
     getAllSliders: builder.query({
-      query: () => ({
-        url: "/admin/slider/get",
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/admin/slider/get${queryString}`,
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+      },
+    }),
+
+    getSingleSlider: builder.query({
+      query: (id) => ({
+        url: `/admin/slider/get/${id}`,
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
+      }),
+    }),
+
+    updateSlider: builder.mutation<any, any>({
+      query: ({ id, formData }) => ({
+        url: `/admin/slider/update/${id}`,
+        method: "PUT",
+        body: formData,
       }),
     }),
 
@@ -32,5 +56,7 @@ export const adminApi = baseApi.injectEndpoints({
 export const {
   useDeleteSliderMutation,
   useGetAllSlidersQuery,
+  useGetSingleSliderQuery,
+  useUpdateSliderMutation,
   useUploadFormDataSliderMutation,
 } = adminApi;

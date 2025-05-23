@@ -37,7 +37,11 @@ const Banner: React.FC = () => {
           >
             <BannerCart
               bgColour={bgColour}
-              image={slide.product?.thumbnail || "/images/fallback.jpg"}
+              image={
+                slide.banner
+                  ? slide.banner
+                  : slide.product.thumbnail || "/images/fallback.jpg"
+              }
               position={idx % 2 === 0 ? "left" : "right"}
               title={slide.title || "Deal"}
               description={slide.offer_name || "Don't miss out!"}

@@ -35,33 +35,6 @@ const ThardBanner: React.FC = () => {
     }
   }, [slidersWithoutBanner]);
 
-  // ✅ If no sliders without banner, show static fallback layout
-  if (slidersWithoutBanner.length === 0) {
-    return (
-      <div className="mt-5 w-full md:mt-16 md:space-y-6">
-        <div className="flex w-full flex-col gap-0 md:flex-row md:gap-10">
-          <BannerCart
-            bgColour="#00153B"
-            image="https://res.cloudinary.com/duizghnhr/image/upload/v1747779781/prtselruymh7odbhhtjm.jpg"
-            position="left"
-            title="SUMMER DEALS"
-            description="GET 10% OFF"
-            text="On ASUS LAPTOP"
-            link="/"
-          />
-          <BannerCart
-            bgColour="#323232"
-            image="https://res.cloudinary.com/duizghnhr/image/upload/v1747779781/prtselruymh7odbhhtjm.jpg"
-            position="right"
-            title="HOT DEALS"
-            description="GET 13% OFF"
-            text="On SAMSUNG PHONE"
-            link="/shop"
-          />
-        </div>
-      </div>
-    );
-  }
   const bgColors = [
     "#00153B",
     "#323232",
@@ -87,7 +60,11 @@ const ThardBanner: React.FC = () => {
               <BannerCart
                 key={colIndex}
                 bgColour={bgColour}
-                image={slide.product?.thumbnail || "/images/fallback.jpg"}
+                image={
+                  slide.banner
+                    ? slide.banner
+                    : slide.product.thumbnail || "/images/fallback.jpg"
+                }
                 position={colIndex % 2 === 0 ? "left" : "right"}
                 title={slide.title || "Deal"}
                 description={slide.offer_name || "Don't miss out!"}
