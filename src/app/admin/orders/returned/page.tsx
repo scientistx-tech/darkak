@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   useGetBrandsQuery,
@@ -20,109 +20,48 @@ import { toast } from "react-toastify";
 import * as yup from "yup";
 import Button from "../../components/Button";
 import { CiCirclePlus } from "react-icons/ci";
-
-// Yup schema
-const brandSchema = yup.object().shape({
-  title: yup.string().required("Title is required"),
-});
+import { useGetOrdersQuery } from "@/redux/services/admin/adminOrderApis";
+import { FaEdit, FaEye } from "react-icons/fa";
+import { MdFileDownload } from "react-icons/md";
+import Pagination from "@/components/shared/Pagination";
+import { useRouter } from "next/navigation";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import OrderInvoicePDF from "../[id]/components/OrderInvoicePDF";
+import FilterOrders from "../all/FilterOrders";
 
 const ReturnedOrderList = () => {
-  const { data, isLoading, error, refetch } = useGetBrandsQuery({});
-  const [deleteBrand] = useDeleteBrandMutation();
-  const [updateBrand, { isLoading: isUpdating }] = useUpdateBrandMutation();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState("");
 
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editData, setEditData] = useState<{
-    title: string;
-    icon: File | null;
-  }>({
-    title: "",
-    icon: null,
+  const {
+    data: orderData,
+    isLoading,
+    error,
+    refetch,
+  } = useGetOrdersQuery({
+    page: String(currentPage),
+    search,
+    status: "returned",
   });
 
-  const handleDelete = async (brandId: number) => {
-    try {
-      await deleteBrand(brandId).unwrap();
-      toast.success("Brand deleted successfully!");
-      refetch();
-    } catch (err) {
-      toast.error("Failed to delete brand.");
-    }
-  };
+  console.log("orderData", orderData);
 
-  const handleEdit = (doc: any) => {
-    setEditingId(doc.id);
-    setEditData({ title: doc.title, icon: null });
-  };
+  const router = useRouter();
 
-  const handleUpdate = async (brandId: number) => {
-    try {
-      // Validate using Yup
-      await brandSchema.validate(editData);
-
-      const formData = new FormData();
-      formData.append("title", editData.title);
-      if (editData.icon) {
-        formData.append("icon", editData.icon);
-      }
-
-      await updateBrand({ categoryId: String(brandId), formData }).unwrap();
-      toast.success("Brand updated successfully!");
-      setEditingId(null);
-      refetch();
-    } catch (err: any) {
-      if (err.name === "ValidationError") {
-        toast.error(err.message);
-      } else {
-        toast.error("Failed to update brand.");
-      }
-    }
-  };
+  useEffect(() => {
+    refetch();
+  }, [currentPage, search]);
 
   return (
     <div className="min-h-screen">
       <h2 className="mb-4 flex items-center gap-2 text-xl font-bold">
-        🏠 Returned Order List{" "}
-        <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">12</span>
+        🏠 Returned Orders{" "}
+        <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">
+          {orderData?.total}
+        </span>
       </h2>
 
-      <div className="rounded-xl bg-white p-6 shadow">
-        <h3 className="mb-4 text-lg font-semibold">Filter Order</h3>
-        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3 xl:grid-cols-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium">Order Type</label>
-            <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm">
-              <option>Select from dropdown</option>
-            </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Store</label>
-            <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm">
-              <option>Select from dropdown</option>
-            </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Customer</label>
-            <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm">
-              <option>Select from dropdown</option>
-            </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Data Type</label>
-            <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm">
-              <option>Select from dropdown</option>
-            </select>
-          </div>
-        </div>
-        <div className="flex justify-end gap-3">
-          <button className="rounded bg-gray-100 px-4 py-2 text-gray-700 hover:bg-gray-200">
-            Reset
-          </button>
-          <button className="rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800">
-            Show data
-          </button>
-        </div>
-      </div>
+      <FilterOrders />
 
       <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:shadow-card">
         {/* search box and export button */}
@@ -139,11 +78,15 @@ const ReturnedOrderList = () => {
               />
               Export
             </button> */}
+
             {/* search box */}
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search brand"
+                placeholder="Search order id"
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
                 className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none"
               />
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -171,107 +114,91 @@ const ReturnedOrderList = () => {
           <Table>
             <TableHeader>
               <TableRow className="border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
-                <TableHead className="min-w-[120px] pl-5 sm:pl-6 xl:pl-7.5">
-                  Icon
-                </TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Product Count</TableHead>
-                <TableHead>Edit</TableHead>
-                <TableHead>Delete</TableHead>
+                <TableHead>SL</TableHead>
+                <TableHead>Order ID</TableHead>
+                <TableHead>Order Date</TableHead>
+                <TableHead>Customer Info</TableHead>
+                <TableHead>Store</TableHead>
+                <TableHead>Total Amount</TableHead>
+                <TableHead className="text-center">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading &&
-                Array.from({ length: 5 }).map((_, i) => (
+                Array.from({ length: 8 }).map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell colSpan={5}>
+                    <TableCell colSpan={8}>
                       <Skeleton className="h-8" />
                     </TableCell>
                   </TableRow>
                 ))}
 
-              {!isLoading &&
-                data?.data?.map((doc: any) => (
-                  <TableRow key={doc.id}>
-                    <TableCell className="pl-5 sm:pl-6 xl:pl-7.5">
-                      {editingId === doc.id ? (
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) =>
-                            setEditData({
-                              ...editData,
-                              icon: e.target.files?.[0] || null,
-                            })
-                          }
-                        />
-                      ) : (
-                        <Image
-                          src={doc.icon}
-                          className="aspect-[6/5] w-15 rounded-[5px] object-cover"
-                          width={60}
-                          height={50}
-                          alt={`${doc.title} image`}
-                        />
-                      )}
+              {!isLoading && orderData?.data?.length <= 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={7}
+                    className="py-8 text-center text-red-500"
+                  >
+                    No Data to Show
+                  </TableCell>
+                </TableRow>
+              ) : (
+                orderData?.data?.map((order: any, i: number) => (
+                  <TableRow key={order.id}>
+                    <TableCell>{i + 1}</TableCell>
+                    <TableCell>{order?.orderId}</TableCell>
+                    <TableCell>{order.date}</TableCell>
+                    <TableCell>{order.name}</TableCell>
+                    <TableCell>{order.order_type}</TableCell>
+                    <TableCell>
+                      {order.subTotal + order.deliveryFee}
+
+                      <div className="flex">
+                        {order.paid ? (
+                          <p className="mt-1 rounded border border-teal-600 bg-teal-100 p-0.5 text-xs font-bold text-teal-600">
+                            Paid
+                          </p>
+                        ) : (
+                          <p className="mt-1 rounded border border-rose-600 bg-rose-100 p-0.5 text-xs font-bold text-rose-600">
+                            Unpaid
+                          </p>
+                        )}
+                      </div>
                     </TableCell>
 
-                    <TableCell>
-                      {editingId === doc.id ? (
-                        <input
-                          type="text"
-                          className="w-full rounded-md border px-2 py-1"
-                          value={editData.title}
-                          onChange={(e) =>
-                            setEditData({ ...editData, title: e.target.value })
-                          }
-                        />
-                      ) : (
-                        doc.title
-                      )}
-                    </TableCell>
-
-                    <TableCell>{doc._count.products}</TableCell>
-
-                    <TableCell>
-                      {editingId === doc.id ? (
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={() => handleUpdate(doc.id)}
-                            className="bg-green-600 text-white"
-                          >
-                            {isUpdating ? "plz wait.." : "save"}
-                          </Button>
-                          <Button
-                            onClick={() => setEditingId(null)}
-                            className="bg-gray-500 text-white"
-                          >
-                            Cancel
-                          </Button>
-                        </div>
-                      ) : (
-                        <Button
-                          onClick={() => handleEdit(doc)}
-                          className="bg-blue text-white"
-                        >
-                          Edit
-                        </Button>
-                      )}
-                    </TableCell>
-
-                    <TableCell>
+                    <TableCell className="flex items-center justify-center gap-2">
                       <Button
-                        onClick={() => handleDelete(doc.id)}
-                        className="bg-red-500 text-white"
+                        onClick={() => {
+                          router.push(`/admin/orders/${order.id}`);
+                        }}
+                        className="rounded-full bg-blue-100 p-1 text-base text-blue-700"
                       >
-                        Delete
+                        <FaEye />
                       </Button>
+                      <PDFDownloadLink
+                        document={<OrderInvoicePDF orderDetails={order} />}
+                        fileName={`invoice_order_${order?.id}.pdf`}
+                      >
+                        {({ loading }) => (
+                          <button className="rounded-full bg-teal-100 p-1 text-base text-teal-700 hover:bg-teal-50">
+                            <MdFileDownload />
+                          </button>
+                        )}
+                      </PDFDownloadLink>
                     </TableCell>
                   </TableRow>
-                ))}
+                ))
+              )}
             </TableBody>
           </Table>
         )}
+
+        <Pagination
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          total={orderData?.total}
+          limit={orderData?.limit}
+        />
       </div>
     </div>
   );

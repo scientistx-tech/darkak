@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button, Modal } from "antd";
 import ButtonSelf from "../components/Button";
@@ -19,6 +19,9 @@ import {
 } from "@/redux/services/admin/adminSliderApis";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import ClientLoading from "@/app/(root)/components/ClientLoading";
+import Pagination from "@/components/shared/Pagination";
 
 function SliderTable() {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,13 +31,17 @@ function SliderTable() {
     null,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
+  const router = useRouter();
+
+  // redux hooks
   const {
     data: slidersData,
     isLoading,
     error,
     refetch,
-  } = useGetAllSlidersQuery({});
+  } = useGetAllSlidersQuery({ page: String(currentPage) });
   const [deleteSlider] = useDeleteSliderMutation();
 
   const handleOk = (id: any) => {
@@ -55,6 +62,12 @@ function SliderTable() {
       toast.error("Failed to delete slider.");
     }
   };
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
+  if (isLoading) <ClientLoading></ClientLoading>;
   return (
     <div>
       <div className="">
@@ -76,7 +89,7 @@ function SliderTable() {
                 <TableHead>Type</TableHead>
                 <TableHead>Details</TableHead>
                 <TableHead>Priority</TableHead>
-                <TableHead>Product ID</TableHead>
+                <TableHead className="whitespace-nowrap">Product ID</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -105,9 +118,9 @@ function SliderTable() {
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <ButtonSelf
-                        // onClick={() =>
-                        //   router.push(`/admin/product/edit/${doc.id}`)
-                        // }
+                        onClick={() =>
+                          router.push(`/admin/slider/edit/${slider.id}`)
+                        }
                         className="mr-2 bg-green-50 p-1 text-green-700"
                       >
                         <FaEdit className="" />
@@ -128,6 +141,12 @@ function SliderTable() {
               ))}
             </TableBody>
           </Table>
+
+          <Pagination
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+            totalPages={slidersData?.totalPage}
+          />
         </div>
       </div>
       <Modal
