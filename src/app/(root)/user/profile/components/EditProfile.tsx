@@ -34,7 +34,7 @@ export default function EditProfile({ refetch, data }: any) {
     sub_district: "",
   });
   useEffect(() => {
-    if (data) {
+    if (data.address) {
       const selectedDivision = divisions.find(
         (d) => d.name === data.address.division
       );
