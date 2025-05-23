@@ -19,7 +19,7 @@ const MyReview: React.FC<{ review: PaginatedProducts }> = ({ review }) => {
 
       {reviewedProducts.length === 0 ? (
         <p className="mt-4 text-gray-500">
-          You haven't reviewed any products yet.
+          You haven&apos;t reviewed any products yet.
         </p>
       ) : (
         <div className="mt-6 flex flex-col gap-6">

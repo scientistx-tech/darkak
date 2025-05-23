@@ -116,7 +116,7 @@ export default function ReviewHistory() {
               {product.review && product.review?.length > 0 && (
                 <div className="mt-3 text-sm text-gray-600">
                   <p className="font-medium">Saved Review:</p>
-                  <p className="mt-1 italic">"{product.review[0].message}"</p>
+                  <p className="mt-1 italic">&quot;{product.review[0].message}&quot;</p>
                 </div>
               )}
 
@@ -168,7 +168,7 @@ export default function ReviewHistory() {
                   ))}
                 </div>
                 <p className="mt-2 text-sm italic text-gray-500">
-                  "{review.message}"
+                  &quot;{review.message}&quot;
                 </p>
 
                 {review.attachments.images.length > 0 && (
