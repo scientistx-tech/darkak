@@ -319,17 +319,29 @@ const Header: React.FC = () => {
 
           <div className="relative w-[30%]">
             <div className="hidden justify-center rounded-full bg-white md:flex">
-              <input
-                className="ignore-click-outside w-[75%] text-black rounded-bl-full rounded-tl-full p-1.5 pl-4 pr-3 outline-none"
-                placeholder="Search.."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onFocus={() => {
-                  if (searchTerm.trim() !== "") {
-                    setIsOpen(true);
-                  }
-                }}
-              />
+              <div className="relative w-[75%]">
+                <input
+                  className="ignore-click-outside w-full text-black rounded-bl-full rounded-tl-full p-1.5 pl-4 pr-8 outline-none"
+                  placeholder="Search.."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onFocus={() => {
+                    if (searchTerm.trim() !== "") {
+                      setIsOpen(true);
+                    }
+                  }}
+                />
+
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm("")}
+                    className="font-semibold text-lg absolute top-1/2 right-2 -translate-y-1/2 text-gray-500 hover:text-black"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
               <div className="flex w-[25%] justify-between">
                 <button className="w-[30%] text-black">
                   <MenuFoldOutlined />
@@ -624,7 +636,7 @@ const Header: React.FC = () => {
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute top-24 lg:top-[100px] left-1/2 -translate-x-1/2 z-50 mt-2 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] flex flex-col lg:flex-row bg-white border shadow-lg rounded-lg max-h-[80vh]"
+          className="absolute top-24 lg:top-[100px] left-1/2 -translate-x-1/2 z-50 mt-2 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] flex flex-col lg:flex-row bg-white border shadow-lg rounded-lg h-[80vh]"
         >
           <div className="w-full lg:w-[30%] border-b lg:border-b-0 lg:border-r p-4">
             <h4 className="font-bold text-base mb-2 text-black">Categories</h4>
@@ -632,25 +644,33 @@ const Header: React.FC = () => {
               {categories
                 ?.flatMap((category) =>
                   category.sub_category.flatMap((subCat) =>
-                    subCat.sub_sub_category.filter((subSub) =>
-                      subSub.title.toLowerCase().includes(searchTerm.toLowerCase())
-                    )
+                    subCat.sub_sub_category
+                      .filter((subSub) =>
+                        subSub.title.toLowerCase().includes(searchTerm.toLowerCase())
+                      )
+                      .map((subSub) => ({
+                        categoryId: category.id,
+                        subCategoryId: subCat.id,
+                        subSubCategoryId: subSub.id,
+                        title: subSub.title,
+                      }))
                   )
                 )
-                .map((matchedSubSub) => (
-                  <li key={matchedSubSub.id} className="mb-1 text-black">
-                    <a
+                .map(({ categoryId, subCategoryId, subSubCategoryId, title }) => (
+                  <li key={subSubCategoryId} className="mb-1 text-black">
+                    <Link
+                      href={`/category?categoryId=${categoryId}&subCategoryId=${subCategoryId}&subSubCategoryId=${subSubCategoryId}`}
+                      onClick={() => setIsOpen(false)}
                       className="text-sm hover:text-secondaryBlue"
-                      href={`/category?search=${matchedSubSub.title.toLowerCase()}`}
                     >
-                      {matchedSubSub.title}
-                    </a>
+                      {title}
+                    </Link>
                   </li>
                 ))}
             </ul>
           </div>
 
-          <div className="w-full lg:w-[70%] p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto max-h-[400px]">
+          <div className="w-full lg:w-[70%] p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto max-h-[80vh]">
             {isLoading ? (
               <div className="flex justify-center items-center w-full py-10">
                 <FaSpinner size={40} color="#3b82f6" className="animate-spin text-blue-500 text-3xl" />
