@@ -44,11 +44,9 @@ function Page() {
           <SecondaryBanner />
         </MotionRevealWrapper>
 
-        {user && (
-          <MotionRevealWrapper>
-            <MostVisitedProducts visitorId={user.id} />
-          </MotionRevealWrapper>
-        )}
+        <MotionRevealWrapper>
+          <MostVisitedProducts visitorId={"dfa"} />
+        </MotionRevealWrapper>
 
         <MotionRevealWrapper>
           <BestSelling />
