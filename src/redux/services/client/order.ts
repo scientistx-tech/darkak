@@ -8,7 +8,7 @@ export const clientOrderApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getMyOrders: builder.query<
       OrderProductData,
-      { page: number; limit: number; status?: string }
+      { page?: number; limit?: number; status?: string }
     >({
       query: ({ page, limit }) =>
         `/user/order/get?page=${page}&limit=${limit}&status=${status}`,
@@ -20,9 +20,9 @@ export const clientOrderApi = baseApi.injectEndpoints({
       query: ({ page, limit }) =>
         `/user/review/get?page=${page}&limit=${limit}`,
     }),
-    // getOrderDetails: builder.query<Order, { id: number }>({
-    //   query: ({ id }) => `/user/order/details/${id}`,
-    // }),
+     getOrderDetails: builder.query<Order, number>({
+      query: (id) => `/user/order/details/${id}`,
+    }),
 
     addReviewCreate: builder.mutation<{ message: string }, Review>({
       query: (body) => ({
@@ -37,6 +37,6 @@ export const clientOrderApi = baseApi.injectEndpoints({
 export const {
   useGetMyOrdersQuery,
   useGetMyReviewsQuery,
-  // useGetOrderDetailsQuery,
+  useGetOrderDetailsQuery,
   useAddReviewCreateMutation,
 } = clientOrderApi;
