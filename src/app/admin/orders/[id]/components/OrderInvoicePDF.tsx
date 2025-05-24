@@ -1,5 +1,12 @@
 // components/OrderInvoicePDF.tsx
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+} from "@react-pdf/renderer";
 
 // Helper for formatting currency
 const formatCurrency = (amount: number) => `$${amount?.toFixed(2) || "0.00"}`;
@@ -64,9 +71,11 @@ export default function OrderInvoicePDF({
 }) {
   if (!orderDetails) return null;
 
+  console.log("orderDetails", orderDetails);
+
   const { user, order_items } = orderDetails;
-  const customerName = user?.name;
-  const customerPhone = user?.phone || "";
+  const customerName = orderDetails?.name;
+  const customerPhone = orderDetails?.phone || "";
   const address = `${orderDetails.area}, ${orderDetails.sub_district}, ${orderDetails.district}, ${orderDetails.division}`;
 
   return (
@@ -81,7 +90,7 @@ export default function OrderInvoicePDF({
             </Text>
           </View>
           <View>
-            <Text>Dhaka Bangladesh</Text>
+            <Text>Dhaka,Bangladesh</Text>
           </View>
         </View>
 
@@ -120,7 +129,8 @@ export default function OrderInvoicePDF({
 
         {/* Table Headers */}
         <View style={styles.tableHeader}>
-          <Text style={[{ width: "50%" }, styles.cell]}>ITEM DESCRIPTION</Text>
+          <Text style={[{ width: "15%" }, styles.cell]}>IMAGE</Text>
+          <Text style={[{ width: "35%" }, styles.cell]}>ITEM DESCRIPTION</Text>
           <Text style={[{ width: "10%", textAlign: "center" }, styles.cell]}>
             QTY
           </Text>
@@ -139,7 +149,13 @@ export default function OrderInvoicePDF({
             product.price - (product.price * product.discount) / 100;
           return (
             <View key={i} style={styles.tableRow}>
-              <Text style={[{ width: "50%" }, styles.cell]}>
+              <View style={{ width: "15%", paddingRight: 4 }}>
+                <Image
+                  src={product.thumbnail}
+                  style={{ objectFit: "contain", width: 20, height: 20 }}
+                />
+              </View>
+              <Text style={[{ width: "35%" }, styles.cell]}>
                 {product.title}
               </Text>
               <Text

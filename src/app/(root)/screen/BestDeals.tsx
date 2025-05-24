@@ -5,7 +5,7 @@ import ProductCard from "@/components/shared/ProductCard";
 import Image from "next/image";
 import laptop from "@/Data/Demo/Rectangle 130 (1).png";
 import { motion } from "framer-motion";
-import { useGetTopRatedProductsQuery } from "@/redux/services/client/products";
+import { useGetBestDealProductsQuery } from "@/redux/services/client/products";
 import Link from "next/link";
 
 // Framer Motion variants
@@ -32,11 +32,14 @@ const itemVariants = {
 };
 
 const BestDeals: React.FC = () => {
-  const { data, error, isLoading, refetch } = useGetTopRatedProductsQuery({});
+  const { data, error, isLoading, refetch } = useGetBestDealProductsQuery({});
+  if (data?.data === 0) {
+    return null;
+  }
 
   return (
     <motion.section
-      className="container mx-auto mt-15 px-2"
+      className="container mx-auto mt-0 px-2"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true }}
@@ -79,7 +82,7 @@ const BestDeals: React.FC = () => {
         </motion.div>
 
         {/* PRODUCT CARDS */}
-        {data?.data.slice(0,9).map((product: any) => (
+        {data?.data.slice(0, 9).map((product: any) => (
           <motion.div key={product.id} variants={itemVariants}>
             <ProductCard product={product} />
           </motion.div>

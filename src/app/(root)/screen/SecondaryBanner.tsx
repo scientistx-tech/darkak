@@ -27,7 +27,7 @@ const SecondaryBanner: React.FC = () => {
   // console.log("sorted banner", sortedSliderData);
   // ✅ Else: Show dynamic sliders without banners
   return (
-    <div className="mt-15 flex w-full flex-col gap-4 md:flex-row md:gap-10">
+    <div className="mt-5 flex w-full flex-col gap-4 md:flex-row md:gap-10">
       {sortedSliderData.slice(2, 4).map((slide: any, idx: number) => {
         const bgColour = bgColors[idx % bgColors.length];
         return (

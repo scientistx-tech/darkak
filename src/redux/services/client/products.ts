@@ -13,6 +13,21 @@ export const myCartApi = baseApi.injectEndpoints({
       }),
     }),
 
+    getAllProducts: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/public/filter${queryString}`,
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+      },
+    }),
+
     getNewArivalProducts: builder.query({
       query: (params?: Record<string, string>) => {
         const queryString = params
@@ -27,6 +42,7 @@ export const myCartApi = baseApi.injectEndpoints({
         };
       },
     }),
+
     getBestSellingProducts: builder.query({
       query: (params?: Record<string, string>) => {
         const queryString = params
@@ -41,6 +57,7 @@ export const myCartApi = baseApi.injectEndpoints({
         };
       },
     }),
+
     getMostVisitedProducts: builder.query({
       query: (params?: Record<string, string>) => {
         const queryString = params
@@ -55,6 +72,7 @@ export const myCartApi = baseApi.injectEndpoints({
         };
       },
     }),
+
     getTopRatedProducts: builder.query({
       query: (params?: Record<string, string>) => {
         const queryString = params
@@ -69,13 +87,44 @@ export const myCartApi = baseApi.injectEndpoints({
         };
       },
     }),
+    getBestDealProducts: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/public/best-deal${queryString}`,
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+      },
+    }),
+    getFeatured: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/public/featured${queryString}`,
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+      },
+    }),
   }),
 });
 
 export const {
   useGetSinglePublicProductDetailsQuery,
+  useGetAllProductsQuery,
   useGetNewArivalProductsQuery,
   useGetBestSellingProductsQuery,
   useGetMostVisitedProductsQuery,
   useGetTopRatedProductsQuery,
+  useGetBestDealProductsQuery,
+  useGetFeaturedQuery,
 } = myCartApi;

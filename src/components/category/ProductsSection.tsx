@@ -3,25 +3,55 @@ import ProductCard from "@/components/shared/ProductCard";
 import { Product } from "@/app/(root)/types/ProductType";
 import LeftSidebar from "@/components/category/leftSidebar/LeftSidebar";
 import CategoryFilter from "@/assets/svg/CategoryFilter";
+import { useGetAllProductsQuery } from "@/redux/services/client/products";
 
-// const dummyProducts: Product[] = new Array(7).fill(null).map((_, i) => ({
-//   id: `prod-${i}`,
-//   name: "iPhone 15 Pro Max",
-//   images: [
-//     "/images/dummy/dummy.png",
-//     "/images/dummy/dummy1.png",
-//     "/images/dummy/dummy2.png",
-//   ],
-//   price: 800,
-//   originalPrice: 1000,
-//   storage: "12GB/512GB",
-//   discount: 20,
-//   rating: 4.5,
-//   reviews: 65,
-// }));
-
-const ProductsSection = () => {
+const ProductsSection = ({
+  initialQuery,
+  sortBy,
+}: {
+  initialQuery: Record<string, string>;
+  sortBy: string;
+}) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [sidebarFilters, setSidebarFilters] = useState<any>(() => {
+    // Convert initialQuery values to numbers if possible
+    const parsed = Object.fromEntries(
+      Object.entries(initialQuery || {}).map(([k, v]) => [
+        k,
+        !isNaN(Number(v)) && v !== "" ? Number(v) : v,
+      ]),
+    );
+    return parsed;
+  });
+
+  console.log("Initial Query from productsection:", initialQuery);
+
+  useEffect(() => {
+    if (sortBy) {
+      setSidebarFilters((prevFilters: any) => ({
+        ...prevFilters,
+        sort: sortBy,
+      }));
+    }
+  }, [sortBy]);
+
+  // When initialQuery changes (route changes), update sidebarFilters
+  useEffect(() => {
+    const parsed = Object.fromEntries(
+      Object.entries(initialQuery || {}).map(([k, v]) => [
+        k,
+        !isNaN(Number(v)) && v !== "" ? Number(v) : v,
+      ]),
+    );
+    setSidebarFilters((prev: any) => {
+      const next = { ...parsed };
+      if (prev.sort || sortBy) next.sort = prev.sort || sortBy || "";
+      return next;
+    });
+  }, [initialQuery]);
+
+  const { data, error, isLoading, refetch } =
+    useGetAllProductsQuery(sidebarFilters);
 
   // Lock scroll when sidebar is open
   useEffect(() => {
@@ -41,6 +71,19 @@ const ProductsSection = () => {
     }
   };
 
+  // Handler to receive filter changes from LeftSidebar
+  const handleSidebarFilters = (filters: any) => {
+    setSidebarFilters((prev: any) => {
+      // Merge, but avoid duplicate params (prefer new filters, but keep sort)
+      const merged = { ...prev, ...filters };
+      if (prev.sort || sortBy) merged.sort = prev.sort || sortBy || "";
+      return merged;
+    });
+    // You can use filters to refetch products, update query params, etc.
+    // Example: refetch({ ...filters })
+  };
+
+  console.log("Sidebar Filters:", sidebarFilters);
   return (
     <section className="mt-4 w-full items-start gap-x-7 p-4 md:mt-6 md:p-6 lg:flex lg:p-8 xl:p-10">
       {/* <section className="relative mt-4 md:mt-12 md:p-6 lg:mt-[62px] flex w-full flex-col gap-x-7 p-4 lg:flex-row lg:p-8 xl:p-10"> */}
@@ -57,7 +100,7 @@ const ProductsSection = () => {
 
       {/* Desktop Sidebar */}
       <div className="hidden lg:block lg:w-1/5">
-        <LeftSidebar />
+        <LeftSidebar onFilterChange={handleSidebarFilters} />
       </div>
 
       {/* Mobile Sidebar Drawer with Overlay */}
@@ -87,18 +130,30 @@ const ProductsSection = () => {
               </button>
             </div>
             <div className="h-full overflow-y-auto px-4 pb-20 pt-4">
-              <LeftSidebar />
+              <LeftSidebar onFilterChange={handleSidebarFilters} />
             </div>
           </div>
         </div>
       )}
 
       {/* Product Grid */}
-      {/* <div className="grid w-full gap-7 grid-cols-2 lg:w-4/5 lg:grid-cols-3 xl:grid-cols-4">
-        {dummyProducts.map((product) => (
+      <div className="grid w-full grid-cols-2 gap-4 lg:w-4/5 lg:grid-cols-3 xl:grid-cols-4">
+        {isLoading &&
+          Array.from({ length: 20 }).map((_, i) => (
+            <div
+              key={i}
+              className="animate-pulse rounded-lg bg-gray-100 p-4 shadow-sm"
+            >
+              <div className="mb-3 h-36 w-full rounded bg-gray-200" />
+              <div className="mb-2 h-4 w-3/4 rounded bg-gray-200" />
+              <div className="mb-1 h-3 w-1/2 rounded bg-gray-200" />
+              <div className="h-3 w-1/3 rounded bg-gray-200" />
+            </div>
+          ))}
+        {data?.data?.map((product: any) => (
           <ProductCard key={product.id} product={product} />
         ))}
-      </div> */}
+      </div>
     </section>
   );
 };

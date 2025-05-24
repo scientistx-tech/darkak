@@ -17,7 +17,6 @@ import {
   ShoppingCartOutlined,
   UserOutlined,
   HomeOutlined,
-  ShopOutlined,
   AppstoreOutlined,
   PhoneOutlined,
   InfoCircleOutlined,
@@ -214,10 +213,10 @@ const Header: React.FC = () => {
             animate={{ opacity: 1, height: 40 }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="mx-auto hidden w-full grid-cols-3 items-center overflow-visible bg-primary px-4 text-white md:grid md:px-6"
+            className="mx-auto hidden w-full grid-cols-3 items-center overflow-visible bg-primary px-4 text-white md:grid md:px-6 lg:px-12"
           >
-            <p>Get Ready For Summer Offers</p>
-            <p className="text-center">Use code 2025 and get 10% Off</p>
+            <p>🎉 Eid Mubarak & Grand Opening Celebration! 🎉</p>
+            <p className="text-center">✨ Flat 30% OFF on All Products! ✨</p>
 
             {/* DropDown-menu */}
             <div className="flex w-full items-center justify-end gap-2">
@@ -295,7 +294,7 @@ const Header: React.FC = () => {
         )}
 
         {/* Main Header */}
-        <div className="mx-auto flex h-[65px] w-full items-center justify-between bg-primaryBlue px-4 text-white md:h-[70px] md:px-6">
+        <div className="mx-auto flex h-[65px] w-full items-center justify-between bg-primaryBlue px-4 text-white md:h-[70px] md:px-6 lg:px-12">
           <Link href="/" className="">
             <Image alt="Darkak-Logo" src={logo} height={50} className="" />
           </Link>

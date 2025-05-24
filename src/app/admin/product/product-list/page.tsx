@@ -35,9 +35,9 @@ import {
 } from "@/redux/services/admin/adminCategoryApis";
 import { useRouter } from "next/navigation";
 import { FaBarcode, FaEdit, FaEye, FaTrashAlt } from "react-icons/fa";
-import axios from "axios";
-
-import ResponsivePaginationComponent from "react-responsive-pagination";
+import AsyncSelect from "react-select/async";
+import { useSelector } from "react-redux";
+import Pagination from "@/components/shared/Pagination";
 
 // Yup schema
 const brandSchema = yup.object().shape({
@@ -49,27 +49,52 @@ const ProductList = () => {
   const [queryParams, setQueryParams] = useState({});
   const { data, isLoading, error, refetch } = useGetProductsQuery(queryParams);
 
-  const { data: brandsData } = useGetBrandsQuery({});
+  const [selectedBrand, setSelectedBrand] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
+  const [selectedSubCategory, setSelectedSubCategory] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
+  const [selectedSubSubCategory, setSelectedSubSubCategory] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
 
+  const [searchBrandTerm, setSearchBrandTerm] = useState("");
+
+  const { data: brandsData } = useGetBrandsQuery({ search: searchBrandTerm });
+
+  const [searchCategoryTerm, setSearchCategoryTerm] = useState("");
   const {
     data: categoriesData,
     isLoading: isCategoriesLoading,
     error: categoriesError,
     refetch: refetchCategories,
-  } = useGetCategoriesQuery();
+  } = useGetCategoriesQuery({ search: searchCategoryTerm });
 
+  const [searchSubCategoryTerm, setSearchSubCategoryTerm] = useState("");
   const {
     data: subCategoriesData,
     isLoading: isSubCategoriesLoading,
     error: subCategoriesError,
     refetch: refetchSubCategories,
-  } = useGetSubCategoriesQuery();
+  } = useGetSubCategoriesQuery({ search: searchSubCategoryTerm });
+
+  const [searchSubSubCategoryTerm, setSearchSubSubCategoryTerm] = useState("");
   const {
     data: subSubCategoriesData,
     isLoading: isSubSubCategoriesLoading,
     error: subSubCategoriesError,
     refetch: refetchSubSubCategories,
-  } = useGetSubSubCategoriesQuery();
+  } = useGetSubSubCategoriesQuery({ search: searchSubSubCategoryTerm });
+
+  const token = useSelector((state: any) => state.auth.token);
 
   const [deleteProduct] = useDeleteProductMutation();
   const [updateBrand, { isLoading: isUpdating }] = useUpdateBrandMutation();
@@ -77,6 +102,10 @@ const ProductList = () => {
   const [changeFeatureStatus] = useUpdateFeatureStatusMutation();
   const [changePublishedStatus] = useUpdateDraftStatusMutation();
 
+  const [brandId, setBrandId] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [subCategoryId, setSubCategoryId] = useState("");
+  const [subSubCategoryId, setSubSubCategoryId] = useState("");
   const [selectedProductId, setSelectedProductId] = useState<number | null>(
     null,
   );
@@ -135,34 +164,73 @@ const ProductList = () => {
     }
   };
 
-  // const handleEdit = (doc: any) => {
-  //   setEditingId(doc.id);
-  //   setEditData({ title: doc.title, icon: null });
-  // };
+  const loadBrandOptions = async (inputValue: string) => {
+    const res = await fetch(
+      `https://api.darkak.com.bd/api/admin/brand/get?search=${inputValue}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    const json = await res.json();
+    return json.data.map((item: any) => ({
+      value: item.id,
+      label: item.title,
+    }));
+  };
 
-  // const handleUpdate = async (brandId: number) => {
-  //   try {
-  //     // Validate using Yup
-  //     await brandSchema.validate(editData);
+  const loadCategoryOptions = async (inputValue: string) => {
+    const res = await fetch(
+      `https://api.darkak.com.bd/api/admin/category/create?search=${inputValue}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    const json = await res.json();
+    return json.data.map((item: any) => ({
+      value: item.id,
+      label: item.title,
+    }));
+  };
 
-  //     const formData = new FormData();
-  //     formData.append("title", editData.title);
-  //     if (editData.icon) {
-  //       formData.append("icon", editData.icon);
-  //     }
+  const loadSubCategoryOptions = async (inputValue: string) => {
+    const res = await fetch(
+      `https://api.darkak.com.bd/api/admin/category/sub-category?search=${inputValue}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    const json = await res.json();
+    return json.data.map((item: any) => ({
+      value: item.id,
+      label: item.title,
+    }));
+  };
 
-  //     await updateBrand({ categoryId: String(brandId), formData }).unwrap();
-  //     toast.success("Brand updated successfully!");
-  //     setEditingId(null);
-  //     refetch();
-  //   } catch (err: any) {
-  //     if (err.name === "ValidationError") {
-  //       toast.error(err.message);
-  //     } else {
-  //       toast.error("Failed to update brand.");
-  //     }
-  //   }
-  // };
+  const loadSubSubCategoryOptions = async (inputValue: string) => {
+    const res = await fetch(
+      `https://api.darkak.com.bd/api/admin/category/sub-sub-category?search=${inputValue}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    const json = await res.json();
+    return json.data.map((item: any) => ({
+      value: item.id,
+      label: item.title,
+    }));
+  };
 
   return (
     <div className="min-h-screen">
@@ -175,94 +243,114 @@ const ProductList = () => {
 
       <div className="rounded-xl bg-white p-6 shadow">
         <h3 className="mb-4 text-lg font-semibold">Filter Products</h3>
-        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3 xl:grid-cols-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium">Brand</label>
-            <select
-              value={filters.brandId}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, brandId: e.target.value }))
-              }
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-            >
-              <option>Select from dropdown</option>
-              {brandsData &&
-                brandsData?.data?.map((subCat: any) => (
-                  <option key={subCat.id} value={subCat.id}>
-                    {subCat?.title}
-                  </option>
-                ))}
-            </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Category</label>
-            <select
-              value={filters.categoryId}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, categoryId: e.target.value }))
-              }
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-            >
-              <option>Select from dropdown</option>
-              {categoriesData &&
-                categoriesData?.data?.map((subCat) => (
-                  <option key={subCat.id} value={subCat.id}>
-                    {subCat?.title}
-                  </option>
-                ))}
-            </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">
-              Sub Category
-            </label>
-            <select
-              value={filters.subCategoryId}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, subCategoryId: e.target.value }))
-              }
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-            >
-              <option>Select from dropdown</option>
-              {subCategoriesData &&
-                subCategoriesData?.data?.map((subCat) => (
-                  <option key={subCat.id} value={subCat.id}>
-                    {subCat?.title}
-                  </option>
-                ))}
-            </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">
-              Sub Sub Category
-            </label>
-            <select
-              value={filters.subSubCategoryId}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, subSubCategoryId: e.target.value }))
-              }
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-            >
-              <option>Select from dropdown</option>
-              {subSubCategoriesData &&
-                subSubCategoriesData?.data?.map((subCat) => (
-                  <option key={subCat.id} value={subCat.id}>
-                    {subCat?.title}
-                  </option>
-                ))}
-            </select>
-          </div>
+        <div className="my-3 grid grid-cols-1 gap-4 md:grid-cols-3 xl:grid-cols-4">
+          {/* Brand */}
+          <AsyncSelect
+            cacheOptions
+            defaultOptions
+            loadOptions={loadBrandOptions}
+            value={selectedBrand}
+            onChange={(option) => {
+              setSelectedBrand(option);
+              setBrandId(option?.value || "");
+              setFilters((prev) => ({ ...prev, brandId: option?.value || "" }));
+            }}
+            placeholder="Select Brand"
+            isClearable
+            styles={{
+              container: (base) => ({ ...base, height: "50px" }),
+              control: (base) => ({ ...base, height: "50px" }),
+            }}
+          />
+
+          {/* Category */}
+          <AsyncSelect
+            cacheOptions
+            defaultOptions
+            loadOptions={loadCategoryOptions}
+            value={selectedCategory}
+            onChange={(option) => {
+              setSelectedCategory(option);
+              setCategoryId(option?.value || "");
+              setFilters((prev) => ({
+                ...prev,
+                categoryId: option?.value || "",
+              }));
+            }}
+            placeholder="Select Category"
+            isClearable
+            styles={{
+              container: (base) => ({ ...base, height: "50px" }),
+              control: (base) => ({ ...base, height: "50px" }),
+            }}
+          />
+
+          {/* Subcategory */}
+          <AsyncSelect
+            cacheOptions
+            defaultOptions
+            loadOptions={loadSubCategoryOptions}
+            value={selectedSubCategory}
+            onChange={(option) => {
+              setSelectedSubCategory(option);
+              setSubCategoryId(option?.value || "");
+              setFilters((prev) => ({
+                ...prev,
+                subCategoryId: option?.value || "",
+              }));
+            }}
+            placeholder="Select Sub Category"
+            isClearable
+            styles={{
+              container: (base) => ({ ...base, height: "50px" }),
+              control: (base) => ({ ...base, height: "50px" }),
+            }}
+          />
+
+          {/* Sub-subcategory */}
+          <AsyncSelect
+            cacheOptions
+            defaultOptions
+            loadOptions={loadSubSubCategoryOptions}
+            value={selectedSubSubCategory}
+            onChange={(option) => {
+              setSelectedSubSubCategory(option);
+              setSubSubCategoryId(option?.value || "");
+              setFilters((prev) => ({
+                ...prev,
+                subSubCategoryId: option?.value || "",
+              }));
+            }}
+            placeholder="Select Sub Sub Category"
+            isClearable
+            styles={{
+              container: (base) => ({ ...base, height: "50px" }),
+              control: (base) => ({ ...base, height: "50px" }),
+            }}
+          />
         </div>
+
         <div className="flex justify-end gap-3">
           <button
             className="rounded bg-gray-100 px-4 py-2 text-gray-700 hover:bg-gray-200"
             onClick={() => {
+              setSelectedBrand(null);
+              setSelectedCategory(null);
+              setSelectedSubCategory(null);
+              setSelectedSubSubCategory(null);
+
+              setBrandId("");
+              setCategoryId("");
+              setSubCategoryId("");
+              setSubSubCategoryId("");
+
               setFilters({
                 brandId: "",
                 categoryId: "",
                 subCategoryId: "",
                 subSubCategoryId: "",
               });
+
               setQueryParams({});
             }}
           >
@@ -589,25 +677,11 @@ const ProductList = () => {
             </TableBody>
           </Table>
         )}
-        {data?.totalPage > 1 && (
-          <div className="mt-6 flex justify-center gap-2">
-            {Array.from({ length: data.totalPage }, (_, i) => i + 1).map(
-              (page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`rounded px-4 py-2 text-sm font-medium ${
-                    currentPage === page
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                  }`}
-                >
-                  {page}
-                </button>
-              ),
-            )}
-          </div>
-        )}
+        <Pagination
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          totalPages={data?.totalPage || 0}
+        />
       </div>
       {/* <div className="pb-4 pt-4">
           <ResponsivePaginationComponent

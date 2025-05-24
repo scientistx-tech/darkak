@@ -145,7 +145,21 @@ const AllOrderList = () => {
                     <TableCell>{i + 1}</TableCell>
                     <TableCell>{order?.orderId}</TableCell>
                     <TableCell>{order.date}</TableCell>
-                    <TableCell>{order.name}</TableCell>
+                    <TableCell className="flex items-start">
+                      <div className="flex flex-col gap-2">
+                        <p>{order.name}</p>
+                        <div>
+                          <Image
+                            width={20}
+                            height={20}
+                            src="/images/icon/icon_phone.png"
+                            alt="phone"
+                            className="mr-2 inline-block"
+                          />
+                          {order.phone}
+                        </div>
+                      </div>
+                    </TableCell>
                     <TableCell>{order.order_type}</TableCell>
                     <TableCell>
                       {order.subTotal + order.deliveryFee}

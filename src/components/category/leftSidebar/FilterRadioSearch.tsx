@@ -37,7 +37,9 @@ const FilterRadioSearch: React.FC<FilterRadioSearchProps> = ({
   );
 
   return (
-    <div className={`rounded-md bg-blue-100 px-4 ${open ? 'pb-8' : 'pb-2'} pt-4 shadow-md`}>
+    <div
+      className={`rounded-md bg-blue-100 px-4 ${open ? "pb-8" : "pb-2"} pt-4 shadow-md`}
+    >
       {/* Header */}
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-blue-900">{title}</h2>
@@ -64,7 +66,7 @@ const FilterRadioSearch: React.FC<FilterRadioSearchProps> = ({
             className="mb-3 w-full rounded-full border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
           />
           {/* Radio Options */}
-          <div className="max-h-48 space-y-3 overflow-y-auto">
+          <div className="hide-scrollbar max-h-48 space-y-3 overflow-y-auto">
             {filteredOptions.map((option) => (
               <label
                 key={option.value}

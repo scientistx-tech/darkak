@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import ProductCard from "@/components/shared/ProductCard";
-import { useGetNewArivalProductsQuery } from "@/redux/services/client/products";
+import { useGetFeaturedQuery } from "@/redux/services/client/products";
 import Link from "next/link";
 
 // Framer motion variants
@@ -20,8 +20,10 @@ const itemVariants = {
 };
 
 const RecommendedProducts: React.FC = () => {
-  const { data, error, isLoading, refetch } = useGetNewArivalProductsQuery({});
-
+  const { data, error, isLoading, refetch } = useGetFeaturedQuery({});
+  if (data?.data?.length === 0) {
+    return null;
+  }
   return (
     <motion.section
       className="mt-15"
@@ -31,7 +33,7 @@ const RecommendedProducts: React.FC = () => {
     >
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-2xl font-bold text-primaryDarkBlue">
-          RECOMMENDED PRODUCTS
+          FEATURED PRODUCTS
         </h2>
         <Link href="/category" className="">
           <span className="cursor-pointer text-2xl">→</span>

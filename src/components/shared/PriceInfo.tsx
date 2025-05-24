@@ -20,8 +20,6 @@ const PriceInfo = ({ product, setIsOpen }: { product: Product; setIsOpen?: (open
 
   const user = useSelector((state: RootState) => state.auth.user);
 
-  // console.log("user", user);
-
   const dispatch = useDispatch<AppDispatch>();
   let discountPrice = price;
 
