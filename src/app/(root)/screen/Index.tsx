@@ -2,9 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import img1 from "@/Data/Demo/Product-banner-1.jpg";
-import img2 from "@/Data/Demo/Product-banner-2.jpg";
-import img3 from "@/Data/Demo/Product-banner-3.webp";
 import { useGetPublicSlidersQuery } from "@/redux/services/client/sliderApis";
 import ClientLoading from "../components/ClientLoading";
 import Link from "next/link";
@@ -49,69 +46,15 @@ const Slider: React.FC = () => {
   if (isLoading) return <ClientLoading></ClientLoading>;
 
   return (
-    <div className="w-full overflow-hidden bg-[#E6EFFF] font-montserrat">
-      <div className="flex flex-col items-center gap-8 px-6 py-12 md:h-[calc(100vh-150px)] md:flex-row md:justify-between md:px-16">
-        {/* mobile screen */}
-        <div className="flex-1 md:hidden">
-          {current?.banner ? (
-            <Image
-              src={current.banner}
-              alt={`Slide ${index}`}
-              className="h-[200px] w-full rounded-xl object-contain md:h-[400px]"
-              width={400}
-              height={200}
-              priority
-            />
-          ) : (
-            <div className="flex h-[200px] items-center justify-center text-gray-500 md:h-[400px]">
-              No image
-            </div>
-          )}
-        </div>
+    <div className="w-full overflow-hidden bg-primaryBlue text-white">
+      <div className="w-full md:h-[calc(100vh-150px)]">
+        <div className="w-full h-[2px] bg-primary"/>
 
-        {/* Left Content */}
-        <div className="flex-1 text-center md:text-left">
-          <h4 className="text-sm font-semibold uppercase tracking-wider text-black">
-            {current?.offer_name}
-          </h4>
-          <h1 className="mt-4 text-4xl font-medium text-gray-800 md:h-[100px] md:text-5xl">
-            {current?.title}
-          </h1>
-          <p className="text-lg text-gray-700 md:mt-4">{current?.details}</p>
-          <div className="h-5 md:h-10 w-full" />
-          <Link
-            href={`/product/${current?.product?.slug || ""}`}
-            className="mt-5 rounded-full bg-[#003084] px-6 py-3 font-semibold text-white transition hover:bg-blue-600 md:mt-6"
-          >
-            Explore More
-          </Link>
+      <div className="flex flex-col items-center gap-8 px-6 py-12 md:flex-row md:justify-between md:px-16 ">
 
-          <p className="absolute left-[20%] mt-[62px] hidden font-montserrat text-[150px] text-white md:block">
-            {" "}
-            {index + 1}
-          </p>
-        </div>
-
-        {/* Right Image */}
-        <div className="hidden flex-1 md:block">
-          {current?.banner ? (
-            <Image
-              src={current.banner}
-              alt={`Slide ${index}`}
-              className="h-[200px] w-full rounded-xl object-contain md:h-[400px]"
-              width={400}
-              height={200}
-              priority
-            />
-          ) : (
-            <div className="flex h-[200px] items-center justify-center text-gray-500 md:h-[400px]">
-              No image
-            </div>
-          )}
-        </div>
+      </div>
       </div>
 
-      {/* Dots */}
       <div className="flex justify-center pb-6 md:mt-4">
         {finalSlides?.map((_: any, i: number) => (
           <button
