@@ -87,6 +87,34 @@ export const myCartApi = baseApi.injectEndpoints({
         };
       },
     }),
+    getBestDealProducts: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/public/best-deal${queryString}`,
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+      },
+    }),
+    getFeatured: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/public/featured${queryString}`,
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+      },
+    }),
   }),
 });
 
@@ -97,4 +125,6 @@ export const {
   useGetBestSellingProductsQuery,
   useGetMostVisitedProductsQuery,
   useGetTopRatedProductsQuery,
+  useGetBestDealProductsQuery,
+  useGetFeaturedQuery,
 } = myCartApi;
