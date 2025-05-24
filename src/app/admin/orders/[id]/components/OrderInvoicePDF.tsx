@@ -1,15 +1,9 @@
 // components/OrderInvoicePDF.tsx
-import {
-  Document,
-  Page,
-  Text,
-  View,
-  StyleSheet,
-  Image,
-} from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import Image from "next/image";
 
 // Helper for formatting currency
-const formatCurrency = (amount: number) => `$${amount?.toFixed(2) || "0.00"}`;
+const formatCurrency = (amount: number) => `Tk ${amount?.toFixed(2) || "0.00"}`;
 
 // Styles
 const styles = StyleSheet.create({
@@ -90,7 +84,7 @@ export default function OrderInvoicePDF({
             </Text>
           </View>
           <View>
-            <Text>Dhaka,Bangladesh</Text>
+            <Text>Dhaka Bangladesh</Text>
           </View>
         </View>
 
@@ -138,6 +132,9 @@ export default function OrderInvoicePDF({
             UNIT PRICE
           </Text>
           <Text style={[{ width: "20%", textAlign: "right" }, styles.cell]}>
+            Discount
+          </Text>
+          <Text style={[{ width: "20%", textAlign: "right" }, styles.cell]}>
             TOTAL
           </Text>
         </View>
@@ -152,11 +149,14 @@ export default function OrderInvoicePDF({
               <View style={{ width: "15%", paddingRight: 4 }}>
                 <Image
                   src={product.thumbnail}
-                  style={{ objectFit: "contain", width: 20, height: 20 }}
+                  style={{ width: 40, height: 40, objectFit: "contain" }}
+                  width={40}
+                  height={40}
+                  alt="Product Image"
                 />
               </View>
               <Text style={[{ width: "35%" }, styles.cell]}>
-                {product.title}
+                {`${product.title} - Code: ${product.code}`}
               </Text>
               <Text
                 style={[{ width: "10%", textAlign: "center" }, styles.cell]}
@@ -164,7 +164,10 @@ export default function OrderInvoicePDF({
                 {quantity}
               </Text>
               <Text style={[{ width: "20%", textAlign: "right" }, styles.cell]}>
-                {formatCurrency(discountedPrice)}
+                {product.price}
+              </Text>
+              <Text style={[{ width: "20%", textAlign: "right" }, styles.cell]}>
+                {product.discount}
               </Text>
               <Text style={[{ width: "20%", textAlign: "right" }, styles.cell]}>
                 {formatCurrency(discountedPrice * quantity)}

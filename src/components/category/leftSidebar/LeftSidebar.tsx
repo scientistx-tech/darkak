@@ -7,6 +7,7 @@ import FilterRadioSearch from "@/components/category/leftSidebar/FilterRadioSear
 import { IoIosArrowDown } from "react-icons/io";
 import { useGetProductCategoriesQuery } from "@/redux/services/client/categories";
 import { useGetBrandsPublicQuery } from "@/redux/services/client/brands";
+import { useRouter } from "next/navigation";
 
 const availabilityOptions = [
   { value: "in_stock", label: "In stock" },
@@ -77,6 +78,8 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
   const [showAllBrands, setShowAllBrands] = useState(false);
   // Only one brand can be selected
   const [selectedBrand, setSelectedBrand] = useState<string>("");
+  // Store the selected brand title
+  const [selectedBrandTitle, setSelectedBrandTitle] = useState<string>("");
 
   // --- Price filter state ---
   const [lowPrice, setLowPrice] = useState("");
@@ -86,35 +89,10 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
   const { data: categoriesData } = useGetProductCategoriesQuery();
   const { data: brandsData } = useGetBrandsPublicQuery({ search: brandSearch });
 
+  const router = useRouter();
+
   // Ref for auto-scroll to top of sidebar on filter change
   const sidebarRef = React.useRef<HTMLDivElement>(null);
-
-  // Helper: scroll to top of sidebar with margin (cross-browser, reliable)
-  const scrollToSidebarWithOffset = () => {
-    if (sidebarRef.current) {
-      const rect = sidebarRef.current.getBoundingClientRect();
-      const scrollTop =
-        window.pageYOffset || document.documentElement.scrollTop;
-      const offset = 60; // px, adjust as needed for your header height
-      const top = rect.top + scrollTop - offset;
-      window.scrollTo({ top, behavior: "smooth" });
-    }
-  };
-
-  // Scroll to top of sidebar when any filter changes, with margin
-  useEffect(() => {
-    scrollToSidebarWithOffset();
-  }, [
-    selectedCategory,
-    selectedSubCategory,
-    selectedSubSubCategory,
-    selectedBrand,
-    availability,
-    warranty,
-    region,
-    lowPrice,
-    highPrice,
-  ]);
 
   const handleOpenClose = () => {
     setOpen((pre) => !pre);
@@ -162,6 +140,7 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
                   onSelect(cat.id);
                   if (onSelectSub) onSelectSub.set("");
                   if (onSelectSubSub) onSelectSubSub.set("");
+                  router.push(`/category?categoryId=${cat.title}`);
                 }}
               >
                 {cat.title}
@@ -202,6 +181,9 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
                             if (onSelect) onSelect(cat.id); // select parent cat
                             onSelectSub && onSelectSub.set(sub.id);
                             if (onSelectSubSub) onSelectSubSub.set("");
+                            router.push(
+                              `/category?categoryId=${cat.title}&subCategoryId=${sub.title}`,
+                            );
                           }}
                         >
                           {sub.title}
@@ -246,6 +228,9 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
                                     if (onSelectSub) onSelectSub.set(sub.id); // select parent subcat
                                     onSelectSubSub &&
                                       onSelectSubSub.set(subsub.id);
+                                    router.push(
+                                      `/category?categoryId=${cat.title}&subCategoryId=${sub.title}&subSubCategoryId=${subsub.title}`,
+                                    );
                                   }}
                                 >
                                   {subsub.title}
@@ -274,18 +259,21 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
     ? filteredBrands
     : filteredBrands.slice(0, 10);
 
-  const handleBrandCheck = (id: string) => {
-    setSelectedBrand(id === selectedBrand ? "" : id);
+  const handleBrandCheck = (id: string, title: string) => {
+    if (selectedBrand === id) {
+      setSelectedBrand("");
+      setSelectedBrandTitle("");
+    } else {
+      setSelectedBrand(id);
+      setSelectedBrandTitle(title);
+    }
   };
 
   // --- Filter state aggregation for parent ---
   useEffect(() => {
-    // Compose all filter values into a single object
+    // Compose all filter values into a single object (exclude categoryId, subCategoryId, subSubCategoryId)
     const queryParams = {
-      categoryId: selectedCategory,
-      subCategoryId: selectedSubCategory,
-      subSubCategoryId: selectedSubSubCategory,
-      brandId: selectedBrand,
+      brand: selectedBrandTitle, // Use title instead of id
       availability,
       warranty,
       region,
@@ -313,10 +301,9 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
       props.onFilterChange(filteredParams);
     }
   }, [
-    selectedCategory,
-    selectedSubCategory,
-    selectedSubSubCategory,
+    // Remove category dependencies
     selectedBrand,
+    selectedBrandTitle,
     availability,
     warranty,
     region,
@@ -409,6 +396,7 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
           {visibleBrands.length === 0 && (
             <div className="py-2 text-sm text-gray-400">No brands found</div>
           )}
+          {/* Brand filter UI */}
           {visibleBrands.map((brand: any) => (
             <label
               key={brand.id}
@@ -418,7 +406,7 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
                 type="radio"
                 name="brand-filter"
                 checked={selectedBrand === brand.id}
-                onChange={() => handleBrandCheck(brand.id)}
+                onChange={() => handleBrandCheck(brand.id, brand.title)}
                 className="accent-blue-600"
               />
               {/* Brand logo if available */}
