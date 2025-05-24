@@ -81,7 +81,7 @@ export default function Test() {
                   <Link
                     href={{
                       pathname: "/category",
-                      query: { categoryId: Number(cat.id) }, // Only categoryId, do not include subCategoryId or subSubCategoryId
+                      query: { categoryId: cat.title }, // Only categoryId, do not include subCategoryId or subSubCategoryId
                     }}
                     className="flex w-full items-center gap-2"
                   >
@@ -134,8 +134,8 @@ export default function Test() {
                           href={{
                             pathname: "/category",
                             query: {
-                              categoryId: Number(selectedMainCategory.id),
-                              subCategoryId: Number(sub.id),
+                              categoryId: selectedMainCategory.title,
+                              subCategoryId: sub.title,
                             },
                           }}
                           className="w-full"
@@ -175,9 +175,9 @@ export default function Test() {
                         href={{
                           pathname: "/category",
                           query: {
-                            categoryId: Number(parentCategory?.id),
-                            subCategoryId: Number(selectedSubCategory.id),
-                            subSubCategoryId: Number(item.id),
+                            categoryId: parentCategory?.title,
+                            subCategoryId: selectedSubCategory?.title,
+                            subSubCategoryId: item.title,
                           },
                         }}
                         className="block rounded px-3 py-2 transition-all duration-200 hover:bg-secondaryBlue"

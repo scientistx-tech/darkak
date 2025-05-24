@@ -47,7 +47,7 @@ export default function Categories() {
             key={index}
             name={category.title}
             icon={category.icon}
-            href={`/category?categoryId=${category.id}`}
+            href={`/category?categoryId=${category.title}`}
           />
         ))}
       </motion.div>

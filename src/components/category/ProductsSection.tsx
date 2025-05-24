@@ -4,13 +4,20 @@ import { Product } from "@/app/(root)/types/ProductType";
 import LeftSidebar from "@/components/category/leftSidebar/LeftSidebar";
 import CategoryFilter from "@/assets/svg/CategoryFilter";
 import { useGetAllProductsQuery } from "@/redux/services/client/products";
+import Pagination from "../shared/Pagination";
 
 const ProductsSection = ({
+  currentPage,
+  setTotalPages,
   initialQuery,
   sortBy,
+  searchValue,
 }: {
+  currentPage: number;
+  setTotalPages: (total: number) => void;
   initialQuery: Record<string, string>;
   sortBy: string;
+  searchValue: string;
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [sidebarFilters, setSidebarFilters] = useState<any>(() => {
@@ -31,9 +38,10 @@ const ProductsSection = ({
       setSidebarFilters((prevFilters: any) => ({
         ...prevFilters,
         sort: sortBy,
+        search: searchValue || "", // Add search value if provided
       }));
     }
-  }, [sortBy]);
+  }, [sortBy, searchValue]);
 
   // When initialQuery changes (route changes), update sidebarFilters
   useEffect(() => {
@@ -48,10 +56,24 @@ const ProductsSection = ({
       if (prev.sort || sortBy) next.sort = prev.sort || sortBy || "";
       return next;
     });
-  }, [initialQuery]);
+  }, [initialQuery, sortBy]); // Add sortBy to the dependency array
 
-  const { data, error, isLoading, refetch } =
-    useGetAllProductsQuery(sidebarFilters);
+  // Add currentPage to sidebarFilters before calling useGetAllProductsQuery
+  const filtersWithPageAndLimit = {
+    ...sidebarFilters,
+    page: currentPage,
+    limit: 16,
+  };
+
+  const { data, error, isLoading, refetch } = useGetAllProductsQuery(
+    filtersWithPageAndLimit,
+  );
+
+  useEffect(() => {
+    if (data?.totalPage) {
+      setTotalPages(data.totalPage);
+    }
+  }, [data, setTotalPages]);
 
   // Lock scroll when sidebar is open
   useEffect(() => {
@@ -79,11 +101,8 @@ const ProductsSection = ({
       if (prev.sort || sortBy) merged.sort = prev.sort || sortBy || "";
       return merged;
     });
-    // You can use filters to refetch products, update query params, etc.
-    // Example: refetch({ ...filters })
   };
 
-  console.log("Sidebar Filters:", sidebarFilters);
   return (
     <section className="mt-4 w-full items-start gap-x-7 p-4 md:mt-6 md:p-6 lg:flex lg:p-8 xl:p-10">
       {/* <section className="relative mt-4 md:mt-12 md:p-6 lg:mt-[62px] flex w-full flex-col gap-x-7 p-4 lg:flex-row lg:p-8 xl:p-10"> */}
@@ -137,6 +156,7 @@ const ProductsSection = ({
       )}
 
       {/* Product Grid */}
+
       <div className="grid w-full grid-cols-2 gap-4 lg:w-4/5 lg:grid-cols-3 xl:grid-cols-4">
         {isLoading &&
           Array.from({ length: 20 }).map((_, i) => (
@@ -150,6 +170,44 @@ const ProductsSection = ({
               <div className="h-3 w-1/3 rounded bg-gray-200" />
             </div>
           ))}
+        {!isLoading && (!data?.data || data.data.length === 0) && (
+          <div className="col-span-full flex flex-col items-center justify-center py-16">
+            <svg
+              width="64"
+              height="64"
+              fill="none"
+              viewBox="0 0 64 64"
+              className="mb-4 text-blue-400"
+            >
+              <circle cx="32" cy="32" r="32" fill="#e0e7ef" />
+              <path
+                d="M20 40c0-4.418 7.163-8 16-8s16 3.582 16 8"
+                stroke="#60a5fa"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <ellipse
+                cx="36"
+                cy="28"
+                rx="8"
+                ry="10"
+                fill="#fff"
+                stroke="#60a5fa"
+                strokeWidth="2"
+              />
+              <circle cx="36" cy="28" r="3" fill="#60a5fa" />
+            </svg>
+            <h3 className="mb-2 text-xl font-bold text-blue-700">
+              No Products Found
+            </h3>
+            <p className="mb-1 text-gray-500">
+              We couldn&rsquo;t find any products matching your filters.
+            </p>
+            <p className="text-sm text-gray-400">
+              Try adjusting your filters or search for something else.
+            </p>
+          </div>
+        )}
         {data?.data?.map((product: any) => (
           <ProductCard key={product.id} product={product} />
         ))}

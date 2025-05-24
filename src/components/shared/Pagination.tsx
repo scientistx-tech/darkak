@@ -1,6 +1,7 @@
 // components/Pagination.tsx
 "use client";
 import React from "react";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 interface PaginationProps {
   currentPage: number;
@@ -9,6 +10,7 @@ interface PaginationProps {
   total?: number;
   limit?: number;
   totalPages?: number;
+  align?: "left" | "center" | "right";
 }
 
 const Pagination: React.FC<PaginationProps> = ({
@@ -17,6 +19,7 @@ const Pagination: React.FC<PaginationProps> = ({
   total,
   limit,
   totalPages: totalPagesProp,
+  align = "right",
 }) => {
   const totalPages =
     totalPagesProp ?? (total && limit ? Math.ceil(total / limit) : 0);
@@ -54,31 +57,39 @@ const Pagination: React.FC<PaginationProps> = ({
     return pages;
   };
 
+  // Determine alignment class
+  let justifyClass = "justify-end";
+  if (align === "center") justifyClass = "justify-center";
+  else if (align === "left") justifyClass = "justify-start";
+
   return (
-    <div className="mt-6 flex flex-wrap justify-end gap-2">
+    <div className={`mt-6 flex flex-wrap ${justifyClass} gap-2`}>
       {currentPage > 1 && (
         <button
           onClick={() => onPageChange(currentPage - 1)}
-          className="rounded bg-gray-200 px-4 py-2 text-sm font-medium hover:bg-gray-300"
+          className="flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-100 to-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 shadow transition-all duration-200 hover:from-blue-200 hover:to-blue-300 hover:text-blue-900 active:scale-95"
+          aria-label="Previous page"
         >
-          Prev
+          <FaChevronLeft className="text-base" />
+          <span className="hidden sm:inline">Prev</span>
         </button>
       )}
 
       {getPageNumbers().map((page, idx) =>
         page === "dots" ? (
-          <span key={`dots-${idx}`} className="px-2 text-gray-500">
+          <span key={`dots-${idx}`} className="select-none px-2 text-gray-400">
             ...
           </span>
         ) : (
           <button
             key={page}
             onClick={() => onPageChange(page)}
-            className={`rounded px-4 py-2 text-sm font-medium ${
+            className={`rounded-full px-4 py-2 text-sm font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
               currentPage === page
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-            }`}
+                ? "scale-105 bg-gradient-to-r from-blue-500 to-blue-700 text-white ring-2 ring-blue-300"
+                : "bg-white text-blue-700 hover:bg-blue-100 hover:text-blue-900"
+            } `}
+            aria-current={currentPage === page ? "page" : undefined}
           >
             {page}
           </button>
@@ -88,9 +99,11 @@ const Pagination: React.FC<PaginationProps> = ({
       {currentPage < totalPages && (
         <button
           onClick={() => onPageChange(currentPage + 1)}
-          className="rounded bg-gray-200 px-4 py-2 text-sm font-medium hover:bg-gray-300"
+          className="flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-100 to-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 shadow transition-all duration-200 hover:from-blue-200 hover:to-blue-300 hover:text-blue-900 active:scale-95"
+          aria-label="Next page"
         >
-          Next
+          <span className="hidden sm:inline">Next</span>
+          <FaChevronRight className="text-base" />
         </button>
       )}
     </div>
