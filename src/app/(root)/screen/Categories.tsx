@@ -13,7 +13,10 @@ export default function Categories() {
   } = useGetProductCategoriesQuery("");
 
   if (isLoading) return <p className="text-center">Loading categories...</p>;
-  if (error) return <p className="text-center text-red-500">Failed to load categories.</p>;
+  if (error)
+    return (
+      <p className="text-center text-red-500">Failed to load categories.</p>
+    );
 
   return (
     <div className="flex w-full flex-col items-center justify-center md:mt-10">
@@ -21,7 +24,7 @@ export default function Categories() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="mt-4 mb-5 text-3xl font-medium text-gray-800 md:text-5xl"
+        className="mb-5 mt-4 text-3xl font-medium text-gray-800 md:text-5xl"
       >
         Shop by Categories
       </motion.h1>
@@ -37,14 +40,14 @@ export default function Categories() {
             },
           },
         }}
-        className="mt-8 grid grid-cols-4 gap-3 md:gap-6 px-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7"
+        className="mt-8 grid grid-cols-4 gap-3 px-4 md:grid-cols-4 md:gap-6 lg:grid-cols-5 xl:grid-cols-7"
       >
         {categories?.map((category: any, index: number) => (
           <CategoriesComponent
             key={index}
             name={category.title}
             icon={category.icon}
-            href={`/category/${category.slug}`}
+            href={`/category?categoryId=${category.id}`}
           />
         ))}
       </motion.div>
@@ -58,7 +61,11 @@ interface CategoriesProps {
   href: string;
 }
 
-const CategoriesComponent: React.FC<CategoriesProps> = ({ name, icon, href }) => {
+const CategoriesComponent: React.FC<CategoriesProps> = ({
+  name,
+  icon,
+  href,
+}) => {
   return (
     <motion.div
       variants={{
@@ -74,7 +81,7 @@ const CategoriesComponent: React.FC<CategoriesProps> = ({ name, icon, href }) =>
         <motion.div
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          className="flex h-[60px] w-[60px] px-3 items-center justify-center rounded-full bg-white transition-all duration-300 hover:scale-105 group-hover:shadow-lg md:h-[120px] md:w-[120px]"
+          className="flex h-[60px] w-[60px] items-center justify-center rounded-full bg-white px-3 transition-all duration-300 hover:scale-105 group-hover:shadow-lg md:h-[120px] md:w-[120px]"
         >
           <Image
             src={icon}
@@ -87,7 +94,7 @@ const CategoriesComponent: React.FC<CategoriesProps> = ({ name, icon, href }) =>
 
         <motion.p
           whileHover={{ color: "#00aaef" }}
-          className="h-[50px] md:h-[60px] mt-3 md:mt-5 text-center text-base md:text-xl font-semibold text-gray-700"
+          className="mt-3 h-[50px] text-center text-base font-semibold text-gray-700 md:mt-5 md:h-[60px] md:text-xl"
         >
           {name}
         </motion.p>

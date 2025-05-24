@@ -154,7 +154,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
       id: Math.floor(Math.random() * 100000), // Random ID, replace if needed
       userId: user?.id,
       productId: product.id,
-      quantity: quantity,
+      quantity: 1,
       date: new Date().toISOString(),
       cart_items: [],
       product: {
@@ -209,7 +209,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
     try {
       const result = await addToCart({
         productId: data?.product?.id,
-        quantity: quantity,
+        quantity: 1,
         optionIds,
       }).unwrap();
       dispatch(setCart(Math.random()));
@@ -330,9 +330,9 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
             )}
             <span className="">
               {data?.product?.stock > 0 ? (
-                <div className="flex items-center gap-2 rounded bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue shadow-1">
+                <div className="flex items-center gap-2 rounded bg-secondaryBlue px-4 py-2 text-sm text-primaryBlue shadow-1">
                   <p>In Stock</p>
-                  <p>{`(${data?.product?.stock} items)`}</p>
+                  <p>{`${data?.product?.stock} items`}</p>
                 </div>
               ) : (
                 <p className="rounded bg-red-100 px-4 py-2 text-sm text-red shadow-1">
@@ -418,19 +418,13 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 className="bg-secondaryBlue px-4 py-1 text-white transition-all duration-300 hover:bg-primaryBlue"
-                disabled={quantity <= 1}
-                aria-label="Decrease quantity"
               >
                 -
               </button>
               <span className="px-4">{quantity}</span>
               <button
-                onClick={() =>
-                  setQuantity(Math.min(quantity + 1, data?.product?.stock || 1))
-                }
+                onClick={() => setQuantity(quantity + 1)}
                 className="bg-secondaryBlue px-4 py-1 text-white transition-all duration-300 hover:bg-primaryBlue"
-                disabled={quantity >= (data?.product?.stock || 1)}
-                aria-label="Increase quantity"
               >
                 +
               </button>

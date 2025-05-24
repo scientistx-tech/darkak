@@ -78,7 +78,13 @@ export default function Test() {
                       : "hover:bg-secondaryBlue"
                   }`}
                 >
-                  <Link href="/category" className="flex w-full items-center gap-2">
+                  <Link
+                    href={{
+                      pathname: "/category",
+                      query: { categoryId: Number(cat.id) }, // Only categoryId, do not include subCategoryId or subSubCategoryId
+                    }}
+                    className="flex w-full items-center gap-2"
+                  >
                     <Image
                       src={cat.icon}
                       alt={cat.title}
@@ -124,7 +130,16 @@ export default function Test() {
                             : "hover:bg-secondaryBlue"
                         }`}
                       >
-                        <Link href="/category" className="w-full">
+                        <Link
+                          href={{
+                            pathname: "/category",
+                            query: {
+                              categoryId: Number(selectedMainCategory.id),
+                              subCategoryId: Number(sub.id),
+                            },
+                          }}
+                          className="w-full"
+                        >
                           {sub.title}
                         </Link>
                         {sub.sub_sub_category && <FaAngleRight />}
@@ -142,6 +157,9 @@ export default function Test() {
 
             if (!selectedSubCategory?.sub_sub_category?.length) return null;
 
+            const parentCategory = categories?.find(
+              (c) => c.title === hoveredMain,
+            );
             return (
               <div
                 className="absolute left-[400px] z-50 min-w-[200px] bg-primaryBlue p-4 text-white shadow-lg"
@@ -154,7 +172,14 @@ export default function Test() {
                   : selectedSubCategory.sub_sub_category.map((item) => (
                       <Link
                         key={item.title}
-                        href="/category"
+                        href={{
+                          pathname: "/category",
+                          query: {
+                            categoryId: Number(parentCategory?.id),
+                            subCategoryId: Number(selectedSubCategory.id),
+                            subSubCategoryId: Number(item.id),
+                          },
+                        }}
                         className="block rounded px-3 py-2 transition-all duration-200 hover:bg-secondaryBlue"
                       >
                         {item.title}
