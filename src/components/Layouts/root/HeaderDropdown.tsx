@@ -59,7 +59,7 @@ export default function Test() {
       {isDropdownOpen && (
         <div className="absolute left-[-50px] top-full z-50 flex bg-transparent">
           {/* Main Categories */}
-          <div className="mt-4 flex min-w-[200px] flex-col rounded bg-primaryBlue p-4 text-white shadow-lg">
+          <div className="mt-4 flex min-w-[200px] flex-col rounded bg-primaryBlue p-4 text-white shadow-lg border border-primary">
             {isLoading ? (
               [...Array(5)].map((_, i) => <div key={i} className={shimmer} />)
             ) : error ? (
@@ -110,7 +110,7 @@ export default function Test() {
 
             return (
               <div
-                className="absolute left-[200px] z-50 min-w-[200px] bg-primaryBlue p-4 text-white shadow-lg"
+                className="absolute left-[200px] z-50 min-w-[200px] bg-primaryBlue p-4 text-white shadow-lg  border border-primary"
                 style={{ top: subCategoryTop }}
               >
                 {isLoading
@@ -162,7 +162,7 @@ export default function Test() {
             );
             return (
               <div
-                className="absolute left-[400px] z-50 min-w-[200px] bg-primaryBlue p-4 text-white shadow-lg"
+                className="absolute left-[400px] z-50 min-w-[200px] bg-primaryBlue p-4 text-white shadow-lg  border border-primary"
                 style={{ top: subCategoryTop }}
               >
                 {isLoading
