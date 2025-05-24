@@ -40,7 +40,7 @@ export default function Categories() {
             },
           },
         }}
-        className="mt-8 grid grid-cols-4 gap-3 px-4 md:grid-cols-4 md:gap-6 lg:grid-cols-5 xl:grid-cols-7"
+        className="mt-8 grid grid-cols-4 gap-3 px-4 md:grid-cols-4 md:gap-6 lg:grid-cols-5 xl:grid-cols-7 2xl:grid-cols-8"
       >
         {categories?.map((category: any, index: number) => (
           <CategoriesComponent
@@ -94,7 +94,7 @@ const CategoriesComponent: React.FC<CategoriesProps> = ({
 
         <motion.p
           whileHover={{ color: "#00aaef" }}
-          className="mt-3 h-[50px] text-center text-base font-semibold text-gray-700 md:mt-5 md:h-[60px] md:text-xl"
+          className="mt-3 h-[70px] text-center text-base font-semibold group-hover:text-primary md:mt-5 md:h-[60px] md:text-xl"
         >
           {name}
         </motion.p>

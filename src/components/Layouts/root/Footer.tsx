@@ -3,7 +3,12 @@ import Link from "next/link";
 import React, { useMemo, useRef } from "react";
 import { notification } from "antd";
 
-import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaWhatsapp,
+  FaYoutube,
+} from "react-icons/fa";
 
 import img1 from "@/Data/Img/app_store_badge.svg";
 import img2 from "@/Data/Img/google_play_badge.svg";
@@ -268,7 +273,7 @@ function Footer() {
 
               <div className="mb-[80px] mt-3 flex gap-4 md:mb-0">
                 <a
-                  href="https://facebook.com"
+                  href="https://www.facebook.com/darkakmart"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-primaryDarkBlue text-lg text-white transition-all duration-500 ease-in-out hover:bg-primary"
@@ -277,7 +282,7 @@ function Footer() {
                 </a>
 
                 <a
-                  href="https://instagram.com"
+                  href="https://www.instagram.com/darkakmart"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-primaryDarkBlue text-xl text-white transition-all duration-500 ease-in-out hover:bg-primary"
@@ -286,7 +291,16 @@ function Footer() {
                 </a>
 
                 <a
-                  href="https://wa.me/01915665089"
+                  href="https://www.youtube.com/@DarKakMart"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-primaryDarkBlue text-xl text-white transition-all duration-500 ease-in-out hover:bg-primary"
+                >
+                  <FaYoutube />
+                </a>
+
+                <a
+                  href="https://api.whatsapp.com/send?phone=8801915665089&text=hello%F0%9F%98%87"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-primaryDarkBlue text-xl text-white transition-all duration-500 ease-in-out hover:bg-primary"

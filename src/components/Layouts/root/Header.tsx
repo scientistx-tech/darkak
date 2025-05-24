@@ -536,8 +536,12 @@ const Header: React.FC = () => {
                 className="flex items-center gap-3 hover:text-primary"
               >
                 <AppstoreOutlined />
-                Category
+                <div className="w-full flex items-center justify-between">
+                  <span >Category</span> 
+                  <DownOutlined />
+                </div>
               </Link>
+              
               <Link
                 href="/contact-us"
                 onClick={onClose}
