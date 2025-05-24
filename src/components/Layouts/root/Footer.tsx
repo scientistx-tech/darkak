@@ -14,6 +14,10 @@ import img1 from "@/Data/Img/app_store_badge.svg";
 import img2 from "@/Data/Img/google_play_badge.svg";
 import imgBg from "@/Data/Img/Rectangle 136.jpeg";
 import Image from "next/image";
+import { AppDispatch, RootState } from "@/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { clearUser } from "@/redux/slices/authSlice";
+import { auth } from "@/utils/firebase";
 
 function Footer() {
   const [api, contextHolder] = notification.useNotification();
@@ -53,6 +57,13 @@ function Footer() {
       console.log(email);
       if (inputRef.current) inputRef.current.value = "";
     }
+  };
+  const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  const handleLogOut = () => {
+    dispatch(clearUser());
+    auth.signOut();
   };
 
   return (
@@ -241,12 +252,23 @@ function Footer() {
                 Get 10% Discount on first LOGIN
               </p>
 
-              <Link
-                href="/auth/signup"
-                className="mt-5 rounded-full border-[2px] border-primary bg-primary px-4 py-1 text-xl font-medium text-white transition-all duration-500 ease-in-out hover:bg-transparent hover:text-primary md:py-2"
-              >
-                Register now
-              </Link>
+              {user ? (
+                <button
+                  onClick={handleLogOut}
+                  className="mt-5 rounded-full border-[2px] border-primary bg-primary px-4 py-1 text-xl font-medium text-white transition-all duration-500 ease-in-out hover:bg-transparent hover:text-primary md:py-2"
+                >
+                  Log Out
+                </button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Link
+                    href="/auth/signup"
+                    className="mt-5 rounded-full border-[2px] border-primary bg-primary px-4 py-1 text-xl font-medium text-white transition-all duration-500 ease-in-out hover:bg-transparent hover:text-primary md:py-2"
+                  >
+                    Register now
+                  </Link>
+                </div>
+              )}
 
               <p className="mt-5 text-xl text-[#BBD4FF] md:mt-8">Contact</p>
 
@@ -317,7 +339,3 @@ function Footer() {
 }
 
 export default Footer;
-
-// <p className="">
-//           &copy; {new Date().getFullYear()} - DARKAK, All rights are reserved.
-//         </p>
