@@ -154,7 +154,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
       id: Math.floor(Math.random() * 100000), // Random ID, replace if needed
       userId: user?.id,
       productId: product.id,
-      quantity: 1,
+      quantity: quantity,
       date: new Date().toISOString(),
       cart_items: [],
       product: {
@@ -209,7 +209,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
     try {
       const result = await addToCart({
         productId: data?.product?.id,
-        quantity: 1,
+        quantity: quantity,
         optionIds,
       }).unwrap();
       dispatch(setCart(Math.random()));
@@ -330,9 +330,9 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
             )}
             <span className="">
               {data?.product?.stock > 0 ? (
-                <div className="flex items-center gap-2 rounded bg-secondaryBlue px-4 py-2 text-sm text-primaryBlue shadow-1">
+                <div className="flex items-center gap-2 rounded bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue shadow-1">
                   <p>In Stock</p>
-                  <p>{`${data?.product?.stock} items`}</p>
+                  <p>{`(${data?.product?.stock} items)`}</p>
                 </div>
               ) : (
                 <p className="rounded bg-red-100 px-4 py-2 text-sm text-red shadow-1">
@@ -418,13 +418,19 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 className="bg-secondaryBlue px-4 py-1 text-white transition-all duration-300 hover:bg-primaryBlue"
+                disabled={quantity <= 1}
+                aria-label="Decrease quantity"
               >
                 -
               </button>
               <span className="px-4">{quantity}</span>
               <button
-                onClick={() => setQuantity(quantity + 1)}
+                onClick={() =>
+                  setQuantity(Math.min(quantity + 1, data?.product?.stock || 1))
+                }
                 className="bg-secondaryBlue px-4 py-1 text-white transition-all duration-300 hover:bg-primaryBlue"
+                disabled={quantity >= (data?.product?.stock || 1)}
+                aria-label="Increase quantity"
               >
                 +
               </button>
@@ -433,36 +439,48 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
           <DeliveryDetails
             deliveryInfo={data?.product?.delivery_info}
           ></DeliveryDetails>
-          {/* Buttons */}
-          <div className="mt-6 flex items-center gap-4">
-            <button
-              className="rounded-full border-2 bg-primaryBlue px-8 py-2 text-white transition-all duration-300 hover:border-primaryBlue hover:bg-secondaryWhite hover:text-primaryDarkBlue"
-              onClick={() => {
-                if (data?.product?.stock > 0) {
-                  handleBuyNow();
-                } else {
-                  toast.info("Product is out of stock");
-                }
-              }}
-            >
-              BUY NOW
-            </button>
+          {data?.product?.stock > 0 ? (
+            <div className="mt-6 flex items-center gap-4">
+              <button
+                className="rounded-full border-2 bg-primaryBlue px-8 py-2 text-white transition-all duration-300 hover:border-primaryBlue hover:bg-secondaryWhite hover:text-primaryDarkBlue"
+                onClick={() => {
+                  if (data?.product?.stock > 0) {
+                    handleBuyNow();
+                  } else {
+                    toast.info("Product is out of stock");
+                  }
+                }}
+              >
+                BUY NOW
+              </button>
 
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="rounded-full border-2 border-primaryBlue px-8 py-2 text-primaryDarkBlue"
-              onClick={(e) => {
-                if (data?.product?.stock > 0) {
-                  handleAddToCart(e);
-                } else {
-                  toast.info("Product is out of stock");
-                }
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="rounded-full border-2 border-primaryBlue px-8 py-2 text-primaryDarkBlue"
+                onClick={(e) => {
+                  if (data?.product?.stock > 0) {
+                    handleAddToCart(e);
+                  } else {
+                    toast.info("Product is out of stock");
+                  }
+                }}
+              >
+                ADD TO CART
+              </motion.button>
+            </div>
+          ) : (
+            <button
+              className="mt-6 rounded-full border-2 bg-rose-600 px-8 py-2 text-white transition-all duration-300 hover:border-rose-600 hover:bg-rose-50 hover:text-primaryDarkBlue"
+              onClick={() => {
+                handleBuyNow();
               }}
             >
-              ADD TO CART
-            </motion.button>
-          </div>
+              Pre Order
+            </button>
+          )}
+
+          {/* Buttons */}
         </div>
       </div>
     </div>

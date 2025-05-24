@@ -1,6 +1,12 @@
 // components/OrderInvoicePDF.tsx
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
-import Image from "next/image";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+} from "@react-pdf/renderer";
 
 // Helper for formatting currency
 const formatCurrency = (amount: number) => `Tk ${amount?.toFixed(2) || "0.00"}`;
@@ -84,7 +90,7 @@ export default function OrderInvoicePDF({
             </Text>
           </View>
           <View>
-            <Text>Dhaka Bangladesh</Text>
+            <Text>Darkak</Text>
           </View>
         </View>
 
@@ -125,6 +131,7 @@ export default function OrderInvoicePDF({
         <View style={styles.tableHeader}>
           <Text style={[{ width: "15%" }, styles.cell]}>IMAGE</Text>
           <Text style={[{ width: "35%" }, styles.cell]}>ITEM DESCRIPTION</Text>
+          <Text style={[{ width: "35%" }, styles.cell]}>ITEM CODE</Text>
           <Text style={[{ width: "10%", textAlign: "center" }, styles.cell]}>
             QTY
           </Text>
@@ -150,13 +157,13 @@ export default function OrderInvoicePDF({
                 <Image
                   src={product.thumbnail}
                   style={{ width: 40, height: 40, objectFit: "contain" }}
-                  width={40}
-                  height={40}
-                  alt="Product Image"
                 />
               </View>
+              <Text style={[{ width: "35%", paddingRight: 4 }, styles.cell]}>
+                {product.title}
+              </Text>
               <Text style={[{ width: "35%" }, styles.cell]}>
-                {`${product.title} - Code: ${product.code}`}
+                {product.code}
               </Text>
               <Text
                 style={[{ width: "10%", textAlign: "center" }, styles.cell]}
