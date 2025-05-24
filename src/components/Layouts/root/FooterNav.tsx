@@ -27,7 +27,7 @@ const FooterNav: React.FC = () => {
       </Link>
 
       <Link
-        href="/shop"
+        href="/category"
         className="flex flex-col items-center transition-all duration-300"
       >
         <FaShoppingBag
@@ -37,7 +37,7 @@ const FooterNav: React.FC = () => {
       </Link>
 
       <Link
-        href="/product"
+        href="/category"
         className="flex flex-col items-center transition-all duration-300"
       >
         <FaBox
