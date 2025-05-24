@@ -69,7 +69,7 @@ const EasyCheckout: React.FC = () => {
       setPhone(user?.phone);
       setAddress(user?.address);
     }
-  }, []);
+  }, [user]);
 
   console.log("user", user);
 
