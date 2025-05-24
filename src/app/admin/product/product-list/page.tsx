@@ -37,6 +37,7 @@ import { useRouter } from "next/navigation";
 import { FaBarcode, FaEdit, FaEye, FaTrashAlt } from "react-icons/fa";
 import AsyncSelect from "react-select/async";
 import { useSelector } from "react-redux";
+import Pagination from "@/components/shared/Pagination";
 
 // Yup schema
 const brandSchema = yup.object().shape({
@@ -676,25 +677,11 @@ const ProductList = () => {
             </TableBody>
           </Table>
         )}
-        {data?.totalPage > 1 && (
-          <div className="mt-6 flex justify-center gap-2">
-            {Array.from({ length: data.totalPage }, (_, i) => i + 1).map(
-              (page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`rounded px-4 py-2 text-sm font-medium ${
-                    currentPage === page
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                  }`}
-                >
-                  {page}
-                </button>
-              ),
-            )}
-          </div>
-        )}
+        <Pagination
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          totalPages={data?.totalPage || 0}
+        />
       </div>
       {/* <div className="pb-4 pt-4">
           <ResponsivePaginationComponent
