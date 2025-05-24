@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { Rating } from "react-simple-star-rating";
 
-const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
+const PriceInfo = ({ product, setIsOpen }: { product: Product; setIsOpen?: (open: boolean) => void }) => {
   const router = useRouter();
   const [addToCart, { isLoading }] = useAddToCartMutation();
   const hasDiscount = !!product?.discount && Number(product.discount) > 0;
@@ -20,7 +20,7 @@ const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
 
   const user = useSelector((state: RootState) => state.auth.user);
 
-  console.log("user", user);
+  // console.log("user", user);
 
   const dispatch = useDispatch<AppDispatch>();
   let discountPrice = price;
@@ -106,6 +106,7 @@ const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
     <div
       onClick={() => {
         router.push(`/product/${product.slug}`);
+        if (setIsOpen) setIsOpen(false);
       }}
       className="group cursor-pointer"
     >

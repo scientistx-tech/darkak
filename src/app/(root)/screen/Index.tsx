@@ -40,7 +40,7 @@ const Slider: React.FC = () => {
     refetch,
   } = useGetPublicSlidersQuery({ type: "slider" });
 
-  console.log(sliderData, "slider data");
+  // console.log(sliderData, "slider data");
 
   const finalSlides = sliderData?.length > 0 ? sliderData : [];
 

@@ -8,9 +8,10 @@ import RightIcons from "./RightIcons";
 
 interface ProductCardProps {
   product: Product;
+  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
   const [hovered, setHovered] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
 
@@ -96,17 +97,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <div
             key={i}
             onClick={() => setActiveImage(i)}
-            className={`h-2 w-4 cursor-pointer rounded-full transition-all duration-300 hover:bg-secondaryBlue ${
-              i === activeImage
+            className={`h-2 w-4 cursor-pointer rounded-full transition-all duration-300 hover:bg-secondaryBlue ${i === activeImage
                 ? "w-8 bg-secondaryBlue"
                 : "border-[1px] border-secondaryLiteBlue bg-secondaryWhite"
-            }`}
+              }`}
           />
         ))}
       </div>
 
       {/* Price and Info */}
-      <PriceInfo product={product} />
+      <PriceInfo product={product} setIsOpen={setIsOpen} />
     </div>
   );
 };

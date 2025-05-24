@@ -71,7 +71,7 @@ const EasyCheckout: React.FC = () => {
     }
   }, []);
 
-  console.log("user", user);
+  // console.log("user", user);
 
   const { data, isLoading, isError, refetch } = useGetMyCartQuery();
   const [createOrder] = useOrderSingleProductMutation();
