@@ -59,7 +59,7 @@ export default function Test() {
       {isDropdownOpen && (
         <div className="absolute left-[-50px] top-full z-50 flex bg-transparent">
           {/* Main Categories */}
-          <div className="mt-4 flex min-w-[200px] flex-col rounded bg-primaryBlue p-4 text-white shadow-lg border border-primary">
+          <div className="mt-4 flex min-w-[300px] flex-col rounded bg-primaryBlue p-4 text-white shadow-lg border border-primary">
             {isLoading ? (
               [...Array(5)].map((_, i) => <div key={i} className={shimmer} />)
             ) : error ? (
@@ -83,7 +83,7 @@ export default function Test() {
                       pathname: "/category",
                       query: { categoryId: cat.title }, // Only categoryId, do not include subCategoryId or subSubCategoryId
                     }}
-                    className="flex w-full items-center gap-2"
+                    className="flex w-full items-center gap-2 "
                   >
                     <Image
                       src={cat.icon}
@@ -92,7 +92,7 @@ export default function Test() {
                       height={28}
                       className="rounded-md"
                     />
-                    {cat.title}
+                    <span className="line-clamp-1">{cat.title}</span>
                   </Link>
                   <FaAngleRight />
                 </div>
@@ -110,7 +110,7 @@ export default function Test() {
 
             return (
               <div
-                className="absolute left-[200px] z-50 min-w-[200px] bg-primaryBlue p-4 text-white shadow-lg  border border-primary"
+                className="absolute left-[300px] z-50 min-w-[250px] bg-primaryBlue p-4 text-white shadow-lg  border border-primary"
                 style={{ top: subCategoryTop }}
               >
                 {isLoading
@@ -162,7 +162,7 @@ export default function Test() {
             );
             return (
               <div
-                className="absolute left-[400px] z-50 min-w-[200px] bg-primaryBlue p-4 text-white shadow-lg  border border-primary"
+                className="absolute left-[550px] z-50 min-w-[250px] bg-primaryBlue p-4 text-white shadow-lg  border border-primary"
                 style={{ top: subCategoryTop }}
               >
                 {isLoading
