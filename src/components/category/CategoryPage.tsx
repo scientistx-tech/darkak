@@ -6,8 +6,13 @@ import SortBy from "@/components/category/SortBy";
 import ProductsSection from "@/components/category/ProductsSection";
 import Pagination from "@/components/category/Pagination";
 
-export default function CategoryPage() {
+export default function CategoryPage({
+  initialQuery,
+}: {
+  initialQuery: Record<string, string>;
+}) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState("newer");
   const totalItems = 701;
   const itemsPerPage = 20;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -17,12 +22,13 @@ export default function CategoryPage() {
     // Fetch data for the new page here
     console.log("Page changed to:", newPage);
   };
+
   return (
     <div>
-      <Hero />
+      {/* <Hero /> */}
       <Brands />
-      <SortBy />
-      <ProductsSection />
+      <SortBy setSortBy={setSortBy} />
+      <ProductsSection initialQuery={initialQuery} sortBy={sortBy} />
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}

@@ -20,8 +20,6 @@ const PriceInfo: React.FC<{ product: Product }> = ({ product }) => {
 
   const user = useSelector((state: RootState) => state.auth.user);
 
-  console.log("user", user);
-
   const dispatch = useDispatch<AppDispatch>();
   let discountPrice = price;
 

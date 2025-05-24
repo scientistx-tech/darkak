@@ -2,7 +2,7 @@
 	<style>
 		.s0 { fill: #000000 } 
 		.s1 { fill: #a6a6a6 } 
-		.s2 { fill: #ffffff;stroke: #ffffff;stroke-miterlimit:10;stroke-width: .4 } 
+		.s2 { fill: #ffffff;stroke: #ffffff;stroke-miterlimit:10;strokeWidth: .4 } 
 		.s3 { fill: #ffffff } 
 		.s4 { fill: #ea4335 } 
 		.s5 { fill: #fbbc04 } 
