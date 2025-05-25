@@ -18,9 +18,7 @@ interface MostVisitedProductsProps {
 const MostVisitedProducts: React.FC<MostVisitedProductsProps> = ({
   visitorId,
 }) => {
-  const { data, error, isLoading, refetch } = useGetMostVisitedProductsQuery({
-    visitorId,
-  });
+  const { data, error, isLoading, refetch } = useGetMostVisitedProductsQuery("visitorId=sff");
   const [screen, setScreen] = useState("md");
 
   useEffect(() => {
@@ -54,7 +52,7 @@ const MostVisitedProducts: React.FC<MostVisitedProductsProps> = ({
             <h2 className="text-2xl font-semibold text-primaryDarkBlue">
               MOST VISITED
             </h2>
-            <Link href="/category" className="">
+            <Link href="/more/most-visited" className="">
               <span className="cursor-pointer text-2xl">→</span>
             </Link>
           </div>
