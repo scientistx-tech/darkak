@@ -4,13 +4,11 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import { AppDispatch, RootState } from "@/redux/store";
 import { setLocalStorage } from "@/utils/localStorage";
 import InputField from "../signup/components/InputField";
 import SocialButton from "../signup/components/SocialButton";
-import SVG from "@/Data/Img/LoginPage.svg";
 import { useEmailLoginMutation } from "@/redux/services/authApis";
 import { toast } from "react-toastify";
 import { setUser } from "@/redux/slices/authSlice";
@@ -53,12 +51,8 @@ const LoginPage: React.FC = () => {
   if (user) return null;
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#E6EFFF] px-4">
-      <Image
-        alt="img"
-        src={SVG}
-        className="absolute -top-7 left-[12.5%] hidden h-[200px] w-[200px] opacity-45 md:block"
-      />
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-primaryBlue px-4">
+    
 
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 10 }}
@@ -110,13 +104,13 @@ const LoginPage: React.FC = () => {
         <button
           onClick={handleLogin}
           disabled={isLoading}
-          className="w-full rounded-lg bg-[#003084] py-2 font-semibold text-white transition hover:bg-[#00153B] disabled:opacity-50"
+          className="w-full rounded-lg bg-primaryBlue py-2 font-semibold text-white transition hover:bg-primary disabled:opacity-50"
         >
           {isLoading ? "Logging in..." : "Login"}
         </button>
 
         <div className="mt-4 text-center text-sm text-gray-600">
-          Don’t have an account?
+          Don&apos;t have an account?
           <Link
             href="/auth/signup"
             className="ml-1 text-[#5694FF] underline hover:text-[#003084]"
@@ -140,11 +134,7 @@ const LoginPage: React.FC = () => {
         </div>
       </motion.div>
 
-      <Image
-        alt="img"
-        src={SVG}
-        className="absolute -bottom-7 right-[12.5%] hidden h-[200px] w-[200px] opacity-45 md:block"
-      />
+      
     </div>
   );
 };

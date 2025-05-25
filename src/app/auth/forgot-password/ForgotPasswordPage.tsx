@@ -51,12 +51,8 @@ const ForgotPasswordPage: React.FC = () => {
 
   if (id && code)
     return (
-      <div className="flex h-screen items-center justify-center bg-[#E6EFFF]">
-        <Image
-          alt="img"
-          src={SVG}
-          className="absolute left-[12.5%] top-4 hidden h-[200px] w-[200px] opacity-45 md:block"
-        />
+      <div className="flex h-screen items-center justify-center bg-primaryBlue">
+       
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -68,20 +64,12 @@ const ForgotPasswordPage: React.FC = () => {
           </div>
         </motion.div>
 
-        <Image
-          alt="img"
-          src={SVG}
-          className="absolute bottom-4 right-[12.5%] hidden h-[200px] w-[200px] opacity-45 md:block"
-        />
+       
       </div>
     );
   return (
-    <div className="flex h-screen items-center justify-center bg-[#E6EFFF]">
-      <Image
-        alt="img"
-        src={SVG}
-        className="absolute left-[12.5%] top-4 hidden h-[200px] w-[200px] opacity-45 md:block"
-      />
+    <div className="flex h-screen items-center justify-center bg-primaryBlue">
+    
 
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 10 }}
@@ -151,11 +139,7 @@ const ForgotPasswordPage: React.FC = () => {
         </div>
       </motion.div>
 
-      <Image
-        alt="img"
-        src={SVG}
-        className="absolute bottom-4 right-[12.5%] hidden h-[200px] w-[200px] opacity-45 md:block"
-      />
+      
     </div>
   );
 };
