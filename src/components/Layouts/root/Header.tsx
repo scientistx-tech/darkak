@@ -729,59 +729,6 @@ const Header: React.FC = () => {
           )}
         </div>
       )}
-
-      {/* {isOpen && (
-        <div
-          ref={dropdownRef}
-          className="absolute top-24 lg:top-[100px] left-1/2 -translate-x-1/2 z-50 mt-2 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] flex flex-col lg:flex-row bg-white border shadow-lg rounded-lg h-[80vh]"
-        >
-          <div className="w-full lg:w-[30%] border-b lg:border-b-0 lg:border-r p-4">
-            <h4 className="font-bold text-base mb-2 text-black">Categories</h4>
-            <ul>
-              {categories
-                ?.flatMap((category) =>
-                  category.sub_category.flatMap((subCat) =>
-                    subCat.sub_sub_category
-                      .filter((subSub) =>
-                        subSub.title.toLowerCase().includes(searchTerm.toLowerCase())
-                      )
-                      .map((subSub) => ({
-                        categoryId: category.id,
-                        subCategoryId: subCat.id,
-                        subSubCategoryId: subSub.id,
-                        title: subSub.title,
-                      }))
-                  )
-                )
-                .map(({ categoryId, subCategoryId, subSubCategoryId, title }) => (
-                  <li key={subSubCategoryId} className="mb-1 text-black">
-                    <Link
-                      href={`/category?categoryId=${categoryId}&subCategoryId=${subCategoryId}&subSubCategoryId=${subSubCategoryId}`}
-                      onClick={() => setIsOpen(false)}
-                      className="text-sm hover:text-secondaryBlue"
-                    >
-                      {title}
-                    </Link>
-                  </li>
-                ))}
-            </ul>
-          </div>
-
-          <div className="w-full lg:w-[70%] p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto max-h-[80vh]">
-            {isLoading ? (
-              <div className="flex justify-center items-center w-full py-10">
-                <FaSpinner size={40} color="#3b82f6" className="animate-spin text-blue-500 text-3xl" />
-              </div>
-            ) : (
-              mergedProducts?.map((product) => (
-                <div key={product._id}>
-                  <ProductCard product={product} setIsOpen={setIsOpen} />
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )} */}
     </div>
   );
 };
