@@ -126,7 +126,11 @@ export default function OrderSummary({ orderDetails }: any) {
               <td className="text-right">
                 ৳{item?.product?.price * item?.quantity}
               </td>
-              <td className="text-right">৳{item?.product?.discount}</td>
+              <td className="text-right">
+                {item?.product?.discount_type === "flat" && "৳"}
+                {item?.product?.discount}
+                {item?.product?.discount_type === "percentage" && "%"}
+              </td>
               <td className="text-right">
                 ৳
                 {item?.product?.discount_type === "flat"

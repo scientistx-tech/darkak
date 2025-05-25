@@ -85,7 +85,7 @@ const ContactPage: React.FC = () => {
               <FaPhoneAlt className="text-white md:text-xl" />
             </div>
 
-            <p className="text-secondary md:text-xl">01915665089</p>
+            <p className="text-secondary md:text-xl">01711726501</p>
           </div>
 
           <div className="mt-3 flex items-center justify-center gap-3 md:mt-5">

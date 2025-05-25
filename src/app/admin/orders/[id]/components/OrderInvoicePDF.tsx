@@ -9,7 +9,7 @@ import {
 } from "@react-pdf/renderer";
 
 // Helper for formatting currency
-const formatCurrency = (amount: number) => `$${amount?.toFixed(2) || "0.00"}`;
+const formatCurrency = (amount: number) => `৳${amount?.toFixed(2) || "0.00"}`;
 
 // Styles
 const styles = StyleSheet.create({
@@ -78,6 +78,28 @@ export default function OrderInvoicePDF({
   const customerPhone = orderDetails?.phone || "";
   const address = `${orderDetails.area}, ${orderDetails.sub_district}, ${orderDetails.district}, ${orderDetails.division}`;
 
+  // Calculate sum of unit prices (not multiplied by quantity)
+  const totalUnitPrice = order_items?.reduce(
+    (sum: number, item: any) => sum + (item.product?.price || 0),
+    0,
+  );
+
+  // Calculate total discount: handle both 'flat' and 'percentage' types
+  const totalDiscount = order_items?.reduce((sum: number, item: any) => {
+    const price = item.product?.price || 0;
+    const discount = item.product?.discount || 0;
+    const discountType = item.product?.discount_type;
+    const quantity = item.quantity || 1;
+    let discountAmount = 0;
+    if (discountType === "flat") {
+      // Flat means a fixed price deduction per unit
+      discountAmount = discount * quantity;
+    } else if (discountType === "percentage") {
+      discountAmount = ((price * discount) / 100) * quantity;
+    }
+    return sum + discountAmount;
+  }, 0);
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -90,7 +112,7 @@ export default function OrderInvoicePDF({
             </Text>
           </View>
           <View>
-            <Text>Dhaka,Bangladesh</Text>
+            <Text>Darkak</Text>
           </View>
         </View>
 
@@ -131,11 +153,15 @@ export default function OrderInvoicePDF({
         <View style={styles.tableHeader}>
           <Text style={[{ width: "15%" }, styles.cell]}>IMAGE</Text>
           <Text style={[{ width: "35%" }, styles.cell]}>ITEM DESCRIPTION</Text>
+          <Text style={[{ width: "35%" }, styles.cell]}>ITEM CODE</Text>
           <Text style={[{ width: "10%", textAlign: "center" }, styles.cell]}>
             QTY
           </Text>
           <Text style={[{ width: "20%", textAlign: "right" }, styles.cell]}>
             UNIT PRICE
+          </Text>
+          <Text style={[{ width: "20%", textAlign: "right" }, styles.cell]}>
+            Discount
           </Text>
           <Text style={[{ width: "20%", textAlign: "right" }, styles.cell]}>
             TOTAL
@@ -152,11 +178,14 @@ export default function OrderInvoicePDF({
               <View style={{ width: "15%", paddingRight: 4 }}>
                 <Image
                   src={product.thumbnail}
-                  style={{ objectFit: "contain", width: 20, height: 20 }}
+                  style={{ width: 40, height: 40, objectFit: "contain" }}
                 />
               </View>
-              <Text style={[{ width: "35%" }, styles.cell]}>
+              <Text style={[{ width: "35%", paddingRight: 4 }, styles.cell]}>
                 {product.title}
+              </Text>
+              <Text style={[{ width: "35%" }, styles.cell]}>
+                {product.code}
               </Text>
               <Text
                 style={[{ width: "10%", textAlign: "center" }, styles.cell]}
@@ -164,7 +193,11 @@ export default function OrderInvoicePDF({
                 {quantity}
               </Text>
               <Text style={[{ width: "20%", textAlign: "right" }, styles.cell]}>
-                {formatCurrency(discountedPrice)}
+                {product.price}
+              </Text>
+              <Text style={[{ width: "20%", textAlign: "right" }, styles.cell]}>
+                {product?.discount_type === "flat" && "Tk"} {product.discount}{" "}
+                {product?.discount_type === "percentage" && "%"}
               </Text>
               <Text style={[{ width: "20%", textAlign: "right" }, styles.cell]}>
                 {formatCurrency(discountedPrice * quantity)}
@@ -177,24 +210,27 @@ export default function OrderInvoicePDF({
         <View style={styles.totalSection}>
           <View style={styles.totalRow}>
             <Text>Total Item Price</Text>
-            <Text>{formatCurrency(orderDetails.subTotal)}</Text>
-          </View>
-          <View style={styles.totalRow}>
-            <Text>Delivery Fee</Text>
-            <Text>{formatCurrency(orderDetails.deliveryFee)}</Text>
+            <Text>{formatCurrency(totalUnitPrice)}</Text>
           </View>
           <View style={styles.totalRow}>
             <Text>Discount</Text>
-            <Text>-{formatCurrency(orderDetails.discount)}</Text>
+            <Text>-{formatCurrency(totalDiscount)}</Text>
+          </View>
+          <View style={styles.totalRow}>
+            <Text>Delivery Fee</Text>
+            <Text>+{formatCurrency(orderDetails.deliveryFee)}</Text>
           </View>
           <View style={styles.totalRow}>
             <Text>Tax</Text>
-            <Text>{formatCurrency(orderDetails.tax)}</Text>
+            <Text>+{formatCurrency(orderDetails.tax)}</Text>
           </View>
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Total</Text>
             <Text style={styles.totalLabel}>
-              {formatCurrency(orderDetails.total)}
+              {totalUnitPrice -
+                totalDiscount +
+                orderDetails.deliveryFee +
+                orderDetails.tax}
             </Text>
           </View>
         </View>

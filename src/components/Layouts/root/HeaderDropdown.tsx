@@ -59,7 +59,7 @@ export default function Test() {
       {isDropdownOpen && (
         <div className="absolute left-[-50px] top-full z-50 flex bg-transparent">
           {/* Main Categories */}
-          <div className="mt-4 flex min-w-[200px] flex-col rounded bg-primaryBlue p-4 text-white shadow-lg">
+          <div className="mt-4 flex min-w-[300px] flex-col rounded bg-primaryBlue p-4 text-white shadow-lg border border-primary">
             {isLoading ? (
               [...Array(5)].map((_, i) => <div key={i} className={shimmer} />)
             ) : error ? (
@@ -81,9 +81,9 @@ export default function Test() {
                   <Link
                     href={{
                       pathname: "/category",
-                      query: { categoryId: Number(cat.id) }, // Only categoryId, do not include subCategoryId or subSubCategoryId
+                      query: { categoryId: cat.title }, // Only categoryId, do not include subCategoryId or subSubCategoryId
                     }}
-                    className="flex w-full items-center gap-2"
+                    className="flex w-full items-center gap-2 "
                   >
                     <Image
                       src={cat.icon}
@@ -92,7 +92,7 @@ export default function Test() {
                       height={28}
                       className="rounded-md"
                     />
-                    {cat.title}
+                    <span className="line-clamp-1">{cat.title}</span>
                   </Link>
                   <FaAngleRight />
                 </div>
@@ -110,7 +110,7 @@ export default function Test() {
 
             return (
               <div
-                className="absolute left-[200px] z-50 min-w-[200px] bg-primaryBlue p-4 text-white shadow-lg"
+                className="absolute left-[300px] z-50 min-w-[250px] bg-primaryBlue p-4 text-white shadow-lg  border border-primary"
                 style={{ top: subCategoryTop }}
               >
                 {isLoading
@@ -134,8 +134,8 @@ export default function Test() {
                           href={{
                             pathname: "/category",
                             query: {
-                              categoryId: Number(selectedMainCategory.id),
-                              subCategoryId: Number(sub.id),
+                              categoryId: selectedMainCategory.title,
+                              subCategoryId: sub.title,
                             },
                           }}
                           className="w-full"
@@ -162,7 +162,7 @@ export default function Test() {
             );
             return (
               <div
-                className="absolute left-[400px] z-50 min-w-[200px] bg-primaryBlue p-4 text-white shadow-lg"
+                className="absolute left-[550px] z-50 min-w-[250px] bg-primaryBlue p-4 text-white shadow-lg  border border-primary"
                 style={{ top: subCategoryTop }}
               >
                 {isLoading
@@ -175,9 +175,9 @@ export default function Test() {
                         href={{
                           pathname: "/category",
                           query: {
-                            categoryId: Number(parentCategory?.id),
-                            subCategoryId: Number(selectedSubCategory.id),
-                            subSubCategoryId: Number(item.id),
+                            categoryId: parentCategory?.title,
+                            subCategoryId: selectedSubCategory?.title,
+                            subSubCategoryId: item.title,
                           },
                         }}
                         className="block rounded px-3 py-2 transition-all duration-200 hover:bg-secondaryBlue"
