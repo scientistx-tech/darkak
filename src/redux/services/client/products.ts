@@ -29,12 +29,9 @@ export const myCartApi = baseApi.injectEndpoints({
     }),
 
     getNewArivalProducts: builder.query({
-      query: (params?: Record<string, string>) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
+      query: (params?: string) => {
         return {
-          url: `/public/new-arrival${queryString}`,
+          url: `/public/new-arrival?${params}`,
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -44,12 +41,9 @@ export const myCartApi = baseApi.injectEndpoints({
     }),
 
     getBestSellingProducts: builder.query({
-      query: (params?: Record<string, string>) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
+      query: (params?: string) => {
         return {
-          url: `/public/most-selling${queryString}`,
+          url: `/public/most-selling?${params}`,
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -59,12 +53,9 @@ export const myCartApi = baseApi.injectEndpoints({
     }),
 
     getMostVisitedProducts: builder.query({
-      query: (params?: Record<string, string>) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
+      query: (params?: string) => {
         return {
-          url: `/public/most-visited${queryString}`,
+          url: `/public/most-visited?${params}`,
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -74,12 +65,9 @@ export const myCartApi = baseApi.injectEndpoints({
     }),
 
     getTopRatedProducts: builder.query({
-      query: (params?: Record<string, string>) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
+      query: (params?: string) => {
         return {
-          url: `/public/top-rated${queryString}`,
+          url: `/public/top-rated?${params}`,
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -88,12 +76,9 @@ export const myCartApi = baseApi.injectEndpoints({
       },
     }),
     getBestDealProducts: builder.query({
-      query: (params?: Record<string, string>) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
+      query: (params?: string) => {
         return {
-          url: `/public/best-deal${queryString}`,
+          url: `/public/best-deal?${params}`,
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -102,12 +87,9 @@ export const myCartApi = baseApi.injectEndpoints({
       },
     }),
     getFeatured: builder.query({
-      query: (params?: Record<string, string>) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
+      query: (params?: string) => {
         return {
-          url: `/public/featured${queryString}`,
+          url: `/public/featured?${params}`,
           method: "GET",
           headers: {
             "Content-Type": "application/json",

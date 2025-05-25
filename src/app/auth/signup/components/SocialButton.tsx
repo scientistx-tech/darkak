@@ -41,7 +41,7 @@ const SocialButton = () => {
     <button
           onClick={handleGoogleLogin}
           key={index}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-[#5694FF] text-white transition hover:bg-[#003084]"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-primaryBlue text-white transition hover:bg-primary"
     >
           <Icon size={20} />
     </button>
