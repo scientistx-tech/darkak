@@ -12,13 +12,16 @@ import { Cart } from "@/types/client/myCartTypes";
 import {
   useDeleteCartMutation,
   useGetMyCartQuery,
+  useUpdateCartMutation,
 } from "@/redux/services/client/myCart";
 import ClientLoading from "../../components/ClientLoading";
 import { setCart } from "@/redux/slices/authSlice";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 const CartPage: React.FC = () => {
   const [deleteCart, { isLoading: isDeleting }] = useDeleteCartMutation();
+  const [cartUpdate] = useUpdateCartMutation();
   const [cartItems, setCartItems] = useState<Cart[]>();
   const { data, isLoading, isError, refetch } = useGetMyCartQuery();
   // For Delete Modal
@@ -56,21 +59,36 @@ const CartPage: React.FC = () => {
     );
   }
   const increaseQty = (id: number) => {
-    setCartItems((prev) =>
-      prev?.map((item) =>
+    setCartItems((prev) => {
+      const updated = prev?.map((item) =>
         item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
-      ),
-    );
+      );
+
+      // After updating, find the item with updated quantity
+      const updatedItem = updated?.find((item) => item.id === id);
+      if (updatedItem) {
+        handleUpdate(id, updatedItem.quantity);
+      }
+
+      return updated;
+    });
   };
 
   const decreaseQty = (id: number) => {
-    setCartItems((prev) =>
-      prev?.map((item) =>
+    setCartItems((prev) => {
+      const updated = prev?.map((item) =>
         item.id === id && item.quantity > 1
           ? { ...item, quantity: item.quantity - 1 }
           : item,
-      ),
-    );
+      );
+
+      const updatedItem = updated?.find((item) => item.id === id);
+      if (updatedItem && updatedItem.quantity > 0) {
+        handleUpdate(id, updatedItem.quantity);
+      }
+
+      return updated;
+    });
   };
 
   const subTotal = cartItems?.reduce(
@@ -83,6 +101,15 @@ const CartPage: React.FC = () => {
     setIsModalOpen(true);
   };
 
+  const handleUpdate = async (id: number, quantity: number) => {
+    try {
+      await cartUpdate({ id, quantity }).unwrap(); // call API with ID
+    } catch (error) {
+      console.error("Delete failed:", error);
+      // Optional: show toast or notification
+      toast.error("Failed to update!");
+    }
+  };
   const handleOk = async () => {
     if (itemToDelete !== null) {
       try {
