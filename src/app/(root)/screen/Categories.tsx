@@ -1,8 +1,8 @@
 "use client";
-import React from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import Link from "next/link";
+import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import { useGetProductCategoriesQuery } from "@/redux/services/client/categories";
 
 export default function Categories() {
@@ -12,6 +12,18 @@ export default function Categories() {
     error,
   } = useGetProductCategoriesQuery("");
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollRef.current) {
+      const amount = 200;
+      scrollRef.current.scrollBy({
+        left: direction === "left" ? -amount : amount,
+        behavior: "smooth",
+      });
+    }
+  };
+
   if (isLoading) return <p className="text-center">Loading categories...</p>;
   if (error)
     return (
@@ -19,38 +31,40 @@ export default function Categories() {
     );
 
   return (
-    <div className="flex w-full flex-col items-center justify-center md:mt-10">
-      <motion.h1
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="mb-5 mt-4 text-3xl font-medium text-gray-800 md:text-5xl"
-      >
+    <div className="mt-16 px-8 md:px-12">
+      <h2 className="mb-10 text-center text-3xl font-medium text-primaryDarkBlue">
         Shop by Categories
-      </motion.h1>
+      </h2>
 
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: {},
-          visible: {
-            transition: {
-              staggerChildren: 0.1,
-            },
-          },
-        }}
-        className="mt-8 grid grid-cols-4 gap-3 px-4 md:grid-cols-4 md:gap-6 lg:grid-cols-5 xl:grid-cols-7 2xl:grid-cols-8"
-      >
-        {categories?.map((category: any, index: number) => (
-          <CategoriesComponent
-            key={index}
-            name={category.title}
-            icon={category.icon}
-            href={`/category?categoryId=${category.title}`}
-          />
-        ))}
-      </motion.div>
+      <div className="relative w-full">
+        <button
+          onClick={() => scroll("left")}
+          className="absolute left-0 top-1/2 z-10 flex h-[40px] w-[40px] -translate-y-1/2 items-center justify-center rounded-full border border-primaryBlue bg-transparent text-primaryBlue shadow-md transition-all duration-300 hover:bg-primaryBlue hover:text-white"
+        >
+          <FaAngleLeft className="text-xl" />
+        </button>
+
+        <div
+          ref={scrollRef}
+          className="no-scrollbar flex h-[210px] w-full items-center gap-4 overflow-x-auto scroll-smooth px-2"
+        >
+          {categories?.map((category: any, index: number) => (
+            <CategoriesComponent
+              key={index}
+              name={category.title}
+              icon={category.icon}
+              href={`/category?categoryId=${category.title}`}
+            />
+          ))}
+        </div>
+
+        <button
+          onClick={() => scroll("right")}
+          className="absolute right-0 top-1/2 z-10 h-[40px] w-[40px] -translate-y-1/2 items-center justify-center rounded-full border border-primaryBlue bg-transparent text-primaryBlue shadow-md transition-all duration-300 hover:bg-primaryBlue hover:text-white flex"
+        >
+          <FaAngleRight className="text-xl" />
+        </button>
+      </div>
     </div>
   );
 }
@@ -67,38 +81,22 @@ const CategoriesComponent: React.FC<CategoriesProps> = ({
   href,
 }) => {
   return (
-    <motion.div
-      variants={{
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0 },
-      }}
-      transition={{ duration: 0.5 }}
+    <Link
+      href={href}
+      className="group flex h-[140px] md:h-[180px] w-[150px] md:w-[200px] flex-shrink-0 flex-col items-center justify-center rounded-xl bg-white p-4 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
     >
-      <Link
-        href={href}
-        className="group flex flex-col items-center justify-center"
-      >
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          className="flex h-[60px] w-[60px] items-center justify-center rounded-full bg-white px-3 transition-all duration-300 hover:scale-105 group-hover:shadow-lg md:h-[120px] md:w-[120px]"
-        >
-          <Image
-            src={icon}
-            alt={name}
-            width={50}
-            height={50}
-            className="object-contain"
-          />
-        </motion.div>
-
-        <motion.p
-          whileHover={{ color: "#00aaef" }}
-          className="mt-3 h-[70px] text-center text-base font-semibold group-hover:text-primary md:mt-5 md:h-[60px] md:text-xl"
-        >
-          {name}
-        </motion.p>
-      </Link>
-    </motion.div>
+      <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-100 via-white to-blue-200 shadow-inner transition group-hover:from-primary/10 group-hover:to-primary/20">
+        <Image
+          src={icon}
+          alt={name}
+          width={40}
+          height={40}
+          className="object-contain"
+        />
+      </div>
+      <p className="text-center md:h-[45px] line-clamp-1 md:line-clamp-2 text-sm font-medium text-gray-700 transition group-hover:text-primary">
+        {name}
+      </p>
+    </Link>
   );
 };
