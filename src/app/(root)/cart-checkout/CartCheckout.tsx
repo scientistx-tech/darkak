@@ -13,6 +13,7 @@ import SendButton from "@/components/Button/SendButton";
 import {
   useDeleteCartMutation,
   useGetMyCartQuery,
+  useUpdateCartMutation,
 } from "@/redux/services/client/myCart";
 import { RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -68,6 +69,7 @@ const CartCheckout: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useDispatch();
+  const [cartUpdate] = useUpdateCartMutation();
 
   const user = useSelector((state: RootState) => state.auth.user);
 
@@ -174,13 +176,22 @@ const CartCheckout: React.FC = () => {
     const updated = checkoutItems.map((item: any) => {
       if (item.id === id) {
         let newQty = type === "inc" ? item.quantity + 1 : item.quantity - 1;
+        handleUpdate(id, newQty);
         return { ...item, quantity: newQty < 1 ? 1 : newQty };
       }
       return item;
     });
     setCheckoutItems(updated);
   };
-
+  const handleUpdate = async (id: number, quantity: number) => {
+    try {
+      await cartUpdate({ id, quantity }).unwrap(); // call API with ID
+    } catch (error) {
+      console.error("Delete failed:", error);
+      // Optional: show toast or notification
+      toast.error("Failed to update!");
+    }
+  };
   const subtotal = checkoutItems.reduce((acc: number, item: any) => {
     const price = item.product?.price ?? 0;
     const discount = item.product?.discount ?? 0;

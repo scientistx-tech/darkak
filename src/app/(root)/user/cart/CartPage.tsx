@@ -12,13 +12,16 @@ import { Cart } from "@/types/client/myCartTypes";
 import {
   useDeleteCartMutation,
   useGetMyCartQuery,
+  useUpdateCartMutation,
 } from "@/redux/services/client/myCart";
 import ClientLoading from "../../components/ClientLoading";
 import { setCart } from "@/redux/slices/authSlice";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 const CartPage: React.FC = () => {
   const [deleteCart, { isLoading: isDeleting }] = useDeleteCartMutation();
+  const [cartUpdate] = useUpdateCartMutation();
   const [cartItems, setCartItems] = useState<Cart[]>();
   const { data, isLoading, isError, refetch } = useGetMyCartQuery();
   // For Delete Modal
@@ -68,10 +71,11 @@ const CartPage: React.FC = () => {
             return item;
           }
           const newQty = item.quantity + 1;
+          handleUpdate(id, newQty);
           return { ...item, quantity: newQty };
         }
         return item;
-      })
+      }),
     );
   };
 
@@ -88,10 +92,11 @@ const CartPage: React.FC = () => {
             return item;
           }
           const newQty = item.quantity - 1;
+          handleUpdate(id, newQty);
           return { ...item, quantity: newQty };
         }
         return item;
-      })
+      }),
     );
   };
 
@@ -105,6 +110,15 @@ const CartPage: React.FC = () => {
     setIsModalOpen(true);
   };
 
+  const handleUpdate = async (id: number, quantity: number) => {
+    try {
+      await cartUpdate({ id, quantity }).unwrap(); // call API with ID
+    } catch (error) {
+      console.error("Delete failed:", error);
+      // Optional: show toast or notification
+      toast.error("Failed to update!");
+    }
+  };
   const handleOk = async () => {
     if (itemToDelete !== null) {
       try {
@@ -206,7 +220,13 @@ const CartPage: React.FC = () => {
               </div>
               <div className="flex w-[19%] items-center justify-center rounded-md py-2 md:w-[12%] xl:w-[10%]">
                 <div className="flex">
-                  <Tooltip title={item.quantity <= (item.product.minOrder ?? 1) ? `Minimum order quantity is ${item.product.minOrder ?? 1}` : ""}>
+                  <Tooltip
+                    title={
+                      item.quantity <= (item.product.minOrder ?? 1)
+                        ? `Minimum order quantity is ${item.product.minOrder ?? 1}`
+                        : ""
+                    }
+                  >
                     <button
                       onClick={() => decreaseQty(item.id)}
                       className="bg-primaryBlue px-1.5 py-1 text-white transition-all duration-300 hover:bg-primary md:rounded-bl-full md:rounded-tl-full md:px-3 md:py-1.5 md:text-xl"
@@ -218,11 +238,19 @@ const CartPage: React.FC = () => {
                   <p className="border border-b-primaryBlue border-t-primaryBlue px-2 text-xl text-black md:py-1.5">
                     {item.quantity}
                   </p>
-                  <Tooltip title={item.quantity >= (item.product.stock ?? Infinity) ? `Maximum stock limit (${item.product.stock}) reached!` : ""}>
+                  <Tooltip
+                    title={
+                      item.quantity >= (item.product.stock ?? Infinity)
+                        ? `Maximum stock limit (${item.product.stock}) reached!`
+                        : ""
+                    }
+                  >
                     <button
                       onClick={() => increaseQty(item.id)}
                       className="bg-primaryBlue px-1.5 py-1 text-white transition-all duration-300 hover:bg-primary md:rounded-br-full md:rounded-tr-full md:px-3 md:py-1.5 md:text-xl"
-                      disabled={item.quantity >= (item.product.stock ?? Infinity)}
+                      disabled={
+                        item.quantity >= (item.product.stock ?? Infinity)
+                      }
                     >
                       <PlusOutlined />
                     </button>
