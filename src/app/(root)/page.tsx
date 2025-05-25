@@ -15,6 +15,7 @@ import MotionRevealWrapper from "./components/MotionRevealWrapper";
 import MostVisitedProducts from "./screen/MostVisitedProducts";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import FeatureSection from "./screen/FeatureSection";
 
 function Page() {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -27,11 +28,11 @@ function Page() {
         <Index />
       </MotionRevealWrapper>
 
-      <div className="container mx-auto flex flex-col gap-y-5 px-2 md:px-4">
-        <MotionRevealWrapper>
-          <Categories />
-        </MotionRevealWrapper>
+      <MotionRevealWrapper>
+        <Categories />
+      </MotionRevealWrapper>
 
+      <div className="container mx-auto flex flex-col gap-y-5 px-2 md:px-4">
         <MotionRevealWrapper>
           <Banner />
         </MotionRevealWrapper>
@@ -66,6 +67,10 @@ function Page() {
 
         <MotionRevealWrapper>
           <BestDeals />
+        </MotionRevealWrapper>
+
+        <MotionRevealWrapper>
+          <FeatureSection />
         </MotionRevealWrapper>
       </div>
     </div>
