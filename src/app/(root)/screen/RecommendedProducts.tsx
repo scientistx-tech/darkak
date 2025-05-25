@@ -20,7 +20,7 @@ const itemVariants = {
 };
 
 const RecommendedProducts: React.FC = () => {
-  const { data, error, isLoading, refetch } = useGetFeaturedQuery({});
+  const { data, error, isLoading, refetch } = useGetFeaturedQuery("");
   if (data?.data?.length === 0) {
     return null;
   }
@@ -35,7 +35,7 @@ const RecommendedProducts: React.FC = () => {
         <h2 className="text-2xl font-bold text-primaryDarkBlue">
           FEATURED PRODUCTS
         </h2>
-        <Link href="/category" className="">
+        <Link href="/more/featured" className="">
           <span className="cursor-pointer text-2xl">→</span>
         </Link>
       </div>

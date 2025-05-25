@@ -13,7 +13,7 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 },
 };
 const NewArrival: React.FC = () => {
-  const { data, error, isLoading, refetch } = useGetNewArivalProductsQuery({});
+  const { data, error, isLoading, refetch } = useGetNewArivalProductsQuery("");
   const [screen, setScreen] = useState("md");
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const NewArrival: React.FC = () => {
             <h2 className="text-2xl font-semibold text-primaryDarkBlue">
               NEW ARRIVAL
             </h2>
-            <Link href="/category" className="">
+            <Link href="/more/new-arival" className="">
               <span className="cursor-pointer text-2xl">→</span>
             </Link>
           </div>

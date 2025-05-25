@@ -32,7 +32,7 @@ const itemVariants = {
 };
 
 const BestDeals: React.FC = () => {
-  const { data, error, isLoading, refetch } = useGetBestDealProductsQuery({});
+  const { data, error, isLoading, refetch } = useGetBestDealProductsQuery("");
   if (data?.data === 0) {
     return null;
   }
@@ -50,9 +50,9 @@ const BestDeals: React.FC = () => {
         variants={itemVariants}
       >
         <h2 className="text-2xl font-semibold text-primaryDarkBlue md:ml-[33%] lg:ml-[25%] xl:ml-[20%]">
-          BEST DEAL
+          TO DAYS DEAL
         </h2>
-        <Link href="/category" className="">
+        <Link href="/more/todays-deal" className="">
           <span className="cursor-pointer text-2xl">→</span>
         </Link>
       </motion.div>

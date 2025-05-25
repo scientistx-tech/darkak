@@ -23,9 +23,7 @@ const itemVariants = {
 };
 
 const BestSelling: React.FC = () => {
-  const { data, error, isLoading, refetch } = useGetBestSellingProductsQuery(
-    {},
-  );
+  const { data, error, isLoading, refetch } = useGetBestSellingProductsQuery("");
 
   return (
     <motion.section
@@ -38,8 +36,8 @@ const BestSelling: React.FC = () => {
         <h2 className="text-2xl font-semibold text-primaryDarkBlue md:ml-[33%] lg:ml-[25%] xl:ml-[20%]">
           BEST SELLING PRODUCTS
         </h2>
-        <Link href="/category" className="">
-          <span className="cursor-pointer text-2xl ">→</span>
+        <Link href="/more/best-selling" className="">
+          <span className="cursor-pointer text-2xl">→</span>
         </Link>
       </div>
 
