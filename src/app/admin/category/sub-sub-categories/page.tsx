@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import React from "react";
+import React, { useState } from "react";
 import {
   useDeleteSubSubCategoryMutation,
   useGetCategoriesQuery,
@@ -21,8 +21,22 @@ import Link from "next/link";
 import { MdOutlineEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import AddSubSubCategories from "./AddSubSubCategories";
+import Pagination from "@/components/shared/Pagination";
 
 function CategoryTable() {
+  const [isEditable, setIsEditable] = useState<{
+    status: boolean;
+    value: {
+      id: string;
+      title: string;
+      categoryId: string;
+      subCategoryId: string;
+    };
+  }>({
+    status: false,
+    value: { id: "", title: "", categoryId: "", subCategoryId: "" },
+  });
+  const [currentPage, setCurrentPage] = useState(1);
   const {
     data: categoriesData,
     isLoading: isCategoriesLoading,
@@ -41,7 +55,7 @@ function CategoryTable() {
     isLoading: isSubSubCategoriesLoading,
     error: subSubCategoriesError,
     refetch: refetchSubSubCategories,
-  } = useGetSubSubCategoriesQuery({});
+  } = useGetSubSubCategoriesQuery({ page: String(currentPage) });
 
   const [deleteCategory] = useDeleteSubSubCategoryMutation();
 
@@ -56,7 +70,7 @@ function CategoryTable() {
   };
 
   return (
-    <div className="rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
+    <div className="rounded-[10px] bg-white p-5 shadow-1 dark:bg-gray-dark dark:shadow-card">
       <div className="flex justify-between px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
         <AddSubSubCategories
           categories={
@@ -105,6 +119,8 @@ function CategoryTable() {
               : []
           }
           refetch={refetchSubSubCategories}
+          value={isEditable.value}
+          setIsEditable={setIsEditable}
         />
       </div>
       <div className="flex justify-between px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
@@ -148,12 +164,23 @@ function CategoryTable() {
                   <TableCell>{doc.category.title}</TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-x-2">
-                      <Link
-                        href={`/admin/category/sub-sub-categories/${doc.id}`}
+                      <button
+                        onClick={() => {
+                          setIsEditable({
+                            status: true,
+                            value: {
+                              id: String(doc.id),
+                              title: doc.title,
+                              categoryId: String(doc.categoryId),
+                              subCategoryId: String(doc.subCategoryId),
+                            },
+                          });
+                          window.scroll({ top: 0, behavior: "smooth" });
+                        }}
                         // className="bg-blue text-white"
                       >
                         <MdOutlineEdit className="h-8 w-8 cursor-pointer rounded border-2 border-blue-500 p-1 text-blue-500" />
-                      </Link>
+                      </button>
                       <button onClick={() => handleDelete(doc.id)} className="">
                         <MdDelete className="h-8 w-8 rounded border-2 border-red-500 p-1 text-red-500" />
                       </button>
@@ -164,6 +191,11 @@ function CategoryTable() {
           </TableBody>
         </Table>
       )}
+      <Pagination
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+        totalPages={subSubCategoriesData?.totalPage}
+      />
     </div>
   );
 }

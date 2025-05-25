@@ -9,7 +9,7 @@ import {
 } from "@react-pdf/renderer";
 
 // Helper for formatting currency
-const formatCurrency = (amount: number) => `৳${amount?.toFixed(2) || "0.00"}`;
+const formatCurrency = (amount: number) => `${amount?.toFixed(2) || "0.00"}`;
 
 // Styles
 const styles = StyleSheet.create({
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   totalRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 4,
+    marginBottom: 6,
   },
   totalLabel: { fontWeight: "bold" },
   thankYou: {
@@ -70,8 +70,6 @@ export default function OrderInvoicePDF({
   orderDetails: any;
 }) {
   if (!orderDetails) return null;
-
-  console.log("orderDetails", orderDetails);
 
   const { user, order_items } = orderDetails;
   const customerName = orderDetails?.name;
@@ -111,7 +109,11 @@ export default function OrderInvoicePDF({
               Invoice Date : {new Date(orderDetails.date).toDateString()}
             </Text>
           </View>
-          <View>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+            <Image
+              src="/images/logo/brandLogo.jpeg" // Make sure this path is correct and accessible
+              style={{ width: 72, height: 32, marginRight: 6 }}
+            />
             <Text>Darkak</Text>
           </View>
         </View>
@@ -200,7 +202,7 @@ export default function OrderInvoicePDF({
                 {product?.discount_type === "percentage" && "%"}
               </Text>
               <Text style={[{ width: "20%", textAlign: "right" }, styles.cell]}>
-                {formatCurrency(discountedPrice * quantity)}
+                Tk {formatCurrency(discountedPrice * quantity)}
               </Text>
             </View>
           );
@@ -210,7 +212,7 @@ export default function OrderInvoicePDF({
         <View style={styles.totalSection}>
           <View style={styles.totalRow}>
             <Text>Total Item Price</Text>
-            <Text>{formatCurrency(totalUnitPrice)}</Text>
+            <Text>Tk {formatCurrency(totalUnitPrice)}</Text>
           </View>
           <View style={styles.totalRow}>
             <Text>Discount</Text>
@@ -227,6 +229,7 @@ export default function OrderInvoicePDF({
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Total</Text>
             <Text style={styles.totalLabel}>
+              Tk{" "}
               {totalUnitPrice -
                 totalDiscount +
                 orderDetails.deliveryFee +
