@@ -10,7 +10,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { Rating } from "react-simple-star-rating";
 
-const PriceInfo = ({ product, setIsOpen }: { product: Product; setIsOpen?: (open: boolean) => void }) => {
+const PriceInfo = ({
+  product,
+  setIsOpen,
+}: {
+  product: Product;
+  setIsOpen?: (open: boolean) => void;
+}) => {
   const router = useRouter();
   const [addToCart, { isLoading }] = useAddToCartMutation();
   const hasDiscount = !!product?.discount && Number(product.discount) > 0;

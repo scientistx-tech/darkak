@@ -223,8 +223,8 @@ const EasyCheckout: React.FC = () => {
       const res = await createOrder(payload).unwrap();
       toast.success("Successfully Placed Order");
       router.push(`/order-placed`);
-    } catch (error) {
-      toast.error("Something went wrong, try again.");
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to place order");
       console.log(error);
     }
   };
