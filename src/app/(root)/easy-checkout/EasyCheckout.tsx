@@ -6,42 +6,13 @@ import { Input, Button, notification, Checkbox, Modal } from "antd";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import product1 from "@/Data/Demo/product-2-1.png";
-import product2 from "@/Data/Demo/product-2-3.png";
-import product3 from "@/Data/Demo/product-2-4.png";
-import SendButton from "@/components/Button/SendButton";
+
 import { useGetMyCartQuery } from "@/redux/services/client/myCart";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useOrderSingleProductMutation } from "@/redux/services/client/checkout";
-
-const initialProducts = [
-  {
-    id: 1,
-    name: "iPhone 16 Pro",
-    variant: "128GB, AUS, Black Titanium",
-    price: 132500,
-    image: product1,
-    quantity: 1,
-  },
-  {
-    id: 2,
-    name: "Galaxy A56 5G",
-    variant: "Graphite, 8/128GB",
-    price: 43000,
-    image: product2,
-    quantity: 1,
-  },
-  {
-    id: 3,
-    name: "Xiaomi Pad 7",
-    variant: "Black, 8/256GB, Without Book Cover",
-    price: 45500,
-    image: product3,
-    quantity: 1,
-  },
-];
+import { BD_Division, BD_District } from "@/Data/addressData";
 
 const EasyCheckout: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "online">("cash");
@@ -67,7 +38,6 @@ const EasyCheckout: React.FC = () => {
       setFullName(user?.name);
       setEmail(user?.email);
       setPhone(user?.phone);
-      setAddress(user?.address);
     }
   }, [user]);
 
@@ -106,49 +76,6 @@ const EasyCheckout: React.FC = () => {
     }
   }, [pathname]);
 
-  const handleConfirm = () => {
-    console.log("Form Submitted:");
-    console.log("Full Name:", fullName);
-    console.log("Phone or Email:", phone);
-    console.log("Address:", address);
-    console.log("Payment Method:", paymentMethod);
-    console.log("Agreed to Terms:", agree);
-
-    if (!fullName || !phone || !address) {
-      api.warning({
-        message: "Warning",
-        description: "Please fill in all required fields.",
-      });
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (phone.includes("@") && !emailRegex.test(phone)) {
-      api.error({
-        message: "Invalid Email",
-        description: "Please enter a valid email address.",
-      });
-      return;
-    }
-
-    if (!agree) {
-      api.warning({
-        message: "Agreement Required",
-        description: "Please accept the terms and conditions.",
-      });
-      return;
-    }
-
-    api.success({
-      message: "Success",
-      description: "Your order has been confirmed.",
-    });
-
-    setTimeout(() => {
-      router.push("/checkout-done");
-    }, 1000);
-  };
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
 
@@ -168,8 +95,6 @@ const EasyCheckout: React.FC = () => {
     setIsModalOpen2(false);
   };
   // For right side
-
-  const [products, setProducts] = useState(initialProducts);
 
   const updateQuantity = (id: number, type: "inc" | "dec") => {
     console.log("id", id, "type", type);
@@ -199,35 +124,43 @@ const EasyCheckout: React.FC = () => {
     return acc + finalPrice * item.quantity;
   }, 0);
 
-  console.log("cartitem", checkoutItems);
-
   const handleCheckout = async () => {
     const payload = {
       userId: user?.id,
       name: fullName,
       email,
       phone,
-      division,
-      district,
+      division, // send division name
+      district, // send district name
       sub_district: subDistrict,
       area,
       paymentType: "cod",
       productId: checkoutItems[0].productId,
       quantity: checkoutItems[0].quantity,
-      deliveryFee: 60,
+      deliveryFee: district === "Dhaka" ? 60 : 120,
       order_type: !checkoutItems[0].product?.user?.isSeller
         ? "in-house"
         : "vendor",
     };
     try {
       const res = await createOrder(payload).unwrap();
-      toast.success("Successfully Placed Order");
-      router.push(`/order-placed`);
+      toast.success(res?.message || "Order placed successfully");
+      router.push(`/order-placed/${res?.order?.orderId}`);
     } catch (error: any) {
       toast.error(error?.data?.message || "Failed to place order");
       console.log(error);
     }
   };
+
+  // For dependent district dropdown using addressData.ts
+  const divisionOptions = BD_Division.divisions;
+  const districtOptions = division
+    ? BD_District.districts.filter(
+        (d) =>
+          d.division_id ===
+          divisionOptions.find((div) => div.name === division)?.id,
+      )
+    : [];
 
   return (
     <div className="px-2 py-6 md:container md:mx-auto md:px-4 xl:px-6">
@@ -348,13 +281,22 @@ const EasyCheckout: React.FC = () => {
                   <label className="mb-1 block text-sm font-medium">
                     Division <span className="text-primaryBlue">*</span>
                   </label>
-                  <Input
-                    placeholder="e.g., Dhaka"
-                    className="border border-primaryBlue px-3 py-2"
+                  <select
+                    className="w-full rounded border border-primaryBlue px-3 py-2"
                     value={division}
-                    onChange={(e) => setDivision(e.target.value)}
+                    onChange={(e) => {
+                      setDivision(e.target.value);
+                      setDistrict(""); // reset district when division changes
+                    }}
                     required
-                  />
+                  >
+                    <option value="">Select Division</option>
+                    {divisionOptions.map((div) => (
+                      <option key={div.id} value={div.name}>
+                        {div.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* District */}
@@ -362,13 +304,22 @@ const EasyCheckout: React.FC = () => {
                   <label className="mb-1 block text-sm font-medium">
                     District <span className="text-primaryBlue">*</span>
                   </label>
-                  <Input
-                    placeholder="e.g., Dhaka"
-                    className="border border-primaryBlue px-3 py-2"
+                  <select
+                    className="w-full rounded border border-primaryBlue px-3 py-2"
                     value={district}
                     onChange={(e) => setDistrict(e.target.value)}
                     required
-                  />
+                    disabled={!division}
+                  >
+                    <option value="">
+                      {division ? "Select District" : "Select Division First"}
+                    </option>
+                    {districtOptions.map((dist) => (
+                      <option key={dist.id} value={dist.name}>
+                        {dist.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -376,11 +327,11 @@ const EasyCheckout: React.FC = () => {
                 {/* Sub-district */}
                 <div>
                   <label className="mb-1 block text-sm font-medium">
-                    Sub-district / Upazila{" "}
+                    Sub District (Thana / Upazila){" "}
                     <span className="text-primaryBlue">*</span>
                   </label>
                   <Input
-                    placeholder="e.g., Dhanmondi"
+                    placeholder="e.g., Shahbag Thana, Savar"
                     className="border border-primaryBlue px-3 py-2"
                     value={subDistrict}
                     onChange={(e) => setSubDistrict(e.target.value)}
@@ -391,8 +342,7 @@ const EasyCheckout: React.FC = () => {
                 {/* Delivery Area */}
                 <div>
                   <label className="mb-1 block text-sm font-medium">
-                    Delivery Area / Address{" "}
-                    <span className="text-primaryBlue">*</span>
+                    Area / Address <span className="text-primaryBlue">*</span>
                   </label>
                   <Input
                     placeholder="e.g., House #12, Road #5"

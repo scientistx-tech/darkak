@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { PlusOutlined, MinusOutlined, DeleteOutlined } from "@ant-design/icons";
 import Image from "next/image";
-import { Modal, message } from "antd";
+import { Modal, message, Tooltip } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -57,19 +57,41 @@ const CartPage: React.FC = () => {
   }
   const increaseQty = (id: number) => {
     setCartItems((prev) =>
-      prev?.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
-      ),
+      prev?.map((item) => {
+        if (item.id === id) {
+          const maxQty = item.product.stock ?? Infinity;
+          if (item.quantity >= maxQty) {
+            messageApi.open({
+              type: "warning",
+              content: `Maximum stock limit (${maxQty}) reached!`,
+            });
+            return item;
+          }
+          const newQty = item.quantity + 1;
+          return { ...item, quantity: newQty };
+        }
+        return item;
+      })
     );
   };
 
   const decreaseQty = (id: number) => {
     setCartItems((prev) =>
-      prev?.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item,
-      ),
+      prev?.map((item) => {
+        if (item.id === id) {
+          const minQty = item.product.minOrder ?? 1;
+          if (item.quantity <= minQty) {
+            messageApi.open({
+              type: "warning",
+              content: `Minimum order quantity is ${minQty}.`,
+            });
+            return item;
+          }
+          const newQty = item.quantity - 1;
+          return { ...item, quantity: newQty };
+        }
+        return item;
+      })
     );
   };
 
@@ -184,21 +206,27 @@ const CartPage: React.FC = () => {
               </div>
               <div className="flex w-[19%] items-center justify-center rounded-md py-2 md:w-[12%] xl:w-[10%]">
                 <div className="flex">
-                  <button
-                    onClick={() => decreaseQty(item.id)}
-                    className="bg-primaryBlue px-1.5 py-1 text-white transition-all duration-300 hover:bg-primary md:rounded-bl-full md:rounded-tl-full md:px-3 md:py-1.5 md:text-xl"
-                  >
-                    <MinusOutlined />
-                  </button>
+                  <Tooltip title={item.quantity <= (item.product.minOrder ?? 1) ? `Minimum order quantity is ${item.product.minOrder ?? 1}` : ""}>
+                    <button
+                      onClick={() => decreaseQty(item.id)}
+                      className="bg-primaryBlue px-1.5 py-1 text-white transition-all duration-300 hover:bg-primary md:rounded-bl-full md:rounded-tl-full md:px-3 md:py-1.5 md:text-xl"
+                      disabled={item.quantity <= (item.product.minOrder ?? 1)}
+                    >
+                      <MinusOutlined />
+                    </button>
+                  </Tooltip>
                   <p className="border border-b-primaryBlue border-t-primaryBlue px-2 text-xl text-black md:py-1.5">
                     {item.quantity}
                   </p>
-                  <button
-                    onClick={() => increaseQty(item.id)}
-                    className="bg-primaryBlue px-1.5 py-1 text-white transition-all duration-300 hover:bg-primary md:rounded-br-full md:rounded-tr-full md:px-3 md:py-1.5 md:text-xl"
-                  >
-                    <PlusOutlined />
-                  </button>
+                  <Tooltip title={item.quantity >= (item.product.stock ?? Infinity) ? `Maximum stock limit (${item.product.stock}) reached!` : ""}>
+                    <button
+                      onClick={() => increaseQty(item.id)}
+                      className="bg-primaryBlue px-1.5 py-1 text-white transition-all duration-300 hover:bg-primary md:rounded-br-full md:rounded-tr-full md:px-3 md:py-1.5 md:text-xl"
+                      disabled={item.quantity >= (item.product.stock ?? Infinity)}
+                    >
+                      <PlusOutlined />
+                    </button>
+                  </Tooltip>
                 </div>
               </div>
               <div className="hidden w-[12%] items-center justify-center rounded-md py-2 text-black md:flex xl:w-[10%]">

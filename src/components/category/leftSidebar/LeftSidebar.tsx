@@ -7,7 +7,7 @@ import FilterRadioSearch from "@/components/category/leftSidebar/FilterRadioSear
 import { IoIosArrowDown } from "react-icons/io";
 import { useGetProductCategoriesQuery } from "@/redux/services/client/categories";
 import { useGetBrandsPublicQuery } from "@/redux/services/client/brands";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const availabilityOptions = [
   { value: "in_stock", label: "In stock" },
@@ -89,6 +89,7 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
   const { data: categoriesData } = useGetProductCategoriesQuery();
   const { data: brandsData } = useGetBrandsPublicQuery({ search: brandSearch });
 
+  const searchParams = useSearchParams();
   const router = useRouter();
 
   // Ref for auto-scroll to top of sidebar on filter change
@@ -140,7 +141,21 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
                   onSelect(cat.id);
                   if (onSelectSub) onSelectSub.set("");
                   if (onSelectSubSub) onSelectSubSub.set("");
-                  router.push(`/category?categoryId=${cat.title}`);
+                  if (selectedCategory === cat.id) {
+                    setSelectedCategory("");
+                    // Remove categoryID from query
+                    const params = new URLSearchParams(searchParams.toString());
+                    params.delete("categoryId");
+                    router.push(`?${params.toString()}`);
+                  } else {
+                    setSelectedCategory(cat?.id);
+                    // Add or update categoryID in query
+                    const params = new URLSearchParams(searchParams.toString());
+                    params.set("categoryId", cat.title);
+                    params.delete("subCategoryId");
+                    params.delete("subSubCategoryId");
+                    router.push(`?${params.toString()}`);
+                  }
                 }}
               >
                 {cat.title}
@@ -181,9 +196,25 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
                             if (onSelect) onSelect(cat.id); // select parent cat
                             onSelectSub && onSelectSub.set(sub.id);
                             if (onSelectSubSub) onSelectSubSub.set("");
-                            router.push(
-                              `/category?categoryId=${cat.title}&subCategoryId=${sub.title}`,
-                            );
+                            if (selectedSubCategory === sub.id) {
+                              setSelectedSubCategory("");
+                              // Remove categoryID from query
+                              const params = new URLSearchParams(
+                                searchParams.toString(),
+                              );
+                              params.delete("subCategoryId");
+                              router.push(`?${params.toString()}`);
+                            } else {
+                              setSelectedSubCategory(sub?.id);
+                              // Add or update categoryID in query
+                              const params = new URLSearchParams(
+                                searchParams.toString(),
+                              );
+                              params.set("categoryId", cat.title);
+                              params.set("subCategoryId", sub.title);
+                              params.delete("subSubCategoryId");
+                              router.push(`?${params.toString()}`);
+                            }
                           }}
                         >
                           {sub.title}
@@ -228,9 +259,28 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
                                     if (onSelectSub) onSelectSub.set(sub.id); // select parent subcat
                                     onSelectSubSub &&
                                       onSelectSubSub.set(subsub.id);
-                                    router.push(
-                                      `/category?categoryId=${cat.title}&subCategoryId=${sub.title}&subSubCategoryId=${subsub.title}`,
-                                    );
+                                    if (selectedSubSubCategory === subsub.id) {
+                                      setSelectedSubSubCategory("");
+                                      // Remove categoryID from query
+                                      const params = new URLSearchParams(
+                                        searchParams.toString(),
+                                      );
+                                      params.delete("subSubCategoryId");
+                                      router.push(`?${params.toString()}`);
+                                    } else {
+                                      setSelectedSubSubCategory(subsub?.id);
+                                      // Add or update categoryID in query
+                                      const params = new URLSearchParams(
+                                        searchParams.toString(),
+                                      );
+                                      params.set("categoryId", cat.title);
+                                      params.set("subCategoryId", sub.title);
+                                      params.set(
+                                        "subSubCategoryId",
+                                        subsub.title,
+                                      );
+                                      router.push(`?${params.toString()}`);
+                                    }
                                   }}
                                 >
                                   {subsub.title}
@@ -263,9 +313,17 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
     if (selectedBrand === id) {
       setSelectedBrand("");
       setSelectedBrandTitle("");
+      // Remove brandId from query
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("brandId");
+      router.push(`?${params.toString()}`);
     } else {
       setSelectedBrand(id);
       setSelectedBrandTitle(title);
+      // Add or update brandId in query
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("brandId", title);
+      router.push(`?${params.toString()}`);
     }
   };
 
@@ -273,7 +331,6 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
   useEffect(() => {
     // Compose all filter values into a single object (exclude categoryId, subCategoryId, subSubCategoryId)
     const queryParams = {
-      brand: selectedBrandTitle, // Use title instead of id
       availability,
       warranty,
       region,
@@ -302,7 +359,6 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
     }
   }, [
     // Remove category dependencies
-    selectedBrand,
     selectedBrandTitle,
     availability,
     warranty,
@@ -333,6 +389,12 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
                   setSelectedCategory("");
                   setSelectedSubCategory("");
                   setSelectedSubSubCategory("");
+                  // Remove categoryId, subCategoryId, subSubCategoryId from query
+                  const params = new URLSearchParams(searchParams.toString());
+                  params.delete("categoryId");
+                  params.delete("subCategoryId");
+                  params.delete("subSubCategoryId");
+                  router.push(`?${params.toString()}`);
                 }}
                 className="rounded border border-blue-300 bg-blue-200 px-2 py-1 text-xs font-medium text-blue-900 hover:bg-blue-300"
                 type="button"
@@ -381,14 +443,23 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
           value={brandSearch}
           onChange={(e) => setBrandSearch(e.target.value)}
         />
-        <div className="hide-scrollbar max-h-56 overflow-y-auto pr-1">
+        <div
+          className={`hide-scrollbar overflow-y-auto pr-1 ${showAllBrands ? "h-fit" : "max-h-86"}`}
+        >
           {/* All option for clearing brand filter */}
           <label className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 font-semibold text-blue-900 hover:bg-blue-50">
             <input
               type="radio"
               name="brand-filter"
               checked={selectedBrand === ""}
-              onChange={() => setSelectedBrand("")}
+              onChange={() => {
+                setSelectedBrand("");
+                setSelectedBrandTitle("");
+                // Remove brandId from query
+                const params = new URLSearchParams(searchParams.toString());
+                params.delete("brandId");
+                router.push(`?${params.toString()}`);
+              }}
               className="accent-blue-600"
             />
             <span className="truncate text-sm">All</span>

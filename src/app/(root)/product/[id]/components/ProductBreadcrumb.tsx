@@ -68,6 +68,11 @@ const ProductBreadcrumb = () => {
             <span>{isCompared ? "Compared" : "Add to Compare"}</span>
           </button> */}
 
+          {/* <ShareDropdown productName="Striking Tag Heuer Carrera Chronograph Blue Dial Stainless Steel" />
+          <SocialShare
+            url="http://localhost:3000/product/striking-tag-heuer-carrera-chronograph-blue-dial-stainless-steel"
+            title="Striking Tag Heuer Carrera Chronograph Blue Dial Stainless Steel"
+          /> */}
           <button
             onClick={handleShare}
             className="flex items-center space-x-1 rounded-full bg-secondaryWhite px-3 py-1.5 text-secondaryBlue transition hover:bg-blue-100"

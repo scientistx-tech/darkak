@@ -1,11 +1,11 @@
 "use client";
 import React from "react";
 import { Result } from "antd";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 const Page = () => {
-  // const searchParams = useSearchParams();
-  // const orderId = searchParams.get("orderId");
+  const params = useParams();
+  const orderId = params.id; // Assuming the order ID is passed as a URL parameter
 
   const router = useRouter();
 
@@ -13,8 +13,8 @@ const Page = () => {
     <div className="mt-52 h-96">
       <Result
         status="success"
-        title="Successfully Ordered!"
-        subTitle={`Order number: 34121huh1234 Placed Successfully.`}
+        title="Successfully Placed!"
+        subTitle={`Order number: ${orderId} Placed Successfully.`}
         extra={[
           <button
             key="buy again"
