@@ -26,6 +26,7 @@ import { MdOutlineEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import AddData from "../categories/AddData";
 import AddSubCategories from "./AddSubCategories";
+import Pagination from "@/components/shared/Pagination";
 
 function CategoryTable() {
   const [isEditable, setIsEditable] = useState<{
@@ -36,6 +37,8 @@ function CategoryTable() {
       categoryId: string;
     };
   }>({ status: false, value: { id: "", title: "", categoryId: "" } });
+
+  const [currentPage, setCurrentPage] = useState(1);
   const {
     data: categoriesData,
     isLoading: isCategoriesLoading,
@@ -47,7 +50,7 @@ function CategoryTable() {
     isLoading,
     error,
     refetch,
-  } = useGetSubCategoriesQuery({});
+  } = useGetSubCategoriesQuery({ page: String(currentPage) });
   const [deleteCategory] = useDeleteSubCategoryMutation();
 
   const handleDelete = async (categoryId: number) => {
@@ -61,7 +64,7 @@ function CategoryTable() {
   };
 
   return (
-    <div className="rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
+    <div className="rounded-[10px] bg-white p-5 shadow-1 dark:bg-gray-dark dark:shadow-card">
       <div className="flex justify-between px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
         <AddSubCategories
           categories={
@@ -131,6 +134,7 @@ function CategoryTable() {
                               categoryId: String(doc.categoryId),
                             },
                           });
+                          window.scroll({ top: 0, behavior: "smooth" });
                         }}
                         // className="bg-blue text-white"
                       >
@@ -146,6 +150,11 @@ function CategoryTable() {
           </TableBody>
         </Table>
       )}
+      <Pagination
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+        totalPages={subCategoriesData?.totalPage}
+      />
     </div>
   );
 }

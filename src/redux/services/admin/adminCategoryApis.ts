@@ -58,7 +58,7 @@ export const adminApi = baseApi.injectEndpoints({
 
     updateSubCategory: builder.mutation<
       any,
-      { subCategoryId: string; formData: FormData }
+      { subCategoryId: string; formData: any }
     >({
       query: ({ subCategoryId, formData }) => ({
         url: `/admin/category/sub-category/${subCategoryId}`,
@@ -104,7 +104,7 @@ export const adminApi = baseApi.injectEndpoints({
 
     updateSubSubCategory: builder.mutation<
       any,
-      { subSubCategoryId: string; formData: FormData }
+      { subSubCategoryId: string; formData: any }
     >({
       query: ({ subSubCategoryId, formData }) => ({
         url: `/admin/category/sub-sub-category/${subSubCategoryId}`,

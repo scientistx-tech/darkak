@@ -53,8 +53,8 @@ export default function OrderStatusPanel({ orderDetails, refetch }: any) {
     },
     {
       id: 8,
-      name: "Packeging",
-      value: "packeging",
+      name: "Packaging",
+      value: "packaging",
     },
   ];
   return (

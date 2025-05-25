@@ -21,6 +21,7 @@ import { Switch } from "@/components/FormElements/switch";
 import { MdOutlineEdit } from "react-icons/md";
 
 import { MdDelete } from "react-icons/md";
+import Pagination from "@/components/shared/Pagination";
 
 function CategoryTable() {
   const [isEditable, setIsEditable] = useState<{
@@ -32,7 +33,10 @@ function CategoryTable() {
       serial: string;
     };
   }>({ status: false, value: { id: "", title: "", icon: "", serial: "" } });
-  const { data, isLoading, error, refetch } = useGetCategoriesQuery({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const { data, isLoading, error, refetch } = useGetCategoriesQuery({
+    page: String(currentPage),
+  });
   const [deleteCategory] = useDeleteCategoryMutation();
   const handleDelete = async (categoryId: number) => {
     try {
@@ -45,7 +49,7 @@ function CategoryTable() {
   };
 
   return (
-    <div className="rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
+    <div className="rounded-[10px] bg-white p-5 shadow-1 dark:bg-gray-dark dark:shadow-card">
       <div className="flex justify-between px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
         <AddData
           refetch={refetch}
@@ -68,7 +72,7 @@ function CategoryTable() {
         <Table>
           <TableHeader>
             <TableRow className="border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
-              <TableHead>ID</TableHead>
+              <TableHead>SL</TableHead>
               <TableHead className="min-w-[120px] pl-5 sm:pl-6 xl:pl-7.5">
                 Icon
               </TableHead>
@@ -94,7 +98,7 @@ function CategoryTable() {
             {!isLoading &&
               data?.data?.map((doc: any, i: number) => (
                 <TableRow key={i} className="h-auto">
-                  <TableCell>{doc.id}</TableCell>
+                  <TableCell>{i + 1}</TableCell>
                   <TableCell className="pl-5 sm:pl-6 xl:pl-7.5">
                     <Image
                       src={doc.icon}
@@ -125,6 +129,7 @@ function CategoryTable() {
                               serial: String(doc.serial),
                             },
                           });
+                          window.scroll({ top: 0, behavior: "smooth" });
                         }}
                         // className="bg-blue text-white"
                       >
@@ -140,6 +145,12 @@ function CategoryTable() {
           </TableBody>
         </Table>
       )}
+
+      <Pagination
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+        totalPages={data?.totalPage}
+      />
     </div>
   );
 }
