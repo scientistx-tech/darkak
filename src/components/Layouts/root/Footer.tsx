@@ -8,6 +8,7 @@ import {
   FaInstagram,
   FaWhatsapp,
   FaYoutube,
+  FaPinterest,
 } from "react-icons/fa";
 
 import img1 from "@/Data/Img/app_store_badge.svg";
@@ -18,6 +19,8 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "@/redux/slices/authSlice";
 import { auth } from "@/utils/firebase";
+
+import { useGetProductCategoriesQuery } from "@/redux/services/client/categories";
 
 function Footer() {
   const [api, contextHolder] = notification.useNotification();
@@ -36,6 +39,12 @@ function Footer() {
       placement: "topRight",
     });
   };
+
+  const {
+    data: categories,
+    isLoading,
+    error,
+  } = useGetProductCategoriesQuery("");
 
   const handleSubscribe = () => {
     const email = inputRef.current?.value.trim() || "";
@@ -187,42 +196,27 @@ function Footer() {
                   Product Categories
                 </p>
 
-                <Link
-                  href="/categories/"
-                  className="text-[#F6F6F6] hover:text-white"
-                >
-                  Electronics
-                </Link>
-                <Link
-                  href="/categories/"
-                  className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3"
-                >
-                  Clothing
-                </Link>
-                <Link
-                  href="/categories/"
-                  className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3"
-                >
-                  Groceries
-                </Link>
-                <Link
-                  href="/categories/"
-                  className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3"
-                >
-                  Accessories
-                </Link>
-                <Link
-                  href="/categories/"
-                  className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3"
-                >
-                  Shoes
-                </Link>
-                <Link
-                  href="/categories/"
-                  className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3"
-                >
-                  Books
-                </Link>
+                {isLoading ? (
+                  [...Array(5)].map((_, i) => (
+                    <div key={i} className="mb-2 h-4 rounded bg-gray-200" />
+                  ))
+                ) : error ? (
+                  <p className="text-sm text-red-500">Failed to load.</p>
+                ) : (
+                  categories?.map((cat) => (
+                    <div key={cat.title} className="mb-1 md:mb-3">
+                      <Link
+                        href={{
+                          pathname: "/category",
+                          query: { categoryId: cat.title },
+                        }}
+                        className=" text-[#F6F6F6] hover:text-white"
+                      >
+                        {cat.title}
+                      </Link>
+                    </div>
+                  ))
+                )}
               </div>
 
               <p className="mt-8 block text-2xl text-[#BBD4FF] md:hidden">
@@ -249,7 +243,7 @@ function Footer() {
             </div>
             <div className="flex flex-col items-start justify-center md:items-end md:pr-10">
               <p className="mt-5 text-2xl font-medium text-[#BBD4FF] md:mt-16">
-                Get 10% Discount on first LOGIN
+                Flat 30% OFF on All Products!
               </p>
 
               {user ? (
@@ -281,8 +275,8 @@ function Footer() {
               </p>
               <p className="mt-1 text-[#F6F6F6] opacity-55 transition-all duration-500 ease-in-out hover:text-white hover:opacity-100 md:mt-3">
                 Phone:{" "}
-                <a href="tel:01915665089" className="hover:underline">
-                  01915665089
+                <a href="tel:01711726501" className="hover:underline">
+                  01711726501
                 </a>
               </p>
               <p className="mt-1 text-[#F6F6F6] opacity-55 transition-all duration-500 ease-in-out hover:text-white hover:opacity-100 md:mt-3">
@@ -322,7 +316,16 @@ function Footer() {
                 </a>
 
                 <a
-                  href="https://api.whatsapp.com/send?phone=8801915665089&text=hello%F0%9F%98%87"
+                  href="https://www.pinterest.com/darkakmart"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-primaryDarkBlue text-xl text-white transition-all duration-500 ease-in-out hover:bg-primary"
+                >
+                  <FaPinterest />
+                </a>
+
+                <a
+                  href="https://api.whatsapp.com/send?phone=8801711726501&text=hello%F0%9F%98%87"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-primaryDarkBlue text-xl text-white transition-all duration-500 ease-in-out hover:bg-primary"
