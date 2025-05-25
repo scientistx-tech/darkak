@@ -46,6 +46,8 @@ import { useGetProductCategoriesQuery } from "@/redux/services/client/categories
 import { FaSpinner } from "react-icons/fa";
 import ProductCard from "@/components/shared/ProductCard";
 import { objectToQueryString } from "@/utils/queryString";
+import { useRouter } from "next/navigation";
+
 
 const Header: React.FC = () => {
   const { data: cart, refetch: cartRefetch } = useGetMyCartQuery();
@@ -64,6 +66,21 @@ const Header: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearch = useDebounce(searchTerm, 500);
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+
+  const handleSearch = () => {
+    console.log('button-clicked')
+    const trimmed = searchTerm.trim();
+    if (!trimmed) return;
+
+    const params = new URLSearchParams({
+      keyword: trimmed,
+      page: "1",
+      limit: "10",
+    });
+
+    router.push(`/search?${params.toString()}`);
+  };
 
   const handleLanguageChange = (lang: string) => {
     setSelectedLang(lang);
@@ -377,7 +394,7 @@ const Header: React.FC = () => {
                 <button className="w-[30%] text-black">
                   <MenuFoldOutlined />
                 </button>
-                <button className="w-[70%] rounded-br-full rounded-tr-full border-none bg-primary p-1.5 pl-5 pr-5 text-white">
+                <button onClick={handleSearch} className="w-[70%] rounded-br-full rounded-tr-full border-none bg-primary p-1.5 pl-5 pr-5 text-white">
                   <SearchOutlined className="text-xl" />
                 </button>
               </div>
@@ -497,50 +514,6 @@ const Header: React.FC = () => {
                   Search
                 </button>
               </div>
-              {/* {isOpen && (
-                <div
-                  ref={dropdownRef}
-                  className="absolute top-10 left-1/2 -translate-x-1/2 z-50 mt-2 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] flex flex-col lg:flex-row bg-white border shadow-lg rounded-lg h-full"
-                >
-                  <div className="w-full lg:w-[30%] border-b lg:border-b-0 lg:border-r p-4">
-                    <h4 className="font-bold text-base mb-2 text-black">Categories</h4>
-                    <ul>
-                      {categories
-                        ?.flatMap((category) =>
-                          category.sub_category.flatMap((subCat) =>
-                            subCat.sub_sub_category.filter((subSub) =>
-                              subSub.title.toLowerCase().includes(searchTerm.toLowerCase())
-                            )
-                          )
-                        )
-                        .map((matchedSubSub) => (
-                          <li key={matchedSubSub.id} className="mb-1 text-black">
-                            <a
-                              className="text-sm hover:text-secondaryBlue"
-                              href={`/category?search=${matchedSubSub.title.toLowerCase()}`}
-                            >
-                              {matchedSubSub.title}
-                            </a>
-                          </li>
-                        ))}
-                    </ul>
-                  </div>
-
-                  <div className="w-full lg:w-[70%] p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto max-h-[400px]">
-                    {mergedProducts?.map((product) => (
-                      <div key={product._id} className="border p-2 rounded shadow-sm">
-                        <img
-                          src={product.thumbnail || "/placeholder.png"}
-                          alt={product.name}
-                          className="h-20 object-contain mx-auto"
-                        />
-                        <div className="mt-1 text-sm">{product.name}</div>
-                        <div className="text-primary font-semibold">{product.price}৳</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )} */}
             </div>
 
             {/* Navigation */}
@@ -714,8 +687,8 @@ const Header: React.FC = () => {
 
               {/* RIGHT: Product Cards */}
               <div className="w-full lg:w-[70%] p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto max-h-[80vh]">
-                {mergedProducts.map((product) => (
-                  <div key={product._id}>
+                {mergedProducts.map((product, index) => (
+                  <div key={index}>
                     <ProductCard product={product} setIsOpen={setIsOpen} />
                   </div>
                 ))}
