@@ -15,6 +15,8 @@ const SocialShare = ({ url, title }: { url: string; title: string }) => {
   const encodedUrl = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(title);
 
+  console.log("sm", title, url);
+
   const shareLinks = {
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
     twitter: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
@@ -34,11 +36,11 @@ const SocialShare = ({ url, title }: { url: string; title: string }) => {
       | "telegram",
   ) => {
     const link = shareLinks[platform];
-    window.open(link, "_blank", "width=600,height=400");
+    window.open(link, "_blank", "width=600,height=600");
   };
 
   return (
-    <div className="mt-4 flex space-x-4">
+    <div className="flex space-x-4">
       <button
         onClick={() => openShareWindow("facebook")}
         aria-label="Share on Facebook"
