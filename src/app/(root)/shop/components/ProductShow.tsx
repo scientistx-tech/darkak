@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import ReactImageMagnify from "react-image-magnify";
@@ -31,8 +31,8 @@ const ProductShow = () => {
     <div className="py-6">
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         {/* Image Section */}
-        <div className="rounded-md border p-2 h-min">
-          <div className="relative ">
+        <div className="h-min rounded-md border p-2">
+          <div className="relative">
             <ReactImageMagnify
               {...{
                 smallImage: {
@@ -70,7 +70,9 @@ const ProductShow = () => {
           <p className="text-sm uppercase text-[#4B4E55]">
             Brand: {product.brand}
           </p>
-          <h1 className="mt-2 text-2xl font-semibold text-[#4B4E55]">{product.name}</h1>
+          <h1 className="mt-2 text-2xl font-semibold text-[#4B4E55]">
+            {product.name}
+          </h1>
 
           <div className="mt-4 flex gap-2">
             <span className="rounded-full bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue line-through">
@@ -82,7 +84,6 @@ const ProductShow = () => {
             <span className="rounded-full bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue">
               {product.status}
             </span>
-          
           </div>
 
           <p className="mt-4 inline-block rounded-full bg-secondaryWhite px-4 py-2 text-sm">
@@ -90,7 +91,7 @@ const ProductShow = () => {
           </p>
 
           <a
-            href="https://wa.me/8801000000000"
+            href="https://api.whatsapp.com/send?phone=8801711726501&text=hello%F0%9F%98%87"
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 flex w-max items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-green-700"
@@ -99,10 +100,12 @@ const ProductShow = () => {
             Message on Whatsapp
           </a>
 
-          <p className="mt-6 text-lg font-semibold text-[#323232]">{product.warranty}</p>
+          <p className="mt-6 text-lg font-semibold text-[#323232]">
+            {product.warranty}
+          </p>
 
           {/* Color */}
-          <div className="mt-4 flex gap-4 items-center">
+          <div className="mt-4 flex items-center gap-4">
             <p className="text-sm font-medium">Color: </p>
             <div className="mt-2 flex gap-3">
               {product.colors.map((clr, idx) => (
@@ -120,9 +123,9 @@ const ProductShow = () => {
           </div>
 
           {/* Storage */}
-          <div className="mt-4 flex gap-4 items-center">
+          <div className="mt-4 flex items-center gap-4">
             <p className="text-sm font-medium">Storage:</p>
-            <div className="mt-2 flex gap-3 bg-secondaryWhite rounded-full">
+            <div className="mt-2 flex gap-3 rounded-full bg-secondaryWhite">
               {product.storages.map((stor, idx) => (
                 <button
                   key={idx}
@@ -163,7 +166,7 @@ const ProductShow = () => {
           <div className="mt-6 flex gap-4">
             <motion.button
               whileTap={{ scale: 0.9 }}
-              className="rounded-full bg-secondaryBlue hover:bg-secondaryWhite border hover:border-secondaryBlue px-8 py-2 text-white hover:text-primaryDarkBlue transition-all duration-300"
+              className="rounded-full border bg-secondaryBlue px-8 py-2 text-white transition-all duration-300 hover:border-secondaryBlue hover:bg-secondaryWhite hover:text-primaryDarkBlue"
               onClick={() => alert("Buying...")}
             >
               BUY NOW

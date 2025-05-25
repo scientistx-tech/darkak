@@ -45,7 +45,51 @@ const Slider: React.FC = () => {
 
   const current = finalSlides[index];
 
-  if (isLoading) return <ClientLoading />;
+  if (isLoading)
+    return (
+      <div className="w-full overflow-hidden bg-primaryBlue text-white">
+        <div className="w-full md:h-[calc(100vh-150px)]">
+          <div className="h-[2px] w-full bg-primary" />
+          <div className="relative flex h-full flex-col items-center justify-center lg:flex-row">
+            {/* Left skeleton (offer name & title) */}
+            <div className="absolute z-30 hidden w-[80%] items-center justify-between lg:flex">
+              <div className="flex h-[500px] w-1/4 flex-col gap-4 border-b-2 border-l-2 border-white px-6 py-6">
+                <div className="mb-5 h-8 w-3/4 animate-pulse rounded bg-white/30" />
+                <div className="h-24 w-2/3 animate-pulse rounded bg-white/20" />
+                <div className="h-24 w-1/2 animate-pulse rounded bg-white/10" />
+              </div>
+              {/* Center skeleton (image) */}
+              <div className="flex h-[500px] w-2/4 items-start justify-end">
+                <div className="mr-[17%] h-[80px] w-[80px] animate-pulse rounded-full bg-white/30" />
+              </div>
+              {/* Right skeleton (details & button) */}
+              <div className="flex h-[500px] w-1/4 flex-col items-end justify-center gap-4 border-r-2 border-t-2 border-white py-6 pr-6">
+                <div className="h-16 w-5/6 animate-pulse rounded bg-white/20" />
+                <div className="h-10 w-1/2 animate-pulse rounded bg-white/30" />
+              </div>
+            </div>
+            {/* Mobile skeleton */}
+            <div className="flex w-full flex-col items-center justify-center gap-4 px-6 py-6 lg:hidden">
+              <div className="mb-3 h-6 w-1/2 animate-pulse rounded bg-white/30" />
+              <div className="h-12 w-2/3 animate-pulse rounded bg-white/20" />
+              <div className="h-6 w-3/4 animate-pulse rounded bg-white/10" />
+              <div className="mb-5 mt-5 h-8 w-1/2 animate-pulse rounded bg-white/20" />
+              <div className="h-10 w-1/3 animate-pulse rounded bg-white/30" />
+            </div>
+          </div>
+          {/* Dots skeleton */}
+          <div className="flex w-full items-center justify-center gap-3 py-4">
+            {[...Array(3)].map((_, i) => (
+              <div
+                key={i}
+                className="h-[8px] w-[30px] animate-pulse rounded bg-white/30"
+              />
+            ))}
+          </div>
+        </div>
+        <div className="flex justify-center pb-6 md:mt-4"></div>
+      </div>
+    );
 
   return (
     <div className="w-full overflow-hidden bg-primaryBlue text-white">
@@ -120,12 +164,12 @@ const Slider: React.FC = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.8 }}
-              className="w-full flex justify-center items-center lg:mt-[-60px] "
+              className="flex w-full items-center justify-center lg:mt-[-60px]"
             >
               <Image
                 src={current.banner}
                 alt={`Slide ${index}`}
-                className="mt-20 h-[300px] w-full object-contain opacity-80 lg:h-[500px] md:w-[500px] lg:mt-0"
+                className="mt-20 h-[300px] w-full object-contain opacity-80 md:w-[500px] lg:mt-0 lg:h-[500px]"
                 width={400}
                 height={300}
                 priority
@@ -148,7 +192,7 @@ const Slider: React.FC = () => {
               <p className="font-serif text-[30px] font-light leading-none opacity-70">
                 {current?.title}
               </p>
-              <p className="mt-5 mb-5 text-center font-serif text-sm opacity-80">
+              <p className="mb-5 mt-5 text-center font-serif text-sm opacity-80">
                 {current?.details}
               </p>
 
