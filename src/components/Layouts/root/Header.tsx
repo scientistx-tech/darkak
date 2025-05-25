@@ -42,10 +42,10 @@ import {
   useGetTopRatedProductsQuery,
 } from "@/redux/services/client/products";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useGetAllCategoriesQuery } from "@/redux/services/client/allCategories";
 import { useGetProductCategoriesQuery } from "@/redux/services/client/categories";
 import { FaSpinner } from "react-icons/fa";
 import ProductCard from "@/components/shared/ProductCard";
+import { objectToQueryString } from "@/utils/queryString";
 
 const Header: React.FC = () => {
   const { data: cart, refetch: cartRefetch } = useGetMyCartQuery();
@@ -105,9 +105,11 @@ const Header: React.FC = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [lastScrollY]);
+
   useEffect(() => {
     wishRefetch();
   }, [wishs]);
+
   useEffect(() => {
     cartRefetch();
   }, [carts]);
@@ -133,34 +135,63 @@ const Header: React.FC = () => {
     isLoading,
     error,
   } = useGetProductCategoriesQuery("");
-  console.log("🚀 ~ categories:", categories);
 
-  const { data: bestSelling } = useGetBestSellingProductsQuery(
-    { search: debouncedSearch, limit: "10", page: "1" },
-    { skip: !debouncedSearch }
-  );
+  const searchParams = {
+    search: debouncedSearch,
+    limit: 10,
+    page: 1,
+  };
 
-  const { data: mostVisited } = useGetMostVisitedProductsQuery(
-    { search: debouncedSearch, limit: "10", page: "1", visitorId: "sazzad123" },
-    { skip: !debouncedSearch }
-  );
+  const visitorParams = {
+    ...searchParams,
+    visitorId: "sazzad123",
+  };
 
-  const { data: newArrival } = useGetNewArivalProductsQuery(
-    { search: debouncedSearch, limit: "10", page: "1" },
-    { skip: !debouncedSearch }
-  );
+  const queryString = objectToQueryString(searchParams);
+  const visitorQueryString = objectToQueryString(visitorParams);
 
-  const { data: topRated } = useGetTopRatedProductsQuery(
-    { search: debouncedSearch, limit: "10", page: "1" },
-    { skip: !debouncedSearch }
-  );
+  const {
+    data: bestSelling,
+    isFetching: fetchingBest,
+  } = useGetBestSellingProductsQuery(queryString, {
+    skip: !debouncedSearch,
+  });
 
-  const mergedProducts = [
-    ...(bestSelling?.data ?? []),
-    ...(mostVisited?.data ?? []),
-    ...(newArrival?.data ?? []),
-    ...(topRated?.data ?? [])
-  ];
+  const {
+    data: mostVisited,
+    isFetching: fetchingVisited,
+  } = useGetMostVisitedProductsQuery(visitorQueryString, {
+    skip: !debouncedSearch,
+  });
+
+  const {
+    data: newArrival,
+    isFetching: fetchingNew,
+  } = useGetNewArivalProductsQuery(queryString, {
+    skip: !debouncedSearch,
+  });
+
+  const {
+    data: topRated,
+    isFetching: fetchingTop,
+  } = useGetTopRatedProductsQuery(queryString, {
+    skip: !debouncedSearch,
+  });
+
+
+  const isFetchingAny = fetchingBest || fetchingVisited || fetchingNew || fetchingTop;
+
+
+  const mergedProducts =
+    !isFetchingAny
+      ? [
+        ...(bestSelling?.data ?? []),
+        ...(mostVisited?.data ?? []),
+        ...(newArrival?.data ?? []),
+        ...(topRated?.data ?? []),
+      ]
+      : [];
+
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -537,11 +568,11 @@ const Header: React.FC = () => {
               >
                 <AppstoreOutlined />
                 <div className="w-full flex items-center justify-between">
-                  <span >Category</span> 
+                  <span >Category</span>
                   <DownOutlined />
                 </div>
               </Link>
-              
+
               <Link
                 href="/contact-us"
                 onClick={onClose}
@@ -642,6 +673,68 @@ const Header: React.FC = () => {
           ref={dropdownRef}
           className="absolute top-24 lg:top-[100px] left-1/2 -translate-x-1/2 z-50 mt-2 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] flex flex-col lg:flex-row bg-white border shadow-lg rounded-lg h-[80vh]"
         >
+          {isFetchingAny ? (
+            <div className="w-full h-full flex justify-center items-center">
+              <FaSpinner size={40} className="animate-spin text-blue-500" />
+            </div>
+          ) : mergedProducts.length > 0 ? (
+            <>
+              {/* LEFT: Categories */}
+              <div className="w-full lg:w-[30%] border-b lg:border-b-0 lg:border-r p-4">
+                <h4 className="font-bold text-base mb-2 text-black">Categories</h4>
+                <ul>
+                  {categories
+                    ?.flatMap((category) =>
+                      category.sub_category.flatMap((subCat) =>
+                        subCat.sub_sub_category
+                          .filter((subSub) =>
+                            subSub.title.toLowerCase().includes(searchTerm.toLowerCase())
+                          )
+                          .map((subSub) => ({
+                            categoryId: category.id,
+                            subCategoryId: subCat.id,
+                            subSubCategoryId: subSub.id,
+                            title: subSub.title,
+                          }))
+                      )
+                    )
+                    .map(({ categoryId, subCategoryId, subSubCategoryId, title }) => (
+                      <li key={subSubCategoryId} className="mb-1 text-black">
+                        <Link
+                          href={`/category?categoryId=${categoryId}&subCategoryId=${subCategoryId}&subSubCategoryId=${subSubCategoryId}`}
+                          onClick={() => setIsOpen(false)}
+                          className="text-sm hover:text-secondaryBlue"
+                        >
+                          {title}
+                        </Link>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+
+              {/* RIGHT: Product Cards */}
+              <div className="w-full lg:w-[70%] p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto max-h-[80vh]">
+                {mergedProducts.map((product) => (
+                  <div key={product._id}>
+                    <ProductCard product={product} setIsOpen={setIsOpen} />
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            // No Products Found – Full Width Centered
+            <div className="w-full h-full flex justify-center items-center text-gray-500 text-lg">
+              No products found
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* {isOpen && (
+        <div
+          ref={dropdownRef}
+          className="absolute top-24 lg:top-[100px] left-1/2 -translate-x-1/2 z-50 mt-2 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] flex flex-col lg:flex-row bg-white border shadow-lg rounded-lg h-[80vh]"
+        >
           <div className="w-full lg:w-[30%] border-b lg:border-b-0 lg:border-r p-4">
             <h4 className="font-bold text-base mb-2 text-black">Categories</h4>
             <ul>
@@ -688,7 +781,7 @@ const Header: React.FC = () => {
             )}
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
