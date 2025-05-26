@@ -384,7 +384,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
               Product Code: {data?.product.code}
             </p>
             <a
-              href="https://wa.me/8801000000000"
+              href="https://api.whatsapp.com/send?phone=8801711726501&text=hello%F0%9F%98%87"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-3 flex w-max items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-xs text-green-700 md:text-sm"

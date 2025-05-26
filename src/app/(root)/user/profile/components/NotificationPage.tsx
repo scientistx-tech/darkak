@@ -89,7 +89,7 @@ const NotificationComponent: React.FC<NotificationProps> = ({
         </div>
       </div>
 
-      <button
+      {/* <button
         onClick={onDelete}
         className="group relative rounded-full bg-red-500 p-3 text-white transition-all hover:bg-red-600"
       >
@@ -97,7 +97,7 @@ const NotificationComponent: React.FC<NotificationProps> = ({
         <span className="absolute right-full mr-2 hidden rounded-md bg-black px-2 py-1 text-xs text-white group-hover:block">
           Delete
         </span>
-      </button>
+      </button> */}
     </div>
   );
 };

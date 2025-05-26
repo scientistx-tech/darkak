@@ -21,10 +21,14 @@ import { clearUser } from "@/redux/slices/authSlice";
 import { auth } from "@/utils/firebase";
 
 import { useGetProductCategoriesQuery } from "@/redux/services/client/categories";
+import { useAddSubscriberMutation } from "@/redux/services/client/subscribe";
+import { toast } from "react-toastify";
 
 function Footer() {
+  const [addSubscriber, { isLoading: subscribeLoading }] =
+    useAddSubscriberMutation();
   const [api, contextHolder] = notification.useNotification();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [email, setEmail] = React.useState("");
 
   const contextValue = useMemo(() => ({ name: "Ant Design" }), []);
 
@@ -46,9 +50,7 @@ function Footer() {
     error,
   } = useGetProductCategoriesQuery("");
 
-  const handleSubscribe = () => {
-    const email = inputRef.current?.value.trim() || "";
-
+  const handleSubscribe = async () => {
     if (!email) {
       openNotification("warning", "Email Required", "Please enter your email.");
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -58,13 +60,15 @@ function Footer() {
         "Please enter a valid email address.",
       );
     } else {
-      openNotification(
-        "success",
-        "Subscribed",
-        "You've successfully subscribed.",
-      );
-      console.log(email);
-      if (inputRef.current) inputRef.current.value = "";
+      try {
+        const response = await addSubscriber({ email }).unwrap();
+        toast.success("Subscribed successfully!");
+        setEmail(""); // Clear the input field after successful subscription
+      } catch (error: any) {
+        console.log(error);
+
+        toast.error(error?.data?.message || "Subscription failed!");
+      }
     }
   };
   const dispatch = useDispatch<AppDispatch>();
@@ -92,18 +96,21 @@ function Footer() {
               <p className="text-xl font-semibold text-[#003084]">
                 SUBSCRIBE TO OUR NEWSLETTER
               </p>
-              <div className="mt-5 w-[80%] rounded-full bg-white">
+              <div className="mt-5 flex w-[80%] rounded-full bg-white">
                 <input
-                  ref={inputRef}
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
                   className="w-2/3 rounded-l-full border-none py-2 pl-4 outline-none"
                   type="text"
                   placeholder="Your email goes here..."
+                  disabled={subscribeLoading}
                 />
                 <button
                   onClick={handleSubscribe}
-                  className="w-1/3 rounded-r-full bg-primary py-2 text-white transition-all duration-500 ease-in-out hover:bg-[#003084]"
+                  disabled={subscribeLoading}
+                  className="w-1/3 rounded-r-full bg-primary py-2 text-white transition-all duration-500 ease-in-out hover:bg-[#003084] disabled:opacity-60"
                 >
-                  SUBSCRIBE
+                  {subscribeLoading ? "Loading..." : "SUBSCRIBE"}
                 </button>
               </div>
             </div>
@@ -210,7 +217,7 @@ function Footer() {
                           pathname: "/category",
                           query: { categoryId: cat.title },
                         }}
-                        className=" text-[#F6F6F6] hover:text-white"
+                        className="text-[#F6F6F6] hover:text-white"
                       >
                         {cat.title}
                       </Link>
