@@ -16,7 +16,6 @@ const ProductGrid: React.FC<Props> = ({ products, isLoading }) => {
                 <FaSpinner size={40} className="animate-spin text-blue-500" />
             </div>
         );
-
     }
 
     if (!isLoading && products.length === 0) {
