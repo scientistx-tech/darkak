@@ -207,9 +207,13 @@ const AllOrderList = () => {
                           <p className="rounded-lg border border-red-700 bg-red-50 px-2 py-0.5 text-center font-bold text-red-700">
                             Cancelled
                           </p>
-                        ) : (
+                        ) : order.status === "failed_to_delivery" ? (
                           <p className="rounded-lg border border-red-700 bg-red-50 px-2 py-0.5 text-center font-bold text-red-700">
                             Failed To Deliver
+                          </p>
+                        ) : (
+                          <p className="rounded-lg border border-red-700 bg-red-50 px-2 py-0.5 text-center font-bold text-red-700">
+                            Pre Order
                           </p>
                         )}
                       </div>

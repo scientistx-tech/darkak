@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import {
   useDeleteSubSubCategoryMutation,
@@ -639,6 +639,34 @@ export default function ProductForm() {
     }
   };
 
+  // Auto-calculate stock based on Color attribute options
+  useEffect(() => {
+    // Find Color attribute (case-insensitive)
+    const colorItem = formData.items.find(
+      (item) => item.title?.toLowerCase() === "color",
+    );
+    if (
+      colorItem &&
+      Array.isArray(colorItem.options) &&
+      colorItem.options.length > 0
+    ) {
+      // Sum all option stocks (handle string/number/undefined)
+      const totalStock = colorItem.options.reduce((sum, opt) => {
+        let stockNum = 0;
+        if (typeof opt.stock === "number") stockNum = opt.stock;
+        else if (typeof opt.stock === "string")
+          stockNum = parseInt(opt.stock) || 0;
+        return sum + stockNum;
+      }, 0);
+      // Always set stock to totalStock if Color exists
+      if (formData.stock !== String(totalStock) || formData.stock === "") {
+        setFormData((prev) => ({ ...prev, stock: String(totalStock) }));
+      }
+    }
+    // If no Color attribute, do nothing (stock input is used)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(formData.items)]);
+
   return (
     <div className="mx-auto w-full">
       <h1 className="mb-4 flex items-center gap-2 text-xl font-bold">
@@ -1048,6 +1076,9 @@ export default function ProductForm() {
               type="number"
               onChange={handleChange}
               className="mt-1 w-full rounded-md border p-2"
+              disabled={formData.items.some(
+                (item) => item.title?.toLowerCase() === "color",
+              )}
             />
           </div>
 
