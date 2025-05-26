@@ -46,6 +46,8 @@ interface ProductShowProps {
           id: number;
           title: string;
           image?: string;
+          stock?: number;
+          price?: string;
         }[];
       }[];
     };
@@ -99,6 +101,27 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
     ),
   );
 
+  const stockkkk = !data?.product?.items.length
+    ? data?.product?.stock
+    : data?.product?.items.map((item: any) => {
+        if (item?.id === Object.keys(selectedOptions)[0]) {
+          return (
+            item.options.find(
+              (option: any) => option.id === selectedOptions[item.id],
+            )?.stock || 0
+          );
+        }
+      });
+
+  console.log("stockkkk", stockkkk);
+  console.log(
+    "product stock, items stock",
+    data?.product?.stock,
+    data?.product,
+  );
+
+  console.log("slectedOptions", selectedOptions);
+
   const fallbackImage = "/images/fallback.png";
 
   //  Selected image state
@@ -147,6 +170,21 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
     }
   }, [data?.product?.items, data?.product?.Image]);
 
+  // Helper to get max quantity based on Color option or fallback to product stock
+  const getMaxQuantity = () => {
+    const colorItem = data?.product?.items?.find(
+      (item: any) => item.title?.toLowerCase() === "color",
+    );
+    if (colorItem) {
+      const selectedOptionId = selectedOptions[colorItem.id];
+      const selectedOption = colorItem.options.find(
+        (opt: any) => opt.id === selectedOptionId,
+      );
+      return selectedOption?.stock ?? 1;
+    }
+    return data?.product?.stock || 1;
+  };
+
   //  Build cart object
   //  This function creates a cart object based on the product data
   const buildCartObject = (product: any) => {
@@ -184,8 +222,6 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
     console.log("cartobject", cartObject);
     try {
       localStorage.setItem("checkout_items", JSON.stringify([cartObject]));
-      // dispatch(setCart(Math.random()));
-      // toast.success("Item added to cart!");
       router.push("/easy-checkout");
     } catch (error: any) {
       if (error?.status === 401) {
@@ -426,19 +462,21 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
               <span className="px-4">{quantity}</span>
               <button
                 onClick={() =>
-                  setQuantity(Math.min(quantity + 1, data?.product?.stock || 1))
+                  setQuantity(Math.min(quantity + 1, getMaxQuantity()))
                 }
                 className="bg-secondaryBlue px-4 py-1 text-white transition-all duration-300 hover:bg-primaryBlue"
-                disabled={quantity >= (data?.product?.stock || 1)}
+                disabled={quantity >= getMaxQuantity()}
                 aria-label="Increase quantity"
               >
                 +
               </button>
             </div>
           </div>
+
           <DeliveryDetails
             deliveryInfo={data?.product?.delivery_info}
           ></DeliveryDetails>
+
           {data?.product?.stock > 0 ? (
             <div className="mt-6 flex items-center gap-4">
               <button

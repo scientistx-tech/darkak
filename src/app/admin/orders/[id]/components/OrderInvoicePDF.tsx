@@ -76,9 +76,10 @@ export default function OrderInvoicePDF({
   const customerPhone = orderDetails?.phone || "";
   const address = `${orderDetails.area}, ${orderDetails.sub_district}, ${orderDetails.district}, ${orderDetails.division}`;
 
-  // Calculate sum of unit prices (not multiplied by quantity)
+  // Calculate sum of unit prices (multiplied by quantity)
   const totalUnitPrice = order_items?.reduce(
-    (sum: number, item: any) => sum + (item.product?.price || 0),
+    (sum: number, item: any) =>
+      sum + (item.product?.price || 0) * (item.quantity || 1),
     0,
   );
 
