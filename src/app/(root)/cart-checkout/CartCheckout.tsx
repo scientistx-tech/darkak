@@ -13,6 +13,7 @@ import SendButton from "@/components/Button/SendButton";
 import {
   useDeleteCartMutation,
   useGetMyCartQuery,
+  useUpdateCartMutation,
 } from "@/redux/services/client/myCart";
 import { RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,6 +23,7 @@ import {
   useOrderSingleProductMutation,
 } from "@/redux/services/client/checkout";
 import { setCart } from "@/redux/slices/authSlice";
+import { BD_Division, BD_District } from "@/Data/addressData";
 
 const initialProducts = [
   {
@@ -67,6 +69,7 @@ const CartCheckout: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useDispatch();
+  const [cartUpdate] = useUpdateCartMutation();
 
   const user = useSelector((state: RootState) => state.auth.user);
 
@@ -173,13 +176,22 @@ const CartCheckout: React.FC = () => {
     const updated = checkoutItems.map((item: any) => {
       if (item.id === id) {
         let newQty = type === "inc" ? item.quantity + 1 : item.quantity - 1;
+        handleUpdate(id, newQty);
         return { ...item, quantity: newQty < 1 ? 1 : newQty };
       }
       return item;
     });
     setCheckoutItems(updated);
   };
-
+  const handleUpdate = async (id: number, quantity: number) => {
+    try {
+      await cartUpdate({ id, quantity }).unwrap(); // call API with ID
+    } catch (error) {
+      console.error("Delete failed:", error);
+      // Optional: show toast or notification
+      toast.error("Failed to update!");
+    }
+  };
   const subtotal = checkoutItems.reduce((acc: number, item: any) => {
     const price = item.product?.price ?? 0;
     const discount = item.product?.discount ?? 0;
@@ -210,26 +222,32 @@ const CartCheckout: React.FC = () => {
       area,
       paymentType: "cod",
       cartIds: productIds,
-      deliveryFee: 60,
+      deliveryFee: district === "Dhaka" ? 60 : 120,
       order_type: !checkoutItems[0].product?.user?.isSeller
         ? "in-house"
         : "vendor",
     };
     try {
       const res = await createOrder(payload).unwrap();
-      // await Promise.all(
-      //   productIds?.map(async (d: number) => {
-      //     await deleteCart(d).unwrap();
-      //   }),
-      // );
+
       dispatch(setCart(Math.random()));
-      toast.success("Successfully Placed Order");
-      router.push(`/order-placed`);
+      toast.success(res?.message || "Order placed successfully!");
+      router.push(`/order-placed/${res?.order?.orderId}`);
     } catch (error: any) {
       toast.error(error?.data?.message);
       console.log(error);
     }
   };
+
+  // For dependent district dropdown using addressData.ts
+  const divisionOptions = BD_Division.divisions;
+  const districtOptions = division
+    ? BD_District.districts.filter(
+        (d) =>
+          d.division_id ===
+          divisionOptions.find((div) => div.name === division)?.id,
+      )
+    : [];
 
   return (
     <div className="px-2 py-6 md:container md:mx-auto md:px-4 xl:px-6">
@@ -350,13 +368,22 @@ const CartCheckout: React.FC = () => {
                   <label className="mb-1 block text-sm font-medium">
                     Division <span className="text-primaryBlue">*</span>
                   </label>
-                  <Input
-                    placeholder="e.g., Dhaka"
-                    className="border border-primaryBlue px-3 py-2"
+                  <select
+                    className="w-full rounded border border-primaryBlue px-3 py-2"
                     value={division}
-                    onChange={(e) => setDivision(e.target.value)}
+                    onChange={(e) => {
+                      setDivision(e.target.value);
+                      setDistrict(""); // reset district when division changes
+                    }}
                     required
-                  />
+                  >
+                    <option value="">Select Division</option>
+                    {divisionOptions.map((div) => (
+                      <option key={div.id} value={div.name}>
+                        {div.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* District */}
@@ -364,13 +391,22 @@ const CartCheckout: React.FC = () => {
                   <label className="mb-1 block text-sm font-medium">
                     District <span className="text-primaryBlue">*</span>
                   </label>
-                  <Input
-                    placeholder="e.g., Dhaka"
-                    className="border border-primaryBlue px-3 py-2"
+                  <select
+                    className="w-full rounded border border-primaryBlue px-3 py-2"
                     value={district}
                     onChange={(e) => setDistrict(e.target.value)}
                     required
-                  />
+                    disabled={!division}
+                  >
+                    <option value="">
+                      {division ? "Select District" : "Select Division First"}
+                    </option>
+                    {districtOptions.map((dist) => (
+                      <option key={dist.id} value={dist.name}>
+                        {dist.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 

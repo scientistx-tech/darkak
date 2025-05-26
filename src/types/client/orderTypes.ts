@@ -79,3 +79,13 @@ export interface Product {
   userId: number;
   date: string;
 }
+
+export interface ReturnRequest {
+  returened_method: string; 
+  message: string;
+  orderItemId: number;
+  files: {
+    images: string[];
+    videos: string[];
+  };
+}

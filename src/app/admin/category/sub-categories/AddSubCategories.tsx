@@ -5,7 +5,10 @@ import * as yup from "yup";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import SelectField from "@/app/(root)/user/profile/components/SelectField";
-import { useCreateSubCategoryMutation } from "@/redux/services/admin/adminCategoryApis";
+import {
+  useCreateSubCategoryMutation,
+  useUpdateSubCategoryMutation,
+} from "@/redux/services/admin/adminCategoryApis";
 import { toast } from "react-toastify";
 
 type AddDataProps = {
@@ -51,6 +54,8 @@ function AddSubCategories({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [uploadFormData, { isLoading }] = useCreateSubCategoryMutation();
+  const [updateSubCategory, { isLoading: loadingUpdate }] =
+    useUpdateSubCategoryMutation();
 
   // React Hook Form setup
   const {
@@ -77,25 +82,29 @@ function AddSubCategories({
   }, [value, reset]);
 
   const onSubmit = async (data: any) => {
-    // const formData = new FormData();
-
-    // formData.append("title", data.title);
-    // formData.append("categoryId", data.categoryId);
-
     const formData = {
       title: data?.title,
       categoryId: parseInt(data?.categoryId),
     };
 
     try {
-      await uploadFormData(formData).unwrap();
-      toast.success("Sub Category created successfully!");
-      if (setIsEditable) {
-        setIsEditable({
-          status: false,
-          value: { id: "", title: "", categoryId: "" },
-        });
+      if (value && value?.id) {
+        await updateSubCategory({
+          subCategoryId: value?.id,
+          formData,
+        }).unwrap();
+        toast.success("Sub Category updated successfully!");
+        if (setIsEditable) {
+          setIsEditable({
+            status: false,
+            value: { id: "", title: "", categoryId: "" },
+          });
+        }
+      } else {
+        await uploadFormData(formData).unwrap();
+        toast.success("Sub Category created successfully!");
       }
+
       refetch(); // Refetch the data after successful submission
       reset(); // Reset the form after successful submission
     } catch (error) {
@@ -196,7 +205,7 @@ function AddSubCategories({
         )}
         <Button onClick={handleSubmit(onSubmit)} disabled={isLoading}>
           {value?.id
-            ? isLoading
+            ? loadingUpdate
               ? "Updating..."
               : "Update"
             : isLoading

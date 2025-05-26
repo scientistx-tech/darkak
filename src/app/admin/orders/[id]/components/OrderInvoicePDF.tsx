@@ -9,7 +9,7 @@ import {
 } from "@react-pdf/renderer";
 
 // Helper for formatting currency
-const formatCurrency = (amount: number) => `Tk ${amount?.toFixed(2) || "0.00"}`;
+const formatCurrency = (amount: number) => `${amount?.toFixed(2) || "0.00"}`;
 
 // Styles
 const styles = StyleSheet.create({
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   totalRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 4,
+    marginBottom: 6,
   },
   totalLabel: { fontWeight: "bold" },
   thankYou: {
@@ -71,12 +71,33 @@ export default function OrderInvoicePDF({
 }) {
   if (!orderDetails) return null;
 
-  console.log("orderDetails", orderDetails);
-
   const { user, order_items } = orderDetails;
   const customerName = orderDetails?.name;
   const customerPhone = orderDetails?.phone || "";
   const address = `${orderDetails.area}, ${orderDetails.sub_district}, ${orderDetails.district}, ${orderDetails.division}`;
+
+  // Calculate sum of unit prices (multiplied by quantity)
+  const totalUnitPrice = order_items?.reduce(
+    (sum: number, item: any) =>
+      sum + (item.product?.price || 0) * (item.quantity || 1),
+    0,
+  );
+
+  // Calculate total discount: handle both 'flat' and 'percentage' types
+  const totalDiscount = order_items?.reduce((sum: number, item: any) => {
+    const price = item.product?.price || 0;
+    const discount = item.product?.discount || 0;
+    const discountType = item.product?.discount_type;
+    const quantity = item.quantity || 1;
+    let discountAmount = 0;
+    if (discountType === "flat") {
+      // Flat means a fixed price deduction per unit
+      discountAmount = discount * quantity;
+    } else if (discountType === "percentage") {
+      discountAmount = ((price * discount) / 100) * quantity;
+    }
+    return sum + discountAmount;
+  }, 0);
 
   return (
     <Document>
@@ -89,7 +110,11 @@ export default function OrderInvoicePDF({
               Invoice Date : {new Date(orderDetails.date).toDateString()}
             </Text>
           </View>
-          <View>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+            <Image
+              src="/images/logo/brandLogo.jpeg" // Make sure this path is correct and accessible
+              style={{ width: 72, height: 32, marginRight: 6 }}
+            />
             <Text>Darkak</Text>
           </View>
         </View>
@@ -174,10 +199,11 @@ export default function OrderInvoicePDF({
                 {product.price}
               </Text>
               <Text style={[{ width: "20%", textAlign: "right" }, styles.cell]}>
-                {product.discount}
+                {product?.discount_type === "flat" && "Tk"} {product.discount}{" "}
+                {product?.discount_type === "percentage" && "%"}
               </Text>
               <Text style={[{ width: "20%", textAlign: "right" }, styles.cell]}>
-                {formatCurrency(discountedPrice * quantity)}
+                Tk {formatCurrency(discountedPrice * quantity)}
               </Text>
             </View>
           );
@@ -187,24 +213,28 @@ export default function OrderInvoicePDF({
         <View style={styles.totalSection}>
           <View style={styles.totalRow}>
             <Text>Total Item Price</Text>
-            <Text>{formatCurrency(orderDetails.subTotal)}</Text>
-          </View>
-          <View style={styles.totalRow}>
-            <Text>Delivery Fee</Text>
-            <Text>{formatCurrency(orderDetails.deliveryFee)}</Text>
+            <Text>Tk {formatCurrency(totalUnitPrice)}</Text>
           </View>
           <View style={styles.totalRow}>
             <Text>Discount</Text>
-            <Text>-{formatCurrency(orderDetails.discount)}</Text>
+            <Text>-{formatCurrency(totalDiscount)}</Text>
+          </View>
+          <View style={styles.totalRow}>
+            <Text>Delivery Fee</Text>
+            <Text>+{formatCurrency(orderDetails.deliveryFee)}</Text>
           </View>
           <View style={styles.totalRow}>
             <Text>Tax</Text>
-            <Text>{formatCurrency(orderDetails.tax)}</Text>
+            <Text>+{formatCurrency(orderDetails.tax)}</Text>
           </View>
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Total</Text>
             <Text style={styles.totalLabel}>
-              {formatCurrency(orderDetails.total)}
+              Tk{" "}
+              {totalUnitPrice -
+                totalDiscount +
+                orderDetails.deliveryFee +
+                orderDetails.tax}
             </Text>
           </View>
         </View>

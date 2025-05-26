@@ -1,8 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import {
   useCreateSubSubCategoryMutation,
+  useUpdateSubSubCategoryMutation,
   useUploadFormDataMutation,
 } from "@/redux/services/admin/adminCategoryApis";
 import { toast } from "react-toastify";
@@ -48,6 +49,21 @@ type AddDataProps = {
         | undefined;
     };
   }[];
+  value?: {
+    id: string;
+    title: string;
+    categoryId: string;
+    subCategoryId: string;
+  };
+  setIsEditable?: (arg: {
+    status: boolean;
+    value: {
+      id: string;
+      title: string;
+      categoryId: string;
+      subCategoryId: string;
+    };
+  }) => void;
 };
 
 // Validation schema using Yup
@@ -61,6 +77,8 @@ function AddSubSubCategories({
   refetch,
   categories,
   subCategories,
+  value,
+  setIsEditable,
 }: AddDataProps) {
   const [title, setTitle] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -71,6 +89,8 @@ function AddSubSubCategories({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [uploadFormData, { isLoading }] = useCreateSubSubCategoryMutation();
+  const [updateSubSubCategory, { isLoading: loadingUpdate }] =
+    useUpdateSubSubCategoryMutation();
 
   const {
     register,
@@ -81,10 +101,21 @@ function AddSubSubCategories({
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      title: "",
-      categoryId: "",
+      title: value?.title || "",
+      categoryId: value?.categoryId || "",
+      subCategoryId: value?.subCategoryId || "",
     },
   });
+
+  useEffect(() => {
+    if (value) {
+      reset({
+        title: value.title || "",
+        categoryId: value.categoryId || "",
+        subCategoryId: value?.subCategoryId || "",
+      });
+    }
+  }, [value, reset]);
 
   const onSubmit = async (data: any) => {
     const formData = {
@@ -94,8 +125,22 @@ function AddSubSubCategories({
     };
 
     try {
-      await uploadFormData(formData).unwrap();
-      toast.success("Sub Sub Category created successfully!");
+      if (value && value?.id) {
+        await updateSubSubCategory({
+          subSubCategoryId: value?.id,
+          formData,
+        }).unwrap();
+        toast.success("Sub Sub Category Updated successfully!");
+        if (setIsEditable) {
+          setIsEditable({
+            status: false,
+            value: { id: "", title: "", categoryId: "", subCategoryId: "" },
+          });
+        }
+      } else {
+        await uploadFormData(formData).unwrap();
+        toast.success("Sub Sub Category created successfully!");
+      }
       refetch();
       reset();
     } catch (error) {

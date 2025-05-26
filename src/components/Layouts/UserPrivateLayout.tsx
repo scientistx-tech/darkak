@@ -15,7 +15,7 @@ const UserPrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
     const router = useRouter();
     const pathname = usePathname();
     setLocalStorage("path", pathname);
-
+    console.log(pathname)
 
     useEffect(() => { 
         if (!user) {

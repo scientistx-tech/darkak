@@ -77,13 +77,13 @@ const SignupPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center bg-[#E6EFFF]">
+    <div className="flex h-screen items-center justify-center bg-primaryBlue">
       {contextHolder}
-      <Image
+      {/* <Image
         alt="img"
         src={SVG}
         className="absolute -top-7 left-[12.5%] hidden h-[200px] w-[200px] opacity-45 md:block"
-      />
+      /> */}
 
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 10 }}
@@ -92,7 +92,7 @@ const SignupPage: React.FC = () => {
         className="z-10 flex w-[90%] flex-col items-center justify-center rounded-lg bg-white p-6 shadow md:w-[70%] max-w-md"
       >
         <p className="mb-1 text-2xl font-medium text-secondary">
-          Sign Up to Darkak<span className="text-primary">Mart</span>
+          Sign Up to &quot;<span className="text-primary">Darkak</span> <span className="text-primaryBlue">Mart&quot;</span>
         </p>
 
         <p className="text-[15px]">Sign Up using social network</p>
@@ -140,7 +140,7 @@ const SignupPage: React.FC = () => {
 
         <button
           onClick={handleSignup}
-          className="w-[90%] rounded-lg bg-[#003084] py-2 font-semibold text-white transition hover:bg-[#00153B] md:w-[70%]"
+          className="w-[90%] rounded-lg bg-primaryBlue py-2 font-semibold text-white transition hover:bg-primary md:w-[70%]"
         >
           {isLoading ? "Signing Up..." : " Sign Up"}
         </button>
@@ -171,11 +171,11 @@ const SignupPage: React.FC = () => {
         </div>
       </motion.div>
 
-      <Image
+      {/* <Image
         alt="img"
         src={SVG}
         className="absolute -bottom-7 right-[12.5%] hidden h-[200px] w-[200px] opacity-45 md:block"
-      />
+      /> */}
       <OtpModal
         onResendOtp={handleSignup}
         email={email}

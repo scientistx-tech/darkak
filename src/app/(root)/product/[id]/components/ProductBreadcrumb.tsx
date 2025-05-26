@@ -1,34 +1,23 @@
 "use client";
 
+import SocialShare from "@/components/ShareSocialMedia";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { BiGitCompare } from "react-icons/bi";
 import { CiShare2 } from "react-icons/ci";
 
-const ProductBreadcrumb = () => {
+const ProductBreadcrumb = ({ title, url }: { title: string; url: string }) => {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
-  const [isCompared, setIsCompared] = useState(false);
-  const [copied, setCopied] = useState(false);
 
-  const handleCompare = () => {
-    setIsCompared((prev) => !prev);
-  };
+  console.log(title, url);
 
-  const handleShare = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy link: ", err);
-    }
-  };
+  const baseUrl = "https://www.darkak.com.bd";
 
   return (
     <div>
-      <div className="flex items-center justify-between py-3">
+      <div className="mt-2 flex items-center justify-between py-3">
         {/* Breadcrumbs */}
         <nav className="flex items-center space-x-1 text-sm text-[#4B4E55]">
           <Link href="/" className="hover:text-primaryDarkBlue">
@@ -60,21 +49,14 @@ const ProductBreadcrumb = () => {
 
         {/* Action Buttons */}
         <div className="flex items-center space-x-2">
-          {/* <button
-            onClick={handleCompare}
-            className="flex items-center space-x-1 rounded-full bg-secondaryWhite px-3 py-1.5 text-secondaryBlue transition hover:bg-blue-100"
-          >
-            <BiGitCompare className="h-4 w-4 text-primaryDarkBlue" />
-            <span>{isCompared ? "Compared" : "Add to Compare"}</span>
-          </button> */}
-
-          <button
-            onClick={handleShare}
-            className="flex items-center space-x-1 rounded-full bg-secondaryWhite px-3 py-1.5 text-secondaryBlue transition hover:bg-blue-100"
-          >
-            <CiShare2 className="h-4 w-4 text-primaryDarkBlue" />
-            <span>{copied ? "Copied!" : "Share"}</span>
-          </button>
+          {/* <ShareDropdown productName="Striking Tag Heuer Carrera Chronograph Blue Dial Stainless Steel" /> */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <CiShare2 className="h-4 w-4 text-primaryDarkBlue" />
+              <p>Share:</p>
+            </div>
+            <SocialShare url={`${baseUrl}${url}`} title={title} />
+          </div>
         </div>
       </div>
     </div>
