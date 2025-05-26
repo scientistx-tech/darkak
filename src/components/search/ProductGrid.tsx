@@ -12,21 +12,11 @@ interface Props {
 const ProductGrid: React.FC<Props> = ({ products, isLoading }) => {
     if (isLoading) {
         return (
-            // <div className="flex justify-center items-center h-64">
-            //     <FaSpinner size={40} className="animate-spin text-blue-500" />
-            // </div>
-            Array.from({ length: 20 }).map((_, i) => (
-                <div
-                    key={i}
-                    className="animate-pulse rounded-lg bg-gray-100 p-4 shadow-sm"
-                >
-                    <div className="mb-3 h-36 w-full rounded bg-gray-200" />
-                    <div className="mb-2 h-4 w-3/4 rounded bg-gray-200" />
-                    <div className="mb-1 h-3 w-1/2 rounded bg-gray-200" />
-                    <div className="h-3 w-1/3 rounded bg-gray-200" />
-                </div>
-            ))
+            <div className="flex justify-center items-center h-64">
+                <FaSpinner size={40} className="animate-spin text-blue-500" />
+            </div>
         );
+
     }
 
     if (!isLoading && products.length === 0) {

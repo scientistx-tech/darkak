@@ -8,6 +8,7 @@ import ProductGrid from '@/components/search/ProductGrid';
 import { useGetAllProductsQuery } from '@/redux/services/client/products';
 import Pagination from '@/components/shared/Pagination';
 import { useGetSearchPublicQuery } from '@/redux/services/client/searchedProducts';
+import SortBy from '@/components/search/SortBy';
 
 export default function SearchPage() {
     const router = useRouter();
@@ -53,6 +54,7 @@ export default function SearchPage() {
                 <p className="mb-1 text-base font-semibold text-[#003084] md:mb-0 md:text-xl lg:text-3xl">
                     Searching for '{keyword}'
                 </p>
+                <SortBy/>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4">
                 <div className="col-span-1">
