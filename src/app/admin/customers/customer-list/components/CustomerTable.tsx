@@ -1,60 +1,37 @@
+import { useToggleBlockUserMutation } from "@/redux/services/admin/adminCustomerList";
+import { User } from "@/types/admin/customerListTyes";
 import { DeleteFilled, EyeFilled } from "@ant-design/icons";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
-interface Customer {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  totalOrders: number;
-  isBlocked: boolean;
+interface CustomerTableProps {
+  data: User[];
+  refetch: () => void;
 }
 
-const customers: Customer[] = [
-  {
-    id: 1,
-    name: "Robert Downey",
-    email: "robert@customer.com",
-    phone: "+15551112222",
-    totalOrders: 137,
-    isBlocked: false,
-  },
-  {
-    id: 2,
-    name: "Chris Evans",
-    email: "chris@customer.com",
-    phone: "+15553334444",
-    totalOrders: 5,
-    isBlocked: false,
-  },
-  {
-    id: 3,
-    name: "Tom Holland",
-    email: "test@customer.com",
-    phone: "+15557778888",
-    totalOrders: 1,
-    isBlocked: false,
-  },
-];
+export const CustomerTable: React.FC<CustomerTableProps> = ({
+  data,
+  refetch,
+}) => {
+  const [toggleBlockUser, { isLoading }] = useToggleBlockUserMutation();
 
-export const CustomerTable: React.FC = () => {
-  const [customerList, setCustomerList] = useState<Customer[]>(customers);
+  const toggleBlock = async (id: number) => {
+    try {
+      const res = await toggleBlockUser(id).unwrap();
+      refetch();
 
-  const toggleBlock = (id: number) => {
-    setCustomerList(
-      customerList.map((customer) =>
-        customer.id === id
-          ? { ...customer, isBlocked: !customer.isBlocked }
-          : customer,
-      ),
-    );
+      toast.success(res.message || "User block status updated");
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Something went wrong");
+    }
   };
 
   return (
     <div className="rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark dark:shadow-card">
       <div className="mb-4 flex justify-between">
         <h2 className="text-lg font-semibold">
-          Customer list <span className="text-blue-500">7</span>
+          Customer list{" "}
+          <span className="text-blue-500">{data?.length ?? 0}</span>
         </h2>
         <div className="flex space-x-2">
           <input
@@ -79,22 +56,26 @@ export const CustomerTable: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {customerList.map((customer) => (
+          {data.map((customer, index) => (
             <tr key={customer.id} className="border-b">
-              <td className="p-2">{customer.id}</td>
+              <td className="p-2">{index + 1}</td>
               <td className="p-2">{customer.name}</td>
               <td className="p-2">
                 <div>{customer.email}</div>
                 <div>{customer.phone}</div>
               </td>
-              <td className="p-2">{customer.totalOrders}</td>
+              <td className="p-2">{customer._count.orders}</td>
               <td className="p-2">
                 <button
                   onClick={() => toggleBlock(customer.id)}
-                  className={`h-6 w-12 rounded-full p-1 ${customer.isBlocked ? "bg-gray-300" : "bg-blue-600"}`}
+                  disabled={isLoading}
+                  className={`h-6 w-12 rounded-full p-1 transition-colors duration-300 ${
+                    customer.isBlocked ? "bg-gray-300" : "bg-blue-600"
+                  }`}
+                  title={customer.isBlocked ? "Unblock" : "Block"}
                 >
                   <div
-                    className={`h-4 w-4 transform rounded-full bg-white shadow-md ${
+                    className={`h-4 w-4 transform rounded-full bg-white shadow-md transition-transform duration-300 ${
                       customer.isBlocked ? "translate-x-0" : "translate-x-6"
                     }`}
                   />
