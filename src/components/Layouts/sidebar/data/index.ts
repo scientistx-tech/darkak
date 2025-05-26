@@ -6,6 +6,7 @@ import { FaUsers } from "react-icons/fa";
 import { GrVend } from "react-icons/gr";
 import { PiUserSoundFill } from "react-icons/pi";
 import { TbBinaryTree2Filled } from "react-icons/tb";
+import { IoAnalytics } from "react-icons/io5";
 import * as Icons from "../icons";
 import { BsTornado } from "react-icons/bs";
 import { url } from "inspector";
@@ -249,6 +250,11 @@ export const NAV_DATA = [
   {
     label: "OTHERS",
     items: [
+      {
+        title: "Analytics",
+        icon: IoAnalytics,
+        url: "/admin/analytics",
+      },
       {
         title: "Charts",
         icon: Icons.PieChart,

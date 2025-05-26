@@ -3,7 +3,8 @@ import {
   useUpdatePaymentStatusMutation,
 } from "@/redux/services/admin/adminOrderApis";
 import * as Switch from "@radix-ui/react-switch";
-import { useState } from "react";
+import { Modal } from "antd";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 export default function OrderStatusPanel({ orderDetails, refetch }: any) {
@@ -11,6 +12,10 @@ export default function OrderStatusPanel({ orderDetails, refetch }: any) {
   const [paymentStatus, setPaymentStatus] = useState<boolean>(
     orderDetails?.paid,
   );
+  const [open, setOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [failedMessage, setFailedMessage] = useState<string>("");
+  const [openCourierBox, setOpenCourierBox] = useState<boolean>(false);
 
   const [changeOrderStatus] = useUpdateOrderStatusMutation();
   const [changePaymentStatus] = useUpdatePaymentStatusMutation();
@@ -20,29 +25,55 @@ export default function OrderStatusPanel({ orderDetails, refetch }: any) {
       id: 1,
       name: "Pending",
       value: "pending",
+      children: [
+        {
+          id: 1,
+          name: "Confirmed",
+          value: "confirmed",
+        },
+        {
+          id: 2,
+          name: "Cancel & Restock",
+          value: "cancelled",
+        },
+      ],
     },
     {
       id: 2,
-      name: "Delivered",
-      value: "delivered",
+      name: "Confirmed",
+      value: "confirmed",
+      children: [
+        {
+          id: 1,
+          name: "Packaging",
+          value: "packaging",
+        },
+        {
+          id: 2,
+          name: "Cancel & Restock",
+          value: "cancelled",
+        },
+      ],
     },
     {
       id: 3,
-      name: "Cancelled",
-      value: "cancelled",
+      name: "Packaging",
+      value: "packaging",
+      children: [
+        {
+          id: 1,
+          name: "Out For Delivery",
+          value: "out_for_delivery",
+        },
+        {
+          id: 2,
+          name: "Failed To Delivery",
+          value: "failed_to_delivery",
+        },
+      ],
     },
     {
       id: 4,
-      name: "Confirmed",
-      value: "confirmed",
-    },
-    {
-      id: 5,
-      name: "Returned",
-      value: "returned",
-    },
-    {
-      id: 6,
       name: "Failed To Delivery",
       value: "failed_to_delivery",
     },
@@ -50,13 +81,73 @@ export default function OrderStatusPanel({ orderDetails, refetch }: any) {
       id: 7,
       name: "Out For Delivery",
       value: "out_for_delivery",
+      children: [
+        {
+          id: 1,
+          name: "Delivered",
+          value: "delivered",
+        },
+        {
+          id: 2,
+          name: "Cancel & Restock",
+          value: "cancelled",
+        },
+      ],
     },
+
     {
-      id: 8,
-      name: "Packaging",
-      value: "packaging",
+      id: 5,
+      name: "Returned",
+      value: "returned",
     },
   ];
+
+  useEffect(() => {
+    if (orderDetails?.status) {
+      setOrderStatus(orderDetails.status);
+    }
+    if (orderDetails?.paid !== undefined) {
+      setPaymentStatus(orderDetails.paid);
+    }
+  }, [orderDetails]);
+
+  const availableStatus =
+    ordersStatus.find((status: any) => status.value === orderStatus)
+      ?.children || [];
+
+  const handleOk = () => {
+    setConfirmLoading(true);
+
+    if (!failedMessage) {
+      toast.error("Please write a message for failed delivery.");
+      setConfirmLoading(false);
+      return;
+    }
+
+    changeOrderStatus({
+      id: orderDetails?.id,
+      data: { status: "failed_to_delivery", message: failedMessage },
+    })
+      .unwrap()
+      .then(() => {
+        refetch();
+        toast.success("Order status updated!");
+      })
+      .catch(() => {
+        toast.error("Failed to update order status");
+      });
+
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
+  };
+
+  const handleCancel = () => {
+    console.log("Clicked cancel button");
+    setOpen(false);
+  };
+
   return (
     <div className="space-y-4 rounded border bg-white p-4 shadow">
       <h2 className="mb-3 text-center text-lg font-bold text-black">
@@ -69,30 +160,56 @@ export default function OrderStatusPanel({ orderDetails, refetch }: any) {
         <select
           value={orderStatus}
           onChange={(e) => {
-            setOrderStatus(e.target.value);
-            changeOrderStatus({
-              id: orderDetails?.id,
-              data: { status: e.target.value },
-            })
-              .unwrap()
-              .then(() => {
-                refetch();
-                toast.success("Order status updated!");
+            // setOrderStatus(e.target.value);
+
+            if (e.target.value === "out_for_delivery") {
+              setOpenCourierBox(true);
+            } else if (e.target.value === "failed_to_delivery") {
+              setOpen(true);
+            } else {
+              changeOrderStatus({
+                id: orderDetails?.id,
+                data: { status: e.target.value },
               })
-              .catch(() => {
-                toast.error("Failed to update order status");
-              });
+                .unwrap()
+                .then(() => {
+                  refetch();
+                  toast.success("Order status updated!");
+                })
+                .catch(() => {
+                  toast.error("Failed to update order status");
+                });
+            }
           }}
           className="mt-1 w-full rounded border p-2 text-slate-900"
         >
-          {ordersStatus.length > 0 &&
-            ordersStatus.map((status: any) => (
+          <option value="">Select Status</option>
+          {availableStatus.length > 0 &&
+            availableStatus.map((status: any) => (
               <option key={status.id} value={status.value}>
                 {status.name}
               </option>
             ))}
         </select>
       </div>
+
+      {openCourierBox && (
+        <div>
+          <label className="">Select Courier</label>
+          <select
+            className="mt-1 w-full rounded border p-2 text-slate-900"
+            value={orderDetails?.courier || ""}
+            onChange={(e) => {
+              // Handle courier selection change if neededPsideba
+            }}
+          >
+            <option value="">Select Courier</option>
+            <option value="Courier A">Pathao</option>
+            <option value="Courier B">Redx</option>
+            <option value="Courier C">Steadfast</option>
+          </select>
+        </div>
+      )}
 
       <div className="flex items-center justify-between border p-2">
         <span className="text-sm font-medium text-slate-900">
@@ -125,6 +242,23 @@ export default function OrderStatusPanel({ orderDetails, refetch }: any) {
           </Switch.Root>
         </div>
       </div>
+
+      <Modal
+        title="Leave a message"
+        open={open}
+        onOk={handleOk}
+        confirmLoading={confirmLoading}
+        onCancel={handleCancel}
+      >
+        <textarea
+          onChange={(e) => setFailedMessage(e.target.value)}
+          name="failedMessage"
+          id=""
+          rows={4}
+          className="w-full rounded border p-2 text-slate-900"
+          placeholder="Write a message"
+        ></textarea>
+      </Modal>
     </div>
   );
 }
