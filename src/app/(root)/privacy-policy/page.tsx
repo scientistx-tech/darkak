@@ -1,6 +1,9 @@
 import React from 'react'
 import PrivacyPolicyPage from './PrivacyPolicyPage'
-
+import { Metadata } from 'next';
+export const metadata: Metadata = {
+  title: "Privacy Policy"
+};
 export default function page() {
   return (
     <div>

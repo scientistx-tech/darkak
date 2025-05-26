@@ -1,6 +1,9 @@
 import React from 'react'
 import BlogsPage from './BlogsPage'
-
+import { Metadata } from 'next';
+export const metadata: Metadata = {
+  title: "Blogs"
+};
 export default function page() {
   return (
     <div>

@@ -1,6 +1,9 @@
 import React from 'react'
 import ContactPage from './ContactPage'
-
+import { Metadata } from 'next';
+export const metadata: Metadata = {
+  title: "Contact Us"
+};
 export default function page() {
   return (
     <div className='w-full'>
