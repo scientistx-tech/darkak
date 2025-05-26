@@ -1,6 +1,9 @@
 import React from 'react'
 import TermsConditionPage from './TermsConditionPage'
-
+import { Metadata } from 'next';
+export const metadata: Metadata = {
+  title: "Terms & Conditions"
+};
 export default function page() {
   return (
     <div>

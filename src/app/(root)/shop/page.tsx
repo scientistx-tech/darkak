@@ -1,6 +1,9 @@
 import React from "react";
 import ShopPage from "./ShopPage";
-
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Shop"
+};
 function page() {
   return (
     <div className="w-full">
