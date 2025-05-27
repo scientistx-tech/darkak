@@ -96,6 +96,8 @@ export default function SearchPage() {
   const startIdx = (currentPage - 1) * limit;
   const endIdx = startIdx + limit;
   const paginatedProducts = allProducts.slice(startIdx, endIdx);
+
+  
   return (
     <div className="container mx-auto w-full">
       <div className="h-[65px] w-full md:h-[109px]" />
