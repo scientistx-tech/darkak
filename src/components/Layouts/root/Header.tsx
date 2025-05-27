@@ -617,48 +617,25 @@ const Header: React.FC = () => {
           ) : products.length > 0 ? (
             <>
               {/* LEFT: Categories */}
-              <div className="w-full lg:w-[30%] border-b lg:border-b-0 lg:border-r p-4">
+              <div className="w-full lg:w-[30%] border-b lg:border-b-0 lg:border-r py-4 px-6">
                 <h4 className="font-bold text-base mb-2 text-black">Categories</h4>
-                {(() => {
-                  const filteredCategories =
-                    categories
-                      ?.flatMap((category) =>
-                        category.sub_category.flatMap((subCat) =>
-                          subCat.sub_sub_category
-                            .filter((subSub) =>
-                              subSub.title.toLowerCase().includes(searchTerm.toLowerCase())
-                            )
-                            .map((subSub) => ({
-                              categoryId: category.title,
-                              subCategoryId: subCat.title,
-                              subSubCategoryId: subSub.title,
-                              title: subSub.title,
-                            }))
-                        )
-                      ) || [];
-
-                  return (
-                    <ul>
-                      {filteredCategories.length > 0 ? (
-                        filteredCategories.map(
-                          ({ categoryId, subCategoryId, subSubCategoryId, title }) => (
-                            <li key={subSubCategoryId} className="mb-1 text-black">
-                              <Link
-                                href={`category?categoryId=${categoryId}&subCategoryId=${subCategoryId}&subSubCategoryId=${subSubCategoryId}`}
-                                onClick={() => setIsOpen(false)}
-                                className="text-sm hover:text-secondaryBlue"
-                              >
-                                {title}
-                              </Link>
-                            </li>
-                          )
-                        )
-                      ) : (
-                        <li className="text-sm text-gray-500">No categories found.</li>
-                      )}
-                    </ul>
-                  );
-                })()}
+                <ul>
+                  {categories?.flatMap((category) =>
+                    category.sub_category.flatMap((subCat) =>
+                      subCat.sub_sub_category.map((subSub) => (
+                        <li key={subSub.title} className="mb-1 text-black">
+                          <Link
+                            href={`category?categoryId=${category.title}&subCategoryId=${subCat.title}&subSubCategoryId=${subSub.title}`}
+                            onClick={() => setIsOpen(false)}
+                            className="text-sm hover:text-secondaryBlue"
+                          >
+                            {subSub.title}
+                          </Link>
+                        </li>
+                      ))
+                    )
+                  )}
+                </ul>
               </div>
 
               {/* RIGHT: Product Cards */}
