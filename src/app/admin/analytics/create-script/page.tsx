@@ -21,7 +21,7 @@ const Page = () => {
   const [form, setForm] = useState({
     name: "",
     type: "custom",
-    location: "head",
+    location: "header",
     script: "",
     active: true,
   });
