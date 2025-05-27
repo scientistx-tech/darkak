@@ -47,6 +47,7 @@ import { FaSpinner } from "react-icons/fa";
 import ProductCard from "@/components/shared/ProductCard";
 import { objectToQueryString } from "@/utils/queryString";
 import { useRouter } from "next/navigation";
+import { useGetSearchPublicQuery } from "@/redux/services/client/searchedProducts";
 
 
 const Header: React.FC = () => {
@@ -149,7 +150,6 @@ const Header: React.FC = () => {
   // Search functionality
   const {
     data: categories,
-    isLoading,
     error,
   } = useGetProductCategoriesQuery("");
 
@@ -167,48 +167,12 @@ const Header: React.FC = () => {
   const queryString = objectToQueryString(searchParams);
   const visitorQueryString = objectToQueryString(visitorParams);
 
-  const {
-    data: bestSelling,
-    isFetching: fetchingBest,
-  } = useGetBestSellingProductsQuery(queryString, {
-    skip: !debouncedSearch,
+  const { data, isFetching, isLoading } = useGetSearchPublicQuery({
+    search: `${debouncedSearch}`,
   });
+  console.log("🚀 ~ data:", data)
 
-  const {
-    data: mostVisited,
-    isFetching: fetchingVisited,
-  } = useGetMostVisitedProductsQuery(visitorQueryString, {
-    skip: !debouncedSearch,
-  });
-
-  const {
-    data: newArrival,
-    isFetching: fetchingNew,
-  } = useGetNewArivalProductsQuery(queryString, {
-    skip: !debouncedSearch,
-  });
-
-  const {
-    data: topRated,
-    isFetching: fetchingTop,
-  } = useGetTopRatedProductsQuery(queryString, {
-    skip: !debouncedSearch,
-  });
-
-
-  const isFetchingAny = fetchingBest || fetchingVisited || fetchingNew || fetchingTop;
-
-
-  const mergedProducts =
-    !isFetchingAny
-      ? [
-        ...(bestSelling?.data ?? []),
-        ...(mostVisited?.data ?? []),
-        ...(newArrival?.data ?? []),
-        ...(topRated?.data ?? []),
-      ]
-      : [];
-
+  const products = data?.data || [];
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -646,48 +610,37 @@ const Header: React.FC = () => {
           ref={dropdownRef}
           className="absolute top-24 lg:top-[100px] left-1/2 -translate-x-1/2 z-50 mt-2 w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] flex flex-col lg:flex-row bg-white border shadow-lg rounded-lg h-[80vh]"
         >
-          {isFetchingAny ? (
+          {isFetching ? (
             <div className="w-full h-full flex justify-center items-center">
               <FaSpinner size={40} className="animate-spin text-blue-500" />
             </div>
-          ) : mergedProducts.length > 0 ? (
+          ) : products.length > 0 ? (
             <>
               {/* LEFT: Categories */}
-              <div className="w-full lg:w-[30%] border-b lg:border-b-0 lg:border-r p-4">
+              <div className="w-full lg:w-[30%] border-b lg:border-b-0 lg:border-r py-4 px-6">
                 <h4 className="font-bold text-base mb-2 text-black">Categories</h4>
                 <ul>
-                  {categories
-                    ?.flatMap((category) =>
-                      category.sub_category.flatMap((subCat) =>
-                        subCat.sub_sub_category
-                          .filter((subSub) =>
-                            subSub.title.toLowerCase().includes(searchTerm.toLowerCase())
-                          )
-                          .map((subSub) => ({
-                            categoryId: category.id,
-                            subCategoryId: subCat.id,
-                            subSubCategoryId: subSub.id,
-                            title: subSub.title,
-                          }))
-                      )
+                  {categories?.flatMap((category) =>
+                    category.sub_category.flatMap((subCat) =>
+                      subCat.sub_sub_category.map((subSub) => (
+                        <li key={subSub.title} className="mb-1 text-black">
+                          <Link
+                            href={`category?categoryId=${category.title}&subCategoryId=${subCat.title}&subSubCategoryId=${subSub.title}`}
+                            onClick={() => setIsOpen(false)}
+                            className="text-sm hover:text-secondaryBlue"
+                          >
+                            {subSub.title}
+                          </Link>
+                        </li>
+                      ))
                     )
-                    .map(({ categoryId, subCategoryId, subSubCategoryId, title }) => (
-                      <li key={subSubCategoryId} className="mb-1 text-black">
-                        <Link
-                          href={`/category?categoryId=${categoryId}&subCategoryId=${subCategoryId}&subSubCategoryId=${subSubCategoryId}`}
-                          onClick={() => setIsOpen(false)}
-                          className="text-sm hover:text-secondaryBlue"
-                        >
-                          {title}
-                        </Link>
-                      </li>
-                    ))}
+                  )}
                 </ul>
               </div>
 
               {/* RIGHT: Product Cards */}
               <div className="w-full lg:w-[70%] p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto max-h-[80vh]">
-                {mergedProducts.map((product, index) => (
+                {products.map((product: any, index: number) => (
                   <div key={index}>
                     <ProductCard product={product} setIsOpen={setIsOpen} />
                   </div>
