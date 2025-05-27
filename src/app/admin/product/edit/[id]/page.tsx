@@ -610,8 +610,6 @@ const ProductEdit = () => {
       !formData.price ||
       !formData.unit ||
       !formData.categoryId ||
-      !formData.subCategoryId ||
-      !formData.subSubCategoryId ||
       !formData.brandId ||
       !formData.keywords ||
       !formData.delivery_info.delivery_time ||
@@ -862,7 +860,7 @@ const ProductEdit = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Sub Category <span className="text-red-500">*</span>
+              Sub Category
             </label>
             <AsyncSelect
               cacheOptions
@@ -891,7 +889,7 @@ const ProductEdit = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Sub Sub Category <span className="text-red-500">*</span>
+              Sub Sub Category
             </label>
             <AsyncSelect
               cacheOptions

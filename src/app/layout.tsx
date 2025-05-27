@@ -9,6 +9,7 @@ import ReduxProvider from "@/redux/ReduxProvider";
 import DataLoader from "@/app/DataLoader";
 import ClientFirebaseAuthProvider from "@/components/Auth/ClientFirebaseAuthProvider";
 import GTMHead from "@/components/Scripts/GTMHead";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: {
@@ -240,8 +241,6 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: PropsWithChildren) {
   const scripts = await fetchScripts();
 
-  console.log("Fetched Scripts:", scripts);
-
   const headerScripts = scripts.filter(
     (s: any) => s.location === "header" && s.active,
   );
@@ -252,20 +251,29 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     (s: any) => s.location === "body-bottom" && s.active,
   );
 
-  console.log("Header Scripts:", headerScripts);
-  console.log("Body Top Scripts:", bodyTopScripts);
-  console.log("Body End Scripts:", bodyEndScripts);
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <GTMHead />
         {headerScripts.map((s: any) => (
-          <script key={s.id} dangerouslySetInnerHTML={{ __html: s.script }} />
+          <Script
+            key={s.id}
+            id={`header-script-${s.id}`}
+            strategy="beforeInteractive"
+          >
+            {s.script}
+          </Script>
         ))}
       </head>
       <body>
         {bodyTopScripts.map((s: any) => (
-          <script key={s.id} dangerouslySetInnerHTML={{ __html: s.script }} />
+          <Script
+            key={s.id}
+            id={`body-top-script-${s.id}`}
+            strategy="beforeInteractive"
+          >
+            {s.script}
+          </Script>
         ))}
         <noscript>
           <iframe
@@ -283,7 +291,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           </DataLoader>
         </ReduxProvider>
         {bodyEndScripts.map((s: any) => (
-          <script key={s.id} dangerouslySetInnerHTML={{ __html: s.script }} />
+          <Script
+            key={s.id}
+            id={`body-end-script-${s.id}`}
+            strategy="beforeInteractive"
+          >
+            {s.script}
+          </Script>
         ))}
       </body>
     </html>

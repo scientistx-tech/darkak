@@ -549,8 +549,6 @@ export default function ProductForm() {
       !formData.price ||
       !formData.unit ||
       !formData.categoryId ||
-      !formData.subCategoryId ||
-      !formData.subSubCategoryId ||
       !formData.brandId ||
       !formData.keywords ||
       !formData.delivery_info.delivery_time ||
@@ -579,7 +577,7 @@ export default function ProductForm() {
       warranty: formData.warranty,
       warranty_time: formData.warranty_time,
       region: formData.region,
-      stock: formData.stock || "0",
+      stock: String(getMainStock()),
       minOrder: formData.minOrder || "1",
       unit: formData.unit,
       specification: formData.specification,
@@ -639,6 +637,27 @@ export default function ProductForm() {
     }
   };
 
+  // Helper to compute main stock
+  const getMainStock = () => {
+    const colorItem = formData.items.find(
+      (item) => item.title?.toLowerCase() === "color",
+    );
+    if (
+      colorItem &&
+      Array.isArray(colorItem.options) &&
+      colorItem.options.length > 0
+    ) {
+      return colorItem.options.reduce((sum, opt) => {
+        let stockNum = 0;
+        if (typeof opt.stock === "number") stockNum = opt.stock;
+        else if (typeof opt.stock === "string")
+          stockNum = parseInt(opt.stock) || 0;
+        return sum + stockNum;
+      }, 0);
+    }
+    return formData.stock ? parseInt(formData.stock) : 0;
+  };
+
   // Auto-calculate stock based on Color attribute options
   useEffect(() => {
     // Find Color attribute (case-insensitive)
@@ -666,6 +685,8 @@ export default function ProductForm() {
     // If no Color attribute, do nothing (stock input is used)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(formData.items)]);
+
+  console.log("Form Data:", formData.stock, formData.items);
 
   return (
     <div className="mx-auto w-full">
@@ -758,7 +779,7 @@ export default function ProductForm() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Sub Category <span className="text-red-500">*</span>
+              Sub Category
             </label>
             <AsyncSelect
               cacheOptions
@@ -787,7 +808,7 @@ export default function ProductForm() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Sub Sub Category <span className="text-red-500">*</span>
+              Sub Sub
             </label>
             <AsyncSelect
               cacheOptions
@@ -1072,7 +1093,7 @@ export default function ProductForm() {
             </label>
             <input
               name="stock"
-              value={formData.stock}
+              value={getMainStock()}
               type="number"
               onChange={handleChange}
               className="mt-1 w-full rounded-md border p-2"
@@ -1312,8 +1333,19 @@ export default function ProductForm() {
               <select
                 value={attribute.attributeId || ""}
                 onChange={(e) => {
+                  const selectedId = e.target.value;
+                  const selectedAttr = attributesData?.data?.find(
+                    (a: any) => a.id === selectedId,
+                  );
+                  console.log("Selected Attribute:", selectedAttr);
+
+                  const selectedTitle = selectedAttr?.title || "";
                   const updatedItems = [...formData.items];
-                  updatedItems[attributeIndex].attributeId = e.target.value;
+                  updatedItems[attributeIndex] = {
+                    ...updatedItems[attributeIndex],
+                    attributeId: selectedId,
+                    title: selectedTitle,
+                  };
                   setFormData((prev) => ({ ...prev, items: updatedItems }));
                 }}
                 className="w-1/3 rounded-md border border-gray-300 p-2"

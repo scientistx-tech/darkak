@@ -126,6 +126,7 @@ const ProductList = () => {
     categoryId: "",
     subCategoryId: "",
     subSubCategoryId: "",
+    stock: "",
   });
   const router = useRouter();
 
@@ -328,6 +329,25 @@ const ProductList = () => {
               control: (base) => ({ ...base, height: "50px" }),
             }}
           />
+
+          {/* stock in or stock out */}
+          <div className="w-full">
+            <select
+              className="w-full rounded border px-3 py-2"
+              value={filters.stock}
+              onChange={(e) => {
+                const value = e.target.value;
+                setFilters((prev) => ({
+                  ...prev,
+                  stock: value || "",
+                }));
+              }}
+            >
+              <option value="">Select Avaiability</option>
+              <option value="stock-in">In Stock</option>
+              <option value="stock-out">Out of Stock</option>
+            </select>
+          </div>
         </div>
 
         <div className="flex justify-end gap-3">
@@ -349,6 +369,7 @@ const ProductList = () => {
                 categoryId: "",
                 subCategoryId: "",
                 subSubCategoryId: "",
+                stock: "",
               });
 
               setQueryParams({});
@@ -370,6 +391,7 @@ const ProductList = () => {
                 ...(filters.subSubCategoryId && {
                   subSubCategoryId: filters.subSubCategoryId,
                 }),
+                ...(filters.stock && { stock: filters.stock }),
               });
             }}
           >
