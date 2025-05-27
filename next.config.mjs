@@ -32,6 +32,11 @@ const nextConfig = {
         hostname: "example.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.pixabay.com",
+        port: "",
+      },
     ],
   },
 };
