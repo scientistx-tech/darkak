@@ -594,9 +594,44 @@ const Header: React.FC = () => {
               <div className="w-full lg:w-[30%] border-b lg:border-b-0 lg:border-r py-4 px-6">
                 <h4 className="font-bold text-base mb-2 text-black">Categories</h4>
                 <ul>
-                  {categories?.flatMap((category) =>
-                    category.sub_category.flatMap((subCat) =>
-                      subCat.sub_sub_category.map((subSub) => (
+                  {categories?.flatMap((category) => {
+                    const subCategories = category.sub_category;
+
+                    if (!subCategories?.length) {
+                      // Category has no sub-categories — it's a leaf
+                      return (
+                        <li key={category.title} className="mb-1 text-black">
+                          <Link
+                            href={`category?categoryId=${category.title}`}
+                            onClick={() => setIsOpen(false)}
+                            className="text-sm hover:text-secondaryBlue"
+                          >
+                            {category.title}
+                          </Link>
+                        </li>
+                      );
+                    }
+
+                    return subCategories.flatMap((subCat) => {
+                      const subSubCategories = subCat.sub_sub_category;
+
+                      if (!subSubCategories?.length) {
+                        // Sub-category has no sub-sub-categories — it's a leaf
+                        return (
+                          <li key={subCat.title} className="mb-1 text-black">
+                            <Link
+                              href={`category?categoryId=${category.title}&subCategoryId=${subCat.title}`}
+                              onClick={() => setIsOpen(false)}
+                              className="text-sm hover:text-secondaryBlue"
+                            >
+                              {subCat.title}
+                            </Link>
+                          </li>
+                        );
+                      }
+
+                      // Sub-sub-categories exist — they are the leaf nodes
+                      return subSubCategories.map((subSub) => (
                         <li key={subSub.title} className="mb-1 text-black">
                           <Link
                             href={`category?categoryId=${category.title}&subCategoryId=${subCat.title}&subSubCategoryId=${subSub.title}`}
@@ -606,9 +641,9 @@ const Header: React.FC = () => {
                             {subSub.title}
                           </Link>
                         </li>
-                      ))
-                    )
-                  )}
+                      ));
+                    });
+                  })}
                 </ul>
               </div>
 
