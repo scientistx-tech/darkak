@@ -413,8 +413,10 @@ const ProductEdit = () => {
         description: p.description,
         warranty_details: p.warranty_details,
         categoryId: String(p.categoryId),
-        subCategoryId: String(p.subCategoryId),
-        subSubCategoryId: String(p.subSubCategoryId),
+        subCategoryId: String(p?.subCategoryId ? p?.subCategoryId : ""),
+        subSubCategoryId: String(
+          p?.subSubCategoryId ? p?.subSubCategoryId : "",
+        ),
         brandId: String(p.brandId),
         keywords: p.keywords.map((k: any) => k.key).join(","),
         images: p.Image.map((img: any) => img.url),
@@ -459,7 +461,7 @@ const ProductEdit = () => {
           : null,
       );
       setSelectedCategory(
-        p.categoryId
+        p?.categoryId
           ? {
               value: String(p.categoryId),
               label:
@@ -470,7 +472,7 @@ const ProductEdit = () => {
           : null,
       );
       setSelectedSubCategory(
-        p.subCategoryId
+        p?.subCategoryId
           ? {
               value: String(p.subCategoryId),
               label:
@@ -481,7 +483,7 @@ const ProductEdit = () => {
           : null,
       );
       setSelectedSubSubCategory(
-        p.subSubCategoryId
+        p?.subSubCategoryId
           ? {
               value: String(p.subSubCategoryId),
               label:
@@ -499,6 +501,8 @@ const ProductEdit = () => {
     subCategoriesData,
     subSubCategoriesData,
   ]);
+
+  console.log("formdata", formData);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -621,7 +625,7 @@ const ProductEdit = () => {
       toast.error("Filled all required field first");
       return;
     }
-    const payload = {
+    const payload: any = {
       title: formData.title,
       code: formData.code || productSKU,
       short_description: formData.short_description,
@@ -650,8 +654,7 @@ const ProductEdit = () => {
         .map((k) => k.trim())
         .filter(Boolean),
       categoryId: formData.categoryId,
-      subCategoryId: formData.subCategoryId,
-      subSubCategoryId: formData.subSubCategoryId,
+
       drafted: isDraft,
       brandId: formData.brandId,
       keywords: formData.keywords
@@ -669,7 +672,6 @@ const ProductEdit = () => {
       },
       items: formData.items.map((item) => ({
         attributeId: item.attributeId || "",
-        title: item.title || "",
         options: item.options.map((opt) => ({
           ...opt,
           price:
@@ -686,6 +688,13 @@ const ProductEdit = () => {
         })),
       })),
     };
+
+    if (formData.subCategoryId) {
+      payload.subCategoryId = formData.subCategoryId;
+    }
+    if (formData.subSubCategoryId) {
+      payload.subSubCategoryId = formData.subSubCategoryId;
+    }
 
     // Send payload to API
     try {
