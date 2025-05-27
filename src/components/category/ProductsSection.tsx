@@ -31,7 +31,7 @@ const ProductsSection = ({
     return parsed;
   });
 
-  console.log("Initial Query from productsection:", initialQuery);
+  // console.log("Initial Query from productsection:", initialQuery);
 
   useEffect(() => {
     if (sortBy) {
