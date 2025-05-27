@@ -103,14 +103,11 @@ const Page = () => {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <button
-                          // onClick={async () => {
-                          //   await deleteScript(doc.id)
-                          //     .unwrap()
-                          //     .then(() => refetch())
-                          //     .catch((error) => {
-                          //       console.error("Failed to delete script", error);
-                          //     });
-                          // }}
+                          onClick={() => {
+                            router.push(
+                              `/admin/analytics/edit-script/${doc.id}`,
+                            );
+                          }}
                           disabled={isDeleting}
                           className="text-blue-600 hover:underline"
                         >

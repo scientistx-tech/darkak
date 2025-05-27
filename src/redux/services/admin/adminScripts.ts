@@ -34,13 +34,13 @@ export const adminScriptApi = baseApi.injectEndpoints({
     //   }),
     // }),
 
-    // updateSlider: builder.mutation<any, any>({
-    //   query: ({ id, formData }) => ({
-    //     url: `/admin/slider/update/${id}`,
-    //     method: "PUT",
-    //     body: formData,
-    //   }),
-    // }),
+    updateScripts: builder.mutation<any, any>({
+      query: ({ id, formData }) => ({
+        url: `/admin/script/update/${id}`,
+        method: "PUT",
+        body: formData,
+      }),
+    }),
 
     createScript: builder.mutation<any, any>({
       query: (formData) => ({
@@ -55,5 +55,6 @@ export const adminScriptApi = baseApi.injectEndpoints({
 export const {
   useDeleteScriptMutation,
   useGetAllScriptsQuery,
+  useUpdateScriptsMutation,
   useCreateScriptMutation,
 } = adminScriptApi;
