@@ -352,9 +352,8 @@ const Header: React.FC = () => {
           <div className="hidden grid-flow-col gap-5 md:grid">
             <Link
               href="/user/profile"
-              className={`text-2xl transition-all duration-300 hover:scale-110 hover:text-primary ${
-                pathname === "/user/profile" ? "opacity-100" : "opacity-70"
-              }`}
+              className={`text-2xl transition-all duration-300 hover:scale-110 hover:text-primary ${pathname === "/user/profile" ? "opacity-100" : "opacity-70"
+                }`}
             >
               <UserOutlined />
             </Link>
@@ -364,16 +363,14 @@ const Header: React.FC = () => {
               className="group text-2xl transition-all duration-300 hover:scale-110 hover:text-primary"
             >
               <HeartOutlined
-                className={` ${
-                  pathname === "/user/wishlist" ? "opacity-100" : "opacity-70"
-                }`}
+                className={` ${pathname === "/user/wishlist" ? "opacity-100" : "opacity-70"
+                  }`}
               />
               <div
-                className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-black group-hover:bg-primary group-hover:text-white ${
-                  pathname === "/user/wishlist"
+                className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-black group-hover:bg-primary group-hover:text-white ${pathname === "/user/wishlist"
                     ? "bg-primary text-white"
                     : "bg-white"
-                }`}
+                  }`}
               >
                 <p className="text-[10px] font-semibold">
                   {wishlist ? wishlist.data.length : "0"}
@@ -386,16 +383,14 @@ const Header: React.FC = () => {
               className="group text-2xl transition-all duration-300 hover:scale-110 hover:text-primary"
             >
               <ShoppingCartOutlined
-                className={` ${
-                  pathname === "/user/cart" ? "opacity-100" : "opacity-70"
-                }`}
+                className={` ${pathname === "/user/cart" ? "opacity-100" : "opacity-70"
+                  }`}
               />
               <div
-                className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-black group-hover:bg-primary group-hover:text-white ${
-                  pathname === "/user/cart"
+                className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-black group-hover:bg-primary group-hover:text-white ${pathname === "/user/cart"
                     ? "bg-primary text-white"
                     : "bg-white"
-                }`}
+                  }`}
               >
                 <p className="text-[10px] font-semibold">
                   {cart ? cart.cart.length : "0"}
@@ -411,16 +406,14 @@ const Header: React.FC = () => {
           >
             <div className="relative h-6 w-6">
               <span
-                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${
-                  open ? "opacity-0" : "opacity-100"
-                }`}
+                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${open ? "opacity-0" : "opacity-100"
+                  }`}
               >
                 <MenuOutlined className="text-xl" />
               </span>
               <span
-                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${
-                  open ? "opacity-100" : "opacity-0"
-                }`}
+                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${open ? "opacity-100" : "opacity-0"
+                  }`}
               >
                 {/* <CloseOutlined className="text-xl" /> */}
               </span>
@@ -622,9 +615,44 @@ const Header: React.FC = () => {
                   Categories
                 </h4>
                 <ul>
-                  {categories?.flatMap((category) =>
-                    category.sub_category.flatMap((subCat) =>
-                      subCat.sub_sub_category.map((subSub) => (
+                  {categories?.flatMap((category) => {
+                    const subCategories = category.sub_category;
+
+                    if (!subCategories?.length) {
+                      // Category has no sub-categories — it's a leaf
+                      return (
+                        <li key={category.title} className="mb-1 text-black">
+                          <Link
+                            href={`category?categoryId=${category.title}`}
+                            onClick={() => setIsOpen(false)}
+                            className="text-sm hover:text-secondaryBlue"
+                          >
+                            {category.title}
+                          </Link>
+                        </li>
+                      );
+                    }
+
+                    return subCategories.flatMap((subCat) => {
+                      const subSubCategories = subCat.sub_sub_category;
+
+                      if (!subSubCategories?.length) {
+                        // Sub-category has no sub-sub-categories — it's a leaf
+                        return (
+                          <li key={subCat.title} className="mb-1 text-black">
+                            <Link
+                              href={`category?categoryId=${category.title}&subCategoryId=${subCat.title}`}
+                              onClick={() => setIsOpen(false)}
+                              className="text-sm hover:text-secondaryBlue"
+                            >
+                              {subCat.title}
+                            </Link>
+                          </li>
+                        );
+                      }
+
+                      // Sub-sub-categories exist — they are the leaf nodes
+                      return subSubCategories.map((subSub) => (
                         <li key={subSub.title} className="mb-1 text-black">
                           <Link
                             href={`category?categoryId=${category.title}&subCategoryId=${subCat.title}&subSubCategoryId=${subSub.title}`}
@@ -634,9 +662,9 @@ const Header: React.FC = () => {
                             {subSub.title}
                           </Link>
                         </li>
-                      )),
-                    ),
-                  )}
+                      ));
+                    });
+                  })}
                 </ul>
               </div>
 
