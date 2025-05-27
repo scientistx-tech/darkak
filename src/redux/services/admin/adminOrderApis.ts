@@ -45,10 +45,16 @@ export const adminOrderApi = baseApi.injectEndpoints({
       any,
       {
         id: string;
-        data: { status: string };
+        data: { status: string; message?: string };
       }
     >({
-      query: ({ id, data }: { id: string; data: { status: string } }) => ({
+      query: ({
+        id,
+        data,
+      }: {
+        id: string;
+        data: { status: string; message?: string };
+      }) => ({
         url: `/admin/order/status/${id}`,
         method: "PUT",
         headers: {

@@ -237,13 +237,30 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.darkak.com.bd"),
 };
 
-export default function RootLayout({ children }: PropsWithChildren) {
+export default async function RootLayout({ children }: PropsWithChildren) {
+  const scripts = await fetchScripts();
+
+  const headerScripts = scripts.filter(
+    (s: any) => s.location === "header" && s.active,
+  );
+  const bodyTopScripts = scripts.filter(
+    (s: any) => s.location === "body-top" && s.active,
+  );
+  const bodyEndScripts = scripts.filter(
+    (s: any) => s.location === "body-end" && s.active,
+  );
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <GTMHead />
+        {headerScripts.map((s: any) => (
+          <script key={s.id} dangerouslySetInnerHTML={{ __html: s.script }} />
+        ))}
       </head>
       <body>
+        {bodyTopScripts.map((s: any) => (
+          <script key={s.id} dangerouslySetInnerHTML={{ __html: s.script }} />
+        ))}
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-52QKH3GQ"
@@ -259,7 +276,17 @@ export default function RootLayout({ children }: PropsWithChildren) {
             {children}
           </DataLoader>
         </ReduxProvider>
+        {bodyEndScripts.map((s: any) => (
+          <script key={s.id} dangerouslySetInnerHTML={{ __html: s.script }} />
+        ))}
       </body>
     </html>
   );
+}
+
+async function fetchScripts() {
+  const res = await fetch("https://api.darkak.com.bd/api/public/script", {
+    cache: "no-store",
+  });
+  return res.json();
 }
