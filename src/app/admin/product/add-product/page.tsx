@@ -560,7 +560,7 @@ export default function ProductForm() {
       toast.error("Filled all required field first");
       return;
     }
-    const payload = {
+    const payload: any = {
       title: formData.title,
       code: formData.code || productSKU,
       short_description: formData.short_description,
@@ -589,8 +589,6 @@ export default function ProductForm() {
         .map((k) => k.trim())
         .filter(Boolean),
       categoryId: formData.categoryId,
-      subCategoryId: formData.subCategoryId,
-      subSubCategoryId: formData.subSubCategoryId,
       drafted: isDraft,
       brandId: formData.brandId,
       keywords: formData.keywords
@@ -625,6 +623,12 @@ export default function ProductForm() {
         })),
       })),
     };
+    if (formData.subCategoryId) {
+      payload.subCategoryId = formData.subCategoryId;
+    }
+    if (formData.subSubCategoryId) {
+      payload.subSubCategoryId = formData.subSubCategoryId;
+    }
 
     // Send payload to API
     try {
