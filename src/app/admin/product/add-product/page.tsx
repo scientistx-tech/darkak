@@ -560,6 +560,7 @@ export default function ProductForm() {
       toast.error("Filled all required field first");
       return;
     }
+
     const payload: any = {
       title: formData.title,
       code: formData.code || productSKU,

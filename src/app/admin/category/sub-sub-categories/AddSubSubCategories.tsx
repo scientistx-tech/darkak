@@ -80,14 +80,7 @@ function AddSubSubCategories({
   value,
   setIsEditable,
 }: AddDataProps) {
-  const [title, setTitle] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [currentLanguage, setCurrentLanguage] = useState("en");
-  const [selectedCategoryPriority, setSelectedCategoryPriority] =
-    useState("Select Priority");
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const [uploadFormData, { isLoading }] = useCreateSubSubCategoryMutation();
   const [updateSubSubCategory, { isLoading: loadingUpdate }] =
     useUpdateSubSubCategoryMutation();
