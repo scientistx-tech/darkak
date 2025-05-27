@@ -107,9 +107,9 @@ function AddSubCategories({
 
       refetch(); // Refetch the data after successful submission
       reset(); // Reset the form after successful submission
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error uploading:", error);
-      toast.error("Failed to create sub category.");
+      toast.error(error?.data?.message || "Failed to create sub category.");
     }
   };
 
