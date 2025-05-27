@@ -60,7 +60,10 @@ export default function ShopViewPage() {
           </div>
         </div>
 
-        
+        <div>
+            {/* Orther products */}
+        </div>
+
       </div>
     </div>
   );
