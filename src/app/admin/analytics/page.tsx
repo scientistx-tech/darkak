@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -20,6 +20,10 @@ const Page = () => {
   const router = useRouter();
   const { data, isLoading, error, refetch } = useGetAllScriptsQuery({});
   const [deleteScript, { isLoading: isDeleting }] = useDeleteScriptMutation();
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   return (
     <div className="text-slate-950">

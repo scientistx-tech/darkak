@@ -240,6 +240,8 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: PropsWithChildren) {
   const scripts = await fetchScripts();
 
+  console.log("Fetched Scripts:", scripts);
+
   const headerScripts = scripts.filter(
     (s: any) => s.location === "header" && s.active,
   );
@@ -247,8 +249,12 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     (s: any) => s.location === "body-top" && s.active,
   );
   const bodyEndScripts = scripts.filter(
-    (s: any) => s.location === "body-end" && s.active,
+    (s: any) => s.location === "body-bottom" && s.active,
   );
+
+  console.log("Header Scripts:", headerScripts);
+  console.log("Body Top Scripts:", bodyTopScripts);
+  console.log("Body End Scripts:", bodyEndScripts);
   return (
     <html lang="en" suppressHydrationWarning>
       <head>

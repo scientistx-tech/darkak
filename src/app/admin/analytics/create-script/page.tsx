@@ -126,7 +126,7 @@ const Page = () => {
         <div className="flex items-center gap-3">
           <span className="font-medium">Active</span>
           <Switch.Root
-            checked={!form.active}
+            checked={form.active}
             onCheckedChange={async (checked) => {
               setForm((prev) => ({ ...prev, active: !checked }));
               handleSwitch(!checked);
