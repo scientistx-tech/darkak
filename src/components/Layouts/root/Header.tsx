@@ -30,22 +30,14 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "@/redux/slices/authSlice";
 import HeaderDropdown from "./HeaderDropdown";
-
 import logo from "@/Data/Icon/PNG.png";
 import { auth } from "@/utils/firebase";
 import { useGetMyCartQuery } from "@/redux/services/client/myCart";
 import { useGetMyWishListQuery } from "@/redux/services/client/myWishList";
-import {
-  useGetBestSellingProductsQuery,
-  useGetNewArivalProductsQuery,
-  useGetMostVisitedProductsQuery,
-  useGetTopRatedProductsQuery,
-} from "@/redux/services/client/products";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useGetProductCategoriesQuery } from "@/redux/services/client/categories";
 import { FaSpinner } from "react-icons/fa";
 import ProductCard from "@/components/shared/ProductCard";
-import { objectToQueryString } from "@/utils/queryString";
 import { useRouter } from "next/navigation";
 import { useGetSearchPublicQuery } from "@/redux/services/client/searchedProducts";
 
@@ -70,14 +62,11 @@ const Header: React.FC = () => {
   const router = useRouter();
 
   const handleSearch = () => {
-    console.log('button-clicked')
     const trimmed = searchTerm.trim();
     if (!trimmed) return;
 
     const params = new URLSearchParams({
-      keyword: trimmed,
-      page: "1",
-      limit: "10",
+      keyword: trimmed
     });
 
     router.push(`/search?${params.toString()}`);
@@ -153,24 +142,9 @@ const Header: React.FC = () => {
     error,
   } = useGetProductCategoriesQuery("");
 
-  const searchParams = {
-    search: debouncedSearch,
-    limit: 10,
-    page: 1,
-  };
-
-  const visitorParams = {
-    ...searchParams,
-    visitorId: "sazzad123",
-  };
-
-  const queryString = objectToQueryString(searchParams);
-  const visitorQueryString = objectToQueryString(visitorParams);
-
   const { data, isFetching, isLoading } = useGetSearchPublicQuery({
     search: `${debouncedSearch}`,
   });
-  console.log("🚀 ~ data:", data)
 
   const products = data?.data || [];
 
