@@ -6,11 +6,11 @@ import { FaSearch } from "react-icons/fa";
 
 export default function VendorPage() {
   return (
-    <div className="w-full px-12 py-6">
+    <div className="w-full px-6 py-3 md:px-12 md:py-6">
       {/* Header */}
-      <div className="flex w-full items-center justify-between rounded-lg bg-gradient-to-r from-primary to-[#e5effe] px-6 py-6">
+      <div className="flex w-full flex-col items-center justify-between rounded-lg bg-gradient-to-r from-primary to-[#e5effe] px-6 py-6 md:flex-row">
         {/* Text Section */}
-        <div className="w-1/2 text-white">
+        <div className="w-full text-white md:w-1/2">
           <h1 className="text-2xl font-bold">ALL STORES</h1>
           <p className="mt-1">
             Find your desired stores and shop your favourite products
@@ -18,7 +18,7 @@ export default function VendorPage() {
         </div>
 
         {/* Search Box */}
-        <div className="flex w-1/2 justify-end">
+        <div className="mt-3 flex w-full justify-end md:mt-0 md:w-1/2">
           <div className="flex w-full max-w-md">
             <input
               type="text"
@@ -45,7 +45,7 @@ export default function VendorPage() {
           shopTotalProduct="194"
         />
         <VendorCard
-          shopLink="/vendors"
+          shopLink="/vendors/shop-view"
           shopBanner="https://img.freepik.com/free-vector/flat-local-market-business-social-media-cover-template_23-2149507335.jpg?semt=ais_hybrid&w=740"
           shopLogo="https://cdn.freebiesupply.com/logos/large/2x/vendor-logo-svg-vector.svg"
           shopName="Darkak Sub Shop"
@@ -54,7 +54,7 @@ export default function VendorPage() {
           shopTotalProduct="194"
         />
         <VendorCard
-          shopLink="/vendors"
+          shopLink="/vendors/shop-view"
           shopBanner="https://img.freepik.com/free-vector/flat-local-market-business-social-media-cover-template_23-2149507335.jpg?semt=ais_hybrid&w=740"
           shopLogo="https://cdn.freebiesupply.com/logos/large/2x/vendor-logo-svg-vector.svg"
           shopName="Darkak Sub Shop"
@@ -63,7 +63,7 @@ export default function VendorPage() {
           shopTotalProduct="194"
         />
         <VendorCard
-          shopLink="/vendors"
+          shopLink="/vendors/shop-view"
           shopBanner="https://img.freepik.com/free-vector/flat-local-market-business-social-media-cover-template_23-2149507335.jpg?semt=ais_hybrid&w=740"
           shopLogo="https://cdn.freebiesupply.com/logos/large/2x/vendor-logo-svg-vector.svg"
           shopName="Darkak Sub Shop"
@@ -72,7 +72,7 @@ export default function VendorPage() {
           shopTotalProduct="194"
         />
         <VendorCard
-          shopLink="/vendors"
+          shopLink="/vendors/shop-view"
           shopBanner="https://img.freepik.com/free-vector/flat-local-market-business-social-media-cover-template_23-2149507335.jpg?semt=ais_hybrid&w=740"
           shopLogo="https://cdn.freebiesupply.com/logos/large/2x/vendor-logo-svg-vector.svg"
           shopName="Darkak Sub Shop"
@@ -81,7 +81,7 @@ export default function VendorPage() {
           shopTotalProduct="194"
         />
         <VendorCard
-          shopLink="/vendors"
+          shopLink="/vendors/shop-view"
           shopBanner="https://img.freepik.com/free-vector/flat-local-market-business-social-media-cover-template_23-2149507335.jpg?semt=ais_hybrid&w=740"
           shopLogo="https://cdn.freebiesupply.com/logos/large/2x/vendor-logo-svg-vector.svg"
           shopName="Darkak Sub Shop"
