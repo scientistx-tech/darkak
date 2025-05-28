@@ -17,6 +17,7 @@ interface ProductShowProps {
     product: {
       id: number;
       title: string;
+      short_description: string;
       brand: {
         title: string;
       };
@@ -60,6 +61,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
   const [selectedOptions, setSelectedOptions] = useState<{
     [itemId: number]: number;
   }>({});
+  const [showFullDesc, setShowFullDesc] = useState(false);
 
   // redux hooks
   const [addToCart, { isLoading }] = useAddToCartMutation();
@@ -347,7 +349,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
           <p className="text-sm uppercase text-[#4B4E55]">
             Brand: {data?.product?.brand?.title}
           </p>
-          <h1 className="mt-2 text-center text-2xl font-semibold text-[#4B4E55]">
+          <h1 className="mt-2 text-center text-xl font-semibold text-[#4B4E55]">
             {data?.product?.title}
           </h1>
 
@@ -472,6 +474,27 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
               </button>
             </div>
           </div>
+
+          {/* Short Description with See More/Less */}
+          {data?.product?.short_description && (
+            <div className="mt-4 w-full">
+              <p className="text-sm text-gray-700">
+                {showFullDesc
+                  ? data.product.short_description
+                  : data.product.short_description.length > 120
+                    ? data.product.short_description.slice(0, 120) + "..."
+                    : data.product.short_description}
+              </p>
+              {data.product.short_description.length > 120 && (
+                <button
+                  className="mt-1 text-xs text-primaryBlue underline"
+                  onClick={() => setShowFullDesc((prev) => !prev)}
+                >
+                  {showFullDesc ? "See less" : "See more"}
+                </button>
+              )}
+            </div>
+          )}
 
           <DeliveryDetails
             deliveryInfo={data?.product?.delivery_info}

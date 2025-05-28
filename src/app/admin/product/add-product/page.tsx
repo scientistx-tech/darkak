@@ -453,6 +453,7 @@ export default function ProductForm() {
       label: item.title,
     }));
   };
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -778,7 +779,6 @@ export default function ProductForm() {
               Category <span className="text-red-500">*</span>
             </label>
             <AsyncSelect
-              key={formData.categoryId}
               cacheOptions
               defaultOptions
               loadOptions={loadCategoryOptions}
