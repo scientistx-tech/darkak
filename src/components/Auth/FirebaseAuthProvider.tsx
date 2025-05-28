@@ -13,7 +13,7 @@ const FirebaseAuthProvider = () => {
 
   useEffect(() => {
     if (user) {
-      router.replace("/"); // Redirect after social login
+      //router.replace("/"); // Redirect after social login
     }
   }, [user, router]);
 
