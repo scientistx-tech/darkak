@@ -1,8 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import {
   useCreateSubSubCategoryMutation,
+  useUpdateSubSubCategoryMutation,
   useUploadFormDataMutation,
 } from "@/redux/services/admin/adminCategoryApis";
 import { toast } from "react-toastify";
@@ -48,6 +49,21 @@ type AddDataProps = {
         | undefined;
     };
   }[];
+  value?: {
+    id: string;
+    title: string;
+    categoryId: string;
+    subCategoryId: string;
+  };
+  setIsEditable?: (arg: {
+    status: boolean;
+    value: {
+      id: string;
+      title: string;
+      categoryId: string;
+      subCategoryId: string;
+    };
+  }) => void;
 };
 
 // Validation schema using Yup
@@ -61,16 +77,13 @@ function AddSubSubCategories({
   refetch,
   categories,
   subCategories,
+  value,
+  setIsEditable,
 }: AddDataProps) {
-  const [title, setTitle] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [currentLanguage, setCurrentLanguage] = useState("en");
-  const [selectedCategoryPriority, setSelectedCategoryPriority] =
-    useState("Select Priority");
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const [uploadFormData, { isLoading }] = useCreateSubSubCategoryMutation();
+  const [updateSubSubCategory, { isLoading: loadingUpdate }] =
+    useUpdateSubSubCategoryMutation();
 
   const {
     register,
@@ -78,13 +91,33 @@ function AddSubSubCategories({
     control,
     reset,
     formState: { errors },
+    watch,
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      title: "",
-      categoryId: "",
+      title: value?.title || "",
+      categoryId: value?.categoryId || "",
+      subCategoryId: value?.subCategoryId || "",
     },
   });
+
+  useEffect(() => {
+    if (value) {
+      reset({
+        title: value.title || "",
+        categoryId: value.categoryId || "",
+        subCategoryId: value?.subCategoryId || "",
+      });
+    }
+  }, [value, reset]);
+
+  const selectedCategoryId = watch("categoryId");
+  const filteredSubCategories = subCategories.filter(
+    (sCat: any) => Number(sCat?.categoryId) === Number(selectedCategoryId),
+  );
+
+  console.log("selected cat", selectedCategoryId);
+  console.log("filtered sub cat", filteredSubCategories);
 
   const onSubmit = async (data: any) => {
     const formData = {
@@ -94,13 +127,27 @@ function AddSubSubCategories({
     };
 
     try {
-      await uploadFormData(formData).unwrap();
-      toast.success("Sub Sub Category created successfully!");
+      if (value && value?.id) {
+        await updateSubSubCategory({
+          subSubCategoryId: value?.id,
+          formData,
+        }).unwrap();
+        toast.success("Sub Sub Category Updated successfully!");
+        if (setIsEditable) {
+          setIsEditable({
+            status: false,
+            value: { id: "", title: "", categoryId: "", subCategoryId: "" },
+          });
+        }
+      } else {
+        const res = await uploadFormData(formData).unwrap();
+        toast.success(res.message || "Sub Sub Category created successfully!");
+      }
       refetch();
       reset();
-    } catch (error) {
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to create category.");
       console.error("Error uploading:", error);
-      toast.error("Failed to create category.");
     }
   };
 
@@ -170,7 +217,7 @@ function AddSubSubCategories({
                 {...field}
                 options={[
                   { label: "Select sub category", value: "" },
-                  ...(subCategories?.map((subCategory: any) => ({
+                  ...(filteredSubCategories?.map((subCategory: any) => ({
                     label: subCategory.title,
                     value: subCategory.id.toString(), // Ensure value is a string
                   })) || []),

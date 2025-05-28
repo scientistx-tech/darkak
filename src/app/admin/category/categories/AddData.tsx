@@ -1,7 +1,10 @@
 import React, { useRef, useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
-import { useUploadFormDataMutation } from "@/redux/services/admin/adminCategoryApis";
+import {
+  useUpdateCategoryMutation,
+  useUploadFormDataMutation,
+} from "@/redux/services/admin/adminCategoryApis";
 import { toast } from "react-toastify";
 import SelectField from "@/app/(root)/user/profile/components/SelectField";
 import Image from "next/image";
@@ -31,11 +34,14 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [uploadFormData, { isLoading }] = useUploadFormDataMutation();
+  const [updateCategory, { isLoading: loadingUpdate }] =
+    useUpdateCategoryMutation();
 
   React.useEffect(() => {
     if (value?.title !== undefined && value?.serial !== undefined) {
       setTitle(value?.title);
       setSelectedCategoryPriority(value.serial);
+      setPreviewImage(value?.icon);
     }
   }, [value?.title]);
 
@@ -51,25 +57,53 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
     }
   };
 
+  async function urlToFile(
+    url: string,
+    filename: string,
+    mimeType: string,
+  ): Promise<File> {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new File([blob], filename, { type: mimeType });
+  }
+
   const handleSubmit = async () => {
-    if (!title || !imageFile) {
+    if (!title) {
       toast.error("Please provide both title and image.");
       return;
     }
 
     const formData = new FormData();
     formData.append("title", title);
-    formData.append("icon", imageFile);
     formData.append("serial", selectedCategoryPriority);
 
+    const image = await urlToFile(
+      previewImage || "",
+      `image-${Date.now()}.png`,
+      "image/png",
+    );
+    if (!image) {
+      toast.error("Image needed for Slider");
+      return;
+    }
+    formData.append("icon", image as File);
+
     try {
-      await uploadFormData(formData).unwrap();
-      toast.success("Category created successfully!");
-      if (setIsEditable) {
-        setIsEditable({
-          status: false,
-          value: { id: "", title: "", icon: "", serial: "" },
-        });
+      if (value && value?.id) {
+        const res = await updateCategory({
+          categoryId: value?.id,
+          formData,
+        }).unwrap();
+        toast.success(res?.message || "Category Updated Successfully");
+        if (setIsEditable) {
+          setIsEditable({
+            status: false,
+            value: { id: "", title: "", icon: "", serial: "" },
+          });
+        }
+      } else {
+        await uploadFormData(formData).unwrap();
+        toast.success("Category created successfully!");
       }
       refetch();
       setTitle("");
@@ -222,7 +256,7 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
         )}
         <Button onClick={handleSubmit} disabled={isLoading}>
           {value?.id
-            ? isLoading
+            ? loadingUpdate
               ? "Updating..."
               : "Update"
             : isLoading

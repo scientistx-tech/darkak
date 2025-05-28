@@ -99,7 +99,7 @@ export const adminApi = baseApi.injectEndpoints({
       }),
     }),
 
-    updateProduct: builder.mutation<any, UpdateProductPayload>({
+    updateProduct: builder.mutation<any, any>({
       query: ({ id, data }) => ({
         url: `/admin/product/update/${id}`,
         method: "PUT",

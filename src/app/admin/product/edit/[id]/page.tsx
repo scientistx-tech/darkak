@@ -413,8 +413,10 @@ const ProductEdit = () => {
         description: p.description,
         warranty_details: p.warranty_details,
         categoryId: String(p.categoryId),
-        subCategoryId: String(p.subCategoryId),
-        subSubCategoryId: String(p.subSubCategoryId),
+        subCategoryId: String(p?.subCategoryId ? p?.subCategoryId : ""),
+        subSubCategoryId: String(
+          p?.subSubCategoryId ? p?.subSubCategoryId : "",
+        ),
         brandId: String(p.brandId),
         keywords: p.keywords.map((k: any) => k.key).join(","),
         images: p.Image.map((img: any) => img.url),
@@ -459,7 +461,7 @@ const ProductEdit = () => {
           : null,
       );
       setSelectedCategory(
-        p.categoryId
+        p?.categoryId
           ? {
               value: String(p.categoryId),
               label:
@@ -470,7 +472,7 @@ const ProductEdit = () => {
           : null,
       );
       setSelectedSubCategory(
-        p.subCategoryId
+        p?.subCategoryId
           ? {
               value: String(p.subCategoryId),
               label:
@@ -481,7 +483,7 @@ const ProductEdit = () => {
           : null,
       );
       setSelectedSubSubCategory(
-        p.subSubCategoryId
+        p?.subSubCategoryId
           ? {
               value: String(p.subSubCategoryId),
               label:
@@ -499,6 +501,8 @@ const ProductEdit = () => {
     subCategoriesData,
     subSubCategoriesData,
   ]);
+
+  console.log("formdata", formData);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -600,30 +604,37 @@ const ProductEdit = () => {
     }
   };
 
+  function validateProductForm(formData: ProductFormData): string | null {
+    if (!formData.title) return "Product Name is required";
+    if (!formData.short_description) return "Short Description is required";
+    if (!formData.meta_title) return "Meta Title is required";
+    if (!formData.meta_image) return "Meta Image is required";
+    if (!formData.thumbnail) return "Thumbnail is required";
+    if (!formData.price) return "Price is required";
+    if (!formData.unit) return "Unit is required";
+    if (!formData.categoryId) return "Category is required";
+    if (!formData.brandId) return "Brand is required";
+    if (!formData.keywords) return "Keywords are required";
+    if (!formData.delivery_info.delivery_time)
+      return "Delivery Time is required";
+    if (!formData.delivery_info.delivery_charge)
+      return "Delivery Charge is required";
+    if (!formData.delivery_info.delivery_time_outside)
+      return "Delivery Time Outside is required";
+    if (!formData.delivery_info.delivery_charge_outside)
+      return "Delivery Charge Outside is required";
+    if (!formData.delivery_info.return_days) return "Return Days is required";
+    return null; // All good!
+  }
+
   const handleSubmit = async (isDraft: boolean) => {
-    if (
-      !formData.title ||
-      !formData.short_description ||
-      !formData.meta_title ||
-      !formData.meta_image ||
-      !formData.thumbnail ||
-      !formData.price ||
-      !formData.unit ||
-      !formData.categoryId ||
-      !formData.subCategoryId ||
-      !formData.subSubCategoryId ||
-      !formData.brandId ||
-      !formData.keywords ||
-      !formData.delivery_info.delivery_time ||
-      !formData.delivery_info.delivery_charge ||
-      !formData.delivery_info.delivery_time_outside ||
-      !formData.delivery_info.delivery_charge_outside ||
-      !formData.delivery_info.return_days
-    ) {
-      toast.error("Filled all required field first");
+    const errorMsg = validateProductForm(formData);
+    if (errorMsg) {
+      toast.error(errorMsg);
       return;
     }
-    const payload = {
+
+    const payload: any = {
       title: formData.title,
       code: formData.code || productSKU,
       short_description: formData.short_description,
@@ -652,8 +663,7 @@ const ProductEdit = () => {
         .map((k) => k.trim())
         .filter(Boolean),
       categoryId: formData.categoryId,
-      subCategoryId: formData.subCategoryId,
-      subSubCategoryId: formData.subSubCategoryId,
+
       drafted: isDraft,
       brandId: formData.brandId,
       keywords: formData.keywords
@@ -671,7 +681,6 @@ const ProductEdit = () => {
       },
       items: formData.items.map((item) => ({
         attributeId: item.attributeId || "",
-        title: item.title || "",
         options: item.options.map((opt) => ({
           ...opt,
           price:
@@ -689,6 +698,13 @@ const ProductEdit = () => {
       })),
     };
 
+    if (formData.subCategoryId) {
+      payload.subCategoryId = formData.subCategoryId;
+    }
+    if (formData.subSubCategoryId) {
+      payload.subSubCategoryId = formData.subSubCategoryId;
+    }
+
     // Send payload to API
     try {
       await updateProduct({
@@ -696,7 +712,7 @@ const ProductEdit = () => {
         data: payload,
       }).unwrap();
       toast.success("Product updated successfully");
-      router.push("/admin/product/product-list");
+      router.back();
     } catch (error: any) {
       console.error(error);
       toast.error(error?.data?.message);
@@ -738,6 +754,8 @@ const ProductEdit = () => {
   };
 
   const loadSubCategoryOptions = async (inputValue: string) => {
+    console.log("selc cat", formData.categoryId);
+    if (!formData.categoryId) return [];
     const res = await fetch(
       `https://api.darkak.com.bd/api/admin/category/sub-category?search=${inputValue}`,
       {
@@ -748,13 +766,21 @@ const ProductEdit = () => {
       },
     );
     const json = await res.json();
-    return json.data.map((item: any) => ({
+    // Filter by selected categoryId
+    const filtered = json.data.filter(
+      (item: any) => String(item.categoryId) === String(formData.categoryId),
+    );
+
+    console.log("fil cat", filtered);
+
+    return filtered.map((item: any) => ({
       value: item.id,
       label: item.title,
     }));
   };
 
   const loadSubSubCategoryOptions = async (inputValue: string) => {
+    if (!formData.subCategoryId) return [];
     const res = await fetch(
       `https://api.darkak.com.bd/api/admin/category/sub-sub-category?search=${inputValue}`,
       {
@@ -765,7 +791,12 @@ const ProductEdit = () => {
       },
     );
     const json = await res.json();
-    return json.data.map((item: any) => ({
+    // Filter by selected subCategoryId
+    const filtered = json.data.filter(
+      (item: any) =>
+        String(item.subCategoryId) === String(formData.subCategoryId),
+    );
+    return filtered.map((item: any) => ({
       value: item.id,
       label: item.title,
     }));
@@ -845,7 +876,11 @@ const ProductEdit = () => {
                 setFormData((prev) => ({
                   ...prev,
                   categoryId: option?.value || "",
+                  subCategoryId: "", // reset
+                  subSubCategoryId: "", // reset
                 }));
+                setSelectedSubCategory(null);
+                setSelectedSubSubCategory(null);
               }}
               placeholder="Select Category"
               isClearable
@@ -862,9 +897,10 @@ const ProductEdit = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Sub Category <span className="text-red-500">*</span>
+              Sub Category
             </label>
             <AsyncSelect
+              key={formData.categoryId}
               cacheOptions
               defaultOptions
               loadOptions={loadSubCategoryOptions}
@@ -874,7 +910,9 @@ const ProductEdit = () => {
                 setFormData((prev) => ({
                   ...prev,
                   subCategoryId: option?.value || "",
+                  subSubCategoryId: "",
                 }));
+                setSelectedSubSubCategory(null);
               }}
               placeholder="Select Sub Category"
               isClearable
@@ -891,9 +929,10 @@ const ProductEdit = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Sub Sub Category <span className="text-red-500">*</span>
+              Sub Sub Category
             </label>
             <AsyncSelect
+              key={formData.subCategoryId}
               cacheOptions
               defaultOptions
               loadOptions={loadSubSubCategoryOptions}

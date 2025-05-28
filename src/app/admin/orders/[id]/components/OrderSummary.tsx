@@ -52,7 +52,7 @@ export default function OrderSummary({ orderDetails }: any) {
           <span>
             Status:{" "}
             <p className="ml-1 inline rounded-full bg-blue-100 px-5 py-1 font-bold text-blue-700">
-              {orderDetails?.status}
+              {orderDetails?.status.toUpperCase()}
             </p>
           </span>
           <span>

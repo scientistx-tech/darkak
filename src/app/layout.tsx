@@ -8,6 +8,8 @@ import UpdateNotice from "@/app/(root)/component/UpdateNotice";
 import ReduxProvider from "@/redux/ReduxProvider";
 import DataLoader from "@/app/DataLoader";
 import ClientFirebaseAuthProvider from "@/components/Auth/ClientFirebaseAuthProvider";
+import GTMHead from "@/components/Scripts/GTMHead";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: {
@@ -247,10 +249,51 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: PropsWithChildren) {
+export default async function RootLayout({ children }: PropsWithChildren) {
+  const scripts = await fetchScripts();
+
+  const headerScripts = scripts.filter(
+    (s: any) => s.location === "header" && s.active,
+  );
+  const bodyTopScripts = scripts.filter(
+    (s: any) => s.location === "body-top" && s.active,
+  );
+  const bodyEndScripts = scripts.filter(
+    (s: any) => s.location === "body-bottom" && s.active,
+  );
+
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <GTMHead />
+        {headerScripts.map((s: any) => (
+          <Script
+            key={s.id}
+            id={`header-script-${s.id}`}
+            strategy="beforeInteractive"
+          >
+            {s.script}
+          </Script>
+        ))}
+      </head>
       <body>
+        {bodyTopScripts.map((s: any) => (
+          <Script
+            key={s.id}
+            id={`body-top-script-${s.id}`}
+            strategy="beforeInteractive"
+          >
+            {s.script}
+          </Script>
+        ))}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-52QKH3GQ"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          ></iframe>
+        </noscript>
         <ReduxProvider>
           <ClientFirebaseAuthProvider />
           <DataLoader>
@@ -258,7 +301,23 @@ export default function RootLayout({ children }: PropsWithChildren) {
             {children}
           </DataLoader>
         </ReduxProvider>
+        {bodyEndScripts.map((s: any) => (
+          <Script
+            key={s.id}
+            id={`body-end-script-${s.id}`}
+            strategy="beforeInteractive"
+          >
+            {s.script}
+          </Script>
+        ))}
       </body>
     </html>
   );
+}
+
+async function fetchScripts() {
+  const res = await fetch("https://api.darkak.com.bd/api/public/script", {
+    cache: "no-store",
+  });
+  return res.json();
 }

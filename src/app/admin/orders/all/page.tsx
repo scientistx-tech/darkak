@@ -162,74 +162,83 @@ const AllOrderList = () => {
                     </TableCell>
                     <TableCell>{order.order_type}</TableCell>
                     <TableCell>
-                      {order.subTotal + order.deliveryFee}
-
-                      <div className="flex">
-                        {order.paid ? (
-                          <p className="mt-1 rounded border border-teal-600 bg-teal-100 p-0.5 text-xs font-bold text-teal-600">
-                            Paid
+                      <div className="flex items-center gap-2">
+                        <p>{order.subTotal + order.deliveryFee}</p>
+                        <div className="flex">
+                          {order.paid ? (
+                            <p className="mt-1 rounded border border-teal-600 bg-teal-100 p-0.5 text-xs text-teal-600">
+                              Paid
+                            </p>
+                          ) : (
+                            <p className="mt-1 rounded border border-rose-600 bg-rose-100 p-0.5 text-xs text-rose-600">
+                              Unpaid
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex justify-center">
+                        {order.status === "pending" ? (
+                          <p className="rounded-lg border border-blue-700 bg-blue-50 px-2 py-0.5 text-center font-bold text-blue-700">
+                            Pending
+                          </p>
+                        ) : order.status === "confirmed" ? (
+                          <p className="rounded-lg border border-green-700 bg-green-50 px-2 py-0.5 text-center font-bold text-green-700">
+                            Confirmed
+                          </p>
+                        ) : order.status === "packaging" ? (
+                          <p className="rounded-lg border border-yellow-700 bg-yellow-50 px-2 py-0.5 text-center font-bold text-yellow-700">
+                            Packaging
+                          </p>
+                        ) : order.status === "out_for_delivery" ? (
+                          <p className="rounded-lg border border-yellow-700 bg-yellow-50 px-2 py-0.5 text-center font-bold text-yellow-700">
+                            Out For Delivery
+                          </p>
+                        ) : order.status === "delivered" ? (
+                          <p className="rounded-lg border border-green-700 bg-green-50 px-2 py-0.5 text-center font-bold text-green-700">
+                            Delivered
+                          </p>
+                        ) : order.status === "returned" ? (
+                          <p className="rounded-lg border border-red-700 bg-red-50 px-2 py-0.5 text-center font-bold text-red-700">
+                            Returned
+                          </p>
+                        ) : order.status === "cancelled" ? (
+                          <p className="rounded-lg border border-red-700 bg-red-50 px-2 py-0.5 text-center font-bold text-red-700">
+                            Cancelled
+                          </p>
+                        ) : order.status === "failed_to_delivery" ? (
+                          <p className="rounded-lg border border-red-700 bg-red-50 px-2 py-0.5 text-center font-bold text-red-700">
+                            Failed To Deliver
                           </p>
                         ) : (
-                          <p className="mt-1 rounded border border-rose-600 bg-rose-100 p-0.5 text-xs font-bold text-rose-600">
-                            Unpaid
+                          <p className="rounded-lg border border-red-700 bg-red-50 px-2 py-0.5 text-center font-bold text-red-700">
+                            Pre Order
                           </p>
                         )}
                       </div>
                     </TableCell>
                     <TableCell>
-                      {order.status === "pending" ? (
-                        <p className="rounded-lg border-2 border-blue-700 bg-blue-50 px-2 py-0.5 text-center font-bold text-blue-700">
-                          Pending
-                        </p>
-                      ) : order.status === "confirmed" ? (
-                        <p className="rounded-lg border-2 border-green-700 bg-green-50 px-2 py-0.5 text-center font-bold text-green-700">
-                          Confirmed
-                        </p>
-                      ) : order.status === "packaging" ? (
-                        <p className="rounded-lg border-2 border-yellow-700 bg-yellow-50 px-2 py-0.5 text-center font-bold text-yellow-700">
-                          Packaging
-                        </p>
-                      ) : order.status === "out_for_delivery" ? (
-                        <p className="rounded-lg border-2 border-yellow-700 bg-yellow-50 px-2 py-0.5 text-center font-bold text-yellow-700">
-                          Out For Delivery
-                        </p>
-                      ) : order.status === "delivered" ? (
-                        <p className="rounded-lg border-2 border-green-700 bg-green-50 px-2 py-0.5 text-center font-bold text-green-700">
-                          Delivered
-                        </p>
-                      ) : order.status === "returned" ? (
-                        <p className="rounded-lg border-2 border-red-700 bg-red-50 px-2 py-0.5 text-center font-bold text-red-700">
-                          returned
-                        </p>
-                      ) : order.status === "cancelled" ? (
-                        <p className="rounded-lg border-2 border-red-700 bg-red-50 px-2 py-0.5 text-center font-bold text-red-700">
-                          Cancelled
-                        </p>
-                      ) : (
-                        <p className="rounded-lg border-2 border-red-700 bg-red-50 px-2 py-0.5 text-center font-bold text-red-700">
-                          Failed To Deliver
-                        </p>
-                      )}
-                    </TableCell>
-                    <TableCell className="flex items-center justify-center gap-2">
-                      <Button
-                        onClick={() => {
-                          router.push(`/admin/orders/${order.id}`);
-                        }}
-                        className="rounded-full bg-blue-100 p-1 text-base text-blue-700"
-                      >
-                        <FaEye />
-                      </Button>
-                      <PDFDownloadLink
-                        document={<OrderInvoicePDF orderDetails={order} />}
-                        fileName={`invoice_order_${order?.id}.pdf`}
-                      >
-                        {({ loading }) => (
-                          <button className="rounded-full bg-teal-100 p-1 text-base text-teal-700 hover:bg-teal-50">
-                            <MdFileDownload />
-                          </button>
-                        )}
-                      </PDFDownloadLink>
+                      <div className="flex items-center justify-center gap-2">
+                        <Button
+                          onClick={() => {
+                            router.push(`/admin/orders/${order.id}`);
+                          }}
+                          className="rounded-full bg-blue-100 p-1 text-base text-blue-700"
+                        >
+                          <FaEye />
+                        </Button>
+                        <PDFDownloadLink
+                          document={<OrderInvoicePDF orderDetails={order} />}
+                          fileName={`invoice_order_${order?.id}.pdf`}
+                        >
+                          {({ loading }) => (
+                            <button className="rounded-full bg-teal-100 p-1 text-base text-teal-700 hover:bg-teal-50">
+                              <MdFileDownload />
+                            </button>
+                          )}
+                        </PDFDownloadLink>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import {
   useDeleteSubSubCategoryMutation,
@@ -406,6 +406,8 @@ export default function ProductForm() {
   };
 
   const loadSubCategoryOptions = async (inputValue: string) => {
+    console.log("selc cat", formData.categoryId);
+    if (!formData.categoryId) return [];
     const res = await fetch(
       `https://api.darkak.com.bd/api/admin/category/sub-category?search=${inputValue}`,
       {
@@ -416,13 +418,21 @@ export default function ProductForm() {
       },
     );
     const json = await res.json();
-    return json.data.map((item: any) => ({
+    // Filter by selected categoryId
+    const filtered = json.data.filter(
+      (item: any) => String(item.categoryId) === String(formData.categoryId),
+    );
+
+    console.log("fil cat", filtered);
+
+    return filtered.map((item: any) => ({
       value: item.id,
       label: item.title,
     }));
   };
 
   const loadSubSubCategoryOptions = async (inputValue: string) => {
+    if (!formData.subCategoryId) return [];
     const res = await fetch(
       `https://api.darkak.com.bd/api/admin/category/sub-sub-category?search=${inputValue}`,
       {
@@ -433,12 +443,16 @@ export default function ProductForm() {
       },
     );
     const json = await res.json();
-    return json.data.map((item: any) => ({
+    // Filter by selected subCategoryId
+    const filtered = json.data.filter(
+      (item: any) =>
+        String(item.subCategoryId) === String(formData.subCategoryId),
+    );
+    return filtered.map((item: any) => ({
       value: item.id,
       label: item.title,
     }));
   };
-
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -539,30 +553,37 @@ export default function ProductForm() {
     }
   };
 
+  function validateProductForm(formData: ProductFormData): string | null {
+    if (!formData.title) return "Product Name is required";
+    if (!formData.short_description) return "Short Description is required";
+    if (!formData.meta_title) return "Meta Title is required";
+    if (!formData.meta_image) return "Meta Image is required";
+    if (!formData.thumbnail) return "Thumbnail is required";
+    if (!formData.price) return "Price is required";
+    if (!formData.unit) return "Unit is required";
+    if (!formData.categoryId) return "Category is required";
+    if (!formData.brandId) return "Brand is required";
+    if (!formData.keywords) return "Keywords are required";
+    if (!formData.delivery_info.delivery_time)
+      return "Delivery Time is required";
+    if (!formData.delivery_info.delivery_charge)
+      return "Delivery Charge is required";
+    if (!formData.delivery_info.delivery_time_outside)
+      return "Delivery Time Outside is required";
+    if (!formData.delivery_info.delivery_charge_outside)
+      return "Delivery Charge Outside is required";
+    if (!formData.delivery_info.return_days) return "Return Days is required";
+    return null; // All good!
+  }
+
   const handleSubmit = async (isDraft: boolean) => {
-    if (
-      !formData.title ||
-      !formData.short_description ||
-      !formData.meta_title ||
-      !formData.meta_image ||
-      !formData.thumbnail ||
-      !formData.price ||
-      !formData.unit ||
-      !formData.categoryId ||
-      !formData.subCategoryId ||
-      !formData.subSubCategoryId ||
-      !formData.brandId ||
-      !formData.keywords ||
-      !formData.delivery_info.delivery_time ||
-      !formData.delivery_info.delivery_charge ||
-      !formData.delivery_info.delivery_time_outside ||
-      !formData.delivery_info.delivery_charge_outside ||
-      !formData.delivery_info.return_days
-    ) {
-      toast.error("Filled all required field first");
+    const errorMsg = validateProductForm(formData);
+    if (errorMsg) {
+      toast.error(errorMsg);
       return;
     }
-    const payload = {
+
+    const payload: any = {
       title: formData.title,
       code: formData.code || productSKU,
       short_description: formData.short_description,
@@ -579,7 +600,7 @@ export default function ProductForm() {
       warranty: formData.warranty,
       warranty_time: formData.warranty_time,
       region: formData.region,
-      stock: formData.stock || "0",
+      stock: String(getMainStock()),
       minOrder: formData.minOrder || "1",
       unit: formData.unit,
       specification: formData.specification,
@@ -591,8 +612,6 @@ export default function ProductForm() {
         .map((k) => k.trim())
         .filter(Boolean),
       categoryId: formData.categoryId,
-      subCategoryId: formData.subCategoryId,
-      subSubCategoryId: formData.subSubCategoryId,
       drafted: isDraft,
       brandId: formData.brandId,
       keywords: formData.keywords
@@ -627,6 +646,12 @@ export default function ProductForm() {
         })),
       })),
     };
+    if (formData.subCategoryId) {
+      payload.subCategoryId = formData.subCategoryId;
+    }
+    if (formData.subSubCategoryId) {
+      payload.subSubCategoryId = formData.subSubCategoryId;
+    }
 
     // Send payload to API
     try {
@@ -638,6 +663,55 @@ export default function ProductForm() {
       toast.error(error?.data?.message);
     }
   };
+
+  // Helper to compute main stock
+  const getMainStock = () => {
+    const colorItem = formData.items.find(
+      (item) => item.title?.toLowerCase() === "color",
+    );
+    if (
+      colorItem &&
+      Array.isArray(colorItem.options) &&
+      colorItem.options.length > 0
+    ) {
+      return colorItem.options.reduce((sum, opt) => {
+        let stockNum = 0;
+        if (typeof opt.stock === "number") stockNum = opt.stock;
+        else if (typeof opt.stock === "string")
+          stockNum = parseInt(opt.stock) || 0;
+        return sum + stockNum;
+      }, 0);
+    }
+    return formData.stock ? parseInt(formData.stock) : 0;
+  };
+
+  // Auto-calculate stock based on Color attribute options
+  useEffect(() => {
+    // Find Color attribute (case-insensitive)
+    const colorItem = formData.items.find(
+      (item) => item.title?.toLowerCase() === "color",
+    );
+    if (
+      colorItem &&
+      Array.isArray(colorItem.options) &&
+      colorItem.options.length > 0
+    ) {
+      // Sum all option stocks (handle string/number/undefined)
+      const totalStock = colorItem.options.reduce((sum, opt) => {
+        let stockNum = 0;
+        if (typeof opt.stock === "number") stockNum = opt.stock;
+        else if (typeof opt.stock === "string")
+          stockNum = parseInt(opt.stock) || 0;
+        return sum + stockNum;
+      }, 0);
+      // Always set stock to totalStock if Color exists
+      if (formData.stock !== String(totalStock) || formData.stock === "") {
+        setFormData((prev) => ({ ...prev, stock: String(totalStock) }));
+      }
+    }
+    // If no Color attribute, do nothing (stock input is used)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(formData.items)]);
 
   return (
     <div className="mx-auto w-full">
@@ -704,6 +778,7 @@ export default function ProductForm() {
               Category <span className="text-red-500">*</span>
             </label>
             <AsyncSelect
+              key={formData.categoryId}
               cacheOptions
               defaultOptions
               loadOptions={loadCategoryOptions}
@@ -713,7 +788,11 @@ export default function ProductForm() {
                 setFormData((prev) => ({
                   ...prev,
                   categoryId: option?.value || "",
+                  subCategoryId: "", // reset
+                  subSubCategoryId: "", // reset
                 }));
+                setSelectedSubCategory(null);
+                setSelectedSubSubCategory(null);
               }}
               placeholder="Select Category"
               isClearable
@@ -730,9 +809,10 @@ export default function ProductForm() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Sub Category <span className="text-red-500">*</span>
+              Sub Category
             </label>
             <AsyncSelect
+              key={formData.categoryId}
               cacheOptions
               defaultOptions
               loadOptions={loadSubCategoryOptions}
@@ -742,7 +822,9 @@ export default function ProductForm() {
                 setFormData((prev) => ({
                   ...prev,
                   subCategoryId: option?.value || "",
+                  subSubCategoryId: "",
                 }));
+                setSelectedSubSubCategory(null);
               }}
               placeholder="Select Sub Category"
               isClearable
@@ -759,9 +841,10 @@ export default function ProductForm() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Sub Sub Category <span className="text-red-500">*</span>
+              Sub Sub Category
             </label>
             <AsyncSelect
+              key={formData.subCategoryId}
               cacheOptions
               defaultOptions
               loadOptions={loadSubSubCategoryOptions}
@@ -1044,10 +1127,13 @@ export default function ProductForm() {
             </label>
             <input
               name="stock"
-              value={formData.stock}
+              value={getMainStock()}
               type="number"
               onChange={handleChange}
               className="mt-1 w-full rounded-md border p-2"
+              disabled={formData.items.some(
+                (item) => item.title?.toLowerCase() === "color",
+              )}
             />
           </div>
 
@@ -1281,8 +1367,19 @@ export default function ProductForm() {
               <select
                 value={attribute.attributeId || ""}
                 onChange={(e) => {
+                  const selectedId = e.target.value;
+                  const selectedAttr = attributesData?.data?.find(
+                    (a: any) => a.id === selectedId,
+                  );
+                  console.log("Selected Attribute:", selectedAttr);
+
+                  const selectedTitle = selectedAttr?.title || "";
                   const updatedItems = [...formData.items];
-                  updatedItems[attributeIndex].attributeId = e.target.value;
+                  updatedItems[attributeIndex] = {
+                    ...updatedItems[attributeIndex],
+                    attributeId: selectedId,
+                    title: selectedTitle,
+                  };
                   setFormData((prev) => ({ ...prev, items: updatedItems }));
                 }}
                 className="w-1/3 rounded-md border border-gray-300 p-2"
@@ -1547,13 +1644,26 @@ export default function ProductForm() {
               </span>
             </div>
           </div>
+
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              Meta Keywords <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="meta_keywords"
+              type="string"
+              value={formData.meta_keywords}
+              onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            />
+          </div>
           <div>
             <label className="text-sm font-medium text-gray-700">
               Meta Description <span className="text-red-500">*</span>
             </label>
-            <input
+            <textarea
+              rows={4}
               name="meta_description"
-              type="text"
               value={formData.meta_description}
               onChange={handleChange}
               className="mt-1 w-full rounded-md border p-2"
@@ -1575,26 +1685,14 @@ export default function ProductForm() {
               </span>
             </div>
           </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              Meta Keywords <span className="text-red-500">*</span>
-            </label>
-            <input
-              name="meta_keywords"
-              type="string"
-              value={formData.meta_keywords}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-md border p-2"
-            />
-          </div>
           <div className="flex-1 rounded-lg">
-            <label className="mb-1 block text-sm font-semibold text-gray-700">
+            <label className="mb-2 inline text-sm font-semibold text-gray-700">
               Meta Image <span className="text-red-500">*</span>
             </label>
-            <p className="mb-2 text-xs text-blue-600">
+            <p className="mb-2 inline text-xs text-blue-600">
               Ratio 1:1 (500 x 500 px)
             </p>
-            <div className="relative flex h-32 cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
+            <div className="relative mt-1 flex h-32 cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
               <input
                 type="file"
                 accept="image/*"

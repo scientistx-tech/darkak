@@ -9,6 +9,7 @@ import PrintButton from "./components/PrintButton";
 import { useGetOrderDetailsQuery } from "@/redux/services/admin/adminOrderApis";
 import { FaLeftLong } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function OrderDetailsPage() {
   const params = useParams();
@@ -34,7 +35,7 @@ export default function OrderDetailsPage() {
             onClick={() => router.back()}
             className="h-8 w-8 cursor-pointer rounded-full bg-gray-3 p-2 text-slate-800 hover:bg-gray-4"
           />
-          <img
+          <Image
             width={40}
             height={40}
             src="/images/icon/icon_order.png"
@@ -52,7 +53,14 @@ export default function OrderDetailsPage() {
           <OrderSummary orderDetails={orderDetailsData} />
         </div>
         <div className="space-y-4">
-          <OrderStatusPanel orderDetails={orderDetailsData} refetch={refetch} />
+          {orderDetailsData?.status !== "cancelled" &&
+            orderDetailsData?.status !== "failed_to_delivery" &&
+            orderDetailsData?.status !== "delivered" && (
+              <OrderStatusPanel
+                orderDetails={orderDetailsData}
+                refetch={refetch}
+              />
+            )}
           <CustomerInfo orderDetails={orderDetailsData} />
           <AddressCard
             orderDetails={orderDetailsData}

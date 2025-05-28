@@ -33,7 +33,7 @@ import {
   useGetSubCategoriesQuery,
   useGetSubSubCategoriesQuery,
 } from "@/redux/services/admin/adminCategoryApis";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FaBarcode, FaEdit, FaEye, FaTrashAlt } from "react-icons/fa";
 import AsyncSelect from "react-select/async";
 import { useSelector } from "react-redux";
@@ -45,7 +45,9 @@ const brandSchema = yup.object().shape({
 });
 
 const ProductList = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+  const searchParams = useSearchParams();
+  const initialPage = Number(searchParams.get("page")) || 1;
+  const [currentPage, setCurrentPage] = useState(initialPage);
   const [queryParams, setQueryParams] = useState({});
   const { data, isLoading, error, refetch } = useGetProductsQuery(queryParams);
 
@@ -126,6 +128,7 @@ const ProductList = () => {
     categoryId: "",
     subCategoryId: "",
     subSubCategoryId: "",
+    stock: "",
   });
   const router = useRouter();
 
@@ -134,6 +137,10 @@ const ProductList = () => {
       ...prev,
       page: currentPage,
     }));
+    // Update the URL with the current page
+    const params = new URLSearchParams(window.location.search);
+    params.set("page", String(currentPage));
+    router.replace(`?${params.toString()}`);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
 
@@ -328,6 +335,25 @@ const ProductList = () => {
               control: (base) => ({ ...base, height: "50px" }),
             }}
           />
+
+          {/* stock in or stock out */}
+          <div className="w-full">
+            <select
+              className="w-full rounded border px-3 py-2"
+              value={filters.stock}
+              onChange={(e) => {
+                const value = e.target.value;
+                setFilters((prev) => ({
+                  ...prev,
+                  stock: value || "",
+                }));
+              }}
+            >
+              <option value="">Select Avaiability</option>
+              <option value="stock-in">In Stock</option>
+              <option value="stock-out">Out of Stock</option>
+            </select>
+          </div>
         </div>
 
         <div className="flex justify-end gap-3">
@@ -349,6 +375,7 @@ const ProductList = () => {
                 categoryId: "",
                 subCategoryId: "",
                 subSubCategoryId: "",
+                stock: "",
               });
 
               setQueryParams({});
@@ -370,6 +397,7 @@ const ProductList = () => {
                 ...(filters.subSubCategoryId && {
                   subSubCategoryId: filters.subSubCategoryId,
                 }),
+                ...(filters.stock && { stock: filters.stock }),
               });
             }}
           >

@@ -1,6 +1,7 @@
 import React from "react";
 import ProductDetails from "./ProductDetails";
 import { notFound } from "next/navigation";
+
 // Fetch metadata for SEO
 export async function generateMetadata({
   params,
@@ -45,6 +46,7 @@ async function Page({ params }: { params: Promise<{ id: string }> }) {
 }
 
 export default Page;
+
 async function getClientNewsDetailsById(id: string) {
   try {
     const res = await fetch(

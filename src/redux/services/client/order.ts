@@ -2,7 +2,7 @@ import baseApi from "@/redux/baseApi";
 import { Review } from "@/types/client/createReviewTypes";
 import { ProductReviewResponse } from "@/types/client/myReviewsTypes";
 import { Order } from "@/types/client/orderDetailsType";
-import { OrderProductData } from "@/types/client/orderTypes";
+import { OrderProductData, ReturnRequest } from "@/types/client/orderTypes";
 
 export const clientOrderApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -31,6 +31,13 @@ export const clientOrderApi = baseApi.injectEndpoints({
         body: body,
       }),
     }),
+    addReturnRequest: builder.mutation<any, ReturnRequest>({
+      query: (body) => ({
+        url: `/user/return-request`,
+        method: "POST",
+        body: body,
+      }),
+    }),
   }),
 });
 
@@ -39,4 +46,5 @@ export const {
   useGetMyReviewsQuery,
   useGetOrderDetailsQuery,
   useAddReviewCreateMutation,
+  useAddReturnRequestMutation,
 } = clientOrderApi;
