@@ -222,7 +222,7 @@ export const metadata: Metadata = {
         url: "https://www.darkak.com.bd/opengraph-image.jpeg", // Update with your image URL
         width: 1200,
         height: 630,
-        alt: "Darkak Mart - Best online store Bangladesh",
+        alt: "Darkak Mart - Premium imported goods including bags, watches, and electronics in Bangladesh",
       },
     ],
     locale: "en_US",
@@ -233,9 +233,20 @@ export const metadata: Metadata = {
     title: "Darkak Mart",
     description:
       "Looking for premium quality bags, stylish watches, and the latest electronics in Bangladesh? Darkak Mart offers a wide range of directly imported, top-tier products. Explore our exclusive collections at darkak.com.bd.",
-    images: ["https://www.darkak.com.bd/opengraph-image.jpeg"], // Same as OG image
+    images: [
+      {
+        url: "https://www.darkak.com.bd/opengraph-image.jpeg",
+        alt: "Darkak Mart - Premium imported goods including bags, watches, and electronics in Bangladesh",
+      },
+    ], // Same as OG image
   },
   metadataBase: new URL("https://www.darkak.com.bd"),
+  other: {
+    // Additional OG tags like og:logo and explicitly adding og:image:alt
+    "og:image:alt":
+      "Darkak Mart - Premium imported goods including bags, watches, and electronics in Bangladesh",
+    "og:logo": "https://www.darkak.com.bd/favicon.ico",
+  },
 };
 
 export default async function RootLayout({ children }: PropsWithChildren) {
