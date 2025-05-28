@@ -7,6 +7,7 @@ import { GrVend } from "react-icons/gr";
 import { PiUserSoundFill } from "react-icons/pi";
 import { TbBinaryTree2Filled } from "react-icons/tb";
 import { IoAnalytics } from "react-icons/io5";
+import { MdOutlineSettings } from "react-icons/md";
 import * as Icons from "../icons";
 import { BsTornado } from "react-icons/bs";
 import { url } from "inspector";
@@ -250,6 +251,16 @@ export const NAV_DATA = [
   {
     label: "OTHERS",
     items: [
+      {
+        title: "Settings",
+        icon: MdOutlineSettings,
+        items: [
+          {
+            title: "Delivery Providers",
+            url: "/admin/settings/delivery-providers",
+          },
+        ],
+      },
       {
         title: "Analytics",
         icon: IoAnalytics,
