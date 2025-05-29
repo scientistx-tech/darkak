@@ -261,7 +261,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
   };
   return (
     <div className="py-6">
-      <div className="flex flex-col items-center justify-between gap-4 md:flex-row md:gap-10">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:gap-10">
         {/* Image Section */}
         <div className="rounded-md p-2 md:p-4">
           <div className="relative mx-auto w-full sm:max-w-sm md:max-w-md lg:max-w-lg">
@@ -378,55 +378,63 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
                 </p>
               )}
             </span>
+            <p className="inline-block rounded bg-secondaryWhite px-4 py-2 text-xs shadow-1 md:text-sm">
+              Product Code: {data?.product.code}
+            </p>
           </div>
 
           <div className="mt-2 flex items-center gap-4 md:mt-4">
             {" "}
-            <p className="mt-4 inline-block rounded-full bg-secondaryWhite px-4 py-2 text-xs md:text-sm">
-              Product Code: {data?.product.code}
-            </p>
             <a
               href="https://api.whatsapp.com/send?phone=8801711726501&text=hello%F0%9F%98%87"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-3 flex w-max items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-xs text-green-700 md:text-sm"
+              className="flex w-max items-center gap-2 rounded bg-green-100 px-4 py-2 text-xs text-green-700 md:text-sm"
             >
               <BsWhatsapp className="h-5 w-5" />
               Message on Whatsapp
             </a>
-          </div>
-
-          <div className="mt-6 text-sm font-semibold text-[#323232]">
-            <p className="inline text-sm text-gray-500">Warranty Type:</p>{" "}
-            {data?.product.warranty}{" "}
-            <p className="inline animate-pulse">{`(${data?.product.warranty_time})`}</p>
+            <div className="text-sm font-semibold text-[#323232]">
+              <p className="inline text-sm text-gray-500">Warranty Type:</p>{" "}
+              {data?.product.warranty}{" "}
+              <p className="inline animate-pulse">{`(${data?.product.warranty_time})`}</p>
+            </div>
           </div>
 
           {data?.product?.items.map((item: any, i: number) => (
             <div key={item.id} className="mt-4 flex gap-4">
               <p className="text-sm font-medium">{item?.title}:</p>
-              <div className="flex flex-wrap gap-3">
-                {item.options.map((option: any, idx: number) => (
-                  <div
-                    key={option.id}
-                    onClick={() => {
-                      setSelectedOptions((prev) => ({
-                        ...prev,
-                        [item.id]: option.id,
-                      }));
-                      if (option.image) {
-                        setSelectedImage(option.image);
-                      }
-                    }}
-                    className={`cursor-pointer rounded-full border-2 px-4 py-0.5 transition-colors duration-200 ${
-                      selectedOptions[item.id] === option.id
-                        ? "border-primaryBlue bg-primaryBlue text-white shadow-2"
-                        : "border-blue-300 bg-white text-primaryBlue"
-                    }`}
-                  >
-                    {option.title}
-                  </div>
-                ))}
+              <div className="flex flex-wrap gap-x-3">
+                {item.options.map((option: any, idx: number) => {
+                  const isOutOfStock = Number(option.stock) <= 0;
+                  return (
+                    <div
+                      key={option.id}
+                      onClick={() => {
+                        if (isOutOfStock) return;
+                        setQuantity(1);
+                        setSelectedOptions((prev) => ({
+                          ...prev,
+                          [item.id]: option.id,
+                        }));
+                        if (option.image) {
+                          setSelectedImage(option.image);
+                        }
+                      }}
+                      className={`cursor-pointer rounded-full border-2 px-4 py-0.5 transition-colors duration-200 ${
+                        selectedOptions[item.id] === option.id
+                          ? "border-primaryBlue bg-primaryBlue text-white shadow-2"
+                          : isOutOfStock
+                            ? "cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400"
+                            : "border-blue-300 bg-white text-primaryBlue"
+                      }`}
+                      title={isOutOfStock ? "This option is stock out" : ""}
+                      style={isOutOfStock ? { pointerEvents: "none" } : {}}
+                    >
+                      {option.title}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           ))}
@@ -477,8 +485,9 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
 
           {/* Short Description with See More/Less */}
           {data?.product?.short_description && (
-            <div className="mt-4 w-full">
-              <p className="text-sm text-gray-700">
+            <div className="mt-6 min-h-[200px] w-full">
+              <p className="inline">Description:</p>
+              <p className="ml-4 inline text-base font-medium text-gray-700">
                 {showFullDesc
                   ? data.product.short_description
                   : data.product.short_description.length > 120
@@ -495,10 +504,6 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
               )}
             </div>
           )}
-
-          <DeliveryDetails
-            deliveryInfo={data?.product?.delivery_info}
-          ></DeliveryDetails>
 
           {data?.product?.stock > 0 ? (
             <div className="mt-6 flex items-center gap-4">
@@ -542,6 +547,12 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
           )}
 
           {/* Buttons */}
+        </div>
+        {/* delivery section */}
+        <div className="mx-auto w-[30%]">
+          <DeliveryDetails
+            deliveryInfo={data?.product?.delivery_info}
+          ></DeliveryDetails>
         </div>
       </div>
     </div>
