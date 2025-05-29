@@ -24,7 +24,7 @@ export default function ProductDetails({ data }: { data: any }) {
       <ProductBreadcrumb title={data?.product?.title} url={currentUrl} />
       <ProductShow data={data} slug={slug} />
       <RelatedProductsSwiper data={data.related} />
-      <div className="w-[100%] gap-6 px-2 py-10 lg:flex">
+      <div className="w-[100%] gap-6 py-10 lg:flex">
         <div className="w-full lg:w-[65%]">
           <ProductTabs data={data.product} />
         </div>
