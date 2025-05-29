@@ -20,8 +20,8 @@ const SocialButton = () => {
       // const appUser = convertFirebaseToAppUser(user);
 
       const firebaseToken = await user.getIdToken();
-      console.log("🚀 ~ handleGoogleLogin ~ token:", firebaseToken);
-      console.log("🚀 ~ handleGoogleLogin ~ user.displayName:", user.displayName);
+      // console.log("🚀 ~ handleGoogleLogin ~ token:", firebaseToken);
+      // console.log("🚀 ~ handleGoogleLogin ~ user.displayName:", user.displayName);
       
       const userValue = await userGoogleAuthentication({ token: firebaseToken, name: user.displayName || "Unknown User" }).unwrap();
       toast.success("Google login successful!");
