@@ -5,15 +5,15 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import bannerImg from "@/Data/Demo/Elegant Grand Opening Announcement Invitation Banner Landscape.png"; // Update path if needed
 
-const GrandOpeningNotice: React.FC = () => {
+const EidOfferNotice: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const lastShown = localStorage.getItem("grand_opening_shown_date");
+    const lastShown = localStorage.getItem("eid_offer_shown_date");
     const today = new Date().toISOString().split("T")[0];
     if (lastShown !== today) {
       setIsModalOpen(true);
-      localStorage.setItem("grand_opening_shown_date", today);
+      localStorage.setItem("eid_offer_shown_date", today);
     }
   }, []);
 
@@ -35,9 +35,9 @@ const GrandOpeningNotice: React.FC = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.7 }}
-            className="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-yellow-400 via-pink-500 to-red-500 bg-clip-text text-transparent drop-shadow-lg"
+            className="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-yellow-400 via-pink-500 to-red-500 bg-clip-text text-transparent drop-shadow-lg"
           >
-            🎉 Grand Opening 🎉
+            🐐 Eid ul Adha Offer 🐐
           </motion.h2>
 
           <motion.p
@@ -46,7 +46,7 @@ const GrandOpeningNotice: React.FC = () => {
             transition={{ delay: 0.2 }}
             className="text-2xl mt-4 font-semibold text-white drop-shadow"
           >
-            Welcome to <span className="text-yellow-300 font-bold">Darkak Mart</span>
+            Celebrate with <span className="text-yellow-300 font-bold">Darkak Mart</span>
           </motion.p>
 
           <motion.p
@@ -55,18 +55,27 @@ const GrandOpeningNotice: React.FC = () => {
             transition={{ delay: 0.3 }}
             className="text-lg mt-2 text-gray-200"
           >
-            Official Launch Date: <span className="text-yellow-400 font-bold">25 May 2025</span>
+            Special Discount: <span className="text-yellow-400 font-bold">30% Off</span> on all orders!
+          </motion.p>
+
+          <motion.p
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-lg mt-4 text-green-300 font-semibold"
+          >
+            🕌 Limited Time Only — Grab it before Eid ends!
           </motion.p>
 
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0.5 }}
             className="my-6"
           >
             <Image
               src={bannerImg}
-              alt="Grand Opening"
+              alt="Eid ul Adha Offer"
               className="rounded-2xl mx-auto border-4 border-yellow-400 shadow-lg"
             />
           </motion.div>
@@ -77,7 +86,7 @@ const GrandOpeningNotice: React.FC = () => {
             onClick={() => setIsModalOpen(false)}
             className="mt-6 px-8 py-3 text-lg font-bold rounded-full bg-white text-[#870160] hover:bg-primaryBlue hover:text-white transition-all shadow-xl"
           >
-            Explore Now
+            Shop Now!
           </motion.button>
         </div>
       </div>
@@ -85,4 +94,4 @@ const GrandOpeningNotice: React.FC = () => {
   );
 };
 
-export default GrandOpeningNotice;
+export default EidOfferNotice;
