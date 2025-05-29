@@ -86,7 +86,7 @@ const EidOfferNotice: React.FC = () => {
             onClick={() => setIsModalOpen(false)}
             className="mt-6 px-8 py-3 text-lg font-bold rounded-full bg-white text-[#870160] hover:bg-primaryBlue hover:text-white transition-all shadow-xl"
           >
-            Shop Now
+            Shop Now!
           </motion.button>
         </div>
       </div>
