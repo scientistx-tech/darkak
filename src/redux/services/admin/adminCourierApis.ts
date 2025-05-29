@@ -50,8 +50,8 @@ export const adminCourierApi = baseApi.injectEndpoints({
     }),
 
     createDelivery: builder.mutation<any, any>({
-      query: ({ id, data }) => ({
-        url: `/admin/courier/delivery/4/${id}`,
+      query: ({ courierId, orderId, data }) => ({
+        url: `/admin/courier/delivery/${courierId}/${orderId}`,
         method: "POST",
         body: data,
       }),
