@@ -1,3 +1,4 @@
+import { useCreateDeliveryMutation } from "@/redux/services/admin/adminCourierApis";
 import {
   useUpdateOrderStatusMutation,
   useUpdatePaymentStatusMutation,
@@ -5,18 +6,22 @@ import {
 import * as Switch from "@radix-ui/react-switch";
 import { Modal } from "antd";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import CourierModal from "./CourierModal";
 
 export default function OrderStatusPanel({ orderDetails, refetch }: any) {
   const [orderStatus, setOrderStatus] = useState<string>(orderDetails?.status);
   const [paymentStatus, setPaymentStatus] = useState<boolean>(
     orderDetails?.paid,
   );
+  const [selectedCourierMedium, setSelectedCourierMedium] =
+    useState<string>("");
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [openCourierModal, setOpenCourierModal] = useState(false);
   const [failedMessage, setFailedMessage] = useState<string>("");
   const [openCourierBox, setOpenCourierBox] = useState<boolean>(false);
-
   const [changeOrderStatus] = useUpdateOrderStatusMutation();
   const [changePaymentStatus] = useUpdatePaymentStatusMutation();
 
@@ -144,7 +149,6 @@ export default function OrderStatusPanel({ orderDetails, refetch }: any) {
   };
 
   const handleCancel = () => {
-    console.log("Clicked cancel button");
     setOpen(false);
   };
 
@@ -160,8 +164,7 @@ export default function OrderStatusPanel({ orderDetails, refetch }: any) {
         <select
           value={orderStatus}
           onChange={(e) => {
-            // setOrderStatus(e.target.value);
-
+            setOrderStatus(e.target.value);
             if (e.target.value === "out_for_delivery") {
               setOpenCourierBox(true);
             } else if (e.target.value === "failed_to_delivery") {
@@ -198,15 +201,17 @@ export default function OrderStatusPanel({ orderDetails, refetch }: any) {
           <label className="">Select Courier</label>
           <select
             className="mt-1 w-full rounded border p-2 text-slate-900"
-            value={orderDetails?.courier || ""}
+            value={selectedCourierMedium}
             onChange={(e) => {
               // Handle courier selection change if neededPsideba
+              setSelectedCourierMedium(e.target.value);
+              setOpenCourierModal(true);
             }}
           >
             <option value="">Select Courier</option>
-            <option value="Courier A">Pathao</option>
-            <option value="Courier B">Redx</option>
-            <option value="Courier C">Steadfast</option>
+            <option value="pathao">Pathao</option>
+            <option value="redx">Redx</option>
+            <option value="steadfast">Steadfast</option>
           </select>
         </div>
       )}
@@ -259,6 +264,14 @@ export default function OrderStatusPanel({ orderDetails, refetch }: any) {
           placeholder="Write a message"
         ></textarea>
       </Modal>
+
+      <CourierModal
+        orderDetails={orderDetails}
+        openCourierModal={openCourierModal}
+        setOpenCourierModal={setOpenCourierModal}
+        refetch={refetch}
+        selectedCourierMedium={selectedCourierMedium}
+      />
     </div>
   );
 }

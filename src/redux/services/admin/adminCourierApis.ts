@@ -48,6 +48,14 @@ export const adminCourierApi = baseApi.injectEndpoints({
         body: formData,
       }),
     }),
+
+    createDelivery: builder.mutation<any, any>({
+      query: ({ id, data }) => ({
+        url: `/admin/courier/delivery/4/${id}`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -56,4 +64,5 @@ export const {
   useCreateDeliveryProviderMutation,
   useDeleteCourierMutation,
   useUpdateDeliveryProviderStatusMutation,
+  useCreateDeliveryMutation,
 } = adminCourierApi;

@@ -7,29 +7,28 @@ import { usePathname, useRouter } from "next/navigation";
 import { getLocalStorage, setLocalStorage } from "@/utils/localStorage";
 
 interface PrivateLayoutProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
 const UserPrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
-    const user = useSelector((state: RootState) => state.auth.user);
-    const router = useRouter();
-    const pathname = usePathname();
-    setLocalStorage("path", pathname);
-    console.log(pathname)
+  const user = useSelector((state: RootState) => state.auth.user);
+  const router = useRouter();
+  const pathname = usePathname();
+  setLocalStorage("path", pathname);
 
-    useEffect(() => { 
-        if (!user) {
-            router.replace("/auth/login");
-        } else {
-            router.replace(getLocalStorage("path") || "/user/profile");
-        }
-    }, [user, router]); // Runs when admin state changes
-
+  useEffect(() => {
     if (!user) {
-        return null; // Prevent rendering before redirect
+      router.replace("/auth/login");
+    } else {
+      router.replace(getLocalStorage("path") || "/user/profile");
     }
+  }, [user, router]); // Runs when admin state changes
 
-    return <div>{children}</div>;
+  if (!user) {
+    return null; // Prevent rendering before redirect
+  }
+
+  return <div>{children}</div>;
 };
 
 export default UserPrivateLayout;
