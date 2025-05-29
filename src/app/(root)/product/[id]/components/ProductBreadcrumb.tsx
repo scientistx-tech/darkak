@@ -17,10 +17,13 @@ const ProductBreadcrumb = ({ title, url }: { title: string; url: string }) => {
 
   return (
     <div>
-      <div className="mt-2 flex items-center justify-between py-3">
+      <div className="mt-2 flex flex-col gap-3 py-3 md:flex-row md:items-center md:justify-between">
         {/* Breadcrumbs */}
-        <nav className="flex items-center space-x-1 text-sm text-[#4B4E55]">
-          <Link href="/" className="hover:text-primaryDarkBlue">
+        <nav className="flex max-w-full flex-wrap items-center gap-x-1 gap-y-2 overflow-x-auto text-[10px] text-[#4B4E55] md:text-sm">
+          <Link
+            href="/"
+            className="whitespace-nowrap hover:text-primaryDarkBlue"
+          >
             Home
           </Link>
           {segments.map((seg, idx) => {
@@ -31,13 +34,13 @@ const ProductBreadcrumb = ({ title, url }: { title: string; url: string }) => {
               <span key={idx} className="flex items-center space-x-1">
                 <span>/</span>
                 {isLast ? (
-                  <span className="text-secondaryBlue">
+                  <span className="whitespace-nowrap text-secondaryBlue">
                     {decodeURIComponent(seg)}
                   </span>
                 ) : (
                   <Link
                     href={href}
-                    className="capitalize hover:text-primaryDarkBlue"
+                    className="whitespace-nowrap capitalize hover:text-primaryDarkBlue"
                   >
                     {decodeURIComponent(seg)}
                   </Link>
@@ -48,15 +51,12 @@ const ProductBreadcrumb = ({ title, url }: { title: string; url: string }) => {
         </nav>
 
         {/* Action Buttons */}
-        <div className="flex items-center space-x-2">
-          {/* <ShareDropdown productName="Striking Tag Heuer Carrera Chronograph Blue Dial Stainless Steel" /> */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <CiShare2 className="h-4 w-4 text-primaryDarkBlue" />
-              <p>Share:</p>
-            </div>
-            <SocialShare url={`${baseUrl}${url}`} title={title} />
+        <div className="flex flex-row items-center gap-3 sm:flex-row sm:gap-4">
+          <div className="flex items-center gap-2">
+            <CiShare2 className="h-4 w-4 text-primaryDarkBlue" />
+            <p className="hidden text-sm md:block">Share:</p>
           </div>
+          <SocialShare url={`${baseUrl}${url}`} title={title} />
         </div>
       </div>
     </div>

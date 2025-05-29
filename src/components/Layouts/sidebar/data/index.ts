@@ -8,6 +8,7 @@ import { PiUserSoundFill } from "react-icons/pi";
 import { TbBinaryTree2Filled } from "react-icons/tb";
 import { IoAnalytics } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
+import { BiSolidOffer } from "react-icons/bi";
 import * as Icons from "../icons";
 import { BsTornado } from "react-icons/bs";
 import { url } from "inspector";
@@ -244,6 +245,16 @@ export const NAV_DATA = [
             url: "/admin/subscribers/subscribers-list",
           },
         ],
+      },
+    ],
+  },
+  {
+    label: "Promotion Management",
+    items: [
+      {
+        title: "Cupon",
+        icon: BiSolidOffer,
+        url: "/admin/promotion-management/cupon",
       },
     ],
   },

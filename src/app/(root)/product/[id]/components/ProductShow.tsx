@@ -349,11 +349,11 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
           <p className="text-sm uppercase text-[#4B4E55]">
             Brand: {data?.product?.brand?.title}
           </p>
-          <h1 className="mt-2 text-center text-xl font-semibold text-[#4B4E55]">
+          <h1 className="mt-2 text-xl font-semibold text-[#4B4E55]">
             {data?.product?.title}
           </h1>
 
-          <div className="mt-4 flex gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
             <span
               className={`rounded bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue shadow-1 ${
                 hasDiscount ? "line-through" : ""
@@ -389,7 +389,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
               href="https://api.whatsapp.com/send?phone=8801711726501&text=hello%F0%9F%98%87"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex w-max items-center gap-2 rounded bg-green-100 px-4 py-2 text-xs text-green-700 md:text-sm"
+              className="flex w-max items-center gap-2 rounded bg-green-100 px-2 py-1 text-xs text-green-700 md:px-4 md:py-2 md:text-sm"
             >
               <BsWhatsapp className="h-5 w-5" />
               Message on Whatsapp
@@ -397,14 +397,14 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
             <div className="text-sm font-semibold text-[#323232]">
               <p className="inline text-sm text-gray-500">Warranty Type:</p>{" "}
               {data?.product.warranty}{" "}
-              <p className="inline animate-pulse">{`(${data?.product.warranty_time})`}</p>
+              <p className="inline animate-pulse text-xs md:text-base">{`(${data?.product.warranty_time})`}</p>
             </div>
           </div>
 
           {data?.product?.items.map((item: any, i: number) => (
-            <div key={item.id} className="mt-4 flex gap-4">
+            <div key={item.id} className="mt-4 flex flex-col gap-4 md:flex-row">
               <p className="text-sm font-medium">{item?.title}:</p>
-              <div className="flex flex-wrap gap-x-3">
+              <div className="flex flex-wrap gap-3">
                 {item.options.map((option: any, idx: number) => {
                   const isOutOfStock = Number(option.stock) <= 0;
                   return (
@@ -485,7 +485,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
 
           {/* Short Description with See More/Less */}
           {data?.product?.short_description && (
-            <div className="mt-6 min-h-[200px] w-full">
+            <div className="mt-6 h-fit w-full">
               <p className="inline">Description:</p>
               <p className="ml-4 inline text-base font-medium text-gray-700">
                 {showFullDesc
@@ -549,7 +549,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
           {/* Buttons */}
         </div>
         {/* delivery section */}
-        <div className="mx-auto w-[30%]">
+        <div className="mx-auto w-full md:w-[20%]">
           <DeliveryDetails
             deliveryInfo={data?.product?.delivery_info}
           ></DeliveryDetails>

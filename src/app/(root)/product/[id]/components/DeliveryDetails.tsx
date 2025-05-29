@@ -11,12 +11,17 @@ const DeliveryDetails = ({
   };
 }) => {
   return (
-    <section className="w-full mt-8 rounded-2xl bg-secondaryWhite p-4 shadow-md  flex flex-col justify-center md:justify-start items-center md:items-start">
+    <section
+      style={{
+        boxShadow: "rgba(0, 0, 0, 0.15) 1.95px 0 2.6px",
+      }}
+      className="flex h-full w-full flex-col items-center justify-center rounded-md bg-[#F3F4F6] p-4 md:items-start md:justify-start"
+    >
       <h2 className="mb-4 text-xl font-semibold text-primaryDarkBlue">
         Delivery Details
       </h2>
 
-      <div className="w-full md:grid gap-2 text-sm text-primaryDarkBlue md:grid-cols-2 flex justify-center flex-col items-center">
+      <div className="flex w-full flex-col items-start justify-center gap-5 text-sm text-primaryDarkBlue">
         <div className="flex items-start gap-3">
           <FaShippingFast className="mt-1 text-lg text-primaryBlue" />
           <div>
