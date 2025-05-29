@@ -1368,12 +1368,15 @@ export default function ProductForm() {
                 value={attribute.attributeId || ""}
                 onChange={(e) => {
                   const selectedId = e.target.value;
+                  console.log(selectedId, "selectedid");
+
                   const selectedAttr = attributesData?.data?.find(
-                    (a: any) => a.id === selectedId,
+                    (a: any) => Number(a.id) === Number(selectedId),
                   );
                   console.log("Selected Attribute:", selectedAttr);
 
-                  const selectedTitle = selectedAttr?.title || "";
+                  // const selectedTitle = selectedAttr?.title || "";
+                  const selectedTitle = "";
                   const updatedItems = [...formData.items];
                   updatedItems[attributeIndex] = {
                     ...updatedItems[attributeIndex],
