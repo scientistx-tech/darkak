@@ -7,7 +7,6 @@ import { PropsWithChildren } from "react";
 import UpdateNotice from "@/app/(root)/component/UpdateNotice";
 import ReduxProvider from "@/redux/ReduxProvider";
 import DataLoader from "@/app/DataLoader";
-import ClientFirebaseAuthProvider from "@/components/Auth/ClientFirebaseAuthProvider";
 import GTMHead from "@/components/Scripts/GTMHead";
 import Script from "next/script";
 
@@ -295,7 +294,6 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           ></iframe>
         </noscript>
         <ReduxProvider>
-          <ClientFirebaseAuthProvider />
           <DataLoader>
             <UpdateNotice />
             {children}
