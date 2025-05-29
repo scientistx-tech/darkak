@@ -50,64 +50,44 @@ const ProductList = () => {
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [queryParams, setQueryParams] = useState({});
   const { data, isLoading, error, refetch } = useGetProductsQuery(queryParams);
+  const [selectedBrandId, setSelectedBrandId] = useState<string>("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [selectedSubCategoryId, setSelectedSubCategoryId] =
+    useState<string>("");
+  const [selectedSubSubCategoryId, setSelectedSubSubCategoryId] =
+    useState<string>("");
+  const [selectedStock, setSelectedStock] = useState<string>("");
 
-  const [selectedBrand, setSelectedBrand] = useState<{
-    value: string;
-    label: string;
-  } | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<{
-    value: string;
-    label: string;
-  } | null>(null);
-  const [selectedSubCategory, setSelectedSubCategory] = useState<{
-    value: string;
-    label: string;
-  } | null>(null);
-  const [selectedSubSubCategory, setSelectedSubSubCategory] = useState<{
-    value: string;
-    label: string;
-  } | null>(null);
+  const { data: brandsData } = useGetBrandsQuery({});
 
-  const [searchBrandTerm, setSearchBrandTerm] = useState("");
-
-  const { data: brandsData } = useGetBrandsQuery({ search: searchBrandTerm });
-
-  const [searchCategoryTerm, setSearchCategoryTerm] = useState("");
   const {
     data: categoriesData,
     isLoading: isCategoriesLoading,
     error: categoriesError,
     refetch: refetchCategories,
-  } = useGetCategoriesQuery({ search: searchCategoryTerm });
+  } = useGetCategoriesQuery({});
 
-  const [searchSubCategoryTerm, setSearchSubCategoryTerm] = useState("");
   const {
     data: subCategoriesData,
     isLoading: isSubCategoriesLoading,
     error: subCategoriesError,
     refetch: refetchSubCategories,
-  } = useGetSubCategoriesQuery({ search: searchSubCategoryTerm });
+  } = useGetSubCategoriesQuery({});
 
-  const [searchSubSubCategoryTerm, setSearchSubSubCategoryTerm] = useState("");
   const {
     data: subSubCategoriesData,
     isLoading: isSubSubCategoriesLoading,
     error: subSubCategoriesError,
     refetch: refetchSubSubCategories,
-  } = useGetSubSubCategoriesQuery({ search: searchSubSubCategoryTerm });
+  } = useGetSubSubCategoriesQuery({});
 
   const token = useSelector((state: any) => state.auth.token);
 
   const [deleteProduct] = useDeleteProductMutation();
-  const [updateBrand, { isLoading: isUpdating }] = useUpdateBrandMutation();
   const [changeDealStatus] = useUpdateTodaysDealStatusMutation();
   const [changeFeatureStatus] = useUpdateFeatureStatusMutation();
   const [changePublishedStatus] = useUpdateDraftStatusMutation();
 
-  const [brandId, setBrandId] = useState("");
-  const [categoryId, setCategoryId] = useState("");
-  const [subCategoryId, setSubCategoryId] = useState("");
-  const [subSubCategoryId, setSubSubCategoryId] = useState("");
   const [selectedProductId, setSelectedProductId] = useState<number | null>(
     null,
   );
@@ -115,21 +95,7 @@ const ProductList = () => {
   const [search, setSearch] = useState("");
   const [code, setCode] = useState("");
   const [sku, setSku] = useState("");
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editData, setEditData] = useState<{
-    title: string;
-    icon: File | null;
-  }>({
-    title: "",
-    icon: null,
-  });
-  const [filters, setFilters] = useState({
-    brandId: "",
-    categoryId: "",
-    subCategoryId: "",
-    subSubCategoryId: "",
-    stock: "",
-  });
+
   const router = useRouter();
 
   useEffect(() => {
@@ -147,10 +113,6 @@ const ProductList = () => {
   useEffect(() => {
     refetch();
   }, []);
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
 
   const handleOk = (id: any) => {
     handleDelete(id);
@@ -171,73 +133,7 @@ const ProductList = () => {
     }
   };
 
-  const loadBrandOptions = async (inputValue: string) => {
-    const res = await fetch(
-      `https://api.darkak.com.bd/api/admin/brand/get?search=${inputValue}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-    const json = await res.json();
-    return json.data.map((item: any) => ({
-      value: item.id,
-      label: item.title,
-    }));
-  };
-
-  const loadCategoryOptions = async (inputValue: string) => {
-    const res = await fetch(
-      `https://api.darkak.com.bd/api/admin/category/create?search=${inputValue}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-    const json = await res.json();
-    return json.data.map((item: any) => ({
-      value: item.id,
-      label: item.title,
-    }));
-  };
-
-  const loadSubCategoryOptions = async (inputValue: string) => {
-    const res = await fetch(
-      `https://api.darkak.com.bd/api/admin/category/sub-category?search=${inputValue}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-    const json = await res.json();
-    return json.data.map((item: any) => ({
-      value: item.id,
-      label: item.title,
-    }));
-  };
-
-  const loadSubSubCategoryOptions = async (inputValue: string) => {
-    const res = await fetch(
-      `https://api.darkak.com.bd/api/admin/category/sub-sub-category?search=${inputValue}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-    const json = await res.json();
-    return json.data.map((item: any) => ({
-      value: item.id,
-      label: item.title,
-    }));
-  };
+  console.log("query", queryParams);
 
   return (
     <div className="min-h-screen">
@@ -252,101 +148,97 @@ const ProductList = () => {
         <h3 className="mb-4 text-lg font-semibold">Filter Products</h3>
         <div className="my-3 grid grid-cols-1 gap-4 md:grid-cols-3 xl:grid-cols-4">
           {/* Brand */}
-          <AsyncSelect
-            cacheOptions
-            defaultOptions
-            loadOptions={loadBrandOptions}
-            value={selectedBrand}
-            onChange={(option) => {
-              setSelectedBrand(option);
-              setBrandId(option?.value || "");
-              setFilters((prev) => ({ ...prev, brandId: option?.value || "" }));
-            }}
-            placeholder="Select Brand"
-            isClearable
-            styles={{
-              container: (base) => ({ ...base, height: "50px" }),
-              control: (base) => ({ ...base, height: "50px" }),
-            }}
-          />
+          <div>
+            <select
+              value={selectedBrandId}
+              className="w-full rounded border px-3 py-2"
+              onChange={(e) => {
+                setSelectedBrandId(e.target.value);
+              }}
+              name=""
+              id=""
+            >
+              <option value="">Select Brand</option>
+              {brandsData?.data &&
+                brandsData?.data?.map((brand: any, i: number) => (
+                  <option key={brand?.id} value={brand?.id}>
+                    {brand?.title}
+                  </option>
+                ))}
+            </select>
+          </div>
 
           {/* Category */}
-          <AsyncSelect
-            cacheOptions
-            defaultOptions
-            loadOptions={loadCategoryOptions}
-            value={selectedCategory}
-            onChange={(option) => {
-              setSelectedCategory(option);
-              setCategoryId(option?.value || "");
-              setFilters((prev) => ({
-                ...prev,
-                categoryId: option?.value || "",
-              }));
-            }}
-            placeholder="Select Category"
-            isClearable
-            styles={{
-              container: (base) => ({ ...base, height: "50px" }),
-              control: (base) => ({ ...base, height: "50px" }),
-            }}
-          />
+          <div>
+            <select
+              value={selectedCategoryId}
+              className="w-full rounded border px-3 py-2"
+              onChange={(e) => {
+                setSelectedCategoryId(e.target.value);
+              }}
+              name=""
+              id=""
+            >
+              <option value="">Select Category</option>
+              {categoriesData?.data &&
+                categoriesData?.data?.map((cat: any, i: number) => (
+                  <option key={cat?.id} value={cat?.id}>
+                    {cat?.title}
+                  </option>
+                ))}
+            </select>
+          </div>
 
-          {/* Subcategory */}
-          <AsyncSelect
-            cacheOptions
-            defaultOptions
-            loadOptions={loadSubCategoryOptions}
-            value={selectedSubCategory}
-            onChange={(option) => {
-              setSelectedSubCategory(option);
-              setSubCategoryId(option?.value || "");
-              setFilters((prev) => ({
-                ...prev,
-                subCategoryId: option?.value || "",
-              }));
-            }}
-            placeholder="Select Sub Category"
-            isClearable
-            styles={{
-              container: (base) => ({ ...base, height: "50px" }),
-              control: (base) => ({ ...base, height: "50px" }),
-            }}
-          />
+          {/* SubCategory */}
+          <div>
+            <select
+              value={selectedSubCategoryId}
+              className="w-full rounded border px-3 py-2"
+              onChange={(e) => {
+                setSelectedSubCategoryId(e.target.value);
+              }}
+              name=""
+              id=""
+            >
+              <option value="">Select Sub Category</option>
+              {subCategoriesData?.data &&
+                subCategoriesData?.data?.map((subCat: any, i: number) => (
+                  <option key={subCat?.id} value={subCat?.id}>
+                    {subCat?.title}
+                  </option>
+                ))}
+            </select>
+          </div>
 
-          {/* Sub-subcategory */}
-          <AsyncSelect
-            cacheOptions
-            defaultOptions
-            loadOptions={loadSubSubCategoryOptions}
-            value={selectedSubSubCategory}
-            onChange={(option) => {
-              setSelectedSubSubCategory(option);
-              setSubSubCategoryId(option?.value || "");
-              setFilters((prev) => ({
-                ...prev,
-                subSubCategoryId: option?.value || "",
-              }));
-            }}
-            placeholder="Select Sub Sub Category"
-            isClearable
-            styles={{
-              container: (base) => ({ ...base, height: "50px" }),
-              control: (base) => ({ ...base, height: "50px" }),
-            }}
-          />
+          {/* SubSubCategory */}
+          <div>
+            <select
+              value={selectedSubSubCategoryId}
+              className="w-full rounded border px-3 py-2"
+              onChange={(e) => {
+                setSelectedSubSubCategoryId(e.target.value);
+              }}
+              name=""
+              id=""
+            >
+              <option value="">Select Sub Sub Category</option>
+              {subSubCategoriesData?.data &&
+                subSubCategoriesData?.data?.map((subSubCat: any, i: number) => (
+                  <option key={subSubCat?.id} value={subSubCat?.id}>
+                    {subSubCat?.title}
+                  </option>
+                ))}
+            </select>
+          </div>
 
           {/* stock in or stock out */}
           <div className="w-full">
             <select
               className="w-full rounded border px-3 py-2"
-              value={filters.stock}
+              value={selectedStock}
               onChange={(e) => {
                 const value = e.target.value;
-                setFilters((prev) => ({
-                  ...prev,
-                  stock: value || "",
-                }));
+                setSelectedStock(value);
               }}
             >
               <option value="">Select Avaiability</option>
@@ -360,24 +252,11 @@ const ProductList = () => {
           <button
             className="rounded bg-gray-100 px-4 py-2 text-gray-700 hover:bg-gray-200"
             onClick={() => {
-              setSelectedBrand(null);
-              setSelectedCategory(null);
-              setSelectedSubCategory(null);
-              setSelectedSubSubCategory(null);
-
-              setBrandId("");
-              setCategoryId("");
-              setSubCategoryId("");
-              setSubSubCategoryId("");
-
-              setFilters({
-                brandId: "",
-                categoryId: "",
-                subCategoryId: "",
-                subSubCategoryId: "",
-                stock: "",
-              });
-
+              setSelectedBrandId("");
+              setSelectedCategoryId("");
+              setSelectedSubCategoryId("");
+              setSelectedSubSubCategoryId("");
+              setSelectedStock("");
               setQueryParams({});
             }}
           >
@@ -387,17 +266,16 @@ const ProductList = () => {
             className="rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
             onClick={() => {
               setCurrentPage(1);
-
               setQueryParams({
-                ...(filters.brandId && { brandId: filters.brandId }),
-                ...(filters.categoryId && { categoryId: filters.categoryId }),
-                ...(filters.subCategoryId && {
-                  subCategoryId: filters.subCategoryId,
+                ...(selectedBrandId && { brandId: selectedBrandId }),
+                ...(selectedCategoryId && { categoryId: selectedCategoryId }),
+                ...(selectedSubCategoryId && {
+                  subCategoryId: selectedSubCategoryId,
                 }),
-                ...(filters.subSubCategoryId && {
-                  subSubCategoryId: filters.subSubCategoryId,
+                ...(selectedSubSubCategoryId && {
+                  subSubCategoryId: selectedSubSubCategoryId,
                 }),
-                ...(filters.stock && { stock: filters.stock }),
+                ...(selectedStock && { stock: selectedStock }),
               });
             }}
           >

@@ -11,12 +11,14 @@ const CourierModal = ({
   setOpenCourierModal,
   refetch,
   selectedCourierMedium,
+  selectedCourierId,
 }: {
   orderDetails: any;
   openCourierModal: boolean;
   setOpenCourierModal: (value: boolean) => void;
   refetch: () => void;
   selectedCourierMedium: string;
+  selectedCourierId: number;
 }) => {
   const [deliveryType, setDeliveryType] = useState("express");
   const [itemType, setItemType] = useState("parcel");
@@ -43,12 +45,15 @@ const CourierModal = ({
   // Fetch cities on mount
   useEffect(() => {
     if (orderDetails?.id) {
-      fetch(`https://api.darkak.com.bd/api/admin/courier/cities/4`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
+      fetch(
+        `https://api.darkak.com.bd/api/admin/courier/cities/${selectedCourierId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      }) // Replace with your API endpoint
+      ) // Replace with your API endpoint
         .then((res) => res.json())
         .then((data) => {
           if (data?.code === 200) {
@@ -63,12 +68,15 @@ const CourierModal = ({
   useEffect(() => {
     if (cityId) {
       setZonesLoading(true);
-      fetch(`https://api.darkak.com.bd/api/admin/courier/zones/4/${cityId}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
+      fetch(
+        `https://api.darkak.com.bd/api/admin/courier/zones/${selectedCourierId}/${cityId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      }) // Replace with your API endpoint
+      ) // Replace with your API endpoint
         .then((res) => res.json())
         .then((data) => setZones(data?.data?.data))
         .finally(() => setZonesLoading(false));
@@ -85,12 +93,15 @@ const CourierModal = ({
   useEffect(() => {
     if (zoneId) {
       setAreasLoading(true);
-      fetch(`https://api.darkak.com.bd/api/admin/courier/area/4/${zoneId}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
+      fetch(
+        `https://api.darkak.com.bd/api/admin/courier/area/${selectedCourierId}/${zoneId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      }) // Replace with your API endpoint
+      ) // Replace with your API endpoint
         .then((res) => res.json())
         .then((data) => setAreas(data?.data?.data))
         .finally(() => setAreasLoading(false));
@@ -156,7 +167,8 @@ const CourierModal = ({
 
     try {
       const res = await createDelivery({
-        id: orderDetails?.id,
+        courierId: selectedCourierId,
+        orderId: orderDetails?.id,
         data: payload,
       }).unwrap();
       toast.success(res?.message || "Courier info submitted!");
@@ -175,8 +187,8 @@ const CourierModal = ({
             toast.error("Failed to update order status");
           });
       }
-    } catch (error) {
-      toast.error("Failed to submit courier info.");
+    } catch (error: any) {
+      toast.error(error?.data?.message);
     } finally {
       setConfirmCourierLoading(false);
     }
