@@ -58,7 +58,7 @@ export default function MoreProduct() {
         {(type as string)?.split("-").join(" ").toUpperCase()}
       </h1>
       <div className="container mx-auto mb-6">
-        <div className="grid w-full grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid w-full grid-cols-2 gap-4 lg:grid-cols-4 xl:grid-cols-5">
           {isLoading &&
             Array.from({ length: 20 }).map((_, i) => (
               <div
