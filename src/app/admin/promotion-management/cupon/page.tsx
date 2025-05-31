@@ -117,7 +117,15 @@ const Page = () => {
                 couponsData?.coupons?.map((doc: any, i: number) => (
                   <TableRow key={doc.id}>
                     <TableCell>{i + 1}</TableCell>
-                    <TableCell>{doc?.title}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-col gap-1">
+                        <p>{doc?.title}</p>
+                        <span>
+                          <p className="inline font-bold">Code: </p>
+                          {doc?.code}{" "}
+                        </span>
+                      </div>
+                    </TableCell>
                     <TableCell className="capitalize">{doc?.type}</TableCell>
                     <TableCell>{`${new Date(doc?.start_date).toLocaleDateString(
                       "en-US",
