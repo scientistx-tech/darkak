@@ -611,10 +611,10 @@ const Header: React.FC = () => {
             <>
               {/* LEFT: Categories */}
               <div className="w-full px-6 py-4 lg:w-[30%] lg:border-r pb-4">
-                <h4 className="mb-2 text-base font-bold text-black border-b pb-4">
+                <h4 className="mb-2 text-lg font-bold text-black border-b pb-4">
                   Categories
                 </h4>
-                <div className="overflow-hidden overflow-y-auto pt-2 pb-4 h-full">
+                <div className="overflow-hidden overflow-y-auto pt-2 pb-4 h-full search-custom-scrollbar">
                   <ul className="pb-2">
                     {categories?.flatMap((category) => {
                       const subCategories = category.sub_category;
@@ -626,7 +626,7 @@ const Header: React.FC = () => {
                             <Link
                               href={`category?categoryId=${category.title}`}
                               onClick={() => setIsOpen(false)}
-                              className="text-sm hover:text-secondaryBlue"
+                              className="text-sm font-medium hover:text-secondaryBlue"
                             >
                               {category.title}
                             </Link>
@@ -644,7 +644,7 @@ const Header: React.FC = () => {
                               <Link
                                 href={`category?categoryId=${category.title}&subCategoryId=${subCat.title}`}
                                 onClick={() => setIsOpen(false)}
-                                className="text-sm hover:text-secondaryBlue"
+                                className="text-sm font-medium hover:text-secondaryBlue"
                               >
                                 {subCat.title}
                               </Link>
@@ -658,7 +658,7 @@ const Header: React.FC = () => {
                             <Link
                               href={`category?categoryId=${category.title}&subCategoryId=${subCat.title}&subSubCategoryId=${subSub.title}`}
                               onClick={() => setIsOpen(false)}
-                              className="text-sm hover:text-secondaryBlue"
+                              className="text-sm font-medium hover:text-secondaryBlue"
                             >
                               {subSub.title}
                             </Link>
@@ -671,7 +671,7 @@ const Header: React.FC = () => {
               </div>
 
               {/* RIGHT: Product Cards */}
-              <div className="grid max-h-[80vh] w-full grid-cols-1 gap-4 overflow-y-auto p-4 sm:grid-cols-2 lg:w-[70%] lg:grid-cols-3">
+              <div className="grid max-h-[80vh] w-full grid-cols-1 gap-4 overflow-y-auto p-4 sm:grid-cols-2 lg:w-[70%] lg:grid-cols-3 search-custom-scrollbar">
                 {products.map((product: any, index: number) => (
                   <div key={index}>
                     <ProductCard product={product} setIsOpen={setIsOpen} />
