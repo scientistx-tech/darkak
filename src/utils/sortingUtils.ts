@@ -27,38 +27,62 @@ export const DEFAULT_SORTING_OPTIONS: SortItem[] = [
   },
 ];
 
-// Product sorting options
-export const PRODUCT_SORTING_OPTIONS: SortItem[] = [
-  ...DEFAULT_SORTING_OPTIONS,
-  {
-    value: "rating-high-to-low",
-    name: "Highest Rated",
-  },
-  {
-    value: "rating-low-to-high",
-    name: "Lowest Rated",
-  },
-];
+/**
+ * Calculate discounted price for a product
+ */
+function calculateDiscountedPrice(item: any): number {
+  const price = parseFloat(item.price) || 0;
+  const discount = parseFloat(item.discount) || 0;
+  const discountType = item.discount_type;
+  
+  if (discountType === 'percentage') {
+    return price - (price * discount / 100);
+  } else if (discountType === 'fixed') {
+    return price - discount;
+  }
+  
+  return price;
+}
 
-// Article/Blog sorting options
-export const ARTICLE_SORTING_OPTIONS: SortItem[] = [
-  {
-    value: "newer",
-    name: "Latest",
-  },
-  {
-    value: "older",
-    name: "Oldest",
-  },
-  {
-    value: "popular",
-    name: "Most Popular",
-  },
-  {
-    value: "alphabetical",
-    name: "A-Z",
-  },
-];
+/**
+ * Calculate popularity score based on your product data structure
+ */
+function calculatePopularityScore(item: any): number {
+  const avgRate = parseFloat(item.avgRate) || 0;
+  const totalReview = parseInt(item.totalReview) || 0;
+  const stock = parseInt(item.stock) || 0;
+  const deal = item.deal ? 1 : 0;
+  const feature = item.feature ? 1 : 0;
+  
+  // Create a composite popularity score based on available data
+  let score = 0;
+  
+  // Rating contribution (0-100 points)
+  score += avgRate * 20; // 5 stars = 100 points
+  
+  // Review count contribution (0-50 points, capped)
+  score += Math.min(totalReview * 2, 50);
+  
+  // Deal and feature bonuses
+  score += deal * 15; // Deal items get 15 bonus points
+  score += feature * 10; // Featured items get 10 bonus points
+  
+  // Stock-based popularity (lower stock might indicate higher demand)
+  if (stock < 5) {
+    score += (5 - stock) * 3; // Low stock bonus
+  }
+  
+  // Recent products get a small boost
+  const createdDate = new Date(item.date);
+  const now = new Date();
+  const daysSinceCreated = Math.floor((now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+  
+  if (daysSinceCreated < 30) {
+    score += (30 - daysSinceCreated) * 0.5; // Small boost for recent products
+  }
+  
+  return score;
+}
 
 /**
  * Generic sorting function that can handle different data types
@@ -77,6 +101,8 @@ export function sortItems<T = any>(
     nameField?: keyof T | string[];
   }
 ): T[] {
+  if (!items || items.length === 0) return [];
+  
   const sortedItems = [...items];
   
   // Helper function to get field value with fallback options
@@ -86,78 +112,90 @@ export function sortItems<T = any>(
     const fields = Array.isArray(fieldOptions) ? fieldOptions : [fieldOptions as string];
     
     for (const field of fields) {
-      if (item[field] !== undefined && item[field] !== null) {
-        return item[field];
+      const value = item[field];
+      if (value !== undefined && value !== null && value !== '') {
+        return value;
       }
     }
-    return 0;
+    return null;
   };
+
+  console.log(`[Sorting] Applying sort: ${sortType} to ${items.length} items`);
 
   switch (sortType) {
     case "newer":
       return sortedItems.sort((a, b) => {
-        const dateA = new Date(getFieldValue(a, customFields?.dateField, ['createdAt', 'created_at', 'publishedAt', 'date'])).getTime();
-        const dateB = new Date(getFieldValue(b, customFields?.dateField, ['createdAt', 'created_at', 'publishedAt', 'date'])).getTime();
-        return dateB - dateA; // Newest first
+        const dateA = getFieldValue(a, customFields?.dateField, ['date', 'createdAt', 'created_at', 'publishedAt']);
+        const dateB = getFieldValue(b, customFields?.dateField, ['date', 'createdAt', 'created_at', 'publishedAt']);
+        
+        if (!dateA || !dateB) {
+          console.warn('[Sorting] Missing date field for newer sort');
+          return 0;
+        }
+        
+        const timestampA = new Date(dateA).getTime();
+        const timestampB = new Date(dateB).getTime();
+        
+        return timestampB - timestampA; // Newest first
       });
     
     case "older":
       return sortedItems.sort((a, b) => {
-        const dateA = new Date(getFieldValue(a, customFields?.dateField, ['createdAt', 'created_at', 'publishedAt', 'date'])).getTime();
-        const dateB = new Date(getFieldValue(b, customFields?.dateField, ['createdAt', 'created_at', 'publishedAt', 'date'])).getTime();
-        return dateA - dateB; // Oldest first
+        const dateA = getFieldValue(a, customFields?.dateField, ['date', 'createdAt', 'created_at', 'publishedAt']);
+        const dateB = getFieldValue(b, customFields?.dateField, ['date', 'createdAt', 'created_at', 'publishedAt']);
+        
+        if (!dateA || !dateB) {
+          console.warn('[Sorting] Missing date field for older sort');
+          return 0;
+        }
+        
+        const timestampA = new Date(dateA).getTime();
+        const timestampB = new Date(dateB).getTime();
+        
+        return timestampA - timestampB; // Oldest first
       });
     
     case "popular":
       return sortedItems.sort((a, b) => {
-        const popularityA = getFieldValue(a, customFields?.popularityField, ['popularity', 'views', 'sales', 'viewCount']);
-        const popularityB = getFieldValue(b, customFields?.popularityField, ['popularity', 'views', 'sales', 'viewCount']);
+        // Try to get popularity from custom fields first
+        let popularityA = getFieldValue(a, customFields?.popularityField, ['popularity', 'views', 'sales', 'viewCount', 'salesCount']);
+        let popularityB = getFieldValue(b, customFields?.popularityField, ['popularity', 'views', 'sales', 'viewCount', 'salesCount']);
+        
+        // If no dedicated popularity field found, calculate based on available data
+        if (popularityA === null && popularityB === null) {
+          popularityA = calculatePopularityScore(a);
+          popularityB = calculatePopularityScore(b);
+        } else {
+          popularityA = parseFloat(popularityA) || 0;
+          popularityB = parseFloat(popularityB) || 0;
+        }
+        
+        console.log(`[Sorting] Popularity - A: ${popularityA}, B: ${popularityB}`);
         return popularityB - popularityA; // Most popular first
       });
     
     case "low-to-high":
       return sortedItems.sort((a, b) => {
-        const priceA = parseFloat(getFieldValue(a, customFields?.priceField, ['price', 'salePrice', 'regularPrice', 'cost']));
-        const priceB = parseFloat(getFieldValue(b, customFields?.priceField, ['price', 'salePrice', 'regularPrice', 'cost']));
+        // Use discounted price calculation for accurate sorting
+        const priceA = calculateDiscountedPrice(a);
+        const priceB = calculateDiscountedPrice(b);
+        
+        console.log(`[Sorting] Price L2H - A: ${priceA}, B: ${priceB}`);
         return priceA - priceB; // Lowest price first
       });
     
     case "high-to-low":
       return sortedItems.sort((a, b) => {
-        const priceA = parseFloat(getFieldValue(a, customFields?.priceField, ['price', 'salePrice', 'regularPrice', 'cost']));
-        const priceB = parseFloat(getFieldValue(b, customFields?.priceField, ['price', 'salePrice', 'regularPrice', 'cost']));
+        // Use discounted price calculation for accurate sorting
+        const priceA = calculateDiscountedPrice(a);
+        const priceB = calculateDiscountedPrice(b);
+        
+        console.log(`[Sorting] Price H2L - A: ${priceA}, B: ${priceB}`);
         return priceB - priceA; // Highest price first
       });
-    
-    case "rating-high-to-low":
-      return sortedItems.sort((a, b) => {
-        const ratingA = parseFloat(getFieldValue(a, customFields?.ratingField, ['rating', 'averageRating', 'score']));
-        const ratingB = parseFloat(getFieldValue(b, customFields?.ratingField, ['rating', 'averageRating', 'score']));
-        return ratingB - ratingA; // Highest rating first
-      });
-    
-    case "rating-low-to-high":
-      return sortedItems.sort((a, b) => {
-        const ratingA = parseFloat(getFieldValue(a, customFields?.ratingField, ['rating', 'averageRating', 'score']));
-        const ratingB = parseFloat(getFieldValue(b, customFields?.ratingField, ['rating', 'averageRating', 'score']));
-        return ratingA - ratingB; // Lowest rating first
-      });
-    
-    case "alphabetical":
-      return sortedItems.sort((a, b) => {
-        const nameA = String(getFieldValue(a, customFields?.nameField, ['name', 'title', 'label'])).toLowerCase();
-        const nameB = String(getFieldValue(b, customFields?.nameField, ['name', 'title', 'label'])).toLowerCase();
-        return nameA.localeCompare(nameB);
-      });
-    
-    case "alphabetical-desc":
-      return sortedItems.sort((a, b) => {
-        const nameA = String(getFieldValue(a, customFields?.nameField, ['name', 'title', 'label'])).toLowerCase();
-        const nameB = String(getFieldValue(b, customFields?.nameField, ['name', 'title', 'label'])).toLowerCase();
-        return nameB.localeCompare(nameA);
-      });
-    
+      
     default:
+      console.log(`[Sorting] Unknown sort type: ${sortType}, returning original order`);
       return sortedItems;
   }
 }
@@ -187,4 +225,45 @@ export function useSortingState(
     currentSort: sortParam,
     updateSort: updateSortInURL
   };
+}
+
+// Debug function to test sorting with your data
+export function debugSorting(products: any[]) {
+  console.log("=== SORTING DEBUG ===");
+  console.log("Total products:", products.length);
+  
+  if (products.length > 0) {
+    const sample = products[0];
+    console.log("Sample product fields:", {
+      id: sample.id,
+      date: sample.date,
+      price: sample.price,
+      avgRate: sample.avgRate,
+      totalReview: sample.totalReview,
+      deal: sample.deal,
+      feature: sample.feature,
+      discount: sample.discount,
+      discount_type: sample.discount_type
+    });
+    
+    // Test each sort type
+    ['newer', 'older', 'popular', 'low-to-high', 'high-to-low'].forEach(sortType => {
+      const sorted = sortItems(products, sortType, {
+        dateField: ['date'],
+        priceField: ['price'],
+        popularityField: ['viewCount', 'salesCount'],
+        ratingField: ['avgRate']
+      });
+      
+      console.log(`${sortType.toUpperCase()} - First 3:`, 
+        sorted.slice(0, 3).map(p => ({
+          id: p.id,
+          date: p.date,
+          price: p.price,
+          finalPrice: calculateDiscountedPrice(p),
+          popularity: calculatePopularityScore(p)
+        }))
+      );
+    });
+  }
 }
