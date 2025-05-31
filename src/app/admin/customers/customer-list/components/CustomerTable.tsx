@@ -7,11 +7,13 @@ import { toast } from "react-toastify";
 interface CustomerTableProps {
   data: User[];
   refetch: () => void;
+  setSearch: (value: string) => void;
 }
 
 export const CustomerTable: React.FC<CustomerTableProps> = ({
   data,
   refetch,
+  setSearch,
 }) => {
   const [toggleBlockUser, { isLoading }] = useToggleBlockUserMutation();
 
@@ -19,7 +21,6 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
     try {
       const res = await toggleBlockUser(id).unwrap();
       refetch();
-
       toast.success(res.message || "User block status updated");
     } catch (err: any) {
       toast.error(err?.data?.message || "Something went wrong");
@@ -36,12 +37,10 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
         <div className="flex space-x-2">
           <input
             type="text"
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by Name or Email"
-            className="rounded border p-2 text-sm"
+            className="w-full rounded border px-12 py-2 text-sm"
           />
-          <button className="flex items-center rounded bg-green-600 p-2 text-sm text-white">
-            <span className="mr-1">Export</span>
-          </button>
         </div>
       </div>
       <table className="w-full text-left">

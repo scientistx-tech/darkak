@@ -1,314 +1,250 @@
 import React, { useState } from "react";
-import * as Yup from "yup";
-import { ImageInput } from "./ImageInput";
+import { useForm, Controller } from "react-hook-form";
+import { toast } from "react-toastify";
+import { useUploadImagesMutation } from "@/redux/services/admin/adminProductApis";
+import { useCreateVendorMutation } from "@/redux/services/admin/adminVendorApis";
 
-const vendorSchema = Yup.object().shape({
-  firstName: Yup.string().required("First Name is required"),
-  lastName: Yup.string().required("Last Name is required"),
-  phoneNumber: Yup.string()
-    .matches(/^\+880\d{10}$/, "Phone number must be in +880XXXXXXXXXX format")
-    .required("Phone Number is required"),
-  email: Yup.string()
-    .email("Invalid email address")
-    .required("Email is required"),
-  password: Yup.string()
-    .min(8, "Password must be at least 8 characters")
-    .required("Password is required"),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), ""], "Passwords must match")
-    .required("Confirm Password is required"),
-  shopName: Yup.string().required("Shop Name is required"),
-  shopAddress: Yup.string().required("Shop Address is required"),
-});
+type VendorFormData = {
+  name: string;
+  email: string;
+  password: string;
+  phone: string;
+  shop_name: string;
+  shop_address: string;
+  shop_logo: string;
+  shop_banner: string;
+  image?: string;
+  whats_app_link?: string;
+};
 
-export const VendorForm: React.FC = () => {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    shopName: "",
-    shopAddress: "",
-    vendorImage: null as File | null,
-    shopLogo: null as File | null,
-    shopBanner: null as File | null,
-  });
-  const [previews, setPreviews] = useState({
-    vendorImage: null as string | null,
-    shopLogo: null as string | null,
-    shopBanner: null as string | null,
-  });
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+const ImageUploadField = ({
+  name,
+  control,
+  label,
+  preview,
+  setPreview,
+  uploadImageFile,
+  required = true,
+}: {
+  name: keyof VendorFormData;
+  control: any;
+  label: string;
+  preview: string | null;
+  setPreview: (url: string) => void;
+  uploadImageFile: any;
+  required?: boolean;
+}) => {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      defaultValue=""
+      rules={required ? { required: `${label} is required` } : {}}
+      render={({ field: { onChange, ref }, fieldState: { error } }) => (
+        <div>
+          <label className="block text-sm font-medium">{label}</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              const formData = new FormData();
+              formData.append("images", file);
+              try {
+                const res = await uploadImageFile(formData).unwrap();
+                const imageUrl = res?.data?.url;
+                if (imageUrl) {
+                  onChange(imageUrl);
+                  setPreview(imageUrl);
+                }
+              } catch (err) {
+                toast.error("Upload failed");
+              }
+            }}
+            className="mt-1 w-full rounded-md border px-3 py-2"
+            ref={ref}
+          />
+          {error && <p className="text-sm text-red-500">{error.message}</p>}
+          {preview && (
+            <img
+              src={preview}
+              alt={`${label} Preview`}
+              className="mt-2 h-24 w-full rounded border object-cover"
+            />
+          )}
+        </div>
+      )}
+    />
+  );
+};
 
-  const handleInputChange = (field: string, value: string | File | null) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-    setErrors((prev) => ({ ...prev, [field]: "" }));
-  };
+const VendorForm = () => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<VendorFormData>();
 
-  const handleFileChange = (field: string, file: File | null) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: file,
-    }));
-    setPreviews((prev) => ({
-      ...prev,
-      [field]: file ? URL.createObjectURL(file) : null,
-    }));
-  };
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [bannerPreview, setBannerPreview] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const handleSubmit = async () => {
+  const [uploadImageFile] = useUploadImagesMutation();
+  const [createVendor] = useCreateVendorMutation();
+
+  const onSubmit = async (data: VendorFormData) => {
     try {
-      await vendorSchema.validate(
-        {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          phoneNumber: formData.phoneNumber,
-          email: formData.email,
-          password: formData.password,
-          confirmPassword: formData.confirmPassword,
-          shopName: formData.shopName,
-          shopAddress: formData.shopAddress,
-        },
-        { abortEarly: false },
-      );
-      console.log("Vendor Data:", formData);
-      setErrors({});
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const newErrors: { [key: string]: string } = {};
-        err.inner.forEach((error) => {
-          if (error.path) {
-            newErrors[error.path] = error.message;
-          }
-        });
-        setErrors(newErrors);
-      }
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("email", data.email);
+      formData.append("password", data.password);
+      formData.append("phone", data.phone);
+      formData.append("shop_name", data.shop_name);
+      formData.append("shop_address", data.shop_address);
+      formData.append("whats_app_link", data.whats_app_link || "");
+      formData.append("shop_logo", data.shop_logo);
+      formData.append("shop_banner", data.shop_banner);
+      if (data.image) formData.append("image", data.image);
+
+      const res = await createVendor(formData).unwrap();
+      toast.success(res?.message || "Vendor created successfully!");
+      reset();
+      setLogoPreview(null);
+      setBannerPreview(null);
+      setImagePreview(null);
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to create vendor.");
     }
   };
 
-  const handleReset = () => {
-    setFormData({
-      firstName: "",
-      lastName: "",
-      phoneNumber: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      shopName: "",
-      shopAddress: "",
-      vendorImage: null,
-      shopLogo: null,
-      shopBanner: null,
-    });
-    setPreviews({
-      vendorImage: null,
-      shopLogo: null,
-      shopBanner: null,
-    });
-    setErrors({});
-  };
-
   return (
-    <div className="rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark dark:shadow-card">
-      <div className="mb-6">
-        <h2 className="mb-4 text-lg font-semibold text-black dark:text-white">
-          Vendor Information
-        </h2>
-        <div className="grid grid-cols-4 gap-4">
-          <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium text-black dark:text-white">
-              First name
-            </label>
-            <input
-              type="text"
-              placeholder="Ex: Jhone"
-              value={formData.firstName}
-              onChange={(e) => handleInputChange("firstName", e.target.value)}
-              className={`rounded-[10px] border border-gray-300 bg-white p-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white ${
-                errors.firstName ? "border-red-500" : ""
-              }`}
-            />
-            {errors.firstName && (
-              <p className="text-xs text-red-500">{errors.firstName}</p>
-            )}
-          </div>
-          <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium text-black dark:text-white">
-              Last name
-            </label>
-            <input
-              type="text"
-              placeholder="Ex: Doe"
-              value={formData.lastName}
-              onChange={(e) => handleInputChange("lastName", e.target.value)}
-              className={`rounded-[10px] border border-gray-300 bg-white p-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white ${
-                errors.lastName ? "border-red-500" : ""
-              }`}
-            />
-            {errors.lastName && (
-              <p className="text-xs text-red-500">{errors.lastName}</p>
-            )}
-          </div>
-          <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium text-black dark:text-white">
-              Phone number
-            </label>
-            <input
-              type="text"
-              placeholder="Ex: +8801710000000"
-              value={formData.phoneNumber}
-              onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
-              className={`rounded-[10px] border border-gray-300 bg-white p-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white ${
-                errors.phoneNumber ? "border-red-500" : ""
-              }`}
-            />
-            {errors.phoneNumber && (
-              <p className="text-xs text-red-500">{errors.phoneNumber}</p>
-            )}
-          </div>
-          <ImageInput
-            label="Vendor Image (Ratio 1:1)"
-            onChange={(file) => handleFileChange("vendorImage", file)}
-            preview={previews.vendorImage}
-            imageRatio="1:1"
-          />
-        </div>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="grid grid-cols-1 gap-4 md:grid-cols-2"
+    >
+      <div>
+        <label className="block text-sm font-medium">Name</label>
+        <input
+          {...register("name", { required: "Name is required" })}
+          className="mt-1 w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        {errors.name && (
+          <p className="text-sm text-red-500">{errors.name.message}</p>
+        )}
       </div>
 
-      <div className="mb-6">
-        <h2 className="mb-4 text-lg font-semibold text-black dark:text-white">
-          Account Information
-        </h2>
-        <div className="grid grid-cols-3 gap-4">
-          <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium text-black dark:text-white">
-              Email
-            </label>
-            <input
-              type="email"
-              placeholder="Ex: jhone@company.com"
-              value={formData.email}
-              onChange={(e) => handleInputChange("email", e.target.value)}
-              className={`rounded-[10px] border border-gray-300 bg-white p-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white ${
-                errors.email ? "border-red-500" : ""
-              }`}
-            />
-            {errors.email && (
-              <p className="text-xs text-red-500">{errors.email}</p>
-            )}
-          </div>
-          <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium text-black dark:text-white">
-              Password (minimum 8 characters)
-            </label>
-            <input
-              type="password"
-              value={formData.password}
-              onChange={(e) => handleInputChange("password", e.target.value)}
-              className={`rounded-[10px] border border-gray-300 bg-white p-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white ${
-                errors.password ? "border-red-500" : ""
-              }`}
-            />
-            {errors.password && (
-              <p className="text-xs text-red-500">{errors.password}</p>
-            )}
-          </div>
-          <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium text-black dark:text-white">
-              Confirm password
-            </label>
-            <input
-              type="password"
-              value={formData.confirmPassword}
-              onChange={(e) =>
-                handleInputChange("confirmPassword", e.target.value)
-              }
-              className={`rounded-[10px] border border-gray-300 bg-white p-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white ${
-                errors.confirmPassword ? "border-red-500" : ""
-              }`}
-            />
-            {errors.confirmPassword && (
-              <p className="text-xs text-red-500">{errors.confirmPassword}</p>
-            )}
-          </div>
-        </div>
+      <div>
+        <label className="block text-sm font-medium">Email</label>
+        <input
+          type="email"
+          {...register("email", { required: "Email is required" })}
+          className="mt-1 w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        {errors.email && (
+          <p className="text-sm text-red-500">{errors.email.message}</p>
+        )}
       </div>
 
-      <div className="mb-6">
-        <h2 className="mb-4 text-lg font-semibold text-black dark:text-white">
-          Shop Information
-        </h2>
-        <div className="grid grid-cols-3 gap-4">
-          <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium text-black dark:text-white">
-              Shop name
-            </label>
-            <input
-              type="text"
-              placeholder="Ex: Jhon"
-              value={formData.shopName}
-              onChange={(e) => handleInputChange("shopName", e.target.value)}
-              className={`rounded-[10px] border border-gray-300 bg-white p-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white ${
-                errors.shopName ? "border-red-500" : ""
-              }`}
-            />
-            {errors.shopName && (
-              <p className="text-xs text-red-500">{errors.shopName}</p>
-            )}
-          </div>
-          <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium text-black dark:text-white">
-              Shop address
-            </label>
-            <input
-              type="text"
-              placeholder="Ex: Doe"
-              value={formData.shopAddress}
-              onChange={(e) => handleInputChange("shopAddress", e.target.value)}
-              className={`rounded-[10px] border border-gray-300 bg-white p-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white ${
-                errors.shopAddress ? "border-red-500" : ""
-              }`}
-            />
-            {errors.shopAddress && (
-              <p className="text-xs text-red-500">{errors.shopAddress}</p>
-            )}
-          </div>
-          <ImageInput
-            label="Shop Logo (Ratio 1:1)"
-            onChange={(file) => handleFileChange("shopLogo", file)}
-            preview={previews.shopLogo}
-            imageRatio="1:1"
-          />
-        </div>
-        <div className="mt-4">
-          <ImageInput
-            label="Shop Banner (Ratio 4:1 (2000 x 500 px))"
-            onChange={(file) => handleFileChange("shopBanner", file)}
-            preview={previews.shopBanner}
-            imageRatio="4:1"
-          />
-        </div>
+      <div>
+        <label className="block text-sm font-medium">Password</label>
+        <input
+          type="password"
+          {...register("password", { required: "Password is required" })}
+          className="mt-1 w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        {errors.password && (
+          <p className="text-sm text-red-500">{errors.password.message}</p>
+        )}
       </div>
 
-      <div className="flex justify-end space-x-2">
+      <div>
+        <label className="block text-sm font-medium">Phone</label>
+        <input
+          {...register("phone", { required: "Phone is required" })}
+          className="mt-1 w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        {errors.phone && (
+          <p className="text-sm text-red-500">{errors.phone.message}</p>
+        )}
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium">Shop Name</label>
+        <input
+          {...register("shop_name", { required: "Shop name is required" })}
+          className="mt-1 w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        {errors.shop_name && (
+          <p className="text-sm text-red-500">{errors.shop_name.message}</p>
+        )}
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium">Shop Address</label>
+        <input
+          {...register("shop_address", {
+            required: "Shop address is required",
+          })}
+          className="mt-1 w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        {errors.shop_address && (
+          <p className="text-sm text-red-500">{errors.shop_address.message}</p>
+        )}
+      </div>
+
+      {/* Shop Logo */}
+      <ImageUploadField
+        name="shop_logo"
+        label="Shop Logo"
+        control={control}
+        preview={logoPreview}
+        setPreview={setLogoPreview}
+        uploadImageFile={uploadImageFile}
+      />
+
+      {/* Shop Banner */}
+      <ImageUploadField
+        name="shop_banner"
+        label="Shop Banner"
+        control={control}
+        preview={bannerPreview}
+        setPreview={setBannerPreview}
+        uploadImageFile={uploadImageFile}
+      />
+
+      {/* Optional Image */}
+      <ImageUploadField
+        name="image"
+        label="Image"
+        control={control}
+        preview={imagePreview}
+        setPreview={setImagePreview}
+        uploadImageFile={uploadImageFile}
+        required={false}
+      />
+
+      <div className="md:col-span-2">
+        <label className="block text-sm font-medium">WhatsApp Link</label>
+        <input
+          {...register("whats_app_link")}
+          className="mt-1 w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div className="md:col-span-2">
         <button
-          className="rounded-[10px] border border-gray-300 bg-white p-2 text-sm text-black hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
-          onClick={handleReset}
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full rounded bg-blue-600 px-4 py-2 font-semibold text-white transition hover:bg-blue-700"
         >
-          Reset
-        </button>
-        <button
-          className="rounded-[10px] bg-blue-600 p-2 text-sm text-white hover:bg-blue-700"
-          onClick={handleSubmit}
-        >
-          Submit
+          {isSubmitting ? "Submitting..." : "Add Vendor"}
         </button>
       </div>
-    </div>
+    </form>
   );
 };
+
+export default VendorForm;

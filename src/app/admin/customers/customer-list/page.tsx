@@ -8,7 +8,14 @@ import { useGetCustomersListQuery } from "@/redux/services/admin/adminCustomerLi
 const CustomerList: React.FC = () => {
   const [page, setPage] = useState(1);
   const limit = 10;
-  const { data, isLoading,refetch } = useGetCustomersListQuery({ page, limit });
+  const [search, setSearch] = useState<string>("");
+  const { data, isLoading, refetch } = useGetCustomersListQuery({
+    page,
+    limit,
+    search,
+  });
+
+  console.log(search, "ss");
 
   return (
     <div className="rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark dark:shadow-card">
@@ -22,7 +29,11 @@ const CustomerList: React.FC = () => {
       {isLoading ? (
         <p className="mt-4 text-gray-500">Loading customers...</p>
       ) : (
-        <CustomerTable refetch={refetch} data={data?.data || []} />
+        <CustomerTable
+          refetch={refetch}
+          data={data?.data || []}
+          setSearch={setSearch}
+        />
       )}
     </div>
   );
