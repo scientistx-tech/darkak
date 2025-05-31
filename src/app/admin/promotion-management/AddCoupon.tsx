@@ -227,7 +227,7 @@ const AddCoupon = ({
           onSubmit={handleSubmit}
           className="grid grid-cols-1 gap-4 rounded bg-white p-6 shadow md:grid-cols-3"
         >
-          <div>
+          <div className="flex flex-col gap-1">
             <label>Coupon type</label>
             <select
               name="couponType"
@@ -244,7 +244,7 @@ const AddCoupon = ({
             </select>
           </div>
 
-          <div>
+          <div className="flex flex-col gap-1">
             <label>Coupon title</label>
             <input
               name="title"
@@ -255,7 +255,7 @@ const AddCoupon = ({
             />
           </div>
 
-          <div>
+          <div className="flex flex-col gap-1">
             <label>
               Coupon Code{" "}
               <button
@@ -276,7 +276,7 @@ const AddCoupon = ({
             />
           </div>
 
-          <div>
+          <div className="flex flex-col gap-1">
             <label>Coupon bearer</label>
             <select
               name="bearer"
@@ -294,7 +294,7 @@ const AddCoupon = ({
           </div>
 
           {formData.bearer === "vendor" && (
-            <div>
+            <div className="flex flex-col gap-1">
               <label>Vendor</label>
               <select
                 name="vendor"
@@ -312,7 +312,7 @@ const AddCoupon = ({
             </div>
           )}
 
-          <div>
+          <div className="flex flex-col gap-1">
             <label>Customer</label>
             <select
               name="customer"
@@ -337,7 +337,7 @@ const AddCoupon = ({
             </select>
           </div>
 
-          <div>
+          <div className="flex flex-col gap-1">
             <label>Applied Level</label>
             <select
               name="appliedLevel"
@@ -353,7 +353,7 @@ const AddCoupon = ({
           </div>
 
           {formData.appliedLevel === "category" ? (
-            <div>
+            <div className="flex flex-col gap-1">
               <label>Select Category</label>
               <select
                 name="categoryId"
@@ -370,7 +370,7 @@ const AddCoupon = ({
               </select>
             </div>
           ) : formData.appliedLevel === "subCategory" ? (
-            <div>
+            <div className="flex flex-col gap-1">
               <label>Select Sub Category</label>
               <select
                 name="subCategoryId"
@@ -387,7 +387,7 @@ const AddCoupon = ({
               </select>
             </div>
           ) : formData.appliedLevel === "subSubCategory" ? (
-            <div>
+            <div className="flex flex-col gap-1">
               <label>Sub Sub Category</label>
               <select
                 name="subSubCategoryId"
@@ -407,7 +407,7 @@ const AddCoupon = ({
             ""
           )}
 
-          <div>
+          <div className="flex flex-col gap-1">
             <label>Limit for same user</label>
             <input
               name="limit"
@@ -418,7 +418,7 @@ const AddCoupon = ({
             />
           </div>
 
-          <div>
+          <div className="flex flex-col gap-1">
             <label>Discount type</label>
             <select
               name="discountType"
@@ -435,7 +435,7 @@ const AddCoupon = ({
             </select>
           </div>
 
-          <div>
+          <div className="flex flex-col gap-1">
             <label>Discount Amount</label>
             <input
               name="discountAmount"
@@ -446,7 +446,7 @@ const AddCoupon = ({
             />
           </div>
 
-          <div>
+          <div className="flex flex-col gap-1">
             <label>Minimum purchase ($)</label>
             <input
               name="minPurchase"
@@ -457,7 +457,7 @@ const AddCoupon = ({
             />
           </div>
 
-          <div>
+          <div className="flex flex-col gap-1">
             <label>Start date</label>
             <input
               type="date"
@@ -468,7 +468,7 @@ const AddCoupon = ({
             />
           </div>
 
-          <div>
+          <div className="flex flex-col gap-1">
             <label>Expire date</label>
             <input
               type="date"
