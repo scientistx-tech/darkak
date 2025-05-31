@@ -45,7 +45,7 @@ export default function Test() {
       }}
     >
       <NavLink
-        href="#"
+        href="/category"
         className="group flex cursor-pointer items-center gap-2 font-serif text-lg text-secondaryWhite transition-colors duration-300 hover:text-secondaryBlue"
       >
         Category

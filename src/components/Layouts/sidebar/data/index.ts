@@ -236,14 +236,12 @@ export const NAV_DATA = [
           },
         ],
       },
+     
       {
         title: "Subscribers",
         icon: PiUserSoundFill,
+        url: "/admin/subscribers",
         items: [
-          {
-            title: "View Subscriber",
-            url: "/admin/subscribers/subscribers-list",
-          },
         ],
       },
     ],

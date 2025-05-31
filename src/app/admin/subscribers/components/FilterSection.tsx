@@ -53,7 +53,7 @@ export const FilterSection: React.FC<{
             type="number"
             value={limit}
             onChange={(e) => setLimit(parseInt(e.target.value) || 100)}
-            className="w-20 rounded-[10px] border border-gray-300 bg-white p-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+            className="w-20 rounded-[10px] border border-gray-300 bg-white p-2 text-sm text-black focus:outline-none focus:ring-2  dark:border-gray-600 dark:bg-gray-800 dark:text-white"
             placeholder="Ex: 100"
           />
         </div>
