@@ -37,6 +37,7 @@ import { useGetMyWishListQuery } from "@/redux/services/client/myWishList";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useGetProductCategoriesQuery } from "@/redux/services/client/categories";
 import { FaSpinner } from "react-icons/fa";
+import { BiSolidDownArrow } from "react-icons/bi";
 import ProductCard from "@/components/shared/ProductCard";
 import { useRouter } from "next/navigation";
 import { useGetSearchPublicQuery } from "@/redux/services/client/searchedProducts";
@@ -311,7 +312,7 @@ const Header: React.FC = () => {
           </div>
 
           <div className="relative w-[30%]">
-            <div className="hidden justify-center rounded-full bg-white md:flex">
+            <div className="relative hidden justify-center rounded-full bg-white md:flex">
               <div className="relative w-[75%]">
                 <input
                   className="ignore-click-outside w-full rounded-bl-full rounded-tl-full p-1.5 pl-4 pr-8 text-black outline-none"
@@ -346,6 +347,7 @@ const Header: React.FC = () => {
                   <SearchOutlined className="text-xl" />
                 </button>
               </div>
+              {/* <BiSolidDownArrow size={24} className={`rotate-180 ${isOpen ? 'absolute' : 'hidden'} -bottom-5 left-1/2 -translate-x-1/2 shadow-none`} /> */}
             </div>
           </div>
 
