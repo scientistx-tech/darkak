@@ -9,6 +9,7 @@ import { TbBinaryTree2Filled } from "react-icons/tb";
 import { IoAnalytics } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
 import { BiSolidOffer } from "react-icons/bi";
+import { MdAddModerator } from "react-icons/md";
 import * as Icons from "../icons";
 import { BsTornado } from "react-icons/bs";
 import { url } from "inspector";
@@ -236,13 +237,17 @@ export const NAV_DATA = [
           },
         ],
       },
-     
+
       {
         title: "Subscribers",
         icon: PiUserSoundFill,
         url: "/admin/subscribers",
-        items: [
-        ],
+        items: [],
+      },
+      {
+        title: "Moderator",
+        icon: MdAddModerator,
+        url: "/admin/moderator",
       },
     ],
   },
@@ -274,40 +279,6 @@ export const NAV_DATA = [
         title: "Analytics",
         icon: IoAnalytics,
         url: "/admin/analytics",
-      },
-      {
-        title: "Charts",
-        icon: Icons.PieChart,
-        items: [
-          {
-            title: "Basic Chart",
-            url: "/charts/basic-chart",
-          },
-        ],
-      },
-      {
-        title: "UI Elements",
-        icon: Icons.FourCircle,
-        items: [
-          {
-            title: "Alerts",
-            url: "/ui-elements/alerts",
-          },
-          {
-            title: "Buttons",
-            url: "/ui-elements/buttons",
-          },
-        ],
-      },
-      {
-        title: "Authentication",
-        icon: Icons.Authentication,
-        items: [
-          {
-            title: "Sign In",
-            url: "/auth/sign-in",
-          },
-        ],
       },
     ],
   },
