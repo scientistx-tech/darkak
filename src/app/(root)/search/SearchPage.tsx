@@ -22,7 +22,7 @@ export default function SearchPage() {
   const page = parseInt(searchParams.get("page") || "1", 10);
 
   const [currentPage, setCurrentPage] = useState(page);
-  const ITEMS_PER_PAGE = 16; // Single source of truth for pagination
+  const ITEMS_PER_PAGE = 16;
 
   // Use the reusable sorting hook
   const { currentSort, updateSort } = useSortingState(searchParams, router, "newer");
@@ -45,23 +45,45 @@ export default function SearchPage() {
   };
 
   const handleSortChange = (name: string, value: string) => {
-    setCurrentPage(1); // Reset to page 1 when sorting changes
-    updateSort(value, true); // true = reset page to 1
+    setCurrentPage(1);
+    updateSort(value, true);
   };
 
-  // Apply sorting to products using the reusable utility
+  // Apply sorting to products using the correct field mappings for your data structure
   const allProducts = data?.data || [];
+  
+  // DEBUG: Log the first product to verify structure
+  if (allProducts.length > 0) {
+    console.log("Sample product structure:", {
+      id: allProducts[0].id,
+      date: allProducts[0].date,
+      price: allProducts[0].price,
+      avgRate: allProducts[0].avgRate,
+      totalReview: allProducts[0].totalReview,
+      deal: allProducts[0].deal,
+      feature: allProducts[0].feature
+    });
+  }
+
   const sortedProducts = sortItems(allProducts, currentSort, {
-    // Custom field mappings for your product data structure
-    dateField: ['createdAt', 'created_at'],
-    priceField: ['price', 'salePrice', 'regularPrice'],
-    popularityField: ['popularity', 'views', 'sales'],
-    ratingField: ['rating', 'averageRating']
+    // FIXED: Use correct field names that match your product data
+    dateField: ['date'], // Your product uses 'date' field
+    priceField: ['price'], // Your product uses 'price' field
+    popularityField: ['viewCount', 'salesCount', 'popularity'], // Fallback fields for popularity
+    ratingField: ['avgRate', 'rating'] // Your product uses 'avgRate'
   });
 
-  // Use actual filtered products length instead of API total
-  const totalProducts = sortedProducts.length;
+  // DEBUG: Log sorting results
+  console.log(`Sorting by: ${currentSort}`);
+  console.log("First 3 sorted products:", sortedProducts.slice(0, 3).map(p => ({
+    id: p.id,
+    title: p.title?.substring(0, 30),
+    date: p.date,
+    price: p.price,
+    avgRate: p.avgRate
+  })));
 
+  const totalProducts = sortedProducts.length;
   const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIdx = startIdx + ITEMS_PER_PAGE;
   const paginatedProducts = sortedProducts.slice(startIdx, endIdx);
@@ -75,7 +97,6 @@ export default function SearchPage() {
           Searching for &apos;{keyword}&apos;
         </p>
 
-        {/* Using the reusable SortingDropdown component */}
         <SortingDropdown
           sortingItems={DEFAULT_SORTING_OPTIONS}
           currentSort={currentSort}
@@ -102,4 +123,4 @@ export default function SearchPage() {
       </div>
     </div>
   );
-}
+};
