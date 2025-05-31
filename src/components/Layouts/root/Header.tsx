@@ -368,8 +368,8 @@ const Header: React.FC = () => {
               />
               <div
                 className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-black group-hover:bg-primary group-hover:text-white ${pathname === "/user/wishlist"
-                    ? "bg-primary text-white"
-                    : "bg-white"
+                  ? "bg-primary text-white"
+                  : "bg-white"
                   }`}
               >
                 <p className="text-[10px] font-semibold">
@@ -388,8 +388,8 @@ const Header: React.FC = () => {
               />
               <div
                 className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-black group-hover:bg-primary group-hover:text-white ${pathname === "/user/cart"
-                    ? "bg-primary text-white"
-                    : "bg-white"
+                  ? "bg-primary text-white"
+                  : "bg-white"
                   }`}
               >
                 <p className="text-[10px] font-semibold">
@@ -601,7 +601,7 @@ const Header: React.FC = () => {
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute left-1/2 top-24 z-50 mt-2 flex h-[80vh] w-[95%] -translate-x-1/2 flex-col rounded-lg border bg-white shadow-lg sm:w-[90%] md:w-[85%] lg:top-[100px] lg:w-[80%] lg:flex-row"
+          className="absolute left-1/2 top-24 z-50 mt-2 flex h-[80vh] w-[95%] -translate-x-1/2 flex-col rounded-xl border bg-white shadow-lg sm:w-[90%] md:w-[85%] lg:top-[100px] lg:w-[80%] lg:flex-row overflow-hidden py-3"
         >
           {isFetching ? (
             <div className="flex h-full w-full items-center justify-center">
@@ -610,62 +610,64 @@ const Header: React.FC = () => {
           ) : products.length > 0 ? (
             <>
               {/* LEFT: Categories */}
-              <div className="w-full border-b px-6 py-4 lg:w-[30%] lg:border-b-0 lg:border-r">
-                <h4 className="mb-2 text-base font-bold text-black">
+              <div className="w-full px-6 py-4 lg:w-[30%] lg:border-r pb-4">
+                <h4 className="mb-2 text-base font-bold text-black border-b pb-4">
                   Categories
                 </h4>
-                <ul>
-                  {categories?.flatMap((category) => {
-                    const subCategories = category.sub_category;
+                <div className="overflow-hidden overflow-y-auto pt-2 pb-4 h-full">
+                  <ul className="pb-2">
+                    {categories?.flatMap((category) => {
+                      const subCategories = category.sub_category;
 
-                    if (!subCategories?.length) {
-                      // Category has no sub-categories — it's a leaf
-                      return (
-                        <li key={category.title} className="mb-1 text-black">
-                          <Link
-                            href={`category?categoryId=${category.title}`}
-                            onClick={() => setIsOpen(false)}
-                            className="text-sm hover:text-secondaryBlue"
-                          >
-                            {category.title}
-                          </Link>
-                        </li>
-                      );
-                    }
-
-                    return subCategories.flatMap((subCat) => {
-                      const subSubCategories = subCat.sub_sub_category;
-
-                      if (!subSubCategories?.length) {
-                        // Sub-category has no sub-sub-categories — it's a leaf
+                      if (!subCategories?.length) {
+                        // Category has no sub-categories — it's a leaf
                         return (
-                          <li key={subCat.title} className="mb-1 text-black">
+                          <li key={category.title} className="mb-1 text-black">
                             <Link
-                              href={`category?categoryId=${category.title}&subCategoryId=${subCat.title}`}
+                              href={`category?categoryId=${category.title}`}
                               onClick={() => setIsOpen(false)}
                               className="text-sm hover:text-secondaryBlue"
                             >
-                              {subCat.title}
+                              {category.title}
                             </Link>
                           </li>
                         );
                       }
 
-                      // Sub-sub-categories exist — they are the leaf nodes
-                      return subSubCategories.map((subSub) => (
-                        <li key={subSub.title} className="mb-1 text-black">
-                          <Link
-                            href={`category?categoryId=${category.title}&subCategoryId=${subCat.title}&subSubCategoryId=${subSub.title}`}
-                            onClick={() => setIsOpen(false)}
-                            className="text-sm hover:text-secondaryBlue"
-                          >
-                            {subSub.title}
-                          </Link>
-                        </li>
-                      ));
-                    });
-                  })}
-                </ul>
+                      return subCategories.flatMap((subCat) => {
+                        const subSubCategories = subCat.sub_sub_category;
+
+                        if (!subSubCategories?.length) {
+                          // Sub-category has no sub-sub-categories — it's a leaf
+                          return (
+                            <li key={subCat.title} className="mb-1 text-black">
+                              <Link
+                                href={`category?categoryId=${category.title}&subCategoryId=${subCat.title}`}
+                                onClick={() => setIsOpen(false)}
+                                className="text-sm hover:text-secondaryBlue"
+                              >
+                                {subCat.title}
+                              </Link>
+                            </li>
+                          );
+                        }
+
+                        // Sub-sub-categories exist — they are the leaf nodes
+                        return subSubCategories.map((subSub) => (
+                          <li key={subSub.title} className="mb-1 text-black">
+                            <Link
+                              href={`category?categoryId=${category.title}&subCategoryId=${subCat.title}&subSubCategoryId=${subSub.title}`}
+                              onClick={() => setIsOpen(false)}
+                              className="text-sm hover:text-secondaryBlue"
+                            >
+                              {subSub.title}
+                            </Link>
+                          </li>
+                        ));
+                      });
+                    })}
+                  </ul>
+                </div>
               </div>
 
               {/* RIGHT: Product Cards */}
