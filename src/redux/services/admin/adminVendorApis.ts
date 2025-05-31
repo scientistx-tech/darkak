@@ -13,7 +13,16 @@ export const adminVendorApi = baseApi.injectEndpoints({
         };
       },
     }),
+
+    createVendor: builder.mutation<any, any>({
+      query: (data) => ({
+        url: "/admin/vendor/create",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useGetAllVendorsQuery } = adminVendorApi;
+export const { useGetAllVendorsQuery, useCreateVendorMutation } =
+  adminVendorApi;

@@ -1,5 +1,19 @@
 import React, { useState } from "react";
 import { EyeFilled } from "@ant-design/icons";
+import { useGetAllVendorsQuery } from "@/redux/services/admin/adminVendorApis";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import * as Switch from "@radix-ui/react-switch";
+import { toast } from "react-toastify";
+import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface Vendor {
   id: number;
@@ -106,10 +120,14 @@ const vendors: Vendor[] = [
 
 export const VendorTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
 
-  const filteredVendors = vendors.filter((vendor) =>
-    vendor.shopName.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const {
+    data: vendorsData,
+    isLoading,
+    error,
+    refetch,
+  } = useGetAllVendorsQuery({});
 
   return (
     <div className="rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark dark:shadow-card">
@@ -122,64 +140,115 @@ export const VendorTable: React.FC = () => {
           className="w-1/3 rounded-[10px] border border-gray-300 bg-white p-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
         />
         <div className="flex space-x-2">
-          <button className="rounded-[10px] bg-green-600 p-2 text-sm text-white hover:bg-green-700">
-            Export
-          </button>
-          <button className="rounded-[10px] bg-blue-600 p-2 text-sm text-white hover:bg-blue-700">
+          <button
+            onClick={() => router.push("/admin/vendors/add-new-vendor")}
+            className="rounded-[10px] bg-blue-600 p-2 text-sm text-white hover:bg-blue-700"
+          >
             Add New Vendor
           </button>
         </div>
       </div>
 
       {/* Table Section */}
-      <table className="w-full text-left">
-        <thead>
-          <tr className="border-b border-gray-300 dark:border-gray-600">
-            <th className="p-2 text-black dark:text-white">SL</th>
-            <th className="p-2 text-black dark:text-white">Shop Name</th>
-            <th className="p-2 text-black dark:text-white">Vendor Name</th>
-            <th className="p-2 text-black dark:text-white">Contact Info</th>
-            <th className="p-2 text-black dark:text-white">Status</th>
-            <th className="p-2 text-black dark:text-white">Total Products</th>
-            <th className="p-2 text-black dark:text-white">Total Orders</th>
-            <th className="p-2 text-black dark:text-white">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredVendors.map((vendor) => (
-            <tr
-              key={vendor.id}
-              className="border-b border-gray-300 dark:border-gray-600"
-            >
-              <td className="p-2 text-black dark:text-white">{vendor.id}</td>
-              <td className="flex items-center p-2 text-black dark:text-white">
-                <span className="mr-2 h-5 w-5 rounded-full bg-gray-300"></span>
-                {vendor.shopName}
-              </td>
-              <td className="p-2 text-black dark:text-white">
-                {vendor.vendorName}
-              </td>
-              <td className="whitespace-pre-line p-2 text-black dark:text-white">
-                {vendor.contactInfo}
-              </td>
-              <td className="p-2 text-green-600 dark:text-green-400">
-                {vendor.status}
-              </td>
-              <td className="p-2 text-black dark:text-white">
-                {vendor.totalProducts}
-              </td>
-              <td className="p-2 text-black dark:text-white">
-                {vendor.totalOrders}
-              </td>
-              <td className="p-2 text-blue-600 dark:text-blue-400">
-                <button className="hover:underline">
-                  <EyeFilled />{" "}
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Table>
+        <TableHeader>
+          <TableRow className="border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
+            <TableHead>Shop Name</TableHead>
+            <TableHead>Address</TableHead>
+            <TableHead>Products</TableHead>
+            <TableHead>Contact</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {isLoading &&
+            Array.from({ length: 6 }).map((_, i) => (
+              <TableRow key={i}>
+                <TableCell colSpan={6}>
+                  <Skeleton className="h-8" />
+                </TableCell>
+              </TableRow>
+            ))}
+
+          {!isLoading && vendorsData?.vendors?.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center">
+                No Vendor Found.
+              </TableCell>
+            </TableRow>
+          ) : (
+            vendorsData?.vendors?.map((doc: any) => (
+              <TableRow key={doc.id}>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={doc?.shop_logo}
+                      alt={`shop_logo_${doc?.id}`}
+                      width={20}
+                      height={20}
+                    />
+                    <p>{doc?.store_name}</p>
+                  </div>
+                </TableCell>
+                <TableCell>{doc?.store_address}</TableCell>
+                <TableCell>{doc?.user?._count?.products}</TableCell>
+                <TableCell>
+                  <button className="rounded-xl bg-green-400 px-3 py-1 text-white">
+                    Message On What&apos;s App
+                  </button>
+                </TableCell>
+                <TableCell>
+                  <Switch.Root
+                    checked={!doc?.isBlocked}
+                    onCheckedChange={async (checked) => {
+                      // try {
+                      //   const res = await changeModeratorStatus(
+                      //     doc.id,
+                      //   ).unwrap();
+                      //   refetch();
+                      //   toast.success(
+                      //     res?.message || "Moderator Status Updated!",
+                      //   );
+                      // } catch (err: any) {
+                      //   toast.error(
+                      //     err?.data?.message ||
+                      //       "Failed to Update Moderator status",
+                      //   );
+                      // }
+                    }}
+                    className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-400 transition-colors data-[state=checked]:bg-teal-600"
+                  >
+                    <Switch.Thumb className="block h-4 w-4 rounded-full bg-white shadow-lg transition-transform data-[state=checked]:translate-x-6" />
+                  </Switch.Root>
+                </TableCell>
+
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <button
+                      // onClick={async () => {
+                      //   await deleteModerator(doc.id)
+                      //     .unwrap()
+                      //     .then(() => {
+                      //       refetch();
+                      //       toast.success("Moderator Deleted Successfully");
+                      //     })
+                      //     .catch((error: any) => {
+                      //       toast.error(error?.data?.message);
+                      //     });
+                      // }}
+                      // disabled={isDeleting}
+                      className="text-teal-600 hover:underline"
+                    >
+                      View
+                    </button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { EmailAuthCredential } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const accessList = [
   "order-pending",
@@ -49,8 +50,7 @@ const AddModeratorModal = ({
   const [selectedAccessList, setSelectedAccessList] = useState<string[]>([]);
   const [confirmAddModeratorLoading, setConfirmAddModeratorLoading] =
     useState<boolean>(false);
-
-  const token = useSelector((state: any) => state.auth.token);
+  const [showPassword, setShowPassword] = useState(false);
 
   // redux hooks
   const [createModerator] = useCreateModeratorMutation();
@@ -114,7 +114,7 @@ const AddModeratorModal = ({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full rounded border p-2 text-slate-900"
-            type="text"
+            type="email"
             name=""
             id=""
           />
@@ -123,14 +123,24 @@ const AddModeratorModal = ({
           <label className="mb-1 block text-sm font-medium text-slate-900">
             Password
           </label>
-          <input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded border p-2 text-slate-900"
-            type="text"
-            name=""
-            id=""
-          />
+          <div className="relative">
+            <input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded border p-2 pr-10 text-slate-900"
+              type={showPassword ? "text" : "password"}
+              name=""
+              id=""
+            />
+            <button
+              type="button"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-xl text-gray-500"
+              onClick={() => setShowPassword((prev) => !prev)}
+              tabIndex={-1}
+            >
+              {showPassword ? <FiEyeOff /> : <FiEye />}
+            </button>
+          </div>
         </div>
 
         <div>
