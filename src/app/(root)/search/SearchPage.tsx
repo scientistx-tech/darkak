@@ -39,37 +39,97 @@ const sortingItems: SortItem[] = [
 ];
 
 export default function SearchPage() {
-  const sortingItems: SortItem[] = [
-    { value: "newer", name: "Newer" },
-    { value: "popular", name: "Popular" },
-    { value: "older", name: "Older" },
-    { value: "low-to-high", name: "Low to High Price" },
-    { value: "high-to-low", name: "High to Low Price" },
-  ];
-
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [sortingItem, setSortingItem] = useState<string>("Newer");
+  const [sortValue, setSortValue] = useState<string>("newer");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const keyword = searchParams.get("keyword")?.toLowerCase().trim() || "";
   const page = parseInt(searchParams.get("page") || "1", 10);
+  const sortParam = searchParams.get("sort") || "newer";
 
   const [currentPage, setCurrentPage] = useState(page);
-  const pageSize = 16;
-
-  const initialData = useGetSearchPublicQuery({ search: `${keyword}` });
+  const ITEMS_PER_PAGE = 16; // Single source of truth for pagination
 
   const { data, isFetching, isLoading } = useGetSearchPublicQuery({
     search: `${keyword}`,
   });
 
-  console.log("🚀 ~ SearchPage ~ data:", initialData);
+  console.log("🚀 ~ SearchPage ~ data:", data);
 
   useEffect(() => {
     setCurrentPage(page);
   }, [page]);
+
+  // Initialize sorting from URL params
+  useEffect(() => {
+    const sortItem = sortingItems.find(item => item.value === sortParam);
+    if (sortItem) {
+      setSortingItem(sortItem.name);
+      setSortValue(sortItem.value);
+    }
+  }, [sortParam]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Sort products function
+  const sortProducts = (products: any[], sortType: string) => {
+    const sortedProducts = [...products];
+
+    switch (sortType) {
+      case "newer":
+        return sortedProducts.sort((a, b) => {
+          const dateA = new Date(a.createdAt || a.created_at || 0).getTime();
+          const dateB = new Date(b.createdAt || b.created_at || 0).getTime();
+          return dateB - dateA; // Newest first
+        });
+
+      case "older":
+        return sortedProducts.sort((a, b) => {
+          const dateA = new Date(a.createdAt || a.created_at || 0).getTime();
+          const dateB = new Date(b.createdAt || b.created_at || 0).getTime();
+          return dateA - dateB; // Oldest first
+        });
+
+      case "popular":
+        return sortedProducts.sort((a, b) => {
+          const popularityA = a.popularity || a.views || a.sales || 0;
+          const popularityB = b.popularity || b.views || b.sales || 0;
+          return popularityB - popularityA; // Most popular first
+        });
+
+      case "low-to-high":
+        return sortedProducts.sort((a, b) => {
+          const priceA = parseFloat(a.price || a.salePrice || a.regularPrice || 0);
+          const priceB = parseFloat(b.price || b.salePrice || b.regularPrice || 0);
+          return priceA - priceB; // Lowest price first
+        });
+
+      case "high-to-low":
+        return sortedProducts.sort((a, b) => {
+          const priceA = parseFloat(a.price || a.salePrice || a.regularPrice || 0);
+          const priceB = parseFloat(b.price || b.salePrice || b.regularPrice || 0);
+          return priceB - priceA; // Highest price first
+        });
+
+      default:
+        return sortedProducts;
+    }
+  };
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -78,26 +138,36 @@ export default function SearchPage() {
     router.push(`/search?${newParams.toString()}`);
   };
 
+  const handleSort = (name: string, value: string) => {
+    setSortingItem(name);
+    setSortValue(value);
+    setIsOpen(false);
+
+    // Reset to page 1 when sorting changes
+    setCurrentPage(1);
+
+    // Update URL with new sort parameter
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set("sort", value);
+    newParams.set("page", "1"); // Reset to first page
+    router.push(`/search?${newParams.toString()}`);
+  };
+
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
   };
 
-  const handleSort = (name: string, value: string) => {
-    setSortingItem(name);
-    setIsOpen(false);
-  };
-
-  // Filter and paginate on client
+  // Apply sorting to products
   const allProducts = data?.data || [];
+  const sortedProducts = sortProducts(allProducts, sortValue);
 
-  const limit = 16;
-  const total = data?.total || 0;
+  // Use actual filtered products length instead of API total
+  const totalProducts = sortedProducts.length;
 
-  const startIdx = (currentPage - 1) * limit;
-  const endIdx = startIdx + limit;
-  const paginatedProducts = allProducts.slice(startIdx, endIdx);
+  const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIdx = startIdx + ITEMS_PER_PAGE;
+  const paginatedProducts = sortedProducts.slice(startIdx, endIdx);
 
-  
   return (
     <div className="container mx-auto w-full">
       <div className="h-[65px] w-full md:h-[109px]" />
@@ -125,9 +195,8 @@ export default function SearchPage() {
               <IoIosArrowDown
                 height={5}
                 width={5}
-                className={`ml-2 text-[#003084] transition-transform duration-200 ${
-                  isOpen ? "rotate-180" : "rotate-0"
-                }`}
+                className={`ml-2 text-[#003084] transition-transform duration-200 ${isOpen ? "rotate-180" : "rotate-0"
+                  }`}
               />
             </button>
 
@@ -154,15 +223,15 @@ export default function SearchPage() {
       </div>
       <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-4">
         <div className="col-span-1">
-          <FilterSidebar products={allProducts} />
+          <FilterSidebar products={sortedProducts} />
         </div>
         <div className="col-span-3">
           <ProductGrid products={paginatedProducts} isLoading={isFetching} />
           <Pagination
             currentPage={currentPage}
             onPageChange={handlePageChange}
-            total={total}
-            limit={pageSize}
+            total={totalProducts}
+            limit={ITEMS_PER_PAGE}
             align="right"
           />
         </div>
