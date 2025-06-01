@@ -197,6 +197,7 @@ const Page = () => {
                               toast.success(
                                 res?.message || "successfully Deleted Coupon",
                               );
+                              refetch();
                             } catch (error: any) {
                               toast.error(
                                 error?.data?.message ||

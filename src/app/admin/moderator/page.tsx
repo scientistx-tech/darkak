@@ -27,7 +27,7 @@ const Page = () => {
     value: { id: number; moderator_access: { access: string }[] };
   }>({
     status: false,
-    value: { id: 0, moderator_access: [{ access: "" }] },
+    value: { id: 0, moderator_access: [] },
   });
   const router = useRouter();
 
