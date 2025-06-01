@@ -39,7 +39,8 @@ const ProductBreadcrumb = ({ title, url }: { title: string; url: string }) => {
                   </span>
                 ) : (
                   <Link
-                    href={href}
+                    // href={href}
+                    href="/category"
                     className="whitespace-nowrap capitalize hover:text-primaryDarkBlue"
                   >
                     {decodeURIComponent(seg)}
