@@ -68,7 +68,9 @@ const AddModeratorModal = ({
     useState<boolean>(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  console.log("able", isEditable);
+  console.log("isEditable", isEditable);
+
+  console.log("selectedList", selectedAccessList);
 
   // redux hooks
   const [createModerator] = useCreateModeratorMutation();
@@ -76,7 +78,9 @@ const AddModeratorModal = ({
 
   useEffect(() => {
     const filteredList = Array.isArray(isEditable?.value?.moderator_access)
-      ? isEditable.value.moderator_access.map((access: any) => access.access)
+      ? isEditable.value.moderator_access
+          .map((access: any) => access.access)
+          .filter((ac: string) => ac)
       : [];
     setSelectedAccessList(filteredList);
 
@@ -115,11 +119,19 @@ const AddModeratorModal = ({
     } finally {
       setConfirmAddModeratorLoading(false);
       setOpenAddModeratorCourierModal(false);
+      setIsEditable({
+        status: false,
+        value: { id: 0, moderator_access: [{ access: "" }] },
+      });
     }
   };
 
   const handleAddModeratorModalCancel = () => {
     setOpenAddModeratorCourierModal(false);
+    setIsEditable({
+      status: false,
+      value: { id: 0, moderator_access: [{ access: "" }] },
+    });
   };
 
   return (
