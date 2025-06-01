@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import * as yup from "yup";
 import Button from "../../components/Button";
 import { CiCirclePlus } from "react-icons/ci";
+import RequireAccess from "@/components/Layouts/RequireAccess";
 
 // Yup schema
 const brandSchema = yup.object().shape({
@@ -80,43 +81,44 @@ const RefundedRefundRequest = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <h2 className="mb-4 flex items-center gap-2 text-xl font-bold">
-        🏠 Refunded Refund Request{" "}
-        <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">
-          194
-        </span>
-      </h2>
-      <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:shadow-card">
-        {/* search box and export button */}
-        <div className="flex items-center justify-between pb-6">
-          {/* search box */}
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search brand"
-              className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none"
-            />
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-4.35-4.35M16.65 10.35a6.3 6.3 0 11-12.6 0 6.3 6.3 0 0112.6 0z"
-                />
-              </svg>
-            </span>
-          </div>
-          {/* more buttons*/}
-          <div className="flex items-center gap-x-2">
-            {/* <button className="flex items-center gap-2 rounded-md border-2 border-blue-400 px-4 py-2 text-sm font-medium text-blue-400">
+    <RequireAccess permission="refund-refunded">
+      <div className="min-h-screen">
+        <h2 className="mb-4 flex items-center gap-2 text-xl font-bold">
+          🏠 Refunded Refund Request{" "}
+          <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">
+            194
+          </span>
+        </h2>
+        <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:shadow-card">
+          {/* search box and export button */}
+          <div className="flex items-center justify-between pb-6">
+            {/* search box */}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search brand"
+                className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none"
+              />
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-4.35-4.35M16.65 10.35a6.3 6.3 0 11-12.6 0 6.3 6.3 0 0112.6 0z"
+                  />
+                </svg>
+              </span>
+            </div>
+            {/* more buttons*/}
+            <div className="flex items-center gap-x-2">
+              {/* <button className="flex items-center gap-2 rounded-md border-2 border-blue-400 px-4 py-2 text-sm font-medium text-blue-400">
               <img
                 width={20}
                 height={20}
@@ -125,117 +127,121 @@ const RefundedRefundRequest = () => {
               />
               Export
             </button> */}
+            </div>
           </div>
-        </div>
-        {error ? (
-          <p className="px-6 text-red-500">Error loading brands.</p>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow className="border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
-                <TableHead className="min-w-[120px] pl-5 sm:pl-6 xl:pl-7.5">
-                  Icon
-                </TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Product Count</TableHead>
-                <TableHead>Edit</TableHead>
-                <TableHead>Delete</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading &&
-                Array.from({ length: 5 }).map((_, i) => (
-                  <TableRow key={i}>
-                    <TableCell colSpan={5}>
-                      <Skeleton className="h-8" />
-                    </TableCell>
-                  </TableRow>
-                ))}
+          {error ? (
+            <p className="px-6 text-red-500">Error loading brands.</p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
+                  <TableHead className="min-w-[120px] pl-5 sm:pl-6 xl:pl-7.5">
+                    Icon
+                  </TableHead>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Product Count</TableHead>
+                  <TableHead>Edit</TableHead>
+                  <TableHead>Delete</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoading &&
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell colSpan={5}>
+                        <Skeleton className="h-8" />
+                      </TableCell>
+                    </TableRow>
+                  ))}
 
-              {!isLoading &&
-                data?.data?.map((doc: any) => (
-                  <TableRow key={doc.id}>
-                    <TableCell className="pl-5 sm:pl-6 xl:pl-7.5">
-                      {editingId === doc.id ? (
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) =>
-                            setEditData({
-                              ...editData,
-                              icon: e.target.files?.[0] || null,
-                            })
-                          }
-                        />
-                      ) : (
-                        <Image
-                          src={doc.icon}
-                          className="aspect-[6/5] w-15 rounded-[5px] object-cover"
-                          width={60}
-                          height={50}
-                          alt={`${doc.title} image`}
-                        />
-                      )}
-                    </TableCell>
+                {!isLoading &&
+                  data?.data?.map((doc: any) => (
+                    <TableRow key={doc.id}>
+                      <TableCell className="pl-5 sm:pl-6 xl:pl-7.5">
+                        {editingId === doc.id ? (
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) =>
+                              setEditData({
+                                ...editData,
+                                icon: e.target.files?.[0] || null,
+                              })
+                            }
+                          />
+                        ) : (
+                          <Image
+                            src={doc.icon}
+                            className="aspect-[6/5] w-15 rounded-[5px] object-cover"
+                            width={60}
+                            height={50}
+                            alt={`${doc.title} image`}
+                          />
+                        )}
+                      </TableCell>
 
-                    <TableCell>
-                      {editingId === doc.id ? (
-                        <input
-                          type="text"
-                          className="w-full rounded-md border px-2 py-1"
-                          value={editData.title}
-                          onChange={(e) =>
-                            setEditData({ ...editData, title: e.target.value })
-                          }
-                        />
-                      ) : (
-                        doc.title
-                      )}
-                    </TableCell>
+                      <TableCell>
+                        {editingId === doc.id ? (
+                          <input
+                            type="text"
+                            className="w-full rounded-md border px-2 py-1"
+                            value={editData.title}
+                            onChange={(e) =>
+                              setEditData({
+                                ...editData,
+                                title: e.target.value,
+                              })
+                            }
+                          />
+                        ) : (
+                          doc.title
+                        )}
+                      </TableCell>
 
-                    <TableCell>{doc._count.products}</TableCell>
+                      <TableCell>{doc._count.products}</TableCell>
 
-                    <TableCell>
-                      {editingId === doc.id ? (
-                        <div className="flex gap-2">
+                      <TableCell>
+                        {editingId === doc.id ? (
+                          <div className="flex gap-2">
+                            <Button
+                              onClick={() => handleUpdate(doc.id)}
+                              className="bg-green-600 text-white"
+                            >
+                              {isUpdating ? "plz wait.." : "save"}
+                            </Button>
+                            <Button
+                              onClick={() => setEditingId(null)}
+                              className="bg-gray-500 text-white"
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        ) : (
                           <Button
-                            onClick={() => handleUpdate(doc.id)}
-                            className="bg-green-600 text-white"
+                            onClick={() => handleEdit(doc)}
+                            className="bg-blue text-white"
                           >
-                            {isUpdating ? "plz wait.." : "save"}
+                            Edit
                           </Button>
-                          <Button
-                            onClick={() => setEditingId(null)}
-                            className="bg-gray-500 text-white"
-                          >
-                            Cancel
-                          </Button>
-                        </div>
-                      ) : (
+                        )}
+                      </TableCell>
+
+                      <TableCell>
                         <Button
-                          onClick={() => handleEdit(doc)}
-                          className="bg-blue text-white"
+                          onClick={() => handleDelete(doc.id)}
+                          className="bg-red-500 text-white"
                         >
-                          Edit
+                          Delete
                         </Button>
-                      )}
-                    </TableCell>
-
-                    <TableCell>
-                      <Button
-                        onClick={() => handleDelete(doc.id)}
-                        className="bg-red-500 text-white"
-                      >
-                        Delete
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          )}
+        </div>
       </div>
-    </div>
+    </RequireAccess>
   );
 };
 

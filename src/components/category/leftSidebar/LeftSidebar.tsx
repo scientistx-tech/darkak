@@ -10,9 +10,8 @@ import { useGetBrandsPublicQuery } from "@/redux/services/client/brands";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const availabilityOptions = [
-  { value: "in_stock", label: "In stock" },
-  { value: "online_order", label: "Online Order" },
-  { value: "pre_order", label: "Pre Order" },
+  { value: "in-stock", label: "In stock" },
+  { value: "pre-order", label: "Pre Order" },
 ];
 
 const warrantyOptions = [
@@ -331,7 +330,7 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
   useEffect(() => {
     // Compose all filter values into a single object (exclude categoryId, subCategoryId, subSubCategoryId)
     const queryParams = {
-      availability,
+      available: availability,
       warranty,
       region,
       lowPrice: lowPrice === "" ? undefined : Number(lowPrice),
