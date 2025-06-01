@@ -1,4 +1,5 @@
 "use client";
+import RequireAccess from "@/components/Layouts/RequireAccess";
 import {
   useCreateDeliveryProviderMutation,
   useDeleteCourierMutation,
@@ -149,314 +150,326 @@ const Page = () => {
 
   console.log("prov", selectedProvider);
   return (
-    <div className="text-slate-900">
-      <h2 className="text-2xl font-bold">Delivery Providers</h2>
-      <p> Configure and manage delivery service providers</p>
+    <RequireAccess permission="settings">
+      <div className="text-slate-900">
+        <h2 className="text-2xl font-bold">Delivery Providers</h2>
+        <p> Configure and manage delivery service providers</p>
 
-      <div className="mt-10">
-        {/* heading and add button */}
-        <div className="flex items-center justify-between">
-          <p className="text-lg">Delivery Providers</p>
-          <button
-            onClick={showModal}
-            className="rounded-md bg-blue-950 px-6 py-2 font-bold text-white transition-all duration-300 ease-in-out hover:bg-blue-800"
-          >
-            Add Provider
-          </button>
-        </div>
-
-        {/* providers list and details */}
-        <div className="mt-8">
-          <div className="flex gap-4">
-            {/* providers list */}
-            <div className="w-[30%] cursor-pointer border-2 border-slate-700 p-4 shadow-md">
-              <p>Available Providers</p>
-              {data?.data?.length <= 0 ? (
-                <div className="py-10 font-bold text-red-500">
-                  No provider added
-                </div>
-              ) : (
-                data?.data?.map((provider: any, i: number) => (
-                  <div
-                    onClick={() =>
-                      setSelectedProvider({ id: provider?.id, value: provider })
-                    }
-                    key={i}
-                    className={`mt-5 rounded-sm p-2 ${selectedProvider?.id === provider?.id && "bg-gray-3"}`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="h-3 w-3 rounded-full bg-green-600" />
-                      <p className="font-bold capitalize">{provider?.type}</p>
-                    </div>
-                    <p className="my-2 text-xs">{provider?.title}</p>
-                  </div>
-                ))
-              )}
-            </div>
-            {/* provider details */}
-            {selectedProvider.id && (
-              <div className="w-[70%] border border-slate-700 p-4">
-                <p>Provider Details</p>
-                {/* basic info */}
-                <div className="mt-5">
-                  <p className="font-bold text-slate-950">Basic Information</p>
-                  <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
-                    <div className="flex flex-col gap-1">
-                      <p className="font-medium">Name</p>
-                      <p>{selectedProvider?.value?.title}</p>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <p className="font-medium">Type</p>
-                      <p className="capitalize">
-                        {selectedProvider?.value?.type}
-                      </p>
-                    </div>
-                    <div className="flex flex-row items-center gap-3">
-                      <div className="flex flex-col gap-1">
-                        <p className="font-medium">Status</p>
-                        {selectedProvider?.value?.isActive ? (
-                          <p className="font-semibold text-green-500">Active</p>
-                        ) : (
-                          <p className="font-semibold text-red-500">Inactive</p>
-                        )}
-                      </div>
-                      <button
-                        onClick={async () => {
-                          try {
-                            const res = await updateStatus(
-                              selectedProvider?.id,
-                            ).unwrap();
-                            toast.success(
-                              res?.message || "Successfully updated status",
-                            );
-                            refetch();
-                          } catch (error: any) {
-                            toast.error(
-                              error?.data?.message || "Failed to update status",
-                            );
-                          }
-                        }}
-                        className="rounded-sm bg-yellow-50 p-0.5 text-xs text-yellow-700"
-                      >
-                        Change Status
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                {/* api creds */}
-                <div className="mt-5">
-                  <p className="font-bold text-slate-950">API Credentials</p>
-                  <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
-                    <div className="flex flex-col gap-1">
-                      <p className="font-medium">Base Url</p>
-                      <p>{selectedProvider?.value?.base_url}</p>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <p className="font-medium">Client Id</p>
-                      <div className="flex items-center gap-2">
-                        <p>
-                          {showClientId
-                            ? selectedProvider?.value?.client_id
-                            : maskValue(
-                                selectedProvider?.value?.client_id || "",
-                              )}
-                        </p>
-                        <button
-                          type="button"
-                          onClick={() => setShowClientId((prev) => !prev)}
-                          className="text-blue-600"
-                          tabIndex={-1}
-                        >
-                          {showClientId ? "🙈" : "👁️"}
-                        </button>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <p className="font-medium">Client Secret</p>
-                      <div className="flex items-center gap-2">
-                        <p>
-                          {showClientSecret
-                            ? selectedProvider?.value?.client_secret
-                            : maskValue(
-                                selectedProvider?.value?.client_secret || "",
-                              )}
-                        </p>
-                        <button
-                          type="button"
-                          onClick={() => setShowClientSecret((prev) => !prev)}
-                          className="text-blue-600"
-                          tabIndex={-1}
-                        >
-                          {showClientSecret ? "🙈" : "👁️"}
-                        </button>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <p className="font-medium">User name</p>
-                      <p>{selectedProvider?.value?.email}</p>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <p className="font-medium">Password</p>
-                      <div className="flex items-center gap-2">
-                        <p>
-                          {showPassword
-                            ? selectedProvider?.value?.password
-                            : maskValue(
-                                selectedProvider?.value?.password || "",
-                              )}
-                        </p>
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword((prev) => !prev)}
-                          className="text-blue-600"
-                          tabIndex={-1}
-                        >
-                          {showPassword ? "🙈" : "👁️"}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* configuration */}
-                <div className="mt-5">
-                  <p className="font-bold text-slate-950">Configuration</p>
-                  <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
-                    <div className="flex flex-col gap-1">
-                      <p className="font-medium">Store Id</p>
-                      <p>{selectedProvider?.value?.store_id}</p>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <p className="font-medium">Default Delivery Type</p>
-                      <p>Regular (38)</p>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <p className="font-medium">Default Item Type</p>
-                      <p>Parcel</p>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <p className="font-medium">Default Weight</p>
-                      <p>0.5</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* buttons */}
-                <div className="mt-5 flex items-center gap-4">
-                  <button
-                    // onClick={() => {
-                    //   setIsEditMode({
-                    //     status: true,
-                    //     value: selectedProvider.value,
-                    //   });
-                    //   showModal();
-                    // }}
-                    className="rounded-md border-2 border-blue-800 bg-blue-100 px-12 py-2 text-blue-800 hover:bg-blue-200"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => {
-                      deleteDeliveryProvider(selectedProvider?.id).unwrap();
-                      refetch();
-                    }}
-                    className="rounded-md border-2 border-red-800 bg-red-100 px-12 py-2 text-red-800 hover:bg-red-200"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            )}
-            <div></div>
-          </div>
-        </div>
-      </div>
-
-      <Modal
-        title={isEditMode?.status ? "Edit Provider" : "Add Provider"}
-        open={open}
-        onOk={handleOk}
-        confirmLoading={confirmLoading}
-        onCancel={handleCancel}
-      >
-        <div className="my-5 grid grid-cols-1 gap-2 md:grid-cols-2">
-          <div className="w-full">
-            <label htmlFor="title">Title</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full rounded-md border border-slate-700 p-3"
-            />
-          </div>
-          <div className="w-full">
-            <label htmlFor="title">Email</label>
-            <input
-              type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border border-slate-700 p-3"
-            />
-          </div>
-          <div className="w-full">
-            <label htmlFor="title">Password</label>
-            <input
-              type="text"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border border-slate-700 p-3"
-            />
-          </div>
-          <div className="w-full">
-            <label htmlFor="title">Base Url</label>
-            <input
-              type="text"
-              value={baseUrl}
-              onChange={(e) => setBaseUrl(e.target.value)}
-              className="w-full rounded-md border border-slate-700 p-3"
-            />
-          </div>
-          <div className="w-full">
-            <label htmlFor="title">Client Id</label>
-            <input
-              type="text"
-              value={clientId}
-              onChange={(e) => setClientId(e.target.value)}
-              className="w-full rounded-md border border-slate-700 p-3"
-            />
-          </div>
-          <div className="w-full">
-            <label htmlFor="title">Client Secret</label>
-            <input
-              type="text"
-              value={clientSecret}
-              onChange={(e) => setClientSecret(e.target.value)}
-              className="w-full rounded-md border border-slate-700 p-3"
-            />
-          </div>
-          <div className="w-full">
-            <label htmlFor="title">Store Id</label>
-            <input
-              type="text"
-              value={storeId}
-              onChange={(e) => setStoreId(e.target.value)}
-              className="w-full rounded-md border border-slate-700 p-3"
-            />
-          </div>
-          <div className="w-full">
-            <label htmlFor="title">Type</label>
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="w-full rounded-md border border-slate-700 p-3"
+        <div className="mt-10">
+          {/* heading and add button */}
+          <div className="flex items-center justify-between">
+            <p className="text-lg">Delivery Providers</p>
+            <button
+              onClick={showModal}
+              className="rounded-md bg-blue-950 px-6 py-2 font-bold text-white transition-all duration-300 ease-in-out hover:bg-blue-800"
             >
-              <option value="">Select Courier Type</option>
-              <option value="pathao">Pathao</option>
-            </select>
+              Add Provider
+            </button>
+          </div>
+
+          {/* providers list and details */}
+          <div className="mt-8">
+            <div className="flex gap-4">
+              {/* providers list */}
+              <div className="w-[30%] cursor-pointer border-2 border-slate-700 p-4 shadow-md">
+                <p>Available Providers</p>
+                {data?.data?.length <= 0 ? (
+                  <div className="py-10 font-bold text-red-500">
+                    No provider added
+                  </div>
+                ) : (
+                  data?.data?.map((provider: any, i: number) => (
+                    <div
+                      onClick={() =>
+                        setSelectedProvider({
+                          id: provider?.id,
+                          value: provider,
+                        })
+                      }
+                      key={i}
+                      className={`mt-5 rounded-sm p-2 ${selectedProvider?.id === provider?.id && "bg-gray-3"}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="h-3 w-3 rounded-full bg-green-600" />
+                        <p className="font-bold capitalize">{provider?.type}</p>
+                      </div>
+                      <p className="my-2 text-xs">{provider?.title}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+              {/* provider details */}
+              {selectedProvider.id && (
+                <div className="w-[70%] border border-slate-700 p-4">
+                  <p>Provider Details</p>
+                  {/* basic info */}
+                  <div className="mt-5">
+                    <p className="font-bold text-slate-950">
+                      Basic Information
+                    </p>
+                    <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+                      <div className="flex flex-col gap-1">
+                        <p className="font-medium">Name</p>
+                        <p>{selectedProvider?.value?.title}</p>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <p className="font-medium">Type</p>
+                        <p className="capitalize">
+                          {selectedProvider?.value?.type}
+                        </p>
+                      </div>
+                      <div className="flex flex-row items-center gap-3">
+                        <div className="flex flex-col gap-1">
+                          <p className="font-medium">Status</p>
+                          {selectedProvider?.value?.isActive ? (
+                            <p className="font-semibold text-green-500">
+                              Active
+                            </p>
+                          ) : (
+                            <p className="font-semibold text-red-500">
+                              Inactive
+                            </p>
+                          )}
+                        </div>
+                        <button
+                          onClick={async () => {
+                            try {
+                              const res = await updateStatus(
+                                selectedProvider?.id,
+                              ).unwrap();
+                              toast.success(
+                                res?.message || "Successfully updated status",
+                              );
+                              refetch();
+                            } catch (error: any) {
+                              toast.error(
+                                error?.data?.message ||
+                                  "Failed to update status",
+                              );
+                            }
+                          }}
+                          className="rounded-sm bg-yellow-50 p-0.5 text-xs text-yellow-700"
+                        >
+                          Change Status
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  {/* api creds */}
+                  <div className="mt-5">
+                    <p className="font-bold text-slate-950">API Credentials</p>
+                    <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+                      <div className="flex flex-col gap-1">
+                        <p className="font-medium">Base Url</p>
+                        <p>{selectedProvider?.value?.base_url}</p>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <p className="font-medium">Client Id</p>
+                        <div className="flex items-center gap-2">
+                          <p>
+                            {showClientId
+                              ? selectedProvider?.value?.client_id
+                              : maskValue(
+                                  selectedProvider?.value?.client_id || "",
+                                )}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => setShowClientId((prev) => !prev)}
+                            className="text-blue-600"
+                            tabIndex={-1}
+                          >
+                            {showClientId ? "🙈" : "👁️"}
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <p className="font-medium">Client Secret</p>
+                        <div className="flex items-center gap-2">
+                          <p>
+                            {showClientSecret
+                              ? selectedProvider?.value?.client_secret
+                              : maskValue(
+                                  selectedProvider?.value?.client_secret || "",
+                                )}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => setShowClientSecret((prev) => !prev)}
+                            className="text-blue-600"
+                            tabIndex={-1}
+                          >
+                            {showClientSecret ? "🙈" : "👁️"}
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <p className="font-medium">User name</p>
+                        <p>{selectedProvider?.value?.email}</p>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <p className="font-medium">Password</p>
+                        <div className="flex items-center gap-2">
+                          <p>
+                            {showPassword
+                              ? selectedProvider?.value?.password
+                              : maskValue(
+                                  selectedProvider?.value?.password || "",
+                                )}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            className="text-blue-600"
+                            tabIndex={-1}
+                          >
+                            {showPassword ? "🙈" : "👁️"}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* configuration */}
+                  <div className="mt-5">
+                    <p className="font-bold text-slate-950">Configuration</p>
+                    <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+                      <div className="flex flex-col gap-1">
+                        <p className="font-medium">Store Id</p>
+                        <p>{selectedProvider?.value?.store_id}</p>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <p className="font-medium">Default Delivery Type</p>
+                        <p>Regular (38)</p>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <p className="font-medium">Default Item Type</p>
+                        <p>Parcel</p>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <p className="font-medium">Default Weight</p>
+                        <p>0.5</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* buttons */}
+                  <div className="mt-5 flex items-center gap-4">
+                    <button
+                      // onClick={() => {
+                      //   setIsEditMode({
+                      //     status: true,
+                      //     value: selectedProvider.value,
+                      //   });
+                      //   showModal();
+                      // }}
+                      className="rounded-md border-2 border-blue-800 bg-blue-100 px-12 py-2 text-blue-800 hover:bg-blue-200"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => {
+                        deleteDeliveryProvider(selectedProvider?.id).unwrap();
+                        refetch();
+                      }}
+                      className="rounded-md border-2 border-red-800 bg-red-100 px-12 py-2 text-red-800 hover:bg-red-200"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              )}
+              <div></div>
+            </div>
           </div>
         </div>
-      </Modal>
-    </div>
+
+        <Modal
+          title={isEditMode?.status ? "Edit Provider" : "Add Provider"}
+          open={open}
+          onOk={handleOk}
+          confirmLoading={confirmLoading}
+          onCancel={handleCancel}
+        >
+          <div className="my-5 grid grid-cols-1 gap-2 md:grid-cols-2">
+            <div className="w-full">
+              <label htmlFor="title">Title</label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full rounded-md border border-slate-700 p-3"
+              />
+            </div>
+            <div className="w-full">
+              <label htmlFor="title">Email</label>
+              <input
+                type="text"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-md border border-slate-700 p-3"
+              />
+            </div>
+            <div className="w-full">
+              <label htmlFor="title">Password</label>
+              <input
+                type="text"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-md border border-slate-700 p-3"
+              />
+            </div>
+            <div className="w-full">
+              <label htmlFor="title">Base Url</label>
+              <input
+                type="text"
+                value={baseUrl}
+                onChange={(e) => setBaseUrl(e.target.value)}
+                className="w-full rounded-md border border-slate-700 p-3"
+              />
+            </div>
+            <div className="w-full">
+              <label htmlFor="title">Client Id</label>
+              <input
+                type="text"
+                value={clientId}
+                onChange={(e) => setClientId(e.target.value)}
+                className="w-full rounded-md border border-slate-700 p-3"
+              />
+            </div>
+            <div className="w-full">
+              <label htmlFor="title">Client Secret</label>
+              <input
+                type="text"
+                value={clientSecret}
+                onChange={(e) => setClientSecret(e.target.value)}
+                className="w-full rounded-md border border-slate-700 p-3"
+              />
+            </div>
+            <div className="w-full">
+              <label htmlFor="title">Store Id</label>
+              <input
+                type="text"
+                value={storeId}
+                onChange={(e) => setStoreId(e.target.value)}
+                className="w-full rounded-md border border-slate-700 p-3"
+              />
+            </div>
+            <div className="w-full">
+              <label htmlFor="title">Type</label>
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                className="w-full rounded-md border border-slate-700 p-3"
+              >
+                <option value="">Select Courier Type</option>
+                <option value="pathao">Pathao</option>
+              </select>
+            </div>
+          </div>
+        </Modal>
+      </div>
+    </RequireAccess>
   );
 };
 

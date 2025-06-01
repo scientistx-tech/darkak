@@ -24,6 +24,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import AsyncSelect from "react-select/async";
 import { useSelector } from "react-redux";
 import { useAccess } from "@/hooks/use-access";
+import RequireAccess from "@/components/Layouts/RequireAccess";
 
 const CustomEditor = dynamic(
   () => import("@/app/admin/components/CustomEditor"),
@@ -370,6 +371,8 @@ export default function ProductForm() {
 
   const token = useSelector((state: any) => state.auth.token);
 
+  const user = useSelector((state: any) => state.auth.user);
+
   const router = useRouter();
 
   const loadBrandOptions = async (inputValue: string) => {
@@ -715,491 +718,488 @@ export default function ProductForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(formData.items)]);
 
-  const canAddProduct = useAccess("product-add");
-
-  console.log(canAddProduct, "access can");
-
   return (
-    <div className="mx-auto w-full">
-      <h1 className="mb-4 flex items-center gap-2 text-xl font-bold">
-        🛍️ Add Product
-      </h1>
+    <RequireAccess permission="product-add">
+      <div className="mx-auto w-full">
+        <h1 className="mb-4 flex items-center gap-2 text-xl font-bold">
+          🛍️ Add Product
+        </h1>
 
-      {/* name and desc */}
-      <div className="bg-white p-5">
-        {/* language tabs */}
-        <div className="mb-4 flex items-center gap-x-5">
-          <div
-            className={`${currentLanguage === "en" ? "border-b-2 border-blue-500 text-blue-500" : ""} flex cursor-pointer py-2 text-sm font-medium tracking-wider`}
-            onClick={() => setCurrentLanguage("en")}
-          >
-            <button>English (EN)</button>
-          </div>
-          <div
-            className={`${currentLanguage === "bn" ? "border-b-2 border-blue-500 text-blue-500" : ""} cursor-pointer py-2 text-sm font-medium tracking-wider`}
-            onClick={() => setCurrentLanguage("bn")}
-          >
-            <button>Bengali (BD)</button>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-y-3">
-          <div className="flex flex-col gap-2">
-            <label htmlFor="title">
-              Product Name {`( ${currentLanguage === "en" ? "EN" : "BD"})`}{" "}
-              <span className="text-red-500">*</span>
-            </label>
-            <input
-              name="title"
-              placeholder="Title"
-              value={formData.title}
-              onChange={handleChange}
-              className="w-full rounded border p-2"
-            />
+        {/* name and desc */}
+        <div className="bg-white p-5">
+          {/* language tabs */}
+          <div className="mb-4 flex items-center gap-x-5">
+            <div
+              className={`${currentLanguage === "en" ? "border-b-2 border-blue-500 text-blue-500" : ""} flex cursor-pointer py-2 text-sm font-medium tracking-wider`}
+              onClick={() => setCurrentLanguage("en")}
+            >
+              <button>English (EN)</button>
+            </div>
+            <div
+              className={`${currentLanguage === "bn" ? "border-b-2 border-blue-500 text-blue-500" : ""} cursor-pointer py-2 text-sm font-medium tracking-wider`}
+              onClick={() => setCurrentLanguage("bn")}
+            >
+              <button>Bengali (BD)</button>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label htmlFor="title">
-              Description {`( ${currentLanguage === "en" ? "EN" : "BD"})`}{" "}
-              <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              name="short_description"
-              placeholder="Short Description"
-              value={formData.short_description}
-              onChange={handleChange}
-              className="w-full rounded border p-2"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* genereal info */}
-      <div className="mt-5 space-y-6 rounded-lg border bg-white p-6 shadow">
-        <h2 className="text-lg font-semibold">General setup</h2>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Category <span className="text-red-500">*</span>
-            </label>
-            <AsyncSelect
-              cacheOptions
-              defaultOptions
-              loadOptions={loadCategoryOptions}
-              value={selectedCategory}
-              onChange={(option) => {
-                setSelectedCategory(option);
-                setFormData((prev) => ({
-                  ...prev,
-                  categoryId: option?.value || "",
-                  subCategoryId: "", // reset
-                  subSubCategoryId: "", // reset
-                }));
-                setSelectedSubCategory(null);
-                setSelectedSubSubCategory(null);
-              }}
-              placeholder="Select Category"
-              isClearable
-              styles={{
-                container: (base) => ({
-                  ...base,
-                  height: "40px",
-                  marginTop: "0.25rem",
-                }),
-                control: (base) => ({ ...base, height: "40px" }),
-              }}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Sub Category
-            </label>
-            <AsyncSelect
-              key={formData.categoryId}
-              cacheOptions
-              defaultOptions
-              loadOptions={loadSubCategoryOptions}
-              value={selectedSubCategory}
-              onChange={(option) => {
-                setSelectedSubCategory(option);
-                setFormData((prev) => ({
-                  ...prev,
-                  subCategoryId: option?.value || "",
-                  subSubCategoryId: "",
-                }));
-                setSelectedSubSubCategory(null);
-              }}
-              placeholder="Select Sub Category"
-              isClearable
-              styles={{
-                container: (base) => ({
-                  ...base,
-                  height: "40px",
-                  marginTop: "0.25rem",
-                }),
-                control: (base) => ({ ...base, height: "40px" }),
-              }}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Sub Sub Category
-            </label>
-            <AsyncSelect
-              key={formData.subCategoryId}
-              cacheOptions
-              defaultOptions
-              loadOptions={loadSubSubCategoryOptions}
-              value={selectedSubSubCategory}
-              onChange={(option) => {
-                setSelectedSubSubCategory(option);
-                setFormData((prev) => ({
-                  ...prev,
-                  subSubCategoryId: option?.value || "",
-                }));
-              }}
-              placeholder="Select Sub Sub Category"
-              isClearable
-              styles={{
-                container: (base) => ({
-                  ...base,
-                  height: "40px",
-                  marginTop: "0.25rem",
-                }),
-                control: (base) => ({ ...base, height: "40px" }),
-              }}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Brand <span className="text-red-500">*</span>
-            </label>
-            <AsyncSelect
-              cacheOptions
-              defaultOptions
-              loadOptions={loadBrandOptions}
-              value={selectedBrand}
-              onChange={(option) => {
-                setSelectedBrand(option);
-                setFormData((prev) => ({
-                  ...prev,
-                  brandId: option?.value || "",
-                }));
-              }}
-              placeholder="Select Brand"
-              isClearable
-              styles={{
-                container: (base) => ({
-                  ...base,
-                  height: "40px",
-                  marginTop: "0.25rem",
-                }),
-                control: (base) => ({ ...base, height: "40px" }),
-              }}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Product SKU <span className="text-red-500">*</span>
-            </label>
-            <div className="relative mt-1 flex items-center gap-2">
+          <div className="flex flex-col gap-y-3">
+            <div className="flex flex-col gap-2">
+              <label htmlFor="title">
+                Product Name {`( ${currentLanguage === "en" ? "EN" : "BD"})`}{" "}
+                <span className="text-red-500">*</span>
+              </label>
               <input
-                type="text"
-                name="code"
-                className="w-full rounded-md border border-gray-300 p-2"
-                value={formData.code}
+                name="title"
+                placeholder="Title"
+                value={formData.title}
                 onChange={handleChange}
+                className="w-full rounded border p-2"
               />
-              <button
-                onClick={generateCode}
-                className="absolute right-0 top-0 whitespace-nowrap rounded bg-blue-100 p-0.5 text-xs text-blue-600"
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label htmlFor="title">
+                Description {`( ${currentLanguage === "en" ? "EN" : "BD"})`}{" "}
+                <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                name="short_description"
+                placeholder="Short Description"
+                value={formData.short_description}
+                onChange={handleChange}
+                className="w-full rounded border p-2"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* genereal info */}
+        <div className="mt-5 space-y-6 rounded-lg border bg-white p-6 shadow">
+          <h2 className="text-lg font-semibold">General setup</h2>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Category <span className="text-red-500">*</span>
+              </label>
+              <AsyncSelect
+                cacheOptions
+                defaultOptions
+                loadOptions={loadCategoryOptions}
+                value={selectedCategory}
+                onChange={(option) => {
+                  setSelectedCategory(option);
+                  setFormData((prev) => ({
+                    ...prev,
+                    categoryId: option?.value || "",
+                    subCategoryId: "", // reset
+                    subSubCategoryId: "", // reset
+                  }));
+                  setSelectedSubCategory(null);
+                  setSelectedSubSubCategory(null);
+                }}
+                placeholder="Select Category"
+                isClearable
+                styles={{
+                  container: (base) => ({
+                    ...base,
+                    height: "40px",
+                    marginTop: "0.25rem",
+                  }),
+                  control: (base) => ({ ...base, height: "40px" }),
+                }}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Sub Category
+              </label>
+              <AsyncSelect
+                key={formData.categoryId}
+                cacheOptions
+                defaultOptions
+                loadOptions={loadSubCategoryOptions}
+                value={selectedSubCategory}
+                onChange={(option) => {
+                  setSelectedSubCategory(option);
+                  setFormData((prev) => ({
+                    ...prev,
+                    subCategoryId: option?.value || "",
+                    subSubCategoryId: "",
+                  }));
+                  setSelectedSubSubCategory(null);
+                }}
+                placeholder="Select Sub Category"
+                isClearable
+                styles={{
+                  container: (base) => ({
+                    ...base,
+                    height: "40px",
+                    marginTop: "0.25rem",
+                  }),
+                  control: (base) => ({ ...base, height: "40px" }),
+                }}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Sub Sub Category
+              </label>
+              <AsyncSelect
+                key={formData.subCategoryId}
+                cacheOptions
+                defaultOptions
+                loadOptions={loadSubSubCategoryOptions}
+                value={selectedSubSubCategory}
+                onChange={(option) => {
+                  setSelectedSubSubCategory(option);
+                  setFormData((prev) => ({
+                    ...prev,
+                    subSubCategoryId: option?.value || "",
+                  }));
+                }}
+                placeholder="Select Sub Sub Category"
+                isClearable
+                styles={{
+                  container: (base) => ({
+                    ...base,
+                    height: "40px",
+                    marginTop: "0.25rem",
+                  }),
+                  control: (base) => ({ ...base, height: "40px" }),
+                }}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Brand <span className="text-red-500">*</span>
+              </label>
+              <AsyncSelect
+                cacheOptions
+                defaultOptions
+                loadOptions={loadBrandOptions}
+                value={selectedBrand}
+                onChange={(option) => {
+                  setSelectedBrand(option);
+                  setFormData((prev) => ({
+                    ...prev,
+                    brandId: option?.value || "",
+                  }));
+                }}
+                placeholder="Select Brand"
+                isClearable
+                styles={{
+                  container: (base) => ({
+                    ...base,
+                    height: "40px",
+                    marginTop: "0.25rem",
+                  }),
+                  control: (base) => ({ ...base, height: "40px" }),
+                }}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Product SKU <span className="text-red-500">*</span>
+              </label>
+              <div className="relative mt-1 flex items-center gap-2">
+                <input
+                  type="text"
+                  name="code"
+                  className="w-full rounded-md border border-gray-300 p-2"
+                  value={formData.code}
+                  onChange={handleChange}
+                />
+                <button
+                  onClick={generateCode}
+                  className="absolute right-0 top-0 whitespace-nowrap rounded bg-blue-100 p-0.5 text-xs text-blue-600"
+                >
+                  Generate code
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Unit <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="unit"
+                value={formData.unit}
+                onChange={handleChange}
+                className="mt-1 block w-full rounded-md border border-gray-300 p-2"
               >
-                Generate code
-              </button>
+                <option value="kg">KilloGram</option>
+                <option value="gm">Gram</option>
+                <option value="litre">Litre</option>
+                <option value="piece">Piece</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Product Status <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="available"
+                onChange={handleChange}
+                value={formData.available}
+                className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+              >
+                <option value="in-stock">In Stock</option>
+                <option value="pre-order">Pre Order</option>
+                <option value="online-order">Online Order</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Warranty
+              </label>
+              <select
+                name="warranty"
+                value={formData.warranty}
+                onChange={handleChange}
+                className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+              >
+                <option value="darkak">Darkak</option>
+                <option value="official">Official</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Warranty Time
+              </label>
+              <div className="relative mt-1 flex items-center gap-2">
+                <input
+                  type="text"
+                  name="warranty_time"
+                  className="w-full rounded-md border border-gray-300 p-2"
+                  value={formData.warranty_time}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Region
+              </label>
+              <select
+                name="region"
+                onChange={handleChange}
+                value={formData.region}
+                className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+              >
+                {countryCodes.map((country) => (
+                  <option key={country} value={country}>
+                    {country}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Unit <span className="text-red-500">*</span>
+            <label className="flex items-center gap-1 text-sm font-medium text-gray-700">
+              Search tags
+              <span className="text-red-500">*</span>
             </label>
-            <select
-              name="unit"
-              value={formData.unit}
+            <input
+              type="text"
+              name="keywords"
               onChange={handleChange}
+              value={formData.keywords}
               className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            >
-              <option value="kg">KilloGram</option>
-              <option value="gm">Gram</option>
-              <option value="litre">Litre</option>
-              <option value="piece">Piece</option>
-            </select>
+              placeholder="Enter tags"
+            />
           </div>
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Product Status <span className="text-red-500">*</span>
-            </label>
-            <select
-              name="available"
-              onChange={handleChange}
-              value={formData.available}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            >
-              <option value="in-stock">In Stock</option>
-              <option value="pre-order">Pre Order</option>
-              <option value="online-order">Online Order</option>
-            </select>
-          </div>
+        {/* delivery info */}
+        <div className="mt-5 space-y-6 rounded-lg border bg-white p-6 shadow">
+          <h2 className="text-lg font-semibold">Delivery setup</h2>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Warranty
-            </label>
-            <select
-              name="warranty"
-              value={formData.warranty}
-              onChange={handleChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            >
-              <option value="darkak">Darkak</option>
-              <option value="official">Official</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Warranty Time
-            </label>
-            <div className="relative mt-1 flex items-center gap-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Delivery Time <span className="text-red-500">*</span>
+              </label>
               <input
-                type="text"
-                name="warranty_time"
-                className="w-full rounded-md border border-gray-300 p-2"
-                value={formData.warranty_time}
-                onChange={handleChange}
+                name="delivery_time"
+                type="string"
+                value={formData.delivery_info.delivery_time}
+                onChange={handleDeliveryChange}
+                className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Delivery Charge <span className="text-red-500">*</span>
+              </label>
+              <input
+                name="delivery_charge"
+                type="number"
+                value={formData.delivery_info.delivery_charge}
+                onChange={handleDeliveryChange}
+                className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Delivery Time Outside <span className="text-red-500">*</span>
+              </label>
+              <input
+                name="delivery_time_outside"
+                type="string"
+                value={formData.delivery_info.delivery_time_outside}
+                onChange={handleDeliveryChange}
+                className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Delivery Charge Outside <span className="text-red-500">*</span>
+              </label>
+              <input
+                name="delivery_charge_outside"
+                type="number"
+                value={formData.delivery_info.delivery_charge_outside}
+                onChange={handleDeliveryChange}
+                className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Retrun Days <span className="text-red-500">*</span>
+              </label>
+              <input
+                name="return_days"
+                type="string"
+                value={formData.delivery_info.return_days}
+                onChange={handleDeliveryChange}
+                className="mt-1 block w-full rounded-md border border-gray-300 p-2"
               />
             </div>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Region
-            </label>
-            <select
-              name="region"
-              onChange={handleChange}
-              value={formData.region}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            >
-              {countryCodes.map((country) => (
-                <option key={country} value={country}>
-                  {country}
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
 
-        <div>
-          <label className="flex items-center gap-1 text-sm font-medium text-gray-700">
-            Search tags
-            <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            name="keywords"
-            onChange={handleChange}
-            value={formData.keywords}
-            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            placeholder="Enter tags"
-          />
-        </div>
-      </div>
+        {/* pricing and others */}
+        <div className="mt-5 space-y-6 rounded-lg border bg-white p-6 shadow">
+          <h2 className="text-lg font-semibold">Pricing & others</h2>
 
-      {/* delivery info */}
-      <div className="mt-5 space-y-6 rounded-lg border bg-white p-6 shadow">
-        <h2 className="text-lg font-semibold">Delivery setup</h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            <div>
+              <label className="text-sm font-medium text-gray-700">
+                Unit price <span className="text-red-500">*</span>{" "}
+              </label>
+              <input
+                name="price"
+                type="number"
+                placeholder="Unit price"
+                value={formData.price}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              />
+            </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Delivery Time <span className="text-red-500">*</span>
-            </label>
-            <input
-              name="delivery_time"
-              type="string"
-              value={formData.delivery_info.delivery_time}
-              onChange={handleDeliveryChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            />
+            <div>
+              <label className="text-sm font-medium text-gray-700">
+                Minimum order quantity
+              </label>
+              <input
+                type="number"
+                name="minOrder"
+                value={formData.minOrder}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700">
+                Current stock quantity
+              </label>
+              <input
+                name="stock"
+                value={getMainStock()}
+                type="number"
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+                disabled={formData.items.some(
+                  (item) => item.title?.toLowerCase() === "color",
+                )}
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700">
+                Discount Type
+              </label>
+              <select
+                name="discount_type"
+                value={formData.discount_type}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              >
+                <option value="flat">Flat</option>
+                <option value="percentage">Percentage</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700">
+                Discount amount
+              </label>
+              <input
+                name="discount"
+                value={formData.discount}
+                type="number"
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700">
+                Tax amount (%)
+              </label>
+              <input
+                type="number"
+                name="tax_amount"
+                value={formData.tax_amount}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700">
+                Tax Type
+              </label>
+              <select
+                name="tax_type"
+                value={formData.tax_type}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              >
+                <option value="include">Include with product</option>
+                <option value="exclude">Exclude from product</option>
+              </select>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Delivery Charge <span className="text-red-500">*</span>
-            </label>
-            <input
-              name="delivery_charge"
-              type="number"
-              value={formData.delivery_info.delivery_charge}
-              onChange={handleDeliveryChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Delivery Time Outside <span className="text-red-500">*</span>
-            </label>
-            <input
-              name="delivery_time_outside"
-              type="string"
-              value={formData.delivery_info.delivery_time_outside}
-              onChange={handleDeliveryChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Delivery Charge Outside <span className="text-red-500">*</span>
-            </label>
-            <input
-              name="delivery_charge_outside"
-              type="number"
-              value={formData.delivery_info.delivery_charge_outside}
-              onChange={handleDeliveryChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Retrun Days <span className="text-red-500">*</span>
-            </label>
-            <input
-              name="return_days"
-              type="string"
-              value={formData.delivery_info.return_days}
-              onChange={handleDeliveryChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* pricing and others */}
-      <div className="mt-5 space-y-6 rounded-lg border bg-white p-6 shadow">
-        <h2 className="text-lg font-semibold">Pricing & others</h2>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              Unit price <span className="text-red-500">*</span>{" "}
-            </label>
-            <input
-              name="price"
-              type="number"
-              placeholder="Unit price"
-              value={formData.price}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-md border p-2"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              Minimum order quantity
-            </label>
-            <input
-              type="number"
-              name="minOrder"
-              value={formData.minOrder}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-md border p-2"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              Current stock quantity
-            </label>
-            <input
-              name="stock"
-              value={getMainStock()}
-              type="number"
-              onChange={handleChange}
-              className="mt-1 w-full rounded-md border p-2"
-              disabled={formData.items.some(
-                (item) => item.title?.toLowerCase() === "color",
-              )}
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              Discount Type
-            </label>
-            <select
-              name="discount_type"
-              value={formData.discount_type}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-md border p-2"
-            >
-              <option value="flat">Flat</option>
-              <option value="percentage">Percentage</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              Discount amount
-            </label>
-            <input
-              name="discount"
-              value={formData.discount}
-              type="number"
-              onChange={handleChange}
-              className="mt-1 w-full rounded-md border p-2"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              Tax amount (%)
-            </label>
-            <input
-              type="number"
-              name="tax_amount"
-              value={formData.tax_amount}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-md border p-2"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              Tax Type
-            </label>
-            <select
-              name="tax_type"
-              value={formData.tax_type}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-md border p-2"
-            >
-              <option value="include">Include with product</option>
-              <option value="exclude">Exclude from product</option>
-            </select>
-          </div>
-        </div>
-
-        {/* <div>
+          {/* <div>
           <label className="flex items-center gap-1 text-sm font-medium text-gray-700">
             Shipping cost multiply with quantity
             <span className="text-gray-400">ⓘ</span>
@@ -1218,503 +1218,33 @@ export default function ProductForm() {
             </label>
           </div>
         </div> */}
-      </div>
-
-      {/* thumbnail and images */}
-      <div className="mt-5 flex flex-col gap-6 md:flex-row">
-        {/* Thumbnail Upload */}
-        <div className="flex-1 rounded-lg border bg-white p-4 shadow">
-          <label className="mb-1 block text-sm font-semibold text-gray-700">
-            Product thumbnail <span className="text-red-500">*</span>
-          </label>
-          <p className="mb-2 text-xs text-blue-600">Ratio 1:1 (500 x 500 px)</p>
-          <div className="relative flex h-32 items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
-            <input
-              type="file"
-              accept="image/*"
-              className="absolute inset-0 cursor-pointer opacity-0"
-              onChange={(e) => handleImageUpload(e, "thumbnail")}
-              style={{ zIndex: 1 }}
-            />
-            <div className="relative z-10 text-center text-sm text-gray-500">
-              {formData.thumbnail ? (
-                <div className="flex flex-row items-center gap-2">
-                  <Image
-                    className="rounded object-cover"
-                    src={formData.thumbnail}
-                    alt="thumbnail"
-                    width={150}
-                    height={150}
-                    priority
-                  />
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setFormData((prev) => ({ ...prev, thumbnail: "" }));
-                    }}
-                    className="mt-2 rounded bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600"
-                    style={{ zIndex: 20, position: "relative" }}
-                  >
-                    Remove
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <p className="text-blue-600">
-                    {thumbnailUploading ? (
-                      <p className="mt-3">Uploading...</p>
-                    ) : (
-                      <p>Click to Upload</p>
-                    )}
-                  </p>
-                </>
-              )}
-            </div>
-          </div>
         </div>
 
-        {/* Additional Images Upload */}
-        <div className="flex-[2] rounded-lg border bg-white p-4 shadow">
-          <label className="mb-1 block text-sm font-semibold text-gray-700">
-            Upload additional image
-          </label>
-          <p className="mb-2 text-xs text-blue-600">Ratio 1:1 (500 x 500 px)</p>
-          <p className="mb-2 text-sm text-gray-600">
-            Upload additional product images
-          </p>
-          <div className="relative flex h-32 cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              name="images"
-              className="absolute inset-0 cursor-pointer opacity-0"
-              onChange={(e) => handleImageUpload(e, "images")}
-            />
-            <div className="relative z-10 w-full text-center text-sm text-gray-500">
-              {formData.images.length > 0 ? (
-                <div className="flex flex-wrap justify-center gap-2">
-                  {formData.images.map((img, idx) => (
-                    <div key={idx} className="group relative">
-                      <Image
-                        src={img}
-                        alt={`Product image ${idx + 1}`}
-                        width={80}
-                        height={80}
-                        className="rounded border object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setFormData((prev) => ({
-                            ...prev,
-                            images: prev.images.filter((_, i) => i !== idx),
-                          }));
-                        }}
-                        className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white opacity-80 hover:opacity-100"
-                        style={{ zIndex: 10 }}
-                        title="Remove"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <>
-                  <p className="text-blue-600">
-                    {imagesUploading ? (
-                      <p className="mt-3">Uploading...</p>
-                    ) : (
-                      <p>Click to Upload</p>
-                    )}
-                  </p>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* product video */}
-      <div className="mt-5 space-y-6 rounded-lg border bg-white p-6 shadow">
-        <h2 className="text-lg font-semibold">Product Video</h2>
-
-        <div className="">
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              Youtube video link{" "}
-              <span className="text-blue-500">
-                (Optional please provide embed link not direct link.)
-              </span>
+        {/* thumbnail and images */}
+        <div className="mt-5 flex flex-col gap-6 md:flex-row">
+          {/* Thumbnail Upload */}
+          <div className="flex-1 rounded-lg border bg-white p-4 shadow">
+            <label className="mb-1 block text-sm font-semibold text-gray-700">
+              Product thumbnail <span className="text-red-500">*</span>
             </label>
-            <input
-              type="string"
-              name="video_link"
-              value={formData.video_link}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-md border p-2"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Product Attributes Section */}
-      <div className="mt-5 space-y-6 rounded-lg border bg-white p-6 shadow">
-        <h2 className="text-lg font-semibold">Product Attributes</h2>
-
-        {formData.items.map((attribute, attributeIndex) => (
-          <div key={attributeIndex} className="mb-4 border-b pb-4">
-            {/* Attribute Title */}
-            <div className="flex items-center gap-4">
-              <select
-                value={attribute.attributeId || ""}
-                onChange={(e) => {
-                  const selectedId = e.target.value;
-                  console.log(selectedId, "selectedid");
-
-                  const selectedAttr = attributesData?.data?.find(
-                    (a: any) => Number(a.id) === Number(selectedId),
-                  );
-                  console.log("Selected Attribute:", selectedAttr);
-
-                  // const selectedTitle = selectedAttr?.title || "";
-                  const selectedTitle = "";
-                  const updatedItems = [...formData.items];
-                  updatedItems[attributeIndex] = {
-                    ...updatedItems[attributeIndex],
-                    attributeId: selectedId,
-                    title: selectedTitle,
-                  };
-                  setFormData((prev) => ({ ...prev, items: updatedItems }));
-                }}
-                className="w-1/3 rounded-md border border-gray-300 p-2"
-              >
-                <option value="">Select Attribute</option>
-                {attributesData &&
-                  attributesData?.data?.map(
-                    (attribute: { id: string; title: string }) => (
-                      <option key={attribute.id} value={attribute.id}>
-                        {attribute?.title}
-                      </option>
-                    ),
-                  )}
-              </select>
-              <button
-                onClick={() => {
-                  const updatedItems = [...formData.items];
-                  updatedItems.splice(attributeIndex, 1);
-                  setFormData((prev) => ({ ...prev, items: updatedItems }));
-                }}
-                className="rounded bg-red-50 px-4 py-2 text-red-700 hover:bg-red-100"
-              >
-                Remove Attribute
-              </button>
-            </div>
-
-            {/* Attribute Options */}
-            {attribute.options.map((option, optionIndex) => (
-              <div
-                key={optionIndex}
-                className="mt-4 flex items-center gap-4 rounded-md border border-gray-3 p-2"
-              >
-                <div className="flex w-full flex-col gap-4">
-                  {/* title,price,stock */}
-                  <div className="flex items-center gap-4">
-                    <div className="flex w-full flex-col gap-1">
-                      <label htmlFor="option_title">Option Title</label>
-                      <input
-                        type="text"
-                        placeholder="Option Title"
-                        value={option.title}
-                        onChange={(e) => {
-                          const updatedItems = [...formData.items];
-                          updatedItems[attributeIndex].options[
-                            optionIndex
-                          ].title = e.target.value;
-                          setFormData((prev) => ({
-                            ...prev,
-                            items: updatedItems,
-                          }));
-                        }}
-                        className="w-full rounded-md border border-gray-300 p-2"
-                      />
-                    </div>
-
-                    <div className="flex w-full flex-col gap-1">
-                      <label htmlFor="option_price">Price</label>
-                      <input
-                        type="number"
-                        placeholder="Price"
-                        value={option.price}
-                        onChange={(e) => {
-                          const updatedItems = [...formData.items];
-                          updatedItems[attributeIndex].options[
-                            optionIndex
-                          ].price = parseFloat(e.target.value);
-                          setFormData((prev) => ({
-                            ...prev,
-                            items: updatedItems,
-                          }));
-                        }}
-                        className="w-full rounded-md border border-gray-300 p-2"
-                      />
-                    </div>
-
-                    <div className="flex w-full flex-col gap-1">
-                      <label htmlFor="stock">Stock</label>
-                      <input
-                        type="number"
-                        placeholder="stock"
-                        value={option.stock}
-                        onChange={(e) => {
-                          const updatedItems = [...formData.items];
-                          updatedItems[attributeIndex].options[
-                            optionIndex
-                          ].stock = parseFloat(e.target.value);
-                          setFormData((prev) => ({
-                            ...prev,
-                            items: updatedItems,
-                          }));
-                        }}
-                        className="w-full rounded-md border border-gray-300 p-2"
-                      />
-                    </div>
-                    <div className="flex w-full flex-col gap-1">
-                      <label htmlFor="item_sku">Code</label>
-                      <input
-                        type="string"
-                        placeholder="sku"
-                        value={option.sku}
-                        onChange={(e) => {
-                          const updatedItems = [...formData.items];
-                          updatedItems[attributeIndex].options[
-                            optionIndex
-                          ].sku = e.target.value;
-                          setFormData((prev) => ({
-                            ...prev,
-                            items: updatedItems,
-                          }));
-                        }}
-                        className="w-full rounded-md border border-gray-300 p-2"
-                      />
-                    </div>
-                  </div>
-                  {/*  image */}
-                  <div className="flex items-center gap-4">
-                    <div className="flex w-full flex-col gap-1">
-                      <label htmlFor="option_image">Option Image</label>
-                      <div className="relative flex h-20 w-full items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="absolute inset-0 cursor-pointer opacity-0"
-                          onChange={(e) =>
-                            handleImageUpload(
-                              e,
-                              "option_image",
-                              attributeIndex,
-                              optionIndex,
-                            )
-                          }
-                          style={{ zIndex: 1 }}
-                        />
-                        <div className="relative z-10 text-center text-sm text-gray-500">
-                          {option.image ? (
-                            <div className="flex flex-row items-center gap-1">
-                              <Image
-                                className="rounded object-cover"
-                                src={option.image}
-                                alt="option"
-                                width={60}
-                                height={60}
-                              />
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  const updatedItems = [...formData.items];
-                                  updatedItems[attributeIndex].options[
-                                    optionIndex
-                                  ].image = "";
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    items: updatedItems,
-                                  }));
-                                }}
-                                className="mt-1 rounded bg-red-500 px-2 py-0.5 text-xs text-white hover:bg-red-600"
-                                style={{ zIndex: 20, position: "relative" }}
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          ) : (
-                            <>
-                              <p className="text-blue-600">
-                                {optionImageUploading ? (
-                                  <p className="mt-3">Uploading...</p>
-                                ) : (
-                                  <p>Click to Upload</p>
-                                )}
-                              </p>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => {
-                    const updatedItems = [...formData.items];
-                    updatedItems[attributeIndex].options.splice(optionIndex, 1);
-                    setFormData((prev) => ({ ...prev, items: updatedItems }));
-                  }}
-                  className=""
-                >
-                  <FaTrashAlt className="text-xl text-red-600 hover:text-red-500" />
-                </button>
-              </div>
-            ))}
-
-            {/* Add Option Button */}
-            <button
-              onClick={() => {
-                const updatedItems = [...formData.items];
-                updatedItems[attributeIndex].options.push({
-                  title: "",
-                  price: 0,
-                  stock: 1,
-                });
-                setFormData((prev) => ({ ...prev, items: updatedItems }));
-              }}
-              className="mt-4 rounded border border-blue-700 bg-blue-50 px-4 py-2 text-blue-700 hover:bg-blue-100"
-            >
-              Add Option
-            </button>
-          </div>
-        ))}
-
-        {/* Add Attribute Button */}
-        <button
-          onClick={() => {
-            setFormData((prev) => ({
-              ...prev,
-              items: [
-                ...prev.items,
-                {
-                  attributeId: "", // <-- always present!
-                  title: "",
-                  options: [],
-                },
-              ],
-            }));
-          }}
-          className="rounded border-2 border-green-500 bg-green-50 px-4 py-2 text-green-700 hover:bg-green-100"
-        >
-          Add Attribute
-        </button>
-      </div>
-
-      {/* meta section */}
-      <div className="mt-5 space-y-6 rounded-lg border bg-white p-6 shadow">
-        <h2 className="text-lg font-semibold">Meta Section</h2>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              Meta Title <span className="text-red-500">*</span>
-            </label>
-            <input
-              name="meta_title"
-              type="text"
-              value={formData.meta_title}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-md border p-2"
-              maxLength={70}
-            />
-            <div className="mt-1 flex items-center justify-between">
-              <span className="text-xs text-gray-500">
-                Title should be between 50-60 characters.
-              </span>
-              <span
-                className={`text-xs font-semibold ${
-                  formData.meta_title.length < 50 ||
-                  formData.meta_title.length > 60
-                    ? "text-red-500"
-                    : "text-green-600"
-                }`}
-              >
-                {formData.meta_title.length} chars
-              </span>
-            </div>
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              Meta Keywords <span className="text-red-500">*</span>
-            </label>
-            <input
-              name="meta_keywords"
-              type="string"
-              value={formData.meta_keywords}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-md border p-2"
-            />
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              Meta Description <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              rows={4}
-              name="meta_description"
-              value={formData.meta_description}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-md border p-2"
-              maxLength={180}
-            />
-            <div className="mt-1 flex items-center justify-between">
-              <span className="text-xs text-gray-500">
-                Description should be between 150-160 characters.
-              </span>
-              <span
-                className={`text-xs font-semibold ${
-                  formData.meta_description.length < 150 ||
-                  formData.meta_description.length > 160
-                    ? "text-red-500"
-                    : "text-green-600"
-                }`}
-              >
-                {formData.meta_description.length} chars
-              </span>
-            </div>
-          </div>
-          <div className="flex-1 rounded-lg">
-            <label className="mb-2 inline text-sm font-semibold text-gray-700">
-              Meta Image <span className="text-red-500">*</span>
-            </label>
-            <p className="mb-2 inline text-xs text-blue-600">
+            <p className="mb-2 text-xs text-blue-600">
               Ratio 1:1 (500 x 500 px)
             </p>
-            <div className="relative mt-1 flex h-32 cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
+            <div className="relative flex h-32 items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
               <input
                 type="file"
                 accept="image/*"
-                name="meta_image"
                 className="absolute inset-0 cursor-pointer opacity-0"
-                onChange={(e) => handleImageUpload(e, "meta_image")}
+                onChange={(e) => handleImageUpload(e, "thumbnail")}
+                style={{ zIndex: 1 }}
               />
               <div className="relative z-10 text-center text-sm text-gray-500">
-                {formData.meta_image ? (
+                {formData.thumbnail ? (
                   <div className="flex flex-row items-center gap-2">
                     <Image
                       className="rounded object-cover"
-                      src={formData.meta_image}
-                      alt="meta_image"
+                      src={formData.thumbnail}
+                      alt="thumbnail"
                       width={150}
                       height={150}
                       priority
@@ -1723,7 +1253,7 @@ export default function ProductForm() {
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setFormData((prev) => ({ ...prev, meta_image: "" }));
+                        setFormData((prev) => ({ ...prev, thumbnail: "" }));
                       }}
                       className="mt-2 rounded bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600"
                       style={{ zIndex: 20, position: "relative" }}
@@ -1734,7 +1264,72 @@ export default function ProductForm() {
                 ) : (
                   <>
                     <p className="text-blue-600">
-                      {metaImageUploading ? (
+                      {thumbnailUploading ? (
+                        <p className="mt-3">Uploading...</p>
+                      ) : (
+                        <p>Click to Upload</p>
+                      )}
+                    </p>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Images Upload */}
+          <div className="flex-[2] rounded-lg border bg-white p-4 shadow">
+            <label className="mb-1 block text-sm font-semibold text-gray-700">
+              Upload additional image
+            </label>
+            <p className="mb-2 text-xs text-blue-600">
+              Ratio 1:1 (500 x 500 px)
+            </p>
+            <p className="mb-2 text-sm text-gray-600">
+              Upload additional product images
+            </p>
+            <div className="relative flex h-32 cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                name="images"
+                className="absolute inset-0 cursor-pointer opacity-0"
+                onChange={(e) => handleImageUpload(e, "images")}
+              />
+              <div className="relative z-10 w-full text-center text-sm text-gray-500">
+                {formData.images.length > 0 ? (
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {formData.images.map((img, idx) => (
+                      <div key={idx} className="group relative">
+                        <Image
+                          src={img}
+                          alt={`Product image ${idx + 1}`}
+                          width={80}
+                          height={80}
+                          className="rounded border object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setFormData((prev) => ({
+                              ...prev,
+                              images: prev.images.filter((_, i) => i !== idx),
+                            }));
+                          }}
+                          className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white opacity-80 hover:opacity-100"
+                          style={{ zIndex: 10 }}
+                          title="Remove"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-blue-600">
+                      {imagesUploading ? (
                         <p className="mt-3">Uploading...</p>
                       ) : (
                         <p>Click to Upload</p>
@@ -1746,116 +1341,529 @@ export default function ProductForm() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* desc, specification and warraties */}
-      <div className="mt-5 rounded-lg border bg-white p-6">
-        {/* tabs */}
-        <div>
-          <span
-            onClick={() => setCurrentTab("desc")}
-            className={`cursor-pointer rounded px-6 py-2 ${currentTab === "desc" && "border-2 border-blue"}`}
-          >
-            Description
-          </span>
-          <span
-            onClick={() => setCurrentTab("spec")}
-            className={`cursor-pointer rounded px-6 py-2 ${currentTab === "spec" && "border-2 border-blue"}`}
-          >
-            Specifications
-          </span>
-          <span
-            onClick={() => setCurrentTab("warrn")}
-            className={`cursor-pointer rounded px-6 py-2 ${currentTab === "warrn" && "border-2 border-blue"}`}
-          >
-            Warranties
-          </span>
+        {/* product video */}
+        <div className="mt-5 space-y-6 rounded-lg border bg-white p-6 shadow">
+          <h2 className="text-lg font-semibold">Product Video</h2>
+
+          <div className="">
+            <div>
+              <label className="text-sm font-medium text-gray-700">
+                Youtube video link{" "}
+                <span className="text-blue-500">
+                  (Optional please provide embed link not direct link.)
+                </span>
+              </label>
+              <input
+                type="string"
+                name="video_link"
+                value={formData.video_link}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              />
+            </div>
+          </div>
         </div>
 
-        {/* content */}
+        {/* Product Attributes Section */}
+        <div className="mt-5 space-y-6 rounded-lg border bg-white p-6 shadow">
+          <h2 className="text-lg font-semibold">Product Attributes</h2>
 
-        <div className="mt-5">
-          {currentTab === "desc" ? (
-            <div className="flex flex-col gap-2">
-              <label htmlFor="description">
-                Description
-                {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+          {formData.items.map((attribute, attributeIndex) => (
+            <div key={attributeIndex} className="mb-4 border-b pb-4">
+              {/* Attribute Title */}
+              <div className="flex items-center gap-4">
+                <select
+                  value={attribute.attributeId || ""}
+                  onChange={(e) => {
+                    const selectedId = e.target.value;
+                    console.log(selectedId, "selectedid");
+
+                    const selectedAttr = attributesData?.data?.find(
+                      (a: any) => Number(a.id) === Number(selectedId),
+                    );
+                    console.log("Selected Attribute:", selectedAttr);
+
+                    // const selectedTitle = selectedAttr?.title || "";
+                    const selectedTitle = "";
+                    const updatedItems = [...formData.items];
+                    updatedItems[attributeIndex] = {
+                      ...updatedItems[attributeIndex],
+                      attributeId: selectedId,
+                      title: selectedTitle,
+                    };
+                    setFormData((prev) => ({ ...prev, items: updatedItems }));
+                  }}
+                  className="w-1/3 rounded-md border border-gray-300 p-2"
+                >
+                  <option value="">Select Attribute</option>
+                  {attributesData &&
+                    attributesData?.data?.map(
+                      (attribute: { id: string; title: string }) => (
+                        <option key={attribute.id} value={attribute.id}>
+                          {attribute?.title}
+                        </option>
+                      ),
+                    )}
+                </select>
+                <button
+                  onClick={() => {
+                    const updatedItems = [...formData.items];
+                    updatedItems.splice(attributeIndex, 1);
+                    setFormData((prev) => ({ ...prev, items: updatedItems }));
+                  }}
+                  className="rounded bg-red-50 px-4 py-2 text-red-700 hover:bg-red-100"
+                >
+                  Remove Attribute
+                </button>
+              </div>
+
+              {/* Attribute Options */}
+              {attribute.options.map((option, optionIndex) => (
+                <div
+                  key={optionIndex}
+                  className="mt-4 flex items-center gap-4 rounded-md border border-gray-3 p-2"
+                >
+                  <div className="flex w-full flex-col gap-4">
+                    {/* title,price,stock */}
+                    <div className="flex items-center gap-4">
+                      <div className="flex w-full flex-col gap-1">
+                        <label htmlFor="option_title">Option Title</label>
+                        <input
+                          type="text"
+                          placeholder="Option Title"
+                          value={option.title}
+                          onChange={(e) => {
+                            const updatedItems = [...formData.items];
+                            updatedItems[attributeIndex].options[
+                              optionIndex
+                            ].title = e.target.value;
+                            setFormData((prev) => ({
+                              ...prev,
+                              items: updatedItems,
+                            }));
+                          }}
+                          className="w-full rounded-md border border-gray-300 p-2"
+                        />
+                      </div>
+
+                      <div className="flex w-full flex-col gap-1">
+                        <label htmlFor="option_price">Price</label>
+                        <input
+                          type="number"
+                          placeholder="Price"
+                          value={option.price}
+                          onChange={(e) => {
+                            const updatedItems = [...formData.items];
+                            updatedItems[attributeIndex].options[
+                              optionIndex
+                            ].price = parseFloat(e.target.value);
+                            setFormData((prev) => ({
+                              ...prev,
+                              items: updatedItems,
+                            }));
+                          }}
+                          className="w-full rounded-md border border-gray-300 p-2"
+                        />
+                      </div>
+
+                      <div className="flex w-full flex-col gap-1">
+                        <label htmlFor="stock">Stock</label>
+                        <input
+                          type="number"
+                          placeholder="stock"
+                          value={option.stock}
+                          onChange={(e) => {
+                            const updatedItems = [...formData.items];
+                            updatedItems[attributeIndex].options[
+                              optionIndex
+                            ].stock = parseFloat(e.target.value);
+                            setFormData((prev) => ({
+                              ...prev,
+                              items: updatedItems,
+                            }));
+                          }}
+                          className="w-full rounded-md border border-gray-300 p-2"
+                        />
+                      </div>
+                      <div className="flex w-full flex-col gap-1">
+                        <label htmlFor="item_sku">Code</label>
+                        <input
+                          type="string"
+                          placeholder="sku"
+                          value={option.sku}
+                          onChange={(e) => {
+                            const updatedItems = [...formData.items];
+                            updatedItems[attributeIndex].options[
+                              optionIndex
+                            ].sku = e.target.value;
+                            setFormData((prev) => ({
+                              ...prev,
+                              items: updatedItems,
+                            }));
+                          }}
+                          className="w-full rounded-md border border-gray-300 p-2"
+                        />
+                      </div>
+                    </div>
+                    {/*  image */}
+                    <div className="flex items-center gap-4">
+                      <div className="flex w-full flex-col gap-1">
+                        <label htmlFor="option_image">Option Image</label>
+                        <div className="relative flex h-20 w-full items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="absolute inset-0 cursor-pointer opacity-0"
+                            onChange={(e) =>
+                              handleImageUpload(
+                                e,
+                                "option_image",
+                                attributeIndex,
+                                optionIndex,
+                              )
+                            }
+                            style={{ zIndex: 1 }}
+                          />
+                          <div className="relative z-10 text-center text-sm text-gray-500">
+                            {option.image ? (
+                              <div className="flex flex-row items-center gap-1">
+                                <Image
+                                  className="rounded object-cover"
+                                  src={option.image}
+                                  alt="option"
+                                  width={60}
+                                  height={60}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    const updatedItems = [...formData.items];
+                                    updatedItems[attributeIndex].options[
+                                      optionIndex
+                                    ].image = "";
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      items: updatedItems,
+                                    }));
+                                  }}
+                                  className="mt-1 rounded bg-red-500 px-2 py-0.5 text-xs text-white hover:bg-red-600"
+                                  style={{ zIndex: 20, position: "relative" }}
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            ) : (
+                              <>
+                                <p className="text-blue-600">
+                                  {optionImageUploading ? (
+                                    <p className="mt-3">Uploading...</p>
+                                  ) : (
+                                    <p>Click to Upload</p>
+                                  )}
+                                </p>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      const updatedItems = [...formData.items];
+                      updatedItems[attributeIndex].options.splice(
+                        optionIndex,
+                        1,
+                      );
+                      setFormData((prev) => ({ ...prev, items: updatedItems }));
+                    }}
+                    className=""
+                  >
+                    <FaTrashAlt className="text-xl text-red-600 hover:text-red-500" />
+                  </button>
+                </div>
+              ))}
+
+              {/* Add Option Button */}
+              <button
+                onClick={() => {
+                  const updatedItems = [...formData.items];
+                  updatedItems[attributeIndex].options.push({
+                    title: "",
+                    price: 0,
+                    stock: 1,
+                  });
+                  setFormData((prev) => ({ ...prev, items: updatedItems }));
+                }}
+                className="mt-4 rounded border border-blue-700 bg-blue-50 px-4 py-2 text-blue-700 hover:bg-blue-100"
+              >
+                Add Option
+              </button>
+            </div>
+          ))}
+
+          {/* Add Attribute Button */}
+          <button
+            onClick={() => {
+              setFormData((prev) => ({
+                ...prev,
+                items: [
+                  ...prev.items,
+                  {
+                    attributeId: "", // <-- always present!
+                    title: "",
+                    options: [],
+                  },
+                ],
+              }));
+            }}
+            className="rounded border-2 border-green-500 bg-green-50 px-4 py-2 text-green-700 hover:bg-green-100"
+          >
+            Add Attribute
+          </button>
+        </div>
+
+        {/* meta section */}
+        <div className="mt-5 space-y-6 rounded-lg border bg-white p-6 shadow">
+          <h2 className="text-lg font-semibold">Meta Section</h2>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+              <label className="text-sm font-medium text-gray-700">
+                Meta Title <span className="text-red-500">*</span>
               </label>
-              <CustomEditor
-                key={currentTab}
-                value={formData.description}
-                onChange={handleEditorChange("description")}
+              <input
+                name="meta_title"
+                type="text"
+                value={formData.meta_title}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+                maxLength={70}
+              />
+              <div className="mt-1 flex items-center justify-between">
+                <span className="text-xs text-gray-500">
+                  Title should be between 50-60 characters.
+                </span>
+                <span
+                  className={`text-xs font-semibold ${
+                    formData.meta_title.length < 50 ||
+                    formData.meta_title.length > 60
+                      ? "text-red-500"
+                      : "text-green-600"
+                  }`}
+                >
+                  {formData.meta_title.length} chars
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700">
+                Meta Keywords <span className="text-red-500">*</span>
+              </label>
+              <input
+                name="meta_keywords"
+                type="string"
+                value={formData.meta_keywords}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
               />
             </div>
-          ) : currentTab === "spec" ? (
-            <div className="flex flex-col gap-2">
-              <label htmlFor="specification">
-                Specification
-                {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+            <div>
+              <label className="text-sm font-medium text-gray-700">
+                Meta Description <span className="text-red-500">*</span>
               </label>
-              <CustomEditor
-                key={currentTab}
-                value={formData.specification}
-                onChange={handleEditorChange("specification")}
+              <textarea
+                rows={4}
+                name="meta_description"
+                value={formData.meta_description}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+                maxLength={180}
               />
+              <div className="mt-1 flex items-center justify-between">
+                <span className="text-xs text-gray-500">
+                  Description should be between 150-160 characters.
+                </span>
+                <span
+                  className={`text-xs font-semibold ${
+                    formData.meta_description.length < 150 ||
+                    formData.meta_description.length > 160
+                      ? "text-red-500"
+                      : "text-green-600"
+                  }`}
+                >
+                  {formData.meta_description.length} chars
+                </span>
+              </div>
             </div>
-          ) : (
-            <div className="flex flex-col gap-2">
-              <label htmlFor="warranty_details">
-                Warranty details
-                {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+            <div className="flex-1 rounded-lg">
+              <label className="mb-2 inline text-sm font-semibold text-gray-700">
+                Meta Image <span className="text-red-500">*</span>
               </label>
-              <CustomEditor
-                key={currentTab}
-                value={formData.warranty_details}
-                onChange={handleEditorChange("warranty_details")}
-              />
+              <p className="mb-2 inline text-xs text-blue-600">
+                Ratio 1:1 (500 x 500 px)
+              </p>
+              <div className="relative mt-1 flex h-32 cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
+                <input
+                  type="file"
+                  accept="image/*"
+                  name="meta_image"
+                  className="absolute inset-0 cursor-pointer opacity-0"
+                  onChange={(e) => handleImageUpload(e, "meta_image")}
+                />
+                <div className="relative z-10 text-center text-sm text-gray-500">
+                  {formData.meta_image ? (
+                    <div className="flex flex-row items-center gap-2">
+                      <Image
+                        className="rounded object-cover"
+                        src={formData.meta_image}
+                        alt="meta_image"
+                        width={150}
+                        height={150}
+                        priority
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setFormData((prev) => ({ ...prev, meta_image: "" }));
+                        }}
+                        className="mt-2 rounded bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600"
+                        style={{ zIndex: 20, position: "relative" }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-blue-600">
+                        {metaImageUploading ? (
+                          <p className="mt-3">Uploading...</p>
+                        ) : (
+                          <p>Click to Upload</p>
+                        )}
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
-          )}
+          </div>
+        </div>
+
+        {/* desc, specification and warraties */}
+        <div className="mt-5 rounded-lg border bg-white p-6">
+          {/* tabs */}
+          <div>
+            <span
+              onClick={() => setCurrentTab("desc")}
+              className={`cursor-pointer rounded px-6 py-2 ${currentTab === "desc" && "border-2 border-blue"}`}
+            >
+              Description
+            </span>
+            <span
+              onClick={() => setCurrentTab("spec")}
+              className={`cursor-pointer rounded px-6 py-2 ${currentTab === "spec" && "border-2 border-blue"}`}
+            >
+              Specifications
+            </span>
+            <span
+              onClick={() => setCurrentTab("warrn")}
+              className={`cursor-pointer rounded px-6 py-2 ${currentTab === "warrn" && "border-2 border-blue"}`}
+            >
+              Warranties
+            </span>
+          </div>
+
+          {/* content */}
+
+          <div className="mt-5">
+            {currentTab === "desc" ? (
+              <div className="flex flex-col gap-2">
+                <label htmlFor="description">
+                  Description
+                  {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+                </label>
+                <CustomEditor
+                  key={currentTab}
+                  value={formData.description}
+                  onChange={handleEditorChange("description")}
+                />
+              </div>
+            ) : currentTab === "spec" ? (
+              <div className="flex flex-col gap-2">
+                <label htmlFor="specification">
+                  Specification
+                  {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+                </label>
+                <CustomEditor
+                  key={currentTab}
+                  value={formData.specification}
+                  onChange={handleEditorChange("specification")}
+                />
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                <label htmlFor="warranty_details">
+                  Warranty details
+                  {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+                </label>
+                <CustomEditor
+                  key={currentTab}
+                  value={formData.warranty_details}
+                  onChange={handleEditorChange("warranty_details")}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-5 flex items-center justify-end gap-3">
+          <button
+            type="button"
+            onClick={() => handleSubmit(true)}
+            className="rounded bg-yellow-600 px-4 py-2 text-white shadow"
+            disabled={
+              imagesUploading ||
+              metaImageUploading ||
+              thumbnailUploading ||
+              optionImageUploading
+            }
+          >
+            Draft
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSubmit(false)}
+            className="rounded bg-blue-600 px-4 py-2 text-white shadow"
+            disabled={
+              imagesUploading ||
+              metaImageUploading ||
+              thumbnailUploading ||
+              optionImageUploading
+            }
+          >
+            Publish
+          </button>
+          <button
+            type="button"
+            // onClick={handleSubmit}
+            className="cursor-not-allowed rounded bg-teal-600 px-4 py-2 text-white shadow"
+            disabled={
+              imagesUploading ||
+              metaImageUploading ||
+              thumbnailUploading ||
+              optionImageUploading
+            }
+          >
+            Schedule
+          </button>
         </div>
       </div>
-
-      <div className="mt-5 flex items-center justify-end gap-3">
-        <button
-          type="button"
-          onClick={() => handleSubmit(true)}
-          className="rounded bg-yellow-600 px-4 py-2 text-white shadow"
-          disabled={
-            imagesUploading ||
-            metaImageUploading ||
-            thumbnailUploading ||
-            optionImageUploading
-          }
-        >
-          Draft
-        </button>
-        <button
-          type="button"
-          onClick={() => handleSubmit(false)}
-          className="rounded bg-blue-600 px-4 py-2 text-white shadow"
-          disabled={
-            imagesUploading ||
-            metaImageUploading ||
-            thumbnailUploading ||
-            optionImageUploading
-          }
-        >
-          Publish
-        </button>
-        <button
-          type="button"
-          // onClick={handleSubmit}
-          className="cursor-not-allowed rounded bg-teal-600 px-4 py-2 text-white shadow"
-          disabled={
-            imagesUploading ||
-            metaImageUploading ||
-            thumbnailUploading ||
-            optionImageUploading
-          }
-        >
-          Schedule
-        </button>
-      </div>
-    </div>
+    </RequireAccess>
   );
 }
