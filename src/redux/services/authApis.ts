@@ -16,6 +16,16 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
       }),
     }),
+    moderatorLogin: builder.mutation<
+      AuthResponse,
+      { email: string; password: string }
+    >({
+      query: (data) => ({
+        url: "/auth/moderator-login",
+        body: data,
+        method: "POST",
+      }),
+    }),
     emailRegistration: builder.mutation<
       AuthResponse,
       { email: string; password: string; name: string }
@@ -69,6 +79,7 @@ export const authApi = baseApi.injectEndpoints({
 export const {
   useGetUserQuery,
   useEmailLoginMutation,
+  useModeratorLoginMutation,
   useEmailRegistrationMutation,
   useVerifyEmailOTPMutation,
   usePasswordResetMailMutation,

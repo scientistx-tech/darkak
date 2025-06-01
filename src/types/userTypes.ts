@@ -7,6 +7,11 @@ export interface Address {
   userId: number;
 }
 
+export interface ModeratorAccess {
+  id: number;
+  moderatorId: number;
+  access: string;
+}
 export interface User {
   id: string;
   name: string;
@@ -30,7 +35,8 @@ export interface User {
   address: Address | null;
 }
 
-  export interface AuthResponse {
-    user: User;
-    token: string;
-  }
+export interface AuthResponse {
+  user: User;
+  token: string;
+  moderator_access?: ModeratorAccess[];
+}

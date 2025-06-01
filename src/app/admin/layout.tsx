@@ -8,12 +8,9 @@ import AdminPrivateLayout from "@/components/Layouts/AdminPrivateLayout";
 
 export const metadata: Metadata = {
   title: {
-    
     template: "%s | Darkak-Dashboard",
     default: "Darkak-Dashboard",
   },
-  description:
-    "Next.js admin dashboard toolkit with 200+ templates, UI components, and integrations for fast dashboard development.",
 };
 
 export default function RootLayout({ children }: PropsWithChildren) {

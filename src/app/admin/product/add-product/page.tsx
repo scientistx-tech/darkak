@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { FaTrashAlt } from "react-icons/fa";
 import AsyncSelect from "react-select/async";
 import { useSelector } from "react-redux";
+import { useAccess } from "@/hooks/use-access";
 
 const CustomEditor = dynamic(
   () => import("@/app/admin/components/CustomEditor"),
@@ -713,6 +714,10 @@ export default function ProductForm() {
     // If no Color attribute, do nothing (stock input is used)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(formData.items)]);
+
+  const canAddProduct = useAccess("product-add");
+
+  console.log(canAddProduct, "access can");
 
   return (
     <div className="mx-auto w-full">

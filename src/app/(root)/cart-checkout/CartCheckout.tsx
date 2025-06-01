@@ -24,6 +24,7 @@ import {
 } from "@/redux/services/client/checkout";
 import { setCart } from "@/redux/slices/authSlice";
 import { BD_Division, BD_District } from "@/Data/addressData";
+import { useCheckCouponCodeMutation } from "@/redux/services/client/applyCoupon";
 
 const initialProducts = [
   {
@@ -64,12 +65,16 @@ const CartCheckout: React.FC = () => {
   const [area, setArea] = useState("");
   const [agree, setAgree] = useState(true);
   const [checkoutItems, setCheckoutItems] = useState<any>([]);
+  const [couponCode, setCouponCode] = useState<string>("");
+  const [couponDiscount, setCouponDiscount] = useState<any>({});
+
   const [deleteCart] = useDeleteCartMutation();
   const [api, contextHolder] = notification.useNotification();
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useDispatch();
   const [cartUpdate] = useUpdateCartMutation();
+  const [applyCoupon] = useCheckCouponCodeMutation();
 
   const user = useSelector((state: RootState) => state.auth.user);
 
@@ -106,49 +111,6 @@ const CartCheckout: React.FC = () => {
     }
   }, [pathname]);
 
-  const handleConfirm = () => {
-    console.log("Form Submitted:");
-    console.log("Full Name:", fullName);
-    console.log("Phone or Email:", phone);
-    console.log("Address:", address);
-    console.log("Payment Method:", paymentMethod);
-    console.log("Agreed to Terms:", agree);
-
-    if (!fullName || !phone || !address) {
-      api.warning({
-        message: "Warning",
-        description: "Please fill in all required fields.",
-      });
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (phone.includes("@") && !emailRegex.test(phone)) {
-      api.error({
-        message: "Invalid Email",
-        description: "Please enter a valid email address.",
-      });
-      return;
-    }
-
-    if (!agree) {
-      api.warning({
-        message: "Agreement Required",
-        description: "Please accept the terms and conditions.",
-      });
-      return;
-    }
-
-    api.success({
-      message: "Success",
-      description: "Your order has been confirmed.",
-    });
-
-    setTimeout(() => {
-      router.push("/checkout-done");
-    }, 1000);
-  };
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
 
@@ -168,8 +130,6 @@ const CartCheckout: React.FC = () => {
     setIsModalOpen2(false);
   };
   // For right side
-
-  const [products, setProducts] = useState(initialProducts);
 
   const updateQuantity = (id: number, type: "inc" | "dec") => {
     console.log("id", id, "type", type);
@@ -248,6 +208,41 @@ const CartCheckout: React.FC = () => {
           divisionOptions.find((div) => div.name === division)?.id,
       )
     : [];
+
+  const handleApplyCoupon = async () => {
+    const visitorId = localStorage.getItem("visitorId");
+    const productIds = checkoutItems.map((item: any) => item.productId);
+
+    const payload: {
+      total: number;
+      userId?: number;
+      productIds: number[];
+      visitorId: string;
+    } = {
+      total: subtotal,
+      productIds: productIds,
+      visitorId: visitorId || "saa-adas-as",
+    };
+
+    if (user && user?.id) {
+      payload.userId = Number(user?.id);
+    }
+
+    console.log("payload ofr coupon", payload);
+
+    try {
+      const res = await applyCoupon({
+        code: couponCode,
+        data: payload,
+      }).unwrap();
+      toast.success(res?.message || "Coupon Applied");
+      setCouponDiscount(res?.coupon);
+    } catch (error: any) {
+      toast.error(error?.data?.message);
+    }
+  };
+
+  console.log("coupon", couponDiscount);
 
   return (
     <div className="px-2 py-6 md:container md:mx-auto md:px-4 xl:px-6">
@@ -556,10 +551,22 @@ const CartCheckout: React.FC = () => {
             </div>
           ))}
 
-          <div className="mt-3 flex items-center gap-2">
-            <Input placeholder="Coupon Code" className="flex-1" />
-            <Button type="primary">Apply</Button>
-          </div>
+          {couponDiscount?.id ? (
+            <p className="animate-bounce py-3 text-right font-bold text-teal-400">
+              Coupon Applied
+            </p>
+          ) : (
+            <div className="mt-3 flex items-center gap-2">
+              <Input
+                onChange={(e) => setCouponCode(e.target.value)}
+                placeholder="Coupon Code"
+                className="flex-1"
+              />
+              <Button onClick={handleApplyCoupon} type="primary">
+                Apply
+              </Button>
+            </div>
+          )}
 
           <div className="mt-5 space-y-1 text-sm">
             <div className="flex justify-between">
@@ -570,9 +577,23 @@ const CartCheckout: React.FC = () => {
               <span>Delivery Charge</span>
               <span>will be added</span>
             </div>
+            {couponDiscount?.id && (
+              <div className="flex justify-between text-primaryBlue">
+                <span>Coupon Discount</span>
+                <span>{`-${couponDiscount?.discount_type === "flat" ? "Tk" : ""} ${couponDiscount?.discount_amount}${couponDiscount?.discount_type === "percentage" ? "%" : ""} `}</span>
+              </div>
+            )}
             <div className="flex justify-between text-lg font-semibold text-black">
               <span>Total</span>
-              <span>BDT {subtotal}</span>
+              <span>
+                BDT{" "}
+                {couponDiscount?.id
+                  ? couponDiscount?.discount_type === "flat"
+                    ? subtotal - couponDiscount?.discount_amount
+                    : subtotal -
+                      subtotal * (couponDiscount?.discount_amount / 100)
+                  : subtotal}
+              </span>
             </div>
           </div>
         </div>

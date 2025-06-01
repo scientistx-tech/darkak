@@ -1,5 +1,8 @@
 import { useCreateDeliveryMutation } from "@/redux/services/admin/adminCourierApis";
-import { useCreateModeratorMutation } from "@/redux/services/admin/adminModeratorApis";
+import {
+  useCreateModeratorMutation,
+  useUpdateModeratorAccessMutation,
+} from "@/redux/services/admin/adminModeratorApis";
 import { useUpdateOrderStatusMutation } from "@/redux/services/admin/adminOrderApis";
 import { Modal } from "antd";
 import { EmailAuthCredential } from "firebase/auth";
@@ -39,10 +42,23 @@ const AddModeratorModal = ({
   openAddModeratorModal,
   setOpenAddModeratorCourierModal,
   refetch,
+  isEditable,
+  setIsEditable,
 }: {
   openAddModeratorModal: boolean;
   setOpenAddModeratorCourierModal: (value: boolean) => void;
   refetch: () => void;
+  isEditable: {
+    status: boolean;
+    value: { id: number; moderator_access: { access: string }[] };
+  };
+  setIsEditable: ({
+    status,
+    value,
+  }: {
+    status: boolean;
+    value: { id: number; moderator_access: { access: string }[] };
+  }) => void;
 }) => {
   const [fullName, setFullName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -52,25 +68,47 @@ const AddModeratorModal = ({
     useState<boolean>(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  console.log("able", isEditable);
+
   // redux hooks
   const [createModerator] = useCreateModeratorMutation();
+  const [updateModeratorAccess] = useUpdateModeratorAccessMutation();
+
+  useEffect(() => {
+    const filteredList = Array.isArray(isEditable?.value?.moderator_access)
+      ? isEditable.value.moderator_access.map((access: any) => access.access)
+      : [];
+    setSelectedAccessList(filteredList);
+
+    console.log("fil", filteredList);
+  }, [isEditable]);
 
   const handleAddModeratorModalOk = async () => {
-    // Validation
-
     setConfirmAddModeratorLoading(true);
 
-    // Prepare payload
-    const payload = {
-      name: fullName,
-      email: email,
-      password,
-      accessList: selectedAccessList,
-    };
-
     try {
-      const res = await createModerator(payload).unwrap();
-      toast.success(res?.message || "Successfully Created Moderator");
+      if (isEditable?.status) {
+        // Prepare payload
+        const payload = {
+          accessList: selectedAccessList,
+        };
+        const id = isEditable?.status && isEditable?.value?.id;
+        const res = await updateModeratorAccess({
+          id: Number(id),
+          data: payload,
+        }).unwrap();
+        toast.success(res?.message || "Successfully Update Moderator Access");
+      } else {
+        // Prepare payload
+        const payload = {
+          name: fullName,
+          email: email,
+          password,
+          accessList: selectedAccessList,
+        };
+        const res = await createModerator(payload).unwrap();
+        toast.success(res?.message || "Successfully Created Moderator");
+      }
       refetch();
     } catch (error: any) {
       toast.error(error?.data?.message);
@@ -86,62 +124,67 @@ const AddModeratorModal = ({
 
   return (
     <Modal
-      title={`Add New Moderator`}
+      title={`${isEditable?.status ? "Edit" : "Add New"} Moderator ${isEditable?.status ? "Access" : ""}`}
       open={openAddModeratorModal}
       onOk={handleAddModeratorModalOk}
       confirmLoading={confirmAddModeratorLoading}
       onCancel={handleAddModeratorModalCancel}
     >
       <div className="space-y-4">
-        <div>
-          <label className="mb-1 block text-sm font-medium text-slate-900">
-            Name
-          </label>
-          <input
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="w-full rounded border p-2 text-slate-900"
-            type="text"
-            name=""
-            id=""
-          />
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-slate-900">
-            Email
-          </label>
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded border p-2 text-slate-900"
-            type="email"
-            name=""
-            id=""
-          />
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-slate-900">
-            Password
-          </label>
-          <div className="relative">
-            <input
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded border p-2 pr-10 text-slate-900"
-              type={showPassword ? "text" : "password"}
-              name=""
-              id=""
-            />
-            <button
-              type="button"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-xl text-gray-500"
-              onClick={() => setShowPassword((prev) => !prev)}
-              tabIndex={-1}
-            >
-              {showPassword ? <FiEyeOff /> : <FiEye />}
-            </button>
-          </div>
-        </div>
+        {!isEditable?.status && (
+          <>
+            {" "}
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-900">
+                Name
+              </label>
+              <input
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full rounded border p-2 text-slate-900"
+                type="text"
+                name=""
+                id=""
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-900">
+                Email
+              </label>
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded border p-2 text-slate-900"
+                type="email"
+                name=""
+                id=""
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-900">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full rounded border p-2 pr-10 text-slate-900"
+                  type={showPassword ? "text" : "password"}
+                  name=""
+                  id=""
+                />
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-xl text-gray-500"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  tabIndex={-1}
+                >
+                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                </button>
+              </div>
+            </div>
+          </>
+        )}
 
         <div>
           <label className="mb-1 block text-sm font-medium text-slate-900">

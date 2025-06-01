@@ -22,6 +22,13 @@ import { toast } from "react-toastify";
 const Page = () => {
   const [openAddModeratorModal, setOpenAddModeratorCourierModal] =
     useState(false);
+  const [isEditable, setIsEditable] = useState<{
+    status: boolean;
+    value: { id: number; moderator_access: { access: string }[] };
+  }>({
+    status: false,
+    value: { id: 0, moderator_access: [{ access: "" }] },
+  });
   const router = useRouter();
 
   const {
@@ -97,7 +104,7 @@ const Page = () => {
                         {doc?.moderator_access?.map(
                           (access: any, idx: number) => (
                             <p
-                              className="mt-0.5 inline rounded bg-red-50 px-2 py-0.5 text-red-600"
+                              className="mt-0.5 inline rounded px-2 py-0.5 text-red-600"
                               key={access?.access || idx}
                             >
                               {access?.access}
@@ -135,6 +142,16 @@ const Page = () => {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={async () => {
+                            setOpenAddModeratorCourierModal(true);
+                            setIsEditable({ status: true, value: doc });
+                          }}
+                          // disabled={isDeleting}
+                          className="text-blue-600 hover:underline"
+                        >
+                          Update
+                        </button>
+                        <button
+                          onClick={async () => {
                             await deleteModerator(doc.id)
                               .unwrap()
                               .then(() => {
@@ -163,6 +180,8 @@ const Page = () => {
         openAddModeratorModal={openAddModeratorModal}
         setOpenAddModeratorCourierModal={setOpenAddModeratorCourierModal}
         refetch={refetch}
+        isEditable={isEditable}
+        setIsEditable={setIsEditable}
       />
     </div>
   );

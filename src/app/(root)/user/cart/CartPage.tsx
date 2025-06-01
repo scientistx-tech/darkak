@@ -300,7 +300,7 @@ const CartPage: React.FC = () => {
           </div>
 
           {/* Coupon / Voucher */}
-          <div className="mt-5 flex w-full flex-col justify-between gap-2 rounded-md bg-[#F6F9FF] px-6 py-2 md:flex-row">
+          {/* <div className="mt-5 flex w-full flex-col justify-between gap-2 rounded-md bg-[#F6F9FF] px-6 py-2 md:flex-row">
             <div className="flex w-full rounded-full bg-[#E6EFFF] md:w-[40%]">
               <input
                 placeholder="Promo/Coupon"
@@ -325,7 +325,7 @@ const CartPage: React.FC = () => {
                 Apply Voucher
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Buttons */}
           <div className="mb-10 mt-16 flex w-full items-center justify-between">
@@ -337,7 +337,7 @@ const CartPage: React.FC = () => {
             </button>
 
             <button
-              className="rounded-full bg-blue-950 px-6 py-2 text-white"
+              className="rounded-full bg-blue-950 px-6 py-2 text-white transition-all duration-300 ease-in hover:bg-blue-600"
               onClick={() => {
                 localStorage.setItem(
                   "checkout_items",

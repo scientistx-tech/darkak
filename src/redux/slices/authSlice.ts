@@ -1,6 +1,5 @@
 // slices/authSlice.ts
-import { AdminLoginResponse } from "@/types/apiTypes";
-import { AuthResponse, User } from "@/types/userTypes";
+import { AuthResponse, User, ModeratorAccess } from "@/types/userTypes";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 
@@ -9,11 +8,13 @@ interface AuthState {
   token: string | undefined;
   cart: number;
   wish: number;
+  accessList: string[];
 }
 
 const initialState: AuthState = {
   user: null,
   token: Cookies.get("token"),
+  accessList: [],
   cart: 0,
   wish: 0,
 };
@@ -25,11 +26,17 @@ const authSlice = createSlice({
     clearUser: (state) => {
       state.user = null;
       state.token = undefined;
+      state.accessList = [];
       Cookies.remove("token");
     },
     setUser: (state, action: PayloadAction<AuthResponse>) => {
+      const accessList =
+        action.payload.moderator_access?.map((item) => item.access) || [];
+
       state.user = action.payload.user;
       state.token = action.payload.token;
+      state.accessList = accessList;
+
       Cookies.set("token", action.payload.token, { expires: 30 });
     },
     updateUser: (state, action: PayloadAction<User>) => {

@@ -12,7 +12,7 @@ export const ImageInput: React.FC<{
   };
 
   return (
-    <div className="flex flex-col space-y-2">
+    <div className="ImageInput flex flex-col space-y-2">
       <label className="text-sm font-medium text-black dark:text-white">
         {label}
       </label>
