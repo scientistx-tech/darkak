@@ -9,7 +9,7 @@ export const categoryApi = baseApi.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
         } catch (error) {
-          console.error("Error fetching categories:", error);
+          console.log("Error fetching categories:", error);
         }
       },
     }),

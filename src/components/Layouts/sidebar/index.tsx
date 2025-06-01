@@ -9,11 +9,14 @@ import { NAV_DATA } from "./data";
 import { ArrowLeftIcon, ChevronUp } from "./icons";
 import { MenuItem } from "./menu-item";
 import { useSidebarContext } from "./sidebar-context";
+import { useFilteredNavData } from "./data";
+import { useSelector } from "react-redux";
 
 export function Sidebar() {
   const pathname = usePathname();
   const { setIsOpen, isOpen, isMobile, toggleSidebar } = useSidebarContext();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const user = useSelector((state: any) => state.auth.user);
 
   const toggleExpanded = (title: string) => {
     setExpandedItems((prev) => (prev.includes(title) ? [] : [title]));
@@ -40,6 +43,15 @@ export function Sidebar() {
     //   });
     // });
   }, [pathname, expandedItems]);
+
+  const filteredNavs = useFilteredNavData();
+
+  let FinalNavs = [];
+  if (user?.isModerator) {
+    FinalNavs = filteredNavs;
+  } else {
+    FinalNavs = NAV_DATA;
+  }
 
   return (
     <>
@@ -86,7 +98,7 @@ export function Sidebar() {
 
           {/* Navigation */}
           <div className="custom-scrollbar mt-6 flex-1 overflow-y-auto pr-3 min-[850px]:mt-10">
-            {NAV_DATA.map((section) => (
+            {FinalNavs.map((section: any) => (
               <div key={section.label} className="mb-6">
                 <h2 className="mb-5 text-sm font-medium text-dark-4 dark:text-dark-6">
                   {section.label}
@@ -94,7 +106,7 @@ export function Sidebar() {
 
                 <nav role="navigation" aria-label={section.label}>
                   <ul className="space-y-2">
-                    {section.items?.map((item) => (
+                    {section.items?.map((item: any) => (
                       <li key={item.title}>
                         {"items" in item &&
                         Array.isArray(item.items) &&
@@ -102,7 +114,7 @@ export function Sidebar() {
                           <div>
                             <MenuItem
                               isActive={item.items.some(
-                                ({ url }) => url === pathname,
+                                ({ url }: any) => url === pathname,
                               )}
                               onClick={() => toggleExpanded(item.title)}
                             >
@@ -128,7 +140,7 @@ export function Sidebar() {
                                 className="ml-9 mr-0 space-y-1.5 pb-[15px] pr-0 pt-2"
                                 role="menu"
                               >
-                                {item.items.map((subItem) => (
+                                {item.items.map((subItem: any) => (
                                   <li
                                     key={subItem.title}
                                     role="none"

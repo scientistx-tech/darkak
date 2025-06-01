@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useOrderSingleProductMutation } from "@/redux/services/client/checkout";
 import { BD_Division, BD_District } from "@/Data/addressData";
+import { useCheckCouponCodeMutation } from "@/redux/services/client/applyCoupon";
 
 const EasyCheckout: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "online">("cash");
@@ -26,6 +27,8 @@ const EasyCheckout: React.FC = () => {
   const [area, setArea] = useState("");
   const [agree, setAgree] = useState(true);
   const [checkoutItems, setCheckoutItems] = useState<any>([]);
+  const [couponCode, setCouponCode] = useState<string>("");
+  const [couponDiscount, setCouponDiscount] = useState<any>({});
 
   const [api, contextHolder] = notification.useNotification();
   const router = useRouter();
@@ -41,12 +44,9 @@ const EasyCheckout: React.FC = () => {
     }
   }, [user]);
 
-  // console.log("user", user);
-
-  const { data, isLoading, isError, refetch } = useGetMyCartQuery();
   const [createOrder] = useOrderSingleProductMutation();
+  const [applyCoupon] = useCheckCouponCodeMutation();
 
-  // ✅ Load checkout_items from localStorage when component mounts
   useEffect(() => {
     const storedItems = localStorage.getItem("checkout_items");
     console.log("stored items", storedItems);
@@ -54,10 +54,9 @@ const EasyCheckout: React.FC = () => {
     if (storedItems) {
       setCheckoutItems(JSON.parse(storedItems));
     } else {
-      router.push("/cart"); // redirect if nothing in storage
+      router.push("/cart");
     }
 
-    // ✅ Clear on browser unload
     const handleBeforeUnload = () => {
       localStorage.removeItem("checkout_items");
     };
@@ -68,9 +67,7 @@ const EasyCheckout: React.FC = () => {
     };
   }, [router]);
 
-  // ✅ Clear on route change (SPA navigation)
   useEffect(() => {
-    // When pathname changes, check and clear localStorage if needed
     if (!pathname.includes("checkout")) {
       localStorage.removeItem("checkout_items");
     }
@@ -161,6 +158,38 @@ const EasyCheckout: React.FC = () => {
           divisionOptions.find((div) => div.name === division)?.id,
       )
     : [];
+
+  const handleApplyCoupon = async () => {
+    const visitorId = localStorage.getItem("visitorId");
+
+    const payload: {
+      total: number;
+      userId?: number;
+      productIds: number[];
+      visitorId: string;
+    } = {
+      total: subtotal,
+      productIds: [checkoutItems[0].productId],
+      visitorId: visitorId || "saa-adas-as",
+    };
+
+    if (user && user?.id) {
+      payload.userId = Number(user?.id);
+    }
+
+    console.log("payload ofr coupon", payload);
+
+    try {
+      const res = await applyCoupon({
+        code: couponCode,
+        data: payload,
+      }).unwrap();
+      toast.success(res?.message || "Coupon Applied");
+      setCouponDiscount(res?.coupon);
+    } catch (error: any) {
+      toast.error(error?.data?.message);
+    }
+  };
 
   return (
     <div className="px-2 py-6 md:container md:mx-auto md:px-4 xl:px-6">
@@ -468,10 +497,22 @@ const EasyCheckout: React.FC = () => {
             </div>
           ))}
 
-          <div className="mt-3 flex items-center gap-2">
-            <Input placeholder="Coupon Code" className="flex-1" />
-            <Button type="primary">Apply</Button>
-          </div>
+          {couponDiscount?.id ? (
+            <p className="animate-bounce py-3 text-right font-bold text-teal-400">
+              Coupon Applied
+            </p>
+          ) : (
+            <div className="mt-3 flex items-center gap-2">
+              <Input
+                onChange={(e) => setCouponCode(e.target.value)}
+                placeholder="Coupon Code"
+                className="flex-1"
+              />
+              <Button onClick={handleApplyCoupon} type="primary">
+                Apply
+              </Button>
+            </div>
+          )}
 
           <div className="mt-5 space-y-1 text-sm">
             <div className="flex justify-between">
@@ -482,9 +523,23 @@ const EasyCheckout: React.FC = () => {
               <span>Delivery Charge</span>
               <span>will be added</span>
             </div>
+            {couponDiscount?.id && (
+              <div className="flex justify-between text-primaryBlue">
+                <span>Coupon Discount</span>
+                <span>{`-${couponDiscount?.discount_type === "flat" ? "Tk" : ""} ${couponDiscount?.discount_amount}${couponDiscount?.discount_type === "percentage" ? "%" : ""} `}</span>
+              </div>
+            )}
             <div className="flex justify-between text-lg font-semibold text-black">
               <span>Total</span>
-              <span>BDT {subtotal}</span>
+              <span>
+                BDT{" "}
+                {couponDiscount?.id
+                  ? couponDiscount?.discount_type === "flat"
+                    ? subtotal - couponDiscount?.discount_amount
+                    : subtotal -
+                      subtotal * (couponDiscount?.discount_amount / 100)
+                  : subtotal}
+              </span>
             </div>
           </div>
         </div>

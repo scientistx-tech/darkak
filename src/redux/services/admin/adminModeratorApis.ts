@@ -31,6 +31,14 @@ export const adminModeratorApi = baseApi.injectEndpoints({
       }),
     }),
 
+    updateModeratorAccess: builder.mutation<any, any>({
+      query: ({ id, data }) => ({
+        url: `/admin/moderator/update-access/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
+
     createModerator: builder.mutation<any, any>({
       query: (data) => ({
         url: `/admin/moderator/create`,
@@ -45,5 +53,6 @@ export const {
   useDeleteModeratorMutation,
   useGetAllModeratorQuery,
   useUpdateModeratorStatusMutation,
+  useUpdateModeratorAccessMutation,
   useCreateModeratorMutation,
 } = adminModeratorApi;

@@ -1,36 +1,38 @@
 "use client";
-// components/PrivateLayout.tsx
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { usePathname, useRouter } from "next/navigation";
 import { getLocalStorage, setLocalStorage } from "@/utils/localStorage";
 
 interface PrivateLayoutProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
 const AdminPrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
-    const user = useSelector((state: RootState) => state.auth.user);
-    const router = useRouter();
-    const pathname = usePathname();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const router = useRouter();
+  const pathname = usePathname();
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
     setLocalStorage("path", pathname);
-// console.log(user);
 
+    // If user not logged in yet
+    if (!user) return;
 
-    useEffect(() => {
-        if (!user?.isAdmin) {
-            router.replace("/auth/login");
-        } else {
-            router.replace(getLocalStorage("path") || "/admin");
-        }
-    }, [user, router]); // Runs when admin state changes
-
-    if (!user) {
-        return null; // Prevent rendering before redirect
+    // If user is either admin or moderator, allow access
+    if (user?.isAdmin || user?.isModerator) {
+      setChecked(true); // allow rendering children
+    } else {
+      router.replace("/auth/login");
     }
+  }, [user, router, pathname]);
 
-    return <div>{children}</div>;
+  // Prevent premature rendering
+  if (!checked) return null;
+
+  return <>{children}</>;
 };
 
 export default AdminPrivateLayout;

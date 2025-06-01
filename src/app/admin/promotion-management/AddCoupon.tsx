@@ -160,7 +160,6 @@ const AddCoupon = ({
       title: formData.title,
       code: formData.code,
       bearer: formData.bearer === "admin" ? "admin" : "seller",
-      userIds: formData.customer,
       limit: formData.limit,
       discount_type: formData.discountType,
       discount_amount: formData.discountAmount
@@ -170,6 +169,10 @@ const AddCoupon = ({
       start_date: formData.startDate,
       end_date: formData.endDate,
     };
+
+    if (formData.customer.length > 0) {
+      payload.userIds = formData.customer;
+    }
 
     if (formData.bearer === "vendor") {
       payload.sellerId = formData.vendor;
@@ -182,10 +185,9 @@ const AddCoupon = ({
       payload.subSubCategoryId = formData.subSubCategoryId;
     }
 
+    console.log("payload", payload);
     try {
       if (isEditable.status) {
-        console.log("payload", payload);
-
         const res = await updateCoupon(payload).unwrap();
         toast.success(res?.message || "Successfully Updated Cupon");
       } else {
@@ -328,7 +330,7 @@ const AddCoupon = ({
               className="w-full rounded border p-2"
               value="" // prevent it from sticking to a value
             >
-              <option value="">Select customer</option>
+              <option value="">All</option>
               {customersData?.data?.map((c: any) => (
                 <option key={c?.id} value={c?.id}>
                   {c?.name}
@@ -501,7 +503,9 @@ const AddCoupon = ({
         <div className="">
           <h2 className="text-lg font-medium">Affected Customer List</h2>
           {formData.customer.length <= 0 ? (
-            <p className="mt-3 font-medium">No one selected yet</p>
+            <p className="mt-3 font-medium">
+              Coupon will applicable for all customers.
+            </p>
           ) : (
             <div className="mt-2 flex flex-wrap gap-2">
               {formData.customer.map((id) => {

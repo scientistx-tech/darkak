@@ -21,12 +21,14 @@ export const NAV_DATA = [
       {
         title: "Dashboard",
         icon: Icons.HomeIcon,
+        // accessKey: "dashboard",
         url: "/admin",
         items: [],
       },
       {
         title: "POS",
         icon: GiPostOffice,
+        // accessKey: "pos",
         url: "/admin/POS",
         items: [],
       },
@@ -37,77 +39,96 @@ export const NAV_DATA = [
     items: [
       {
         title: "Orders",
+        // accessKey: "orders",
         icon: IoMdCart,
         items: [
           {
             title: "All",
             url: "/admin/orders/all",
+            accessKey: "order-all",
             values: { vive: "positive", value: 111 },
           },
           {
             title: "Pending",
             url: "/admin/orders/pending",
+            accessKey: "order-pending",
             values: { vive: "positive", value: 55 },
           },
           {
             title: "Confirm",
             url: "/admin/orders/confirmed",
+            accessKey: "order-confirm",
             values: { vive: "neutral-1", value: 12 },
           },
           {
             title: "Packaging",
             url: "/admin/orders/packaging",
+            accessKey: "order-packaging",
             values: { vive: "neutral-2", value: 5 },
           },
           {
             title: "Out For Delivery",
             url: "/admin/orders/out-for-delivery",
+            accessKey: "order-out-for-delivery",
             values: { vive: "neutral-2", value: 20 },
           },
           {
             title: "Delivered",
             url: "/admin/orders/delivered",
+            accessKey: "order-delivered",
             values: { vive: "neutral-1", value: 65 },
           },
           {
             title: "Returned",
             url: "/admin/orders/returned",
+            accessKey: "order-returned",
             values: { vive: "negetive", value: 31 },
           },
           {
             title: "Failled To Deliver",
             url: "/admin/orders/failled-to-deliver",
+            accessKey: "order-failed-to-deliver",
             values: { vive: "negetive", value: 23 },
           },
           {
             title: "Canceled",
             url: "/admin/orders/cancelled",
+            accessKey: "order-cancelled",
+
             values: { vive: "negetive", value: 19 },
           },
         ],
       },
       {
         title: "Refund Request",
+        // accessKey: "refund-request",
         icon: GiTakeMyMoney,
         items: [
           {
             title: "Pending",
             url: "/admin/refund-request/pending",
+            accessKey: "refund-pending",
             values: { vive: "positive", value: 111 },
           },
           {
             title: "Approved",
             url: "/admin/refund-request/approved",
+            accessKey: "refund-approved",
+
             values: { vive: "positive", value: 55 },
           },
           {
             title: "Refunded",
             url: "/admin/refund-request/refunded",
+            accessKey: "refund-refunded",
+
             values: { vive: "neutral-1", value: 12 },
           },
           {
             title: "Rejected",
             url: "/admin/refund-request/rejected",
+            accessKey: "refund-rejected",
+
             values: { vive: "neutral-2", value: 5 },
           },
         ],
@@ -123,14 +144,17 @@ export const NAV_DATA = [
         items: [
           {
             title: "Categories",
+            accessKey: "category",
             url: "/admin/category/categories",
           },
           {
             title: "Sub Categories",
+            accessKey: "sub-category",
             url: "/admin/category/sub-categories",
           },
           {
             title: "Sub Sub Categories",
+            accessKey: "sub-sub-category",
             url: "/admin/category/sub-sub-categories",
           },
         ],
@@ -138,6 +162,7 @@ export const NAV_DATA = [
       {
         title: "Brand",
         icon: BsTornado,
+        accessKey: "brand",
         items: [
           {
             title: "Add New",
@@ -153,6 +178,7 @@ export const NAV_DATA = [
         title: "Product Attribute Setup",
         icon: TbBinaryTree2Filled,
         url: "/admin/product-attributes",
+        accessKey: "attribute",
         items: [],
       },
       {
@@ -161,18 +187,24 @@ export const NAV_DATA = [
         items: [
           {
             title: "Product List",
+            accessKey: "product-list",
+
             url: "/admin/product/product-list",
           },
           {
             title: "Add Product",
+            accessKey: "product-add",
+
             url: "/admin/product/add-product",
           },
           {
             title: "Bulk Import",
+            accessKey: "bulk-product",
             url: "/admin/product/bulk-import",
           },
           {
             title: "Request Restock List",
+            accessKey: "restock-product",
             url: "/admin/product/request-restock-list",
           },
         ],
@@ -180,12 +212,12 @@ export const NAV_DATA = [
       {
         title: "Slider Adds",
         url: "/admin/slider",
+        accessKey: "sliders",
         icon: BiSlider,
         items: [],
       },
     ],
   },
-
   {
     label: "User Management",
     items: [
@@ -195,58 +227,65 @@ export const NAV_DATA = [
         items: [
           {
             title: "Customer List",
+            accessKey: "customer-list",
             url: "/admin/customers/customer-list",
           },
           {
             title: "Customer Reviews",
+            accessKey: "customer-review",
             url: "/admin/customers/customer-reviews",
           },
-          {
-            title: "Wallet",
-            url: "/admin/customers/wallet",
-          },
-          {
-            title: "Wallet Bonus Setup",
-            url: "/admin/customers/wallet-bonus-setup",
-          },
-          {
-            title: "Loyality Points",
-            url: "/admin/customers/loyality-points",
-          },
+          // {
+          //   title: "Wallet",
+          //   url: "/admin/customers/wallet",
+          // },
+          // {
+          //   title: "Wallet Bonus Setup",
+          //   url: "/admin/customers/wallet-bonus-setup",
+          // },
+          // {
+          //   title: "Loyality Points",
+          //   url: "/admin/customers/loyality-points",
+          // },
         ],
       },
       {
         title: "Vendors",
         icon: GrVend,
+        // accessKey: "vendor",
         items: [
           {
             title: "Add New Vendor",
+            accessKey: "add-vendor",
             url: "/admin/vendors/add-new-vendor",
           },
           {
             title: "Vendor List",
+            accessKey: "vendor-list",
             url: "/admin/vendors/vendor-list",
           },
-          {
-            title: "Withdraws",
-            url: "/admin/vendors/withdraws",
-          },
-          {
-            title: "Withdrawal Methods",
-            url: "/admin/vendors/withdrawal-methods",
-          },
+          // {
+          //   title: "Withdraws",
+          //   url: "/admin/vendors/withdraws",
+          // },
+          // {
+          //   title: "Withdrawal Methods",
+          //   url: "/admin/vendors/withdrawal-methods",
+          // },
         ],
       },
 
       {
         title: "Subscribers",
         icon: PiUserSoundFill,
+        accessKey: "subscriber",
         url: "/admin/subscribers",
         items: [],
       },
       {
         title: "Moderator",
         icon: MdAddModerator,
+        accessKey: "moderator",
         url: "/admin/moderator",
       },
     ],
@@ -255,18 +294,19 @@ export const NAV_DATA = [
     label: "Promotion Management",
     items: [
       {
-        title: "Cupon",
+        title: "Coupon",
+        accessKey: "coupon",
         icon: BiSolidOffer,
         url: "/admin/promotion-management/cupon",
       },
     ],
   },
-
   {
     label: "OTHERS",
     items: [
       {
         title: "Settings",
+        accessKey: "settings",
         icon: MdOutlineSettings,
         items: [
           {
@@ -277,9 +317,50 @@ export const NAV_DATA = [
       },
       {
         title: "Analytics",
+        accessKey: "analytics",
         icon: IoAnalytics,
         url: "/admin/analytics",
       },
     ],
   },
 ];
+
+import { useSelector } from "react-redux";
+
+export const useFilteredNavData = () => {
+  const moderatorAccess = useSelector(
+    (state: any) => state.auth.user?.moderator_access || [],
+  );
+
+  console.log("moderator access", moderatorAccess);
+
+  const accessKeys = moderatorAccess.map((a: any) => a.access);
+
+  const filterItems = (items: any[]): any[] => {
+    return items
+      .map((item) => {
+        const hasAccess =
+          !item.accessKey || accessKeys.includes(item.accessKey);
+
+        if (item.items && item.items.length > 0) {
+          const filteredChildren = filterItems(item.items);
+
+          if (filteredChildren.length === 0) {
+            return null;
+          }
+          return hasAccess ? { ...item, items: filteredChildren } : null;
+        }
+        return hasAccess ? item : null;
+      })
+      .filter(Boolean);
+  };
+
+  const filteredNav = NAV_DATA.map((section) => {
+    const filteredItems = filterItems(section.items);
+    return filteredItems.length > 0
+      ? { ...section, items: filteredItems }
+      : null;
+  }).filter(Boolean);
+
+  return filteredNav;
+};

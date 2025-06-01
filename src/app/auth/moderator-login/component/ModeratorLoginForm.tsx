@@ -7,18 +7,19 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { AppDispatch, RootState } from "@/redux/store";
 import { setLocalStorage } from "@/utils/localStorage";
-import InputField from "../signup/components/InputField";
-import SocialButton from "../signup/components/SocialButton";
-import { useEmailLoginMutation } from "@/redux/services/authApis";
+
+import { useModeratorLoginMutation } from "@/redux/services/authApis";
 import { toast } from "react-toastify";
 import { setUser } from "@/redux/slices/authSlice";
+import InputField from "../../signup/components/InputField";
+import SocialButton from "../../signup/components/SocialButton";
 
-const LoginPage: React.FC = () => {
+const ModeratorLoginForm: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const [login, { isLoading }] = useEmailLoginMutation();
+  const [login, { isLoading }] = useModeratorLoginMutation();
   const user = useSelector((state: RootState) => state.auth.user);
   const router = useRouter();
   const pathname = usePathname();
@@ -36,11 +37,11 @@ const LoginPage: React.FC = () => {
     });
   }
 
+  console.log("user mode", user);
+
   useEffect(() => {
     if (!user) return;
-    if (user?.isAdmin) {
-      router.replace("/admin");
-    } else if (user?.isSeller) {
+    if (user.isModerator) {
       router.replace("/admin");
     } else {
       // optionally handle non-moderators
@@ -57,7 +58,7 @@ const LoginPage: React.FC = () => {
     try {
       const res = await login({ email, password }).unwrap();
       dispatch(setUser(res));
-      toast.success("Login successful!");
+      toast.success("Moderator Login successful!");
       let visitorId = localStorage.getItem("visitorId");
       if (!visitorId) {
         visitorId = generateVisitorId();
@@ -127,41 +128,9 @@ const LoginPage: React.FC = () => {
         >
           {isLoading ? "Logging in..." : "Login"}
         </button>
-
-        <div className="mt-4 text-center text-sm text-gray-600">
-          Don&apos;t have an account?
-          <Link
-            href="/auth/signup"
-            className="ml-1 text-[#5694FF] underline hover:text-[#003084]"
-          >
-            Register Now
-          </Link>
-        </div>
-
-        <div className="mt-6 text-center text-sm">
-          <div className="mb-3 flex items-center justify-between">
-            <div className="h-[1px] w-[45%] bg-gray-200" />
-            <p className="text-xs text-gray-400">OR</p>
-            <div className="h-[1px] w-[45%] bg-gray-200" />
-          </div>
-          <div className="flex flex-col gap-1">
-            <Link
-              href="/"
-              className="font-medium text-[#5694FF] underline hover:text-[#003084]"
-            >
-              Continue as a Guest
-            </Link>
-            <Link
-              href="/auth/moderator-login"
-              className="font-medium text-[#5694FF] underline hover:text-[#003084]"
-            >
-              Moderator Login
-            </Link>
-          </div>
-        </div>
       </motion.div>
     </div>
   );
 };
 
-export default LoginPage;
+export default ModeratorLoginForm;
