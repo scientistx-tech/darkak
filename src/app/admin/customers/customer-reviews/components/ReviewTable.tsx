@@ -36,6 +36,7 @@ interface ReviewTableProps {
   isLoading: boolean;
   error: FetchBaseQueryError;
   refetch: () => void;
+  setSearchTerm: (value: string) => void;
 }
 
 export const ReviewTable: React.FC<ReviewTableProps> = ({
@@ -43,6 +44,7 @@ export const ReviewTable: React.FC<ReviewTableProps> = ({
   isLoading,
   error,
   refetch,
+  setSearchTerm,
 }) => {
   const [changeReviewStatus] = useChangeCustomerReviewStatusMutation();
   return (
@@ -53,6 +55,7 @@ export const ReviewTable: React.FC<ReviewTableProps> = ({
         </h2>
         <div className="flex space-x-2">
           <input
+            onChange={(e) => setSearchTerm(e.target.value)}
             type="text"
             placeholder="Search by Product or Customer"
             className="rounded border px-6 py-2 text-sm"
@@ -85,7 +88,7 @@ export const ReviewTable: React.FC<ReviewTableProps> = ({
 
           {!isLoading && data?.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center">
+              <TableCell colSpan={8} className="text-center">
                 No Reviews Found.
               </TableCell>
             </TableRow>

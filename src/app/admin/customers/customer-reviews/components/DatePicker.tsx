@@ -17,7 +17,7 @@ export const DatePicker: React.FC<{
         placeholder="DD/MM/YYYY"
         value={value}
         onChange={handleChange}
-        className={`w-full rounded border p-2 text-sm ${error ? "border-red-500" : ""}`}
+        className={`h-[50px] w-full rounded border p-2 text-sm ${error ? "border-red-500" : ""}`}
       />
       {error && <p className="text-xs text-red-500">{error}</p>}
     </div>

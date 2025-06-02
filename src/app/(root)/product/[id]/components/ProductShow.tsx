@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useAddToCartMutation } from "@/redux/services/client/myCart";
 import { setCart } from "@/redux/slices/authSlice";
+import DOMPurify from "dompurify";
 
 interface ProductShowProps {
   data: {
@@ -487,21 +488,13 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
           {data?.product?.short_description && (
             <div className="mt-6 h-fit w-full">
               <p className="inline">Description:</p>
-              <p className="ml-4 inline text-base font-medium text-gray-700">
-                {showFullDesc
-                  ? data.product.short_description
-                  : data.product.short_description.length > 120
-                    ? data.product.short_description.slice(0, 120) + "..."
-                    : data.product.short_description}
-              </p>
-              {data.product.short_description.length > 120 && (
-                <button
-                  className="mt-1 text-xs text-primaryBlue underline"
-                  onClick={() => setShowFullDesc((prev) => !prev)}
-                >
-                  {showFullDesc ? "See less" : "See more"}
-                </button>
-              )}
+              <div className="prose prose-table:border prose-td:border prose-th:border prose-td:p-2 prose-th:p-2 prose-table:bg-white prose-tr:bg-white prose-tr:odd:bg-gray-50 max-w-none">
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: data?.product?.short_description,
+                  }}
+                />
+              </div>
             </div>
           )}
 
