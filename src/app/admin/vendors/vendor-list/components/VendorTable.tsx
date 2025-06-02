@@ -127,7 +127,7 @@ export const VendorTable: React.FC = () => {
     isLoading,
     error,
     refetch,
-  } = useGetAllVendorsQuery({});
+  } = useGetAllVendorsQuery({ shop_name: searchTerm });
 
   return (
     <div className="rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark dark:shadow-card">
@@ -194,7 +194,12 @@ export const VendorTable: React.FC = () => {
                 <TableCell>{doc?.store_address}</TableCell>
                 <TableCell>{doc?.user?._count?.products}</TableCell>
                 <TableCell>
-                  <button className="rounded-xl bg-green-400 px-3 py-1 text-white">
+                  <button
+                    onClick={() => {
+                      window.open(doc?.whats_app_link, "_blank");
+                    }}
+                    className="rounded-xl bg-green-400 px-3 py-1 text-white"
+                  >
                     Message On What&apos;s App
                   </button>
                 </TableCell>

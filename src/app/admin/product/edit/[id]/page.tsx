@@ -856,6 +856,9 @@ const ProductEdit = () => {
               config={{
                 askBeforePasteHTML: false,
                 defaultActionOnPaste: "insert_only_text",
+                uploader: {
+                  insertImageAsBase64URI: true,
+                },
                 style: {
                   // background: "#E3E3E3",
                 },
@@ -1896,6 +1899,9 @@ const ProductEdit = () => {
                 config={{
                   askBeforePasteHTML: false,
                   defaultActionOnPaste: "insert_only_text",
+                  uploader: {
+                    insertImageAsBase64URI: true,
+                  },
                   style: {
                     // background: "#E3E3E3",
                   },
@@ -1950,6 +1956,9 @@ const ProductEdit = () => {
                 config={{
                   askBeforePasteHTML: false,
                   defaultActionOnPaste: "insert_only_text",
+                  uploader: {
+                    insertImageAsBase64URI: true,
+                  },
                   style: {
                     // background: "#E3E3E3",
                   },
@@ -2003,6 +2012,9 @@ const ProductEdit = () => {
                 ref={warrantyEditor}
                 config={{
                   askBeforePasteHTML: false,
+                  uploader: {
+                    insertImageAsBase64URI: true,
+                  },
                   defaultActionOnPaste: "insert_only_text",
                   style: {
                     // background: "#E3E3E3",

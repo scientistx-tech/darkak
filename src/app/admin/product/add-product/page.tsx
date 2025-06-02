@@ -779,6 +779,9 @@ export default function ProductForm() {
                 config={{
                   askBeforePasteHTML: false,
                   defaultActionOnPaste: "insert_only_text",
+                  uploader: {
+                    insertImageAsBase64URI: true,
+                  },
                   style: {
                     // background: "#E3E3E3",
                   },
@@ -1844,6 +1847,9 @@ export default function ProductForm() {
                   config={{
                     askBeforePasteHTML: false,
                     defaultActionOnPaste: "insert_only_text",
+                    uploader: {
+                      insertImageAsBase64URI: true,
+                    },
                     style: {
                       // background: "#E3E3E3",
                     },
@@ -1898,6 +1904,9 @@ export default function ProductForm() {
                   config={{
                     askBeforePasteHTML: false,
                     defaultActionOnPaste: "insert_only_text",
+                    uploader: {
+                      insertImageAsBase64URI: true,
+                    },
                     style: {
                       // background: "#E3E3E3",
                     },
@@ -1952,6 +1961,9 @@ export default function ProductForm() {
                   config={{
                     askBeforePasteHTML: false,
                     defaultActionOnPaste: "insert_only_text",
+                    uploader: {
+                      insertImageAsBase64URI: true,
+                    },
                     style: {
                       // background: "#E3E3E3",
                     },

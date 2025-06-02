@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
 import ProductCard from "@/components/shared/ProductCard";
-import { Product } from "@/app/(root)/types/ProductType";
-import LeftSidebar from "@/components/category/leftSidebar/LeftSidebar";
 import CategoryFilter from "@/assets/svg/CategoryFilter";
 import { useGetAllProductsQuery } from "@/redux/services/client/products";
-import Pagination from "../shared/Pagination";
+import SideFilterSection from "./SideFilterSection";
 
-const ProductsSection = ({
+const VendorsProductsSection = ({
   currentPage,
   setTotalPages,
   initialQuery,
   sortBy,
   searchValue,
+  vendorProduct,
 }: {
   currentPage: number;
   setTotalPages: (total: number) => void;
   initialQuery?: Record<string, string>;
   sortBy: string;
   searchValue: string;
+  vendorProduct: any;
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [sidebarFilters, setSidebarFilters] = useState<any>(() => {
@@ -119,7 +119,7 @@ const ProductsSection = ({
 
       {/* Desktop Sidebar */}
       <div className="hidden lg:block lg:w-1/5">
-        <LeftSidebar onFilterChange={handleSidebarFilters} />
+        <SideFilterSection onFilterChange={handleSidebarFilters} />
       </div>
 
       {/* Mobile Sidebar Drawer with Overlay */}
@@ -149,7 +149,7 @@ const ProductsSection = ({
               </button>
             </div>
             <div className="h-full overflow-y-auto px-4 pb-20 pt-4">
-              <LeftSidebar onFilterChange={handleSidebarFilters} />
+              <SideFilterSection onFilterChange={handleSidebarFilters} />
             </div>
           </div>
         </div>
@@ -158,7 +158,7 @@ const ProductsSection = ({
       {/* Product Grid */}
 
       <div className="grid w-full grid-cols-2 gap-4 lg:w-4/5 lg:grid-cols-3 xl:grid-cols-4">
-        {isLoading &&
+        {/* {isLoading &&
           Array.from({ length: 20 }).map((_, i) => (
             <div
               key={i}
@@ -169,8 +169,8 @@ const ProductsSection = ({
               <div className="mb-1 h-3 w-1/2 rounded bg-gray-200" />
               <div className="h-3 w-1/3 rounded bg-gray-200" />
             </div>
-          ))}
-        {!isLoading && (!data?.data || data.data.length === 0) && (
+          ))} */}
+        {(!vendorProduct || vendorProduct.length === 0) && (
           <div className="col-span-full flex flex-col items-center justify-center py-16">
             <svg
               width="64"
@@ -208,7 +208,7 @@ const ProductsSection = ({
             </p>
           </div>
         )}
-        {data?.data?.map((product: any) => (
+        {vendorProduct?.map((product: any) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
@@ -216,4 +216,4 @@ const ProductsSection = ({
   );
 };
 
-export default ProductsSection;
+export default VendorsProductsSection;
