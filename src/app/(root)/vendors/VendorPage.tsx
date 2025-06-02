@@ -1,10 +1,18 @@
 "use client";
 
 import VendorCard from "@/components/shared/VendorCard";
-import React from "react";
+import { useGetAllVendorsQuery } from "@/redux/services/admin/adminVendorApis";
+import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 
 export default function VendorPage() {
+  const [search, setSearch] = useState<string>("");
+  const {
+    data: vendorsData,
+    isLoading,
+    error,
+    refetch,
+  } = useGetAllVendorsQuery({ shop_name: search });
   return (
     <div className="w-full px-6 py-3 md:px-12 md:py-6">
       {/* Header */}
@@ -23,6 +31,8 @@ export default function VendorPage() {
             <input
               type="text"
               placeholder="Search Store"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className="w-full rounded-l-md border-[1.5px] border-blue-300 px-4 py-2 outline-none focus:border-none focus:ring-2 focus:ring-blue-500"
             />
             <button className="rounded-r-md bg-primary px-4 text-white hover:bg-blue-800">
@@ -35,60 +45,18 @@ export default function VendorPage() {
       {/* Body-Par */}
 
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        <VendorCard
-          shopLink="/vendors/shop-view"
-          shopBanner="https://img.freepik.com/free-vector/flat-local-market-business-social-media-cover-template_23-2149507335.jpg?semt=ais_hybrid&w=740"
-          shopLogo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLP0L-mu0JmaUEFQjNVlWbrxw3pgTZIBmFQg&s"
-          shopName="Darkak Sub Shop"
-          shopRating="4.8"
-          shopReviews="4"
-          shopTotalProduct="194"
-        />
-        <VendorCard
-          shopLink="/vendors/shop-view"
-          shopBanner="https://img.freepik.com/free-vector/flat-local-market-business-social-media-cover-template_23-2149507335.jpg?semt=ais_hybrid&w=740"
-          shopLogo="https://cdn.freebiesupply.com/logos/large/2x/vendor-logo-svg-vector.svg"
-          shopName="Darkak Sub Shop"
-          shopRating="4.8"
-          shopReviews="4"
-          shopTotalProduct="194"
-        />
-        <VendorCard
-          shopLink="/vendors/shop-view"
-          shopBanner="https://img.freepik.com/free-vector/flat-local-market-business-social-media-cover-template_23-2149507335.jpg?semt=ais_hybrid&w=740"
-          shopLogo="https://cdn.freebiesupply.com/logos/large/2x/vendor-logo-svg-vector.svg"
-          shopName="Darkak Sub Shop"
-          shopRating="4.8"
-          shopReviews="4"
-          shopTotalProduct="194"
-        />
-        <VendorCard
-          shopLink="/vendors/shop-view"
-          shopBanner="https://img.freepik.com/free-vector/flat-local-market-business-social-media-cover-template_23-2149507335.jpg?semt=ais_hybrid&w=740"
-          shopLogo="https://cdn.freebiesupply.com/logos/large/2x/vendor-logo-svg-vector.svg"
-          shopName="Darkak Sub Shop"
-          shopRating="4.8"
-          shopReviews="4"
-          shopTotalProduct="194"
-        />
-        <VendorCard
-          shopLink="/vendors/shop-view"
-          shopBanner="https://img.freepik.com/free-vector/flat-local-market-business-social-media-cover-template_23-2149507335.jpg?semt=ais_hybrid&w=740"
-          shopLogo="https://cdn.freebiesupply.com/logos/large/2x/vendor-logo-svg-vector.svg"
-          shopName="Darkak Sub Shop"
-          shopRating="4.8"
-          shopReviews="4"
-          shopTotalProduct="194"
-        />
-        <VendorCard
-          shopLink="/vendors/shop-view"
-          shopBanner="https://img.freepik.com/free-vector/flat-local-market-business-social-media-cover-template_23-2149507335.jpg?semt=ais_hybrid&w=740"
-          shopLogo="https://cdn.freebiesupply.com/logos/large/2x/vendor-logo-svg-vector.svg"
-          shopName="Darkak Sub Shop"
-          shopRating="4.8"
-          shopReviews="4"
-          shopTotalProduct="194"
-        />
+        {vendorsData?.vendors?.map((vendor: any, i: number) => (
+          <VendorCard
+            key={i}
+            shopLink={`/vendors/shop-view/${vendor?.id}`}
+            shopBanner={vendor?.shop_banner}
+            shopLogo={vendor?.shop_logo}
+            shopName={vendor?.store_name}
+            shopRating={vendor?.averageRate || 0}
+            shopReviews={vendor?.reviews?.length || 0}
+            shopTotalProduct={vendor?.user?._count?.products}
+          />
+        ))}
       </div>
     </div>
   );
