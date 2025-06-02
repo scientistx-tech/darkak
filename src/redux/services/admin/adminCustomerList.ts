@@ -3,6 +3,18 @@ import baseApi from "../../baseApi";
 
 export const adminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    getCustomerReviews: builder.query({
+      query: (params?: Record<any, any>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/admin/user/reviews${queryString}`,
+          method: "GET",
+        };
+      },
+    }),
+
     getCustomersList: builder.query({
       query: (params?: Record<any, any>) => {
         const queryString = params
@@ -21,8 +33,19 @@ export const adminApi = baseApi.injectEndpoints({
         method: "PUT",
       }),
     }),
+
+    changeCustomerReviewStatus: builder.mutation<any, any>({
+      query: (id) => ({
+        url: `/admin/user/update-status-review/${id}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useGetCustomersListQuery, useToggleBlockUserMutation } =
-  adminApi;
+export const {
+  useGetCustomerReviewsQuery,
+  useGetCustomersListQuery,
+  useToggleBlockUserMutation,
+  useChangeCustomerReviewStatusMutation,
+} = adminApi;

@@ -1,6 +1,7 @@
 import { useToggleBlockUserMutation } from "@/redux/services/admin/adminCustomerList";
 import { User } from "@/types/admin/customerListTyes";
 import { DeleteFilled, EyeFilled } from "@ant-design/icons";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -16,6 +17,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
   setSearch,
 }) => {
   const [toggleBlockUser, { isLoading }] = useToggleBlockUserMutation();
+  const router = useRouter();
 
   const toggleBlock = async (id: number) => {
     try {
@@ -81,7 +83,12 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
                 </button>
               </td>
               <td className="flex space-x-2 p-2">
-                <button className="text-blue-500">
+                <button
+                  onClick={() =>
+                    router.push(`/admin/customers/edit/${customer?.id}`)
+                  }
+                  className="text-blue-500"
+                >
                   <EyeFilled />{" "}
                 </button>
                 <button className="text-red-500">
