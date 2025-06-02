@@ -28,7 +28,7 @@ export const NAV_DATA = [
       {
         title: "POS",
         icon: GiPostOffice,
-        // accessKey: "pos",
+        accessKey: "pos",
         url: "/admin/POS",
         items: [],
       },
@@ -162,14 +162,15 @@ export const NAV_DATA = [
       {
         title: "Brand",
         icon: BsTornado,
-        accessKey: "brand",
         items: [
           {
             title: "Add New",
+            accessKey: "brand",
             url: "/admin/brand/add-brand",
           },
           {
             title: "List",
+            accessKey: "brand",
             url: "/admin/brand/list",
           },
         ],
