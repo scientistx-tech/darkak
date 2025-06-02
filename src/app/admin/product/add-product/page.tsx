@@ -24,11 +24,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import AsyncSelect from "react-select/async";
 import { useSelector } from "react-redux";
 import { useAccess } from "@/hooks/use-access";
-
-const CustomEditor = dynamic(
-  () => import("@/app/admin/components/CustomEditor"),
-  { ssr: false },
-);
+import CustomEditor from "../../components/CustomEditor";
 
 // --- Type Definitions ---
 type DeliveryInfo = {
@@ -80,9 +76,9 @@ type ProductFormData = {
   unit: string;
   code: string;
   drafted: boolean;
-  specification: string;
-  description: string;
-  warranty_details: string;
+  specification: string | undefined;
+  description: string | undefined;
+  warranty_details: string | undefined;
   categoryId: string;
   subCategoryId: string;
   subSubCategoryId: string;
@@ -314,9 +310,9 @@ export default function ProductForm() {
     minOrder: "1",
     unit: "kg",
     code: "",
-    specification: "",
-    description: "",
-    warranty_details: "",
+    specification: undefined,
+    description: undefined,
+    warranty_details: undefined,
     categoryId: "",
     subCategoryId: "",
     subSubCategoryId: "",
@@ -334,6 +330,7 @@ export default function ProductForm() {
     } as DeliveryInfo,
     items: [],
   });
+  const [short_description, setShortDescription] = useState<any>();
   const [currentLanguage, setCurrentLanguage] = useState("en");
   const [productSKU, setProductSKU] = useState("5Y5LMO");
   const [multiplyShipping, setMultiplyShipping] = useState(false);
@@ -717,7 +714,7 @@ export default function ProductForm() {
 
   const canAddProduct = useAccess("product-add");
 
-  console.log(canAddProduct, "access can");
+  //console.log(canAddProduct, "access can");
 
   return (
     <div className="mx-auto w-full">
@@ -763,12 +760,22 @@ export default function ProductForm() {
               Description {`( ${currentLanguage === "en" ? "EN" : "BD"})`}{" "}
               <span className="text-red-500">*</span>
             </label>
-            <textarea
+            {/* <textarea
               name="short_description"
               placeholder="Short Description"
               value={formData.short_description}
               onChange={handleChange}
               className="w-full rounded border p-2"
+            /> */}
+            <CustomEditor
+              //onChange={(e) => console.log(e)}
+              initialContent={formData.short_description}
+              onChange={(e) =>
+                setFormData((d) => ({ ...d, short_description: e }))
+              }
+            />
+            <div
+              dangerouslySetInnerHTML={{ __html: formData.short_description }}
             />
           </div>
         </div>
@@ -1781,11 +1788,11 @@ export default function ProductForm() {
                 Description
                 {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
               </label>
-              <CustomEditor
-                key={currentTab}
-                value={formData.description}
+              {/* <Editor
+                editorblock="description"
+                data={formData.description}
                 onChange={handleEditorChange("description")}
-              />
+              /> */}
             </div>
           ) : currentTab === "spec" ? (
             <div className="flex flex-col gap-2">
@@ -1793,11 +1800,11 @@ export default function ProductForm() {
                 Specification
                 {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
               </label>
-              <CustomEditor
-                key={currentTab}
-                value={formData.specification}
+              {/* <Editor
+                editorblock="specification"
+                data={formData.specification}
                 onChange={handleEditorChange("specification")}
-              />
+              /> */}
             </div>
           ) : (
             <div className="flex flex-col gap-2">
@@ -1805,11 +1812,11 @@ export default function ProductForm() {
                 Warranty details
                 {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
               </label>
-              <CustomEditor
-                key={currentTab}
-                value={formData.warranty_details}
+              {/* <Editor
+                editorblock="warranty_details"
+                data={formData.warranty_details}
                 onChange={handleEditorChange("warranty_details")}
-              />
+              /> */}
             </div>
           )}
         </div>
