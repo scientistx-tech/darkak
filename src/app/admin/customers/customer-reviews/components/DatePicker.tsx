@@ -10,14 +10,14 @@ export const DatePicker: React.FC<{
   };
 
   return (
-    <div className="flex flex-col space-y-1">
+    <div className="flex w-full flex-col space-y-1">
       <label className="text-sm font-medium">{label}</label>
       <input
         type="text"
         placeholder="DD/MM/YYYY"
         value={value}
         onChange={handleChange}
-        className={`rounded border p-2 text-sm ${error ? "border-red-500" : ""}`}
+        className={`h-[50px] w-full rounded border p-2 text-sm ${error ? "border-red-500" : ""}`}
       />
       {error && <p className="text-xs text-red-500">{error}</p>}
     </div>

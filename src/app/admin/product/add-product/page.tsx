@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import {
   useDeleteSubSubCategoryMutation,
@@ -26,6 +26,7 @@ import { useSelector } from "react-redux";
 import { useAccess } from "@/hooks/use-access";
 import CustomEditor from "../../components/CustomEditor";
 import RequireAccess from "@/components/Layouts/RequireAccess";
+import JoditEditor from "jodit-react";
 
 // --- Type Definitions ---
 type DeliveryInfo = {
@@ -311,9 +312,9 @@ export default function ProductForm() {
     minOrder: "1",
     unit: "kg",
     code: "",
-    specification: undefined,
-    description: undefined,
-    warranty_details: undefined,
+    specification: "",
+    description: "",
+    warranty_details: "",
     categoryId: "",
     subCategoryId: "",
     subSubCategoryId: "",
@@ -331,6 +332,10 @@ export default function ProductForm() {
     } as DeliveryInfo,
     items: [],
   });
+  const editor = useRef(null);
+  const descriptionEditor = useRef(null);
+  const warrantyEditor = useRef(null);
+  const specificationEditor = useRef(null);
   const [short_description, setShortDescription] = useState<any>();
   const [currentLanguage, setCurrentLanguage] = useState("en");
   const [productSKU, setProductSKU] = useState("5Y5LMO");
@@ -715,9 +720,7 @@ export default function ProductForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(formData.items)]);
 
-  const canAddProduct = useAccess("product-add");
-
-  //console.log(canAddProduct, "access can");
+  console.log(formData, "dataa");
 
   return (
     <RequireAccess permission="product-add">
@@ -771,12 +774,52 @@ export default function ProductForm() {
                 onChange={handleChange}
                 className="w-full rounded border p-2"
               /> */}
-              <CustomEditor
-                initialContent={formData.short_description}
-                onChange={(e) =>
-                  setFormData((d) => ({ ...d, short_description: e }))
-                }
-                key={"12"}
+              <JoditEditor
+                ref={editor}
+                config={{
+                  askBeforePasteHTML: false,
+                  defaultActionOnPaste: "insert_only_text",
+                  style: {
+                    // background: "#E3E3E3",
+                  },
+                  placeholder: "Start writing",
+                  height: "450px",
+                  toolbar: true,
+                  buttons: [
+                    "bold",
+                    "italic",
+                    "underline",
+                    "strikethrough",
+                    "|",
+                    "ul",
+                    "ol", // <-- Add these for bullet and numbered lists
+                    "outdent",
+                    "indent",
+                    "|",
+                    "font",
+                    "fontsize",
+                    "brush",
+                    "paragraph",
+                    "|",
+                    "image",
+                    "video",
+                    "table",
+                    "link",
+                    "|",
+                    "align",
+                    "undo",
+                    "redo",
+                    "hr",
+                    "eraser",
+                    "copyformat",
+                    "fullsize",
+                  ],
+                }}
+                value={formData.short_description}
+                onBlur={(newContent) => {
+                  handleEditorChange("short_description")(newContent);
+                }} // preferred to use only this option to update the content for performance reasons
+                // onChange={newContent => {}}
               />
             </div>
           </div>
@@ -1796,6 +1839,53 @@ export default function ProductForm() {
                   Description
                   {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
                 </label>
+                <JoditEditor
+                  ref={descriptionEditor}
+                  config={{
+                    askBeforePasteHTML: false,
+                    defaultActionOnPaste: "insert_only_text",
+                    style: {
+                      // background: "#E3E3E3",
+                    },
+                    placeholder: "Start writing description",
+                    height: "450px",
+                    toolbar: true,
+                    buttons: [
+                      "bold",
+                      "italic",
+                      "underline",
+                      "strikethrough",
+                      "|",
+                      "ul",
+                      "ol", // <-- Add these for bullet and numbered lists
+                      "outdent",
+                      "indent",
+                      "|",
+                      "font",
+                      "fontsize",
+                      "brush",
+                      "paragraph",
+                      "|",
+                      "image",
+                      "video",
+                      "table",
+                      "link",
+                      "|",
+                      "align",
+                      "undo",
+                      "redo",
+                      "hr",
+                      "eraser",
+                      "copyformat",
+                      "fullsize",
+                    ],
+                  }}
+                  value={formData.description}
+                  onBlur={(newContent) => {
+                    handleEditorChange("description")(newContent);
+                  }} // preferred to use only this option to update the content for performance reasons
+                  // onChange={newContent => {}}
+                />
               </div>
             ) : currentTab === "spec" ? (
               <div className="flex flex-col gap-2">
@@ -1803,6 +1893,53 @@ export default function ProductForm() {
                   Specification
                   {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
                 </label>
+                <JoditEditor
+                  ref={specificationEditor}
+                  config={{
+                    askBeforePasteHTML: false,
+                    defaultActionOnPaste: "insert_only_text",
+                    style: {
+                      // background: "#E3E3E3",
+                    },
+                    placeholder: "Start writing specification",
+                    height: "450px",
+                    toolbar: true,
+                    buttons: [
+                      "bold",
+                      "italic",
+                      "underline",
+                      "strikethrough",
+                      "|",
+                      "ul",
+                      "ol", // <-- Add these for bullet and numbered lists
+                      "outdent",
+                      "indent",
+                      "|",
+                      "font",
+                      "fontsize",
+                      "brush",
+                      "paragraph",
+                      "|",
+                      "image",
+                      "video",
+                      "table",
+                      "link",
+                      "|",
+                      "align",
+                      "undo",
+                      "redo",
+                      "hr",
+                      "eraser",
+                      "copyformat",
+                      "fullsize",
+                    ],
+                  }}
+                  value={formData.specification}
+                  onBlur={(newContent) => {
+                    handleEditorChange("specification")(newContent);
+                  }} // preferred to use only this option to update the content for performance reasons
+                  // onChange={newContent => {}}
+                />
               </div>
             ) : (
               <div className="flex flex-col gap-2">
@@ -1810,6 +1947,53 @@ export default function ProductForm() {
                   Warranty details
                   {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
                 </label>
+                <JoditEditor
+                  ref={warrantyEditor}
+                  config={{
+                    askBeforePasteHTML: false,
+                    defaultActionOnPaste: "insert_only_text",
+                    style: {
+                      // background: "#E3E3E3",
+                    },
+                    placeholder: "Start writing warranty details",
+                    height: "450px",
+                    toolbar: true,
+                    buttons: [
+                      "bold",
+                      "italic",
+                      "underline",
+                      "strikethrough",
+                      "|",
+                      "ul",
+                      "ol", // <-- Add these for bullet and numbered lists
+                      "outdent",
+                      "indent",
+                      "|",
+                      "font",
+                      "fontsize",
+                      "brush",
+                      "paragraph",
+                      "|",
+                      "image",
+                      "video",
+                      "table",
+                      "link",
+                      "|",
+                      "align",
+                      "undo",
+                      "redo",
+                      "hr",
+                      "eraser",
+                      "copyformat",
+                      "fullsize",
+                    ],
+                  }}
+                  value={formData.warranty_details}
+                  onBlur={(newContent) => {
+                    handleEditorChange("warranty_details")(newContent);
+                  }} // preferred to use only this option to update the content for performance reasons
+                  // onChange={newContent => {}}
+                />
               </div>
             )}
           </div>

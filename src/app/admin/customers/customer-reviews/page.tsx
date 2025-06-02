@@ -2,16 +2,31 @@
 import RequireAccess from "@/components/Layouts/RequireAccess";
 import { ReviewFilterSection } from "./components/ReviewFilterSection";
 import { ReviewTable } from "./components/ReviewTable";
+import { useGetCustomerReviewsQuery } from "@/redux/services/admin/adminCustomerList";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { useState } from "react";
 
 const CustomerReviews: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [queryParams, setQueryParams] = useState<{}>({});
+  const { data, isLoading, error, refetch } = useGetCustomerReviewsQuery({
+    ...queryParams,
+    ...(searchTerm !== "" ? { search: searchTerm } : {}),
+  });
   return (
     <RequireAccess permission="customer-review">
       <div className="rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark dark:shadow-card">
         <h1 className="mb-4 text-xl font-bold">
           Customer Reviews <span className="text-blue-500">23</span>
         </h1>
-        <ReviewFilterSection />
-        <ReviewTable />
+        <ReviewFilterSection setQueryParams={setQueryParams} />
+        <ReviewTable
+          data={data?.reviews}
+          isLoading={isLoading}
+          error={error as FetchBaseQueryError}
+          refetch={refetch}
+          setSearchTerm={setSearchTerm}
+        />
       </div>
     </RequireAccess>
   );
