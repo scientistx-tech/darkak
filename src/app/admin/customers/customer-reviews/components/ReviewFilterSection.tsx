@@ -61,8 +61,8 @@ export const ReviewFilterSection: React.FC = () => {
   };
 
   return (
-    <div className="mb-4 flex space-x-4 rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark dark:shadow-card">
-      <div className="flex flex-col space-y-1">
+    <div className="mb-4 flex w-full space-x-4 rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark dark:shadow-card">
+      <div className="flex w-full flex-col space-y-1">
         <label className="text-sm font-medium">Products</label>
         <select
           className={`rounded border p-2 text-sm ${errors.product ? "border-red-500" : ""}`}
@@ -77,7 +77,7 @@ export const ReviewFilterSection: React.FC = () => {
           <p className="text-xs text-red-500">{errors.product}</p>
         )}
       </div>
-      <div className="flex flex-col space-y-1">
+      <div className="flex w-full flex-col space-y-1">
         <label className="text-sm font-medium">Customer</label>
         <select
           className={`rounded border p-2 text-sm ${errors.customer ? "border-red-500" : ""}`}
@@ -92,7 +92,7 @@ export const ReviewFilterSection: React.FC = () => {
           <p className="text-xs text-red-500">{errors.customer}</p>
         )}
       </div>
-      <div className="flex flex-col space-y-1">
+      <div className="flex w-full flex-col space-y-1">
         <label className="text-sm font-medium">Choose Status</label>
         <select
           className={`rounded border p-2 text-sm ${errors.status ? "border-red-500" : ""}`}
@@ -114,11 +114,14 @@ export const ReviewFilterSection: React.FC = () => {
         error={errors.dateFilter}
       />
       <div className="flex items-end space-x-2">
-        <button className="rounded border p-2 text-sm" onClick={handleReset}>
+        <button
+          className="rounded border px-6 py-2 text-sm"
+          onClick={handleReset}
+        >
           Reset
         </button>
         <button
-          className="rounded bg-blue-600 p-2 text-sm text-white"
+          className="rounded bg-blue-600 px-6 py-2 text-sm text-white"
           onClick={handleFilter}
         >
           Filter

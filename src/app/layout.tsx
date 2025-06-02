@@ -1,3 +1,4 @@
+import 'remirror/styles/all.css';
 import "@/css/satoshi.css";
 import "@/css/style.css";
 import "flatpickr/dist/flatpickr.min.css";
@@ -9,6 +10,7 @@ import ReduxProvider from "@/redux/ReduxProvider";
 import DataLoader from "@/app/DataLoader";
 import GTMHead from "@/components/Scripts/GTMHead";
 import Script from "next/script";
+import CustomEditor from "./admin/components/CustomEditor";
 
 export const metadata: Metadata = {
   title: {
@@ -297,6 +299,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <DataLoader>
             <UpdateNotice />
             {children}
+            
           </DataLoader>
         </ReduxProvider>
         {bodyEndScripts.map((s: any) => (
