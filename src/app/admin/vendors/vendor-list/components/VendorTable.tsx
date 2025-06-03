@@ -231,18 +231,11 @@ export const VendorTable: React.FC = () => {
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <button
-                      // onClick={async () => {
-                      //   await deleteModerator(doc.id)
-                      //     .unwrap()
-                      //     .then(() => {
-                      //       refetch();
-                      //       toast.success("Moderator Deleted Successfully");
-                      //     })
-                      //     .catch((error: any) => {
-                      //       toast.error(error?.data?.message);
-                      //     });
-                      // }}
-                      // disabled={isDeleting}
+                      onClick={() => {
+                        router.push(
+                          `/admin/vendors/vendor-list/vendor-show/${doc?.id}`,
+                        );
+                      }}
                       className="text-teal-600 hover:underline"
                     >
                       View
