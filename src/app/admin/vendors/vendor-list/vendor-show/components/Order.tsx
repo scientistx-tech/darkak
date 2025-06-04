@@ -25,7 +25,7 @@ const OrderTab = ({ id }: { id: string }) => {
   const router = useRouter();
   console.log(data, "order");
   return (
-    <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:shadow-card">
+    <div className="mt-8 bg-white dark:bg-gray-dark dark:shadow-card md:p-5">
       <div className="my-3 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div className="flex items-center justify-between rounded bg-white p-6 shadow-2">
           <div className="flex items-center gap-2">
@@ -69,7 +69,7 @@ const OrderTab = ({ id }: { id: string }) => {
       ) : (
         <Table>
           <TableHeader>
-            <TableRow className="border-t text-base text-slate-900 [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
+            <TableRow className="whitespace-nowrap border-t text-base text-slate-900 [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
               <TableHead>SL</TableHead>
               <TableHead>Order ID</TableHead>
               <TableHead>Order Date</TableHead>

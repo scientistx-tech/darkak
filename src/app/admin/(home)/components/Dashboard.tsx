@@ -1,0 +1,169 @@
+"use client";
+
+import { useDashboardDataQuery } from "@/redux/services/admin/adminDashboard";
+import React, { useState } from "react";
+import { BarChart3, BarChart4, ArrowUp, ArrowDown } from "lucide-react";
+import SummaryCards from "./SummaryCards";
+import OrderStatusCards from "./OrderStatusCards";
+import FinancialCards from "./FinancialCards";
+import OrderStatistics from "./OrderStatistics";
+import EarningStatistics from "./EarningStatistics";
+import TopCustomers from "./TopCustomers";
+import MostPopularStores from "./MostPopularStores";
+import TopSellingProducts from "./TopSellingProducts";
+
+const Dashboard: React.FC = () => {
+  const { data, isLoading, error } = useDashboardDataQuery({});
+  console.log("satat", data);
+  const [orderPeriod, setOrderPeriod] = useState<"year" | "month" | "week">(
+    "year",
+  );
+  const [earningPeriod, setEarningPeriod] = useState<"year" | "month" | "week">(
+    "year",
+  );
+
+  if (isLoading)
+    return <div className="p-8 text-center">Loading dashboard data...</div>;
+  if (error)
+    return (
+      <div className="p-8 text-center text-red-500">
+        Error loading dashboard data
+      </div>
+    );
+  if (!data) return <div className="p-8 text-center">No data available</div>;
+
+  return (
+    <div>
+      <div className="mb-6">
+        <h1 className="mb-1 text-2xl font-semibold">Welcome Admin</h1>
+        <p className="text-gray-600">
+          Monitor your business analytics and statistics.
+        </p>
+      </div>
+
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="flex items-center gap-2 text-lg font-semibold">
+          <BarChart3 className="h-5 w-5 text-blue-600" />
+          Business Analytics
+        </h2>
+        <div className="text-right">
+          <h3 className="text-sm font-medium text-gray-500">
+            Overall statistics
+          </h3>
+        </div>
+      </div>
+
+      {/* Financial Cards */}
+      <FinancialCards
+        toalInhouseEarning={data.toalInhouseEarning}
+        deliveryCharge={data.deliveryCharge}
+        pendingAmount={data.pendingAmount}
+        totalTax={data.totalTax}
+      />
+
+      {/* Summary Cards */}
+      <SummaryCards
+        totalOrder={data.totalOrder}
+        totalStore={data.totalStore}
+        totalProduct={data.totalProduct}
+        totalCustomer={data.totalCustomer}
+      />
+
+      {/* Order Status Cards */}
+      <OrderStatusCards ordersCount={data.ordersCount} />
+
+      {/* Charts Section */}
+      <div className="mt-6">
+        {/* Order Statistics */}
+        <div className="rounded-lg bg-white p-4 shadow">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-md flex items-center gap-2 font-semibold">
+              <BarChart3 className="h-4 w-4 text-blue-600" />
+              Order Statistics
+            </h3>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setOrderPeriod("year")}
+                className={`rounded px-2 py-1 text-xs ${orderPeriod === "year" ? "bg-blue-600 text-white" : "bg-gray-100"}`}
+              >
+                This Year
+              </button>
+              <button
+                onClick={() => setOrderPeriod("month")}
+                className={`rounded px-2 py-1 text-xs ${orderPeriod === "month" ? "bg-blue-600 text-white" : "bg-gray-100"}`}
+              >
+                This Month
+              </button>
+              <button
+                onClick={() => setOrderPeriod("week")}
+                className={`rounded px-2 py-1 text-xs ${orderPeriod === "week" ? "bg-blue-600 text-white" : "bg-gray-100"}`}
+              >
+                This Week
+              </button>
+            </div>
+          </div>
+          <OrderStatistics period={orderPeriod} />
+        </div>
+
+        {/* User Overview */}
+        {/* <div className="rounded-lg bg-white p-4 shadow">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-md font-semibold">User Overview</h3>
+            <div className="flex space-x-2">
+              <button className="rounded bg-blue-600 px-2 py-1 text-xs text-white">
+                This Year
+              </button>
+              <button className="rounded bg-gray-100 px-2 py-1 text-xs">
+                This Month
+              </button>
+              <button className="rounded bg-gray-100 px-2 py-1 text-xs">
+                This Week
+              </button>
+            </div>
+          </div>
+          <UserOverview />
+        </div> */}
+      </div>
+
+      {/* Earning Statistics */}
+      <div className="mt-6 rounded-lg bg-white p-4 shadow">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-md flex items-center gap-2 font-semibold">
+            <BarChart4 className="h-4 w-4 text-blue-600" />
+            Earning Statistics
+          </h3>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => setEarningPeriod("year")}
+              className={`rounded px-2 py-1 text-xs ${earningPeriod === "year" ? "bg-blue-600 text-white" : "bg-gray-100"}`}
+            >
+              This Year
+            </button>
+            <button
+              onClick={() => setEarningPeriod("month")}
+              className={`rounded px-2 py-1 text-xs ${earningPeriod === "month" ? "bg-blue-600 text-white" : "bg-gray-100"}`}
+            >
+              This Month
+            </button>
+            <button
+              onClick={() => setEarningPeriod("week")}
+              className={`rounded px-2 py-1 text-xs ${earningPeriod === "week" ? "bg-blue-600 text-white" : "bg-gray-100"}`}
+            >
+              This Week
+            </button>
+          </div>
+        </div>
+        <EarningStatistics period={earningPeriod} />
+      </div>
+
+      {/* Bottom Sections */}
+      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <TopCustomers customers={data.topCustomers} />
+        <MostPopularStores stores={data.mostPopularStore} />
+        <TopSellingProducts products={data.topSellingProduct} />
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;

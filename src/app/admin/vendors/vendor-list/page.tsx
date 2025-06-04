@@ -6,7 +6,7 @@ import { VendorTable } from "./components/VendorTable";
 const VendorList: React.FC = () => {
   return (
     <RequireAccess permission="vendor-list">
-      <div className="p-6">
+      <div>
         <VendorTable />
       </div>
     </RequireAccess>
