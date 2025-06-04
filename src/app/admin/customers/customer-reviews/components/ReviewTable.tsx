@@ -51,7 +51,8 @@ export const ReviewTable: React.FC<ReviewTableProps> = ({
     <div className="rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark dark:shadow-card">
       <div className="mb-4 flex justify-between">
         <h2 className="text-lg font-semibold">
-          Customer Reviews List <span className="text-blue-500">23</span>
+          Customer Reviews List{" "}
+          <span className="text-blue-500">{data?.length || 0}</span>
         </h2>
         <div className="flex space-x-2">
           <input

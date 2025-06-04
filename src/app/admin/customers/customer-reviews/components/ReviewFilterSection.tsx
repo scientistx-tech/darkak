@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import * as Yup from "yup";
-import { DatePicker } from "./DatePicker";
 import AsyncSelect from "react-select/async";
 import { useGetProductsQuery } from "@/redux/services/admin/adminProductApis";
 import { useGetCustomersListQuery } from "@/redux/services/admin/adminCustomerList";
+import { useSelector } from "react-redux";
 
 interface ReviewFilterSectionProps {
   setQueryParams: ({}) => void;
@@ -22,13 +21,19 @@ export const ReviewFilterSection: React.FC<ReviewFilterSectionProps> = ({
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [searchTerm, setSearchTerm] = useState("");
   const [productId, setProductId] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
+
+  const token = useSelector((state: any) => state.auth.token);
 
   const {
     data: productData,
     isLoading: productLoading,
     error,
     refetch: productRefetch,
-  } = useGetProductsQuery(searchTerm ? { search: searchTerm } : {});
+  } = useGetProductsQuery({});
   const {
     data: customerList,
     isLoading: customerLoading,
@@ -42,11 +47,21 @@ export const ReviewFilterSection: React.FC<ReviewFilterSectionProps> = ({
   };
 
   const loadProductOptions = async (inputValue: string) => {
-    setSearchTerm(inputValue);
-    // Wait for Redux to update productData
-    return (productData?.data || [])
-      .slice(0, 10)
-      .map((p: any) => ({ value: p.id, label: p.title }));
+    // You must use a direct fetcher here, not a hook!
+    const res = await fetch(
+      `https://api.darkak.com.bd/api/admin/product/get?search=${inputValue}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    const data = await res.json();
+    return (data?.data || []).slice(0, 10).map((p: any) => ({
+      value: p.id,
+      label: p.title,
+    }));
   };
 
   const handleFilter = () => {
@@ -67,7 +82,9 @@ export const ReviewFilterSection: React.FC<ReviewFilterSectionProps> = ({
     });
     setErrors({});
     setProductId("");
+    setSearchTerm(""); // <-- Reset searchTerm
     setQueryParams({});
+    productRefetch();
   };
 
   console.log(formData, "filter data");
@@ -78,24 +95,19 @@ export const ReviewFilterSection: React.FC<ReviewFilterSectionProps> = ({
         <label className="text-sm font-medium">Product</label>
         <AsyncSelect
           cacheOptions
-          defaultOptions={(productData?.data || [])
-            .slice(0, 10)
-            .map((p: any) => ({ value: p.id, label: p.title }))}
-          loadOptions={loadProductOptions}
-          value={
-            productId
-              ? {
-                  value: productId,
-                  label:
-                    productData?.data?.find((p: any) => p.id === productId)
-                      ?.title || "Selected Product",
-                }
-              : null
+          defaultOptions={
+            productData?.data
+              ? productData.data.slice(0, 10).map((p: any) => ({
+                  value: p.id,
+                  label: p.title,
+                }))
+              : []
           }
+          loadOptions={loadProductOptions}
+          value={selectedProduct}
           onChange={(option: any) => {
-            setProductId(option?.value || "");
-            handleInputChange("productId", option.value);
-            if (!option) setSearchTerm("");
+            setSelectedProduct(option);
+            handleInputChange("productId", option?.value || "");
           }}
           placeholder="Select Product"
           isClearable
