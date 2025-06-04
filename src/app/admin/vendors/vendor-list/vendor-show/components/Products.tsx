@@ -62,7 +62,7 @@ const Products = ({ id }: { id: string }) => {
       </div>
       <Table>
         <TableHeader>
-          <TableRow className="border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
+          <TableRow className="whitespace-nowrap border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
             <TableHead>SL</TableHead>
             <TableHead>Thumbnail</TableHead>
             <TableHead>Name</TableHead>
@@ -93,7 +93,7 @@ const Products = ({ id }: { id: string }) => {
             </TableRow>
           ) : (
             data?.map((doc: any, i: number) => (
-              <TableRow key={doc.id}>
+              <TableRow className="whitespace-nowrap" key={doc.id}>
                 <TableCell>{i + 1}</TableCell>
 
                 <TableCell>

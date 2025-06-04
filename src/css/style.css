@@ -506,3 +506,16 @@ input[type="search"]::-webkit-search-cancel-button {
 /* Search scrollbar design end */
 
 /* styles/global.css or globals.scss */
+
+.scrollbar-always {
+  scrollbar-width: auto; /* Firefox */
+  overflow-y: hidden;
+}
+.scrollbar-always::-webkit-scrollbar {
+  height: 4px;
+  background: #e5e7eb; /* Tailwind gray-200 */
+}
+.scrollbar-always::-webkit-scrollbar-thumb {
+  background: #a3a3a3; /* Tailwind gray-400 */
+  border-radius: 4px;
+}

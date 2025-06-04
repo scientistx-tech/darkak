@@ -84,6 +84,24 @@ export const adminVendorApi = baseApi.injectEndpoints({
         body: data,
       }),
     }),
+
+    getVendorComissionSetting: builder.query({
+      query: ({ id }) => ({
+        url: `/admin/vendor/commission/${id}`,
+        method: "GET",
+      }),
+    }),
+
+    updateVendorComissionSetting: builder.mutation<
+      any,
+      { data: { charge: number }; id: number }
+    >({
+      query: ({ data, id }) => ({
+        url: `/admin/vendor/commission/${id}`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -96,4 +114,6 @@ export const {
   useChangeVendorStatusMutation,
   useGetAllVendorsQuery,
   useCreateVendorMutation,
+  useGetVendorComissionSettingQuery,
+  useUpdateVendorComissionSettingMutation,
 } = adminVendorApi;
