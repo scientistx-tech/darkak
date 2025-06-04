@@ -1,151 +1,118 @@
-import { useState } from "react";
-import * as Yup from "yup";
-import { DateRangePicker } from "./DateRangePicker";
+import { format } from "date-fns";
+import React, { useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-const filterSchema = Yup.object().shape({
-  orderDateRange: Yup.string()
-    .matches(
-      /^\d{2}\/\d{2}\/\d{4}-\d{2}\/\d{2}\/\d{4}$/,
-      "Order Date must be in DD/MM/YYYY-DD/MM/YYYY format",
-    )
-    .required("Order Date is required"),
-  joiningDateRange: Yup.string()
-    .matches(
-      /^\d{2}\/\d{2}\/\d{4}-\d{2}\/\d{2}\/\d{4}$/,
-      "Joining Date must be in DD/MM/YYYY-DD/MM/YYYY format",
-    )
-    .required("Joining Date is required"),
-  customerStatus: Yup.string()
-    .oneOf(["Active", "Inactive"], "Select a valid status")
-    .required("Customer Status is required"),
-  sortBy: Yup.string()
-    .oneOf(["Name (A-Z)", "Name (Z-A)"], "Select a valid sort option")
-    .required("Sort By is required"),
-  chooseFirst: Yup.string()
-    .matches(
-      /^\*?\d+$/,
-      "Choose First must be a number, optionally starting with *",
-    )
-    .required("Choose First is required"),
-});
+export default function FilterSection({
+  setQueryParams,
+}: {
+  setQueryParams: ({}) => void;
+}) {
+  const [orderDateRange, setOrderDateRange] = useState<(Date | null)[]>([
+    null,
+    null,
+  ]);
+  const [joiningDateRange, setJoiningDateRange] = useState<(Date | null)[]>([
+    null,
+    null,
+  ]);
+  const [sort, setSort] = useState("");
 
-export const FilterSection: React.FC = () => {
-  const [formData, setFormData] = useState({
-    orderDateRange: "",
-    joiningDateRange: "",
-    customerStatus: "",
-    sortBy: "",
-    chooseFirst: "",
-  });
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const formatDate = (date: any) => (date ? format(date, "dd-MM-yyyy") : "");
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => ({ ...prev, [field]: "" }));
+  const [orderDateFrom, orderDateTo] = orderDateRange;
+  const [joiningDateFrom, joiningDateTo] = joiningDateRange;
+
+  const handleFilter = () => {
+    const params: Record<string, string> = {
+      orderDateFrom: orderDateFrom ? formatDate(orderDateFrom) : "",
+      orderDateTo: orderDateTo ? formatDate(orderDateTo) : "",
+      joiningDateFrom: joiningDateFrom ? formatDate(joiningDateFrom) : "",
+      joiningDateTo: joiningDateTo ? formatDate(joiningDateTo) : "",
+      sort,
+    };
+
+    // Remove keys with empty values
+    const filteredParams = Object.fromEntries(
+      Object.entries(params).filter(([_, value]) => value),
+    );
+
+    setQueryParams(filteredParams);
   };
 
-  const handleFilter = async () => {
-    try {
-      await filterSchema.validate(formData, { abortEarly: false });
-      setErrors({});
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const newErrors: { [key: string]: string } = {};
-        err.inner.forEach((error) => {
-          if (error.path) {
-            newErrors[error.path] = error.message;
-          }
-        });
-        setErrors(newErrors);
-      }
-    }
+  const handleReset = () => {
+    setOrderDateRange([null, null]);
+    setJoiningDateRange([null, null]);
+    setSort("");
+    setQueryParams({});
   };
 
   return (
-    <div className="mb-4 flex space-x-4 rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark dark:shadow-card">
-      <DateRangePicker
-        label="Order Date"
-        onChange={(value) => handleInputChange("orderDateRange", value)}
-        value={formData.orderDateRange}
-        error={errors.orderDateRange}
-      />
-      <DateRangePicker
-        label="Customer Joining Date"
-        onChange={(value) => handleInputChange("joiningDateRange", value)}
-        value={formData.joiningDateRange}
-        error={errors.joiningDateRange}
-      />
-      <div className="flex flex-col space-y-1">
-        <label className="text-sm font-medium">Customer Status</label>
-        <select
-          className={`rounded border p-2 text-sm ${
-            errors.customerStatus ? "border-red-500" : ""
-          }`}
-          value={formData.customerStatus}
-          onChange={(e) => handleInputChange("customerStatus", e.target.value)}
-        >
-          <option value="">Select status</option>
-          <option>Active</option>
-          <option>Inactive</option>
-        </select>
-        {errors.customerStatus && (
-          <p className="text-xs text-red-500">{errors.customerStatus}</p>
-        )}
+    <div className="space-y-6 rounded-lg bg-white p-6 shadow-md">
+      <div className="grid grid-cols-3 gap-4">
+        {/* Order Date */}
+        <div className="w-full">
+          <label className="mb-1 block font-medium">Order Date</label>
+          <DatePicker
+            selectsRange
+            startDate={orderDateFrom}
+            endDate={orderDateTo}
+            onChange={(update) => setOrderDateRange(update)}
+            isClearable
+            placeholderText="Select date range"
+            className="w-full rounded border border-gray-300 px-3 py-2"
+            wrapperClassName="w-full"
+          />
+        </div>
+
+        {/* Customer Joining Date */}
+        <div className="w-full">
+          <label className="mb-1 block font-medium">
+            Customer Joining Date
+          </label>
+          <DatePicker
+            selectsRange
+            startDate={joiningDateFrom}
+            endDate={joiningDateTo}
+            onChange={(update) => setJoiningDateRange(update)}
+            isClearable
+            placeholderText="Select date range"
+            className="w-full rounded border border-gray-300 px-3 py-2"
+            wrapperClassName="w-full"
+          />
+        </div>
+        {/* Sort By Dropdown */}
+        <div>
+          <label className="mb-1 block font-medium">Sort By</label>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            className="w-full rounded border border-gray-300 px-3 py-2"
+          >
+            <option>Select sorting order</option>
+            <option value="older">Older</option>
+            <option value="newer">Newer</option>
+          </select>
+        </div>
       </div>
-      <div className="flex flex-col space-y-1">
-        <label className="text-sm font-medium">Sort By</label>
-        <select
-          className={`rounded border p-2 text-sm ${
-            errors.sortBy ? "border-red-500" : ""
-          }`}
-          value={formData.sortBy}
-          onChange={(e) => handleInputChange("sortBy", e.target.value)}
-        >
-          <option value="">Select Customer sorting order</option>
-          <option>Name (A-Z)</option>
-          <option>Name (Z-A)</option>
-        </select>
-        {errors.sortBy && (
-          <p className="text-xs text-red-500">{errors.sortBy}</p>
-        )}
-      </div>
-      <div className="flex flex-col space-y-1">
-        <label className="text-sm font-medium">Choose First</label>
-        <input
-          type="text"
-          placeholder="Ex: *100"
-          className={`rounded border p-2 text-sm ${
-            errors.chooseFirst ? "border-red-500" : ""
-          }`}
-          value={formData.chooseFirst}
-          onChange={(e) => handleInputChange("chooseFirst", e.target.value)}
-        />
-        {errors.chooseFirst && (
-          <p className="text-xs text-red-500">{errors.chooseFirst}</p>
-        )}
-      </div>
-      <div className="flex items-end space-x-2">
-        <button
-          className="rounded border p-2 text-sm"
-          onClick={() =>
-            setFormData({
-              orderDateRange: "",
-              joiningDateRange: "",
-              customerStatus: "",
-              sortBy: "",
-              chooseFirst: "",
-            })
-          }
-        >
-          Reset
-        </button>
-        <button
-          className="rounded bg-blue-600 p-2 text-sm text-white"
-          onClick={handleFilter}
-        >
-          Filter
-        </button>
+
+      <div className="flex justify-end">
+        {/* Buttons */}
+        <div className="flex space-x-2">
+          <button
+            onClick={handleReset}
+            className="flex-1 rounded bg-gray-200 px-4 py-2 font-medium hover:bg-gray-300"
+          >
+            Reset
+          </button>
+          <button
+            onClick={handleFilter}
+            className="flex-1 rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
+          >
+            Filter
+          </button>
+        </div>
       </div>
     </div>
   );
-};
+}

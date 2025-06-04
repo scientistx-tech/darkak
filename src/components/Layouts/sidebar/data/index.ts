@@ -14,7 +14,7 @@ import * as Icons from "../icons";
 import { BsTornado } from "react-icons/bs";
 import { url } from "inspector";
 
-export const NAV_DATA = [
+export const getNavData = (data: any) => [
   {
     label: "MAIN MENU",
     items: [
@@ -46,56 +46,71 @@ export const NAV_DATA = [
             title: "All",
             url: "/admin/orders/all",
             accessKey: "order-all",
-            values: { vive: "positive", value: 111 },
+            values: { vive: "positive", value: data?.totalOrder },
           },
           {
             title: "Pending",
             url: "/admin/orders/pending",
             accessKey: "order-pending",
-            values: { vive: "positive", value: 55 },
+            values: { vive: "positive", value: data?.ordersCount[0].pending },
           },
           {
             title: "Confirm",
             url: "/admin/orders/confirmed",
             accessKey: "order-confirm",
-            values: { vive: "neutral-1", value: 12 },
+            values: {
+              vive: "neutral-1",
+              value: data?.ordersCount[1].confirmed,
+            },
           },
           {
             title: "Packaging",
             url: "/admin/orders/packaging",
             accessKey: "order-packaging",
-            values: { vive: "neutral-2", value: 5 },
+            values: {
+              vive: "neutral-2",
+              value: data?.ordersCount[2].packaging,
+            },
           },
           {
             title: "Out For Delivery",
             url: "/admin/orders/out-for-delivery",
             accessKey: "order-out-for-delivery",
-            values: { vive: "neutral-2", value: 20 },
+            values: {
+              vive: "neutral-2",
+              value: data?.ordersCount[3].out_for_delivery,
+            },
           },
           {
             title: "Delivered",
             url: "/admin/orders/delivered",
             accessKey: "order-delivered",
-            values: { vive: "neutral-1", value: 65 },
+            values: {
+              vive: "neutral-1",
+              value: data?.ordersCount[4].delivered,
+            },
           },
           {
             title: "Returned",
             url: "/admin/orders/returned",
             accessKey: "order-returned",
-            values: { vive: "negetive", value: 31 },
+            values: { vive: "negetive", value: data?.ordersCount[6].returned },
           },
           {
             title: "Failled To Deliver",
             url: "/admin/orders/failled-to-deliver",
             accessKey: "order-failed-to-deliver",
-            values: { vive: "negetive", value: 23 },
+            values: {
+              vive: "negetive",
+              value: data?.ordersCount[7].failed_to_delivery,
+            },
           },
           {
             title: "Canceled",
             url: "/admin/orders/cancelled",
             accessKey: "order-cancelled",
 
-            values: { vive: "negetive", value: 19 },
+            values: { vive: "negetive", value: data?.ordersCount[5].cancelled },
           },
         ],
       },
@@ -327,15 +342,20 @@ export const NAV_DATA = [
 ];
 
 import { useSelector } from "react-redux";
+import { useDashboardDataQuery } from "@/redux/services/admin/adminDashboard";
 
 export const useFilteredNavData = () => {
   const moderatorAccess = useSelector(
     (state: any) => state.auth.user?.moderator_access || [],
   );
 
-  console.log("moderator access", moderatorAccess);
-
   const accessKeys = moderatorAccess.map((a: any) => a.access);
+
+  // Fetch dashboard data
+  const { data: dashboardData } = useDashboardDataQuery({});
+
+  // Get nav data with API data
+  const NAV_DATA = getNavData(dashboardData);
 
   const filterItems = (items: any[]): any[] => {
     return items

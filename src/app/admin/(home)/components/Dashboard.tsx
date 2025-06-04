@@ -14,7 +14,6 @@ import TopSellingProducts from "./TopSellingProducts";
 
 const Dashboard: React.FC = () => {
   const { data, isLoading, error } = useDashboardDataQuery({});
-  console.log("satat", data);
   const [orderPeriod, setOrderPeriod] = useState<"year" | "month" | "week">(
     "year",
   );
@@ -23,7 +22,20 @@ const Dashboard: React.FC = () => {
   );
 
   if (isLoading)
-    return <div className="p-8 text-center">Loading dashboard data...</div>;
+    return (
+      <div className="p-8">
+        <div className="mb-4 h-8 w-1/3 animate-pulse rounded bg-gray-200" />
+        <div className="mb-2 h-6 w-1/2 animate-pulse rounded bg-gray-200" />
+        <div className="mb-6 h-4 w-1/4 animate-pulse rounded bg-gray-100" />
+        <div className="mb-4 h-32 w-full animate-pulse rounded bg-gray-100" />
+        <div className="mb-4 h-32 w-full animate-pulse rounded bg-gray-100" />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="h-40 w-full animate-pulse rounded bg-gray-100" />
+          <div className="h-40 w-full animate-pulse rounded bg-gray-100" />
+          <div className="h-40 w-full animate-pulse rounded bg-gray-100" />
+        </div>
+      </div>
+    );
   if (error)
     return (
       <div className="p-8 text-center text-red-500">

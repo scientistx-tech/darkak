@@ -5,12 +5,12 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { NAV_DATA } from "./data";
 import { ArrowLeftIcon, ChevronUp } from "./icons";
 import { MenuItem } from "./menu-item";
 import { useSidebarContext } from "./sidebar-context";
-import { useFilteredNavData } from "./data";
+import { getNavData, useFilteredNavData } from "./data";
 import { useSelector } from "react-redux";
+import { useDashboardDataQuery } from "@/redux/services/admin/adminDashboard";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -27,22 +27,12 @@ export function Sidebar() {
     // );
   };
 
-  useEffect(() => {
-    // Keep collapsible open, when it's subpage is active
-    // NAV_DATA.some((section) => {
-    //   return section.items.some((item) => {
-    //     return item.items.some((subItem) => {
-    //       if (subItem.url === pathname) {
-    //         if (!expandedItems.includes(item.title)) {
-    //           toggleExpanded(item.title);
-    //         }
-    //         // Break the loop
-    //         return true;
-    //       }
-    //     });
-    //   });
-    // });
-  }, [pathname, expandedItems]);
+  // Fetch dashboard data
+  const { data: dashboardData } = useDashboardDataQuery({});
+
+  console.log("data drom sidebar", dashboardData);
+  // Get nav data with API data
+  const NAV_DATA = getNavData(dashboardData);
 
   const filteredNavs = useFilteredNavData();
 

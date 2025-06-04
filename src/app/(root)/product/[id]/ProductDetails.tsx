@@ -29,7 +29,7 @@ export default function ProductDetails({ data }: { data: any }) {
           <ProductTabs data={data.product} />
         </div>
         <div className="w-full py-10 lg:w-[35%] lg:py-0">
-          <CustomerReviews />
+          <CustomerReviews reviews={data?.product?.review} />
         </div>
       </div>
     </div>
