@@ -4,18 +4,39 @@ import { Modal } from "antd";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import bannerImg from "@/Data/Demo/White Brown Modern Youtube Thumbnail.png";
+import Link from "next/link";
 
 const EidOfferNotice: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [countdown, setCountdown] = useState(10);
 
   useEffect(() => {
     const lastShown = localStorage.getItem("eid_offer_shown_date");
     const today = new Date().toISOString().split("T")[0];
+
     if (lastShown !== today) {
       setIsModalOpen(true);
       localStorage.setItem("eid_offer_shown_date", today);
     }
   }, []);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (isModalOpen) {
+      timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev === 1) {
+            clearInterval(timer);
+            setIsModalOpen(false);
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => clearInterval(timer);
+  }, [isModalOpen]);
 
   return (
     <Modal
@@ -28,9 +49,7 @@ const EidOfferNotice: React.FC = () => {
       className="rounded-3xl modal-glow bg-opacity-60 backdrop-blur-md"
     >
       <div className="relative bg-gradient-to-br from-[#1a002a] via-[#3a005e] to-[#610086] text-white rounded-3xl overflow-hidden border border-purple-400 shadow-2xl">
-        {/* Sparkles Background */}
         <div className="absolute inset-0 bg-[url('/stars.gif')] bg-cover opacity-10 z-0" />
-
         <div className="relative z-10 text-center px-6 py-12">
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
@@ -77,7 +96,6 @@ const EidOfferNotice: React.FC = () => {
             ⏳ Hurry, Offer ends tonight!
           </motion.p>
 
-          {/* Image */}
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -91,15 +109,26 @@ const EidOfferNotice: React.FC = () => {
             />
           </motion.div>
 
-          {/* Shop Button */}
-          <motion.button
-            whileHover={{ scale: 1.08, boxShadow: "0 0 20px #ffeb3b" }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setIsModalOpen(false)}
-            className="mt-6 px-10 py-3 text-lg font-bold rounded-full bg-gradient-to-r from-yellow-400 via-pink-500 to-red-500 text-white shadow-xl hover:shadow-2xl transition-all duration-300"
+          {/* Countdown Text */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2 }}
+            className="text-sm mt-2 text-yellow-200"
           >
-            🎉 Shop Now & Save Big
-          </motion.button>
+            This offer message will close in {countdown} second{countdown !== 1 ? "s" : ""}...
+          </motion.p>
+
+          <Link href="/category" passHref>
+            <motion.button
+              whileHover={{ scale: 1.08, boxShadow: "0 0 20px #ffeb3b" }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsModalOpen(false)}
+              className="mt-6 px-10 py-3 text-lg font-bold rounded-full bg-gradient-to-r from-yellow-400 via-pink-500 to-red-500 text-white shadow-xl hover:shadow-2xl transition-all duration-300"
+            >
+              🎉 Shop Now & Save Big
+            </motion.button>
+          </Link>
         </div>
       </div>
     </Modal>
