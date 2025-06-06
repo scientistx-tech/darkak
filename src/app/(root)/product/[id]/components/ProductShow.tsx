@@ -487,7 +487,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
           {/* Short Description with See More/Less */}
           {data?.product?.short_description && (
             <div className="mt-6 h-fit w-full">
-              <p className="inline">Description:</p>
+              {/* <p className="inline">Description:</p> */}
               <div className="prose prose-table:border prose-td:border prose-th:border prose-td:p-2 prose-th:p-2 prose-table:bg-white prose-tr:bg-white prose-tr:odd:bg-gray-50 max-w-none">
                 <div
                   dangerouslySetInnerHTML={{
