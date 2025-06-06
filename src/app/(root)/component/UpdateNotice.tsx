@@ -7,7 +7,7 @@ import bannerImg from "@/Data/Demo/White Brown Modern Youtube Thumbnail.png";
 import Link from "next/link";
 
 const EidOfferNotice: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [countdown, setCountdown] = useState(10);
 
   useEffect(() => {
