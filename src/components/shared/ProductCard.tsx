@@ -5,6 +5,7 @@ import { Product } from "@/app/(root)/types/ProductType";
 import { message } from "antd";
 import PriceInfo from "./PriceInfo";
 import RightIcons from "./RightIcons";
+import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
   product: Product;
@@ -14,6 +15,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
   const [hovered, setHovered] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
+  const router = useRouter();
 
   // Message setup
   const [messageApi, contextHolder] = message.useMessage();
@@ -63,11 +65,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
 
       {/* Image Container with polygon background */}
       <div
-        className="relative flex h-32 items-center justify-center transition-all duration-500 md:h-48"
+        className="relative flex h-32 cursor-pointer items-center justify-center transition-all duration-500 md:h-48"
         onMouseEnter={() => {
           setTimeout(() => {
             setActiveImage((activeImage + 1) % product.Image.length);
           }, 1600);
+        }}
+        onClick={() => {
+          router.push(`/product/${product.slug}`);
+          if (setIsOpen) setIsOpen(false);
         }}
       >
         {/* Polygon background behind the image */}
@@ -97,10 +103,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
           <div
             key={i}
             onClick={() => setActiveImage(i)}
-            className={`h-2 w-4 cursor-pointer rounded-full transition-all duration-300 hover:bg-secondaryBlue ${i === activeImage
+            className={`h-2 w-4 cursor-pointer rounded-full transition-all duration-300 hover:bg-secondaryBlue ${
+              i === activeImage
                 ? "w-8 bg-secondaryBlue"
                 : "border-[1px] border-secondaryLiteBlue bg-secondaryWhite"
-              }`}
+            }`}
           />
         ))}
       </div>
