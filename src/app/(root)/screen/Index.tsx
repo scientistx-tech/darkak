@@ -92,7 +92,7 @@ const Slider: React.FC = () => {
     );
 
   return (
-    <div className="w-full overflow-hidden bg-primaryBlue text-white">
+    <div className="w-full overflow-hidden bg-gradient-to-r from-primaryBlue via-primary to-primaryBlue text-white">
       <div className="w-full md:h-[calc(100vh-150px)]">
         <div className="h-[2px] w-full bg-primary" />
 
@@ -215,7 +215,7 @@ const Slider: React.FC = () => {
               key={i}
               onClick={() => handleDotClick(i)}
               className={`h-[8px] w-[30px] transition-all duration-300 ${
-                i === index ? "scale-110 bg-white" : "bg-primary"
+                i === index ? "scale-110 bg-white" : "bg-primaryDarkBlue"
               }`}
             />
           ))}
