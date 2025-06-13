@@ -137,7 +137,7 @@ const PriceInfo = ({
           {product.title}
           {/* ({product.storage}) */}
         </h3>
-        <div className="flex flex-wrap items-center justify-center text-sm text-secondaryBlue">
+        {/* <div className="flex flex-wrap items-center justify-center text-sm text-secondaryBlue">
           <Rating
             readonly
             size={18}
@@ -150,7 +150,7 @@ const PriceInfo = ({
           <span className="ml-2 text-gray-500">
             ({product.review ? product.review.length : 0} Reviews)
           </span>
-        </div>
+        </div> */}
 
         {/* Buttons */}
         {product?.stock === 0 ? (

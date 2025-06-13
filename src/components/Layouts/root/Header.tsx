@@ -20,6 +20,9 @@ import {
   AppstoreOutlined,
   PhoneOutlined,
   InfoCircleOutlined,
+  ShoppingOutlined,
+  MinusOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
 
 import { AnimatePresence, motion } from "framer-motion";
@@ -41,6 +44,7 @@ import { BiSolidDownArrow } from "react-icons/bi";
 import ProductCard from "@/components/shared/ProductCard";
 import { useRouter } from "next/navigation";
 import { useGetSearchPublicQuery } from "@/redux/services/client/searchedProducts";
+import MobileDropdown from "./MobileDropdown";
 
 const Header: React.FC = () => {
   const { data: cart, refetch: cartRefetch } = useGetMyCartQuery();
@@ -181,6 +185,11 @@ const Header: React.FC = () => {
   useEffect(() => {
     setIsOpen(!!debouncedSearch);
   }, [debouncedSearch]);
+
+  const [submenuOpen, setSubmenuOpen] = useState(false);
+  const toggleSubmenu = () => {
+    setSubmenuOpen(!submenuOpen);
+  };
 
   return (
     <div className="relative w-full bg-black">
@@ -354,8 +363,9 @@ const Header: React.FC = () => {
           <div className="hidden grid-flow-col gap-5 md:grid">
             <Link
               href="/user/profile"
-              className={`text-2xl transition-all duration-300 hover:scale-110 hover:text-primary ${pathname === "/user/profile" ? "opacity-100" : "opacity-70"
-                }`}
+              className={`text-2xl transition-all duration-300 hover:scale-110 hover:text-primary ${
+                pathname === "/user/profile" ? "opacity-100" : "opacity-70"
+              }`}
             >
               <UserOutlined />
             </Link>
@@ -365,14 +375,16 @@ const Header: React.FC = () => {
               className="group text-2xl transition-all duration-300 hover:scale-110 hover:text-primary"
             >
               <HeartOutlined
-                className={` ${pathname === "/user/wishlist" ? "opacity-100" : "opacity-70"
-                  }`}
+                className={` ${
+                  pathname === "/user/wishlist" ? "opacity-100" : "opacity-70"
+                }`}
               />
               <div
-                className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-black group-hover:bg-primary group-hover:text-white ${pathname === "/user/wishlist"
-                  ? "bg-primary text-white"
-                  : "bg-white"
-                  }`}
+                className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-black group-hover:bg-primary group-hover:text-white ${
+                  pathname === "/user/wishlist"
+                    ? "bg-primary text-white"
+                    : "bg-white"
+                }`}
               >
                 <p className="text-[10px] font-semibold">
                   {wishlist ? wishlist.data.length : "0"}
@@ -385,14 +397,16 @@ const Header: React.FC = () => {
               className="group text-2xl transition-all duration-300 hover:scale-110 hover:text-primary"
             >
               <ShoppingCartOutlined
-                className={` ${pathname === "/user/cart" ? "opacity-100" : "opacity-70"
-                  }`}
+                className={` ${
+                  pathname === "/user/cart" ? "opacity-100" : "opacity-70"
+                }`}
               />
               <div
-                className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-black group-hover:bg-primary group-hover:text-white ${pathname === "/user/cart"
-                  ? "bg-primary text-white"
-                  : "bg-white"
-                  }`}
+                className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-black group-hover:bg-primary group-hover:text-white ${
+                  pathname === "/user/cart"
+                    ? "bg-primary text-white"
+                    : "bg-white"
+                }`}
               >
                 <p className="text-[10px] font-semibold">
                   {cart ? cart.cart.length : "0"}
@@ -408,14 +422,16 @@ const Header: React.FC = () => {
           >
             <div className="relative h-6 w-6">
               <span
-                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${open ? "opacity-0" : "opacity-100"
-                  }`}
+                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${
+                  open ? "opacity-0" : "opacity-100"
+                }`}
               >
                 <MenuOutlined className="text-xl" />
               </span>
               <span
-                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${open ? "opacity-100" : "opacity-0"
-                  }`}
+                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${
+                  open ? "opacity-100" : "opacity-0"
+                }`}
               >
                 {/* <CloseOutlined className="text-xl" /> */}
               </span>
@@ -433,7 +449,7 @@ const Header: React.FC = () => {
         className="custom-drawer"
         styles={{ body: { padding: 0 } }}
       >
-        <div className="flex h-full flex-col justify-between px-5 py-6 text-gray-800 shadow-lg backdrop-blur-md">
+        <div className="flex h-full flex-col justify-between px-5 py-6 text-gray-800 backdrop-blur-md">
           <div className="w-full">
             {/* Header */}
             <div className="mb-6 flex h-[50px] items-center justify-between bg-primaryBlue">
@@ -476,6 +492,7 @@ const Header: React.FC = () => {
                 <HomeOutlined />
                 Home
               </Link>
+
               {/* <Link
                 href="/shop"
                 onClick={onClose}
@@ -484,24 +501,51 @@ const Header: React.FC = () => {
                 <ShopOutlined />
                 Shop
               </Link> */}
-              <Link
-                href="/category"
-                onClick={onClose}
-                className="flex items-center gap-3 hover:text-primary"
-              >
-                <AppstoreOutlined />
-                <div className="flex w-full items-center justify-between">
-                  <span>Category</span>
-                  <DownOutlined />
-                </div>
-              </Link>
+
+              {/* Categories */}
+              <div className="flex items-center justify-between">
+                <Link
+                  href="/category"
+                  onClick={onClose}
+                  className="flex items-center gap-3 hover:text-primary"
+                >
+                  <AppstoreOutlined />
+                  <div className="flex w-full items-center justify-between">
+                    <span>Category</span>
+                  </div>
+                </Link>
+
+                <button onClick={toggleSubmenu} className="w-auto">
+                  {submenuOpen ? (
+                    <MinusOutlined className="text-xl" />
+                  ) : (
+                    <PlusOutlined className="text-xl" />
+                  )}
+                </button>
+              </div>
+
+              <AnimatePresence initial={false}>
+                {submenuOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="ml-[10%] overflow-hidden"
+                  >
+                    <MobileDropdown onClose={onClose} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Vendors */}
 
               <Link
                 href="/vendors"
                 onClick={onClose}
                 className="flex items-center gap-3 hover:text-primary"
               >
-                <PhoneOutlined />
+                <ShoppingOutlined />
                 Vendors
               </Link>
 
@@ -566,7 +610,7 @@ const Header: React.FC = () => {
             </div>
 
             {/* Bottom Icons */}
-            <div className="mt-10 grid grid-cols-3 gap-4 text-center text-sm">
+            <div className="mt-5 grid grid-cols-3 gap-4 text-center text-sm">
               <Link href="/profile" onClick={onClose}>
                 <div className="flex flex-col items-center justify-center hover:text-primary">
                   <UserOutlined className="text-xl" />
@@ -594,7 +638,7 @@ const Header: React.FC = () => {
             </div>
           </div>
 
-          <div className="border-b-2 border-t-2 border-primaryBlue bg-[#f0f8ff] text-sm text-gray-700">
+          <div className="mt-3 border-b-2 border-t-2 border-primaryBlue bg-[#f0f8ff] text-sm text-gray-700">
             <HeadLineText />
           </div>
         </div>
@@ -603,7 +647,7 @@ const Header: React.FC = () => {
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute left-1/2 top-24 z-50 mt-2 flex h-[80vh] w-[95%] -translate-x-1/2 flex-col rounded-xl border bg-white shadow-lg sm:w-[90%] md:w-[85%] lg:top-[100px] lg:w-[80%] lg:flex-row overflow-hidden py-3"
+          className="absolute left-1/2 top-24 z-50 mt-2 flex h-[80vh] w-[95%] -translate-x-1/2 flex-col overflow-hidden rounded-xl border bg-white py-3 shadow-lg sm:w-[90%] md:w-[85%] lg:top-[100px] lg:w-[80%] lg:flex-row"
         >
           {isFetching ? (
             <div className="flex h-full w-full items-center justify-center">
@@ -612,11 +656,11 @@ const Header: React.FC = () => {
           ) : products.length > 0 ? (
             <>
               {/* LEFT: Categories */}
-              <div className="w-full px-6 py-4 lg:w-[30%] lg:border-r pb-4">
-                <h4 className="mb-2 text-lg font-bold text-black border-b pb-4">
+              <div className="w-full px-6 py-4 pb-4 lg:w-[30%] lg:border-r">
+                <h4 className="mb-2 border-b pb-4 text-lg font-bold text-black">
                   Categories
                 </h4>
-                <div className="overflow-hidden overflow-y-auto pt-2 pb-4 h-full search-custom-scrollbar">
+                <div className="search-custom-scrollbar h-full overflow-hidden overflow-y-auto pb-4 pt-2">
                   <ul className="pb-2">
                     {categories?.flatMap((category) => {
                       const subCategories = category.sub_category;
@@ -673,7 +717,7 @@ const Header: React.FC = () => {
               </div>
 
               {/* RIGHT: Product Cards */}
-              <div className="grid max-h-[80vh] w-full grid-cols-1 gap-4 overflow-y-auto p-4 sm:grid-cols-2 lg:w-[70%] lg:grid-cols-3 search-custom-scrollbar">
+              <div className="search-custom-scrollbar grid max-h-[80vh] w-full grid-cols-1 gap-4 overflow-y-auto p-4 sm:grid-cols-2 lg:w-[70%] lg:grid-cols-3">
                 {products.map((product: any, index: number) => (
                   <div key={index}>
                     <ProductCard product={product} setIsOpen={setIsOpen} />

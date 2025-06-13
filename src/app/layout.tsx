@@ -297,7 +297,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         </noscript>
         <ReduxProvider>
           <DataLoader>
-            <UpdateNotice />
+            {/* <UpdateNotice /> */}
             {children}
             
           </DataLoader>
