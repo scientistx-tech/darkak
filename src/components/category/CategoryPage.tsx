@@ -38,14 +38,14 @@ export default function CategoryPage({
         sortBy={sortBy}
         searchValue={searchValue}
       />
-      <div className="px-10">
+      {/* <div className="px-10">
         <Pagination
           currentPage={currentPage}
           onPageChange={setCurrentPage}
           totalPages={totalPages}
           align="right"
         />
-      </div>
+      </div> */}
     </div>
   );
 }

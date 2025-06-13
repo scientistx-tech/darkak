@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import TypingPlaceholderInput from "../shared/TypingPlaceholderInput";
+import { useRouter } from "next/navigation";
 
 export interface SortItem {
   value: string;
@@ -47,6 +48,8 @@ const SortBy = ({
   const [sortingItem, setSortingItem] = useState<string>("Newer");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const router = useRouter();
+
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
   };
@@ -77,9 +80,17 @@ const SortBy = ({
     <div className="w-full px-2 md:px-6 lg:px-8 xl:px-10">
       <div className="mt-4 flex flex-col gap-3 md:mt-6 md:flex-row md:items-center md:gap-x-7 md:gap-y-0">
         <div className="w-full md:w-auto">
-          <p className="mb-1 text-base font-semibold text-[#003084] md:mb-0 md:text-xl lg:text-3xl">
+          <p className="mb-1 text-base font-semibold text-[#003084] md:mb-0">
             {categoryTitle} Category
           </p>
+          {categoryTitle !== "All Products" && (
+            <button
+              onClick={() => router.push("/category")}
+              className="cursor-pointer text-sm text-blue-600 hover:underline"
+            >
+              Show All Products
+            </button>
+          )}
         </div>
         <div className="order-3 w-full flex-1 md:order-none">
           <TypingPlaceholderInput
