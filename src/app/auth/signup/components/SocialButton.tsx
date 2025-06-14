@@ -67,10 +67,15 @@ const SocialButton = () => {
         <button
           key={index}
           onClick={onClick}
-          className={`w-[80%] flex items-center justify-center gap-3 rounded-md py-3 px-6 text-sm font-semibold text-white shadow-md transition duration-300 ${color}`}
+          className={`flex w-[80%] items-center justify-start rounded-md text-sm font-semibold text-white shadow-md transition duration-300 ${color}`}
         >
-          <span>{icon}</span>
-          <span>{text}</span>
+          <div className="border-r-2 border-white px-6 py-3">
+            <span>{icon}</span>
+          </div>
+
+          <div className="px-6 py-3">
+            <span>{text}</span>
+          </div>
         </button>
       ))}
     </div>
