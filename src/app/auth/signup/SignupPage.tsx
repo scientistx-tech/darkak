@@ -89,20 +89,23 @@ const SignupPage: React.FC = () => {
         initial={{ opacity: 0, scale: 0.9, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="z-10 flex w-[90%] flex-col items-center justify-center rounded-lg bg-white p-6 shadow md:w-[70%] max-w-md"
+        className="z-10 flex w-full max-w-md flex-col items-center justify-center rounded-2xl bg-white px-8 py-10 shadow-lg"
       >
         <p className="mb-1 text-2xl font-medium text-secondary">
-          Sign Up to &quot;<span className="text-primary">Darkak</span> <span className="text-primaryBlue">Mart&quot;</span>
+          Sign Up to &quot;<span className="text-primary">Darkak</span>{" "}
+          <span className="text-primaryBlue">Mart&quot;</span>
         </p>
 
         <p className="text-[15px]">Sign Up using social network</p>
 
-        <SocialButton />
+        <div className="w-full">
+          <SocialButton />
 
-        <div className="mb-2 flex w-[90%] items-center justify-around md:w-[70%]">
-          <div className="h-[1px] w-[45%] bg-yellow-200" />{" "}
-          <p className="text-[10px]">OR</p>{" "}
-          <div className="h-[1px] w-[45%] bg-yellow-200" />
+          <div className="mb-4 flex items-center justify-between">
+            <div className="h-[1px] w-[45%] bg-gray-200" />
+            <p className="text-xs text-gray-400">OR</p>
+            <div className="h-[1px] w-[45%] bg-gray-200" />
+          </div>
         </div>
 
         <InputField
