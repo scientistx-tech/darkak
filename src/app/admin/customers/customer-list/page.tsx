@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useGetCustomersListQuery } from "@/redux/services/admin/adminCustomerList";
 import RequireAccess from "@/components/Layouts/RequireAccess";
 import FilterSection from "./components/FilterSection";
+import Pagination from "@/components/shared/Pagination";
 
 const CustomerList: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -39,6 +40,12 @@ const CustomerList: React.FC = () => {
           />
         )}
       </div>
+      <Pagination
+        currentPage={page}
+        onPageChange={setPage}
+        total={data?.totalItems}
+        limit={limit}
+      />
     </RequireAccess>
   );
 };

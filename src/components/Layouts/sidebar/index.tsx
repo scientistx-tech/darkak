@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeftIcon, ChevronUp } from "./icons";
 import { MenuItem } from "./menu-item";
 import { useSidebarContext } from "./sidebar-context";
-import { getNavData, useFilteredNavData } from "./data";
+import { getNavData, getSellerNavData, useFilteredNavData } from "./data";
 import { useSelector } from "react-redux";
 import { useDashboardDataQuery } from "@/redux/services/admin/adminDashboard";
 
@@ -33,14 +33,17 @@ export function Sidebar() {
   console.log("data drom sidebar", dashboardData);
   // Get nav data with API data
   const NAV_DATA = getNavData(dashboardData);
+  const SELLER_NAV_DATA = getSellerNavData(dashboardData);
 
   const filteredNavs = useFilteredNavData();
 
-  let FinalNavs = [];
+  let FinalNavs: any = [];
   if (user?.isModerator) {
     FinalNavs = filteredNavs;
-  } else {
+  } else if (user?.isAdmin) {
     FinalNavs = NAV_DATA;
+  } else {
+    FinalNavs = SELLER_NAV_DATA;
   }
 
   return (

@@ -119,6 +119,7 @@ const AllOrderList = () => {
                   <TableHead>Store</TableHead>
                   <TableHead>Total Amount</TableHead>
                   <TableHead className="text-center">Order Status</TableHead>
+                  <TableHead className="">Courier Status</TableHead>
                   <TableHead className="text-center">Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -219,6 +220,11 @@ const AllOrderList = () => {
                             </p>
                           )}
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        {order?.courier_status === null
+                          ? "N/A"
+                          : order?.courier_status.split("_").join(" ")}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center justify-center gap-2">

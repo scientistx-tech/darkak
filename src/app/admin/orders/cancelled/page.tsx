@@ -121,6 +121,7 @@ const CancelledOrderList = () => {
                   <TableHead>Order Date</TableHead>
                   <TableHead>Customer Info</TableHead>
                   <TableHead>Store</TableHead>
+                  <TableHead className="">Courier Status</TableHead>
                   <TableHead>Total Amount</TableHead>
                   <TableHead className="text-center">Action</TableHead>
                 </TableRow>
@@ -164,6 +165,11 @@ const CancelledOrderList = () => {
                             {order.phone}
                           </div>
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        {order?.courier_status === null
+                          ? "N/A"
+                          : order?.courier_status.split("_").join(" ")}
                       </TableCell>
                       <TableCell>{order.order_type}</TableCell>
                       <TableCell>

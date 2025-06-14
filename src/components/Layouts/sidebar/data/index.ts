@@ -14,6 +14,178 @@ import * as Icons from "../icons";
 import { BsTornado } from "react-icons/bs";
 import { url } from "inspector";
 
+export const getSellerNavData = (data: any) => [
+  {
+    label: "Seller Dashboard",
+    items: [
+      {
+        title: "My Products",
+        icon: BiLogoProductHunt,
+        items: [
+          {
+            title: "Product List",
+            url: "/seller/product/product-list",
+            accessKey: "seller-product-list",
+          },
+          {
+            title: "Approved Product List",
+            url: "/seller/product/approved-product-list",
+            accessKey: "seller-approved-product-list",
+          },
+          {
+            title: "Rejected Product List",
+            url: "/seller/product/rejected-product-list",
+            accessKey: "seller-rejected-product-list",
+          },
+          {
+            title: "Request Product List",
+            url: "/seller/product/request-product-list",
+            accessKey: "seller-request-product-list",
+          },
+          // {
+          //   title: "New Product Request",
+          //   url: "/seller/product/new-product-request",
+          //   accessKey: "seller-new-product-request",
+          // },
+          // {
+          //   title: "Restock Product Request",
+          //   url: "/seller/product/restock-product-request",
+          //   accessKey: "seller-restock-product-request",
+          // },
+          {
+            title: "Add Product",
+            url: "/seller/product/add-product",
+            accessKey: "seller-product-add",
+          },
+        ],
+      },
+
+      {
+        title: "Orders",
+        // accessKey: "orders",
+        icon: IoMdCart,
+        items: [
+          {
+            title: "All",
+            url: "/seller/orders/all",
+            accessKey: "order-all",
+            values: { vive: "positive", value: data?.totalOrder },
+          },
+          {
+            title: "Pending",
+            url: "/seller/orders/pending",
+            accessKey: "order-pending",
+            values: { vive: "positive", value: data?.ordersCount[0].pending },
+          },
+          {
+            title: "Confirm",
+            url: "/seller/orders/confirmed",
+            accessKey: "order-confirm",
+            values: {
+              vive: "neutral-1",
+              value: data?.ordersCount[1].confirmed,
+            },
+          },
+          {
+            title: "Packaging",
+            url: "/seller/orders/packaging",
+            accessKey: "order-packaging",
+            values: {
+              vive: "neutral-2",
+              value: data?.ordersCount[2].packaging,
+            },
+          },
+          {
+            title: "Out For Delivery",
+            url: "/seller/orders/out-for-delivery",
+            accessKey: "order-out-for-delivery",
+            values: {
+              vive: "neutral-2",
+              value: data?.ordersCount[3].out_for_delivery,
+            },
+          },
+          {
+            title: "Delivered",
+            url: "/seller/orders/delivered",
+            accessKey: "order-delivered",
+            values: {
+              vive: "neutral-1",
+              value: data?.ordersCount[4].delivered,
+            },
+          },
+          {
+            title: "Returned",
+            url: "/seller/orders/returned",
+            accessKey: "order-returned",
+            values: {
+              vive: "negetive",
+              value: data?.ordersCount[6].returned,
+            },
+          },
+          {
+            title: "Failled To Deliver",
+            url: "/seller/orders/failled-to-deliver",
+            accessKey: "order-failed-to-deliver",
+            values: {
+              vive: "negetive",
+              value: data?.ordersCount[7].failed_to_delivery,
+            },
+          },
+          {
+            title: "Canceled",
+            url: "/seller/orders/cancelled",
+            accessKey: "order-cancelled",
+
+            values: {
+              vive: "negetive",
+              value: data?.ordersCount[5].cancelled,
+            },
+          },
+        ],
+      },
+      {
+        title: "Refund Request",
+        // accessKey: "refund-request",
+        icon: GiTakeMyMoney,
+        items: [
+          {
+            title: "Pending",
+            url: "/seller/refund-request/pending",
+            accessKey: "refund-pending",
+          },
+          {
+            title: "Approved",
+            url: "/seller/refund-request/approved",
+            accessKey: "refund-approved",
+          },
+          {
+            title: "Refunded",
+            url: "/seller/refund-request/refunded",
+            accessKey: "refund-refunded",
+          },
+          {
+            title: "Rejected",
+            url: "/seller/refund-request/rejected",
+            accessKey: "refund-rejected",
+          },
+        ],
+      },
+      {
+        title: "Customer Reviews",
+        accessKey: "customer-review",
+        icon: FaUsers,
+        url: "/seller/customer-reviews",
+      },
+      {
+        title: "Coupon",
+        accessKey: "coupon",
+        icon: BiSolidOffer,
+        url: "/seller/cupon",
+      },
+    ],
+  },
+];
+
 export const getNavData = (data: any) => [
   {
     label: "MAIN MENU",
@@ -123,28 +295,21 @@ export const getNavData = (data: any) => [
             title: "Pending",
             url: "/admin/refund-request/pending",
             accessKey: "refund-pending",
-            values: { vive: "positive", value: 111 },
           },
           {
             title: "Approved",
             url: "/admin/refund-request/approved",
             accessKey: "refund-approved",
-
-            values: { vive: "positive", value: 55 },
           },
           {
             title: "Refunded",
             url: "/admin/refund-request/refunded",
             accessKey: "refund-refunded",
-
-            values: { vive: "neutral-1", value: 12 },
           },
           {
             title: "Rejected",
             url: "/admin/refund-request/rejected",
             accessKey: "refund-rejected",
-
-            values: { vive: "neutral-2", value: 5 },
           },
         ],
       },

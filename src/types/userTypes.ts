@@ -28,6 +28,7 @@ export interface User {
   token: string | null;
   isModerator: boolean;
   isSeller: boolean;
+  seller?: {};
   updatePasswordAt: string;
   createdAt: string;
   marital_status: string | null;
