@@ -41,7 +41,7 @@ const LoginPage: React.FC = () => {
     if (user?.isAdmin) {
       router.replace("/admin");
     } else if (user?.isSeller) {
-      router.replace("/admin");
+      router.replace("/seller");
     } else {
       // optionally handle non-moderators
       router.replace("/user/profile");

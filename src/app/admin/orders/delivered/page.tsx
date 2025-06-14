@@ -120,6 +120,8 @@ const DeliveredOrderList = () => {
                   <TableHead>Order ID</TableHead>
                   <TableHead>Order Date</TableHead>
                   <TableHead>Customer Info</TableHead>
+                  <TableHead className="">Courier Status</TableHead>
+
                   <TableHead>Store</TableHead>
                   <TableHead>Total Amount</TableHead>
                   <TableHead className="text-center">Action</TableHead>
@@ -165,6 +167,12 @@ const DeliveredOrderList = () => {
                           </div>
                         </div>
                       </TableCell>{" "}
+                      <TableHead className="">Courier Status</TableHead>
+                      <TableCell>
+                        {order?.courier_status === null
+                          ? "N/A"
+                          : order?.courier_status.split("_").join(" ")}
+                      </TableCell>
                       <TableCell>{order.order_type}</TableCell>
                       <TableCell>
                         {order.subTotal + order.deliveryFee}
