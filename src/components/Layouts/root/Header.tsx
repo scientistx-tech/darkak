@@ -611,13 +611,13 @@ const Header: React.FC = () => {
 
             {/* Bottom Icons */}
             <div className="mt-5 grid grid-cols-3 gap-4 text-center text-sm">
-              <Link href="/profile" onClick={onClose}>
+              <Link href="/user/profile" onClick={onClose}>
                 <div className="flex flex-col items-center justify-center hover:text-primary">
                   <UserOutlined className="text-xl" />
                   <span className="mt-1">Profile</span>
                 </div>
               </Link>
-              <Link href="/wishlist" onClick={onClose}>
+              <Link href="/user/wishlist" onClick={onClose}>
                 <div className="relative flex flex-col items-center hover:text-primary">
                   <HeartOutlined className="text-xl" />
                   <span className="absolute -top-1 right-7 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primaryBlue text-[10px] text-white">
@@ -626,7 +626,7 @@ const Header: React.FC = () => {
                   <span className="mt-1">Wishlist</span>
                 </div>
               </Link>
-              <Link href="/cart" onClick={onClose}>
+              <Link href="/user/cart" onClick={onClose}>
                 <div className="relative flex flex-col items-center hover:text-primary">
                   <ShoppingCartOutlined className="text-xl" />
                   <span className="absolute -top-1 right-7 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primaryBlue text-[10px] text-white">
