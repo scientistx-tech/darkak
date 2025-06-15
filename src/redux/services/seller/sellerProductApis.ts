@@ -48,6 +48,18 @@ export const sellerProductApi = baseApi.injectEndpoints({
       },
     }),
 
+    getPendingProductsSeller: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/seller/product/get/pending${queryString}`,
+          method: "GET",
+        };
+      },
+    }),
+
     getApprovedProductsSeller: builder.query({
       query: (params?: Record<string, string>) => {
         const queryString = params
@@ -72,6 +84,14 @@ export const sellerProductApi = baseApi.injectEndpoints({
       },
     }),
 
+    createPorductRequestToAdmin: builder.mutation<any, any>({
+      query: ({ data }) => ({
+        url: `/seller/product/stock`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+
     getRequestedProductsSeller: builder.query({
       query: (params?: Record<string, string>) => {
         const queryString = params
@@ -84,28 +104,12 @@ export const sellerProductApi = baseApi.injectEndpoints({
       },
     }),
 
-    getNewProductsSeller: builder.query({
-      query: (params?: Record<string, string>) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
-        return {
-          url: `/seller/product/stock${queryString}`,
-          method: "GET",
-        };
-      },
-    }),
-
-    getRestockProductsSeller: builder.query({
-      query: (params?: Record<string, string>) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
-        return {
-          url: `/seller/product/restock${queryString}`,
-          method: "GET",
-        };
-      },
+    createRestockRequestToAdmin: builder.mutation<any, any>({
+      query: ({ data }) => ({
+        url: `/seller/product/restock`,
+        method: "POST",
+        body: data,
+      }),
     }),
 
     getSingleProductDetailsSeller: builder.query({
@@ -205,11 +209,12 @@ export const {
   useGetProductAttributesSellerQuery,
   useCreateProductSellerMutation,
   useGetProductsSellerQuery,
+  useGetPendingProductsSellerQuery,
   useGetApprovedProductsSellerQuery,
   useGetRejectedProductsSellerQuery,
+  useCreatePorductRequestToAdminMutation,
   useGetRequestedProductsSellerQuery,
-  useGetNewProductsSellerQuery,
-  useGetRestockProductsSellerQuery,
+  useCreateRestockRequestToAdminMutation,
   useGetSingleProductDetailsSellerQuery,
   useUpdateProductSellerMutation,
   useUploadImagesSellerMutation,

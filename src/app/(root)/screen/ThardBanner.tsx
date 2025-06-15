@@ -16,9 +16,9 @@ const ThardBanner: React.FC = () => {
   const slidersWithoutBanner =
     sliderData?.filter(
       (slider: any) =>
-        !slider.banner ||
-        slider.banner === "null" ||
-        slider.banner.trim() === "",
+        !slider?.banner ||
+        slider?.banner === "null" ||
+        slider?.banner.trim() === "",
     ) || [];
 
   // ✅ Group slidersWithoutBanner in rows of 2
@@ -61,14 +61,14 @@ const ThardBanner: React.FC = () => {
                 key={colIndex}
                 bgColour={bgColour}
                 image={
-                  slide.banner
-                    ? slide.banner
-                    : slide.product.thumbnail || "/images/fallback.jpg"
+                  slide?.banner
+                    ? slide?.banner
+                    : slide?.product?.thumbnail || "/images/fallback.jpg"
                 }
                 position={colIndex % 2 === 0 ? "left" : "right"}
-                title={slide.title || "Deal"}
-                description={slide.offer_name || "Don't miss out!"}
-                text={slide.details || "Shop the best products now!"}
+                title={slide?.title || "Deal"}
+                description={slide?.offer_name || "Don't miss out!"}
+                text={slide?.details || "Shop the best products now!"}
                 link={`/product/${slide?.product?.slug || ""}`}
               />
             );

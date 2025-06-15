@@ -30,8 +30,10 @@ import {
   useGetSubSubCategoriesSellerQuery,
 } from "@/redux/services/seller/sellerCategoryApis";
 import {
+  useCreatePorductRequestToAdminMutation,
+  useCreateRestockRequestToAdminMutation,
   useDeleteProductSellerMutation,
-  useGetApprovedProductsSellerQuery,
+  useGetPendingProductsSellerQuery,
   useGetProductsSellerQuery,
   useGetRejectedProductsSellerQuery,
   useUpdateDraftStatusSellerMutation,
@@ -39,7 +41,7 @@ import {
   useUpdateTodaysDealStatusSellerMutation,
 } from "@/redux/services/seller/sellerProductApis";
 
-const ProductList = () => {
+const RejectedProductList = () => {
   const searchParams = useSearchParams();
   const initialPage = Number(searchParams.get("page")) || 1;
   const [currentPage, setCurrentPage] = useState(initialPage);
@@ -81,9 +83,7 @@ const ProductList = () => {
   const token = useSelector((state: any) => state.auth.token);
 
   const [deleteProduct] = useDeleteProductSellerMutation();
-  const [changeDealStatus] = useUpdateTodaysDealStatusSellerMutation();
-  const [changeFeatureStatus] = useUpdateFeatureStatusSellerMutation();
-  const [changePublishedStatus] = useUpdateDraftStatusSellerMutation();
+  const [restockProductRequest] = useCreateRestockRequestToAdminMutation();
 
   const [selectedProductId, setSelectedProductId] = useState<number | null>(
     null,
@@ -136,7 +136,7 @@ const ProductList = () => {
     <RequireAccess permission="product-list">
       <div className="min-h-screen">
         <h2 className="mb-4 flex items-center gap-2 text-xl font-bold">
-          🏠 Rejected Product List{" "}
+          🏠 Pending Product List{" "}
           <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">
             {data?.data.length || 0}
           </span>
@@ -418,9 +418,7 @@ const ProductList = () => {
                   <TableHead>Added By</TableHead>
                   <TableHead>Info</TableHead>
                   <TableHead>Total Stock</TableHead>
-                  <TableHead>Published</TableHead>
-                  <TableHead>Today&apos;s Deal</TableHead>
-                  <TableHead>Featured</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -482,99 +480,32 @@ const ProductList = () => {
                       </TableCell>
                       <TableCell>{doc.stock}</TableCell>
                       <TableCell>
-                        <Switch.Root
-                          checked={!doc.drafted}
-                          onCheckedChange={async (checked) => {
-                            try {
-                              const res = await changePublishedStatus({
-                                id: doc.id,
-                                data: { status: !checked },
-                              }).unwrap();
-                              refetch();
-                              toast.success("Published status updated!");
-                            } catch (err) {
-                              toast.error("Failed to update published status");
-                            }
-                          }}
-                          className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-400 transition-colors data-[state=checked]:bg-teal-600"
-                        >
-                          <Switch.Thumb className="block h-4 w-4 rounded-full bg-white shadow-lg transition-transform data-[state=checked]:translate-x-6" />
-                        </Switch.Root>
-                      </TableCell>
-                      <TableCell>
-                        <Switch.Root
-                          checked={doc.deal}
-                          onCheckedChange={async (checked) => {
-                            try {
-                              const res = await changeDealStatus({
-                                id: doc.id,
-                                data: { status: checked },
-                              }).unwrap();
-                              refetch();
-                              toast.success("Todays Deal status updated!");
-                            } catch (err) {
-                              toast.error("Failed to update deal status");
-                            }
-                          }}
-                          className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-400 transition-colors data-[state=checked]:bg-teal-600"
-                        >
-                          <Switch.Thumb className="block h-4 w-4 rounded-full bg-white shadow-lg transition-transform data-[state=checked]:translate-x-6" />
-                        </Switch.Root>
-                      </TableCell>
-                      <TableCell>
-                        <Switch.Root
-                          checked={doc.feature}
-                          onCheckedChange={async (checked) => {
-                            try {
-                              const res = await changeFeatureStatus({
-                                id: doc.id,
-                                data: { status: checked },
-                              }).unwrap();
-                              refetch();
-                              toast.success("Featured status updated!");
-                            } catch (err) {
-                              toast.error("Failed to update feature status");
-                            }
-                          }}
-                          className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-400 transition-colors data-[state=checked]:bg-teal-600"
-                        >
-                          <Switch.Thumb className="block h-4 w-4 rounded-full bg-white shadow-lg transition-transform data-[state=checked]:translate-x-6" />
-                        </Switch.Root>
+                        <p className="rounded-xl bg-teal-100 px-2 py-0.5 capitalize text-teal-600">
+                          {doc.status}
+                        </p>
                       </TableCell>
                       <TableCell className="">
                         <ButtonSelf
-                          // onClick={() => handleDelete(doc.id)}
-                          className="mr-2 bg-red-50 p-1 text-blue-700"
+                          onClick={async () => {
+                            try {
+                              const res = await restockProductRequest({
+                                data: { productId: doc?.id },
+                              }).unwrap();
+                              toast.success(
+                                res?.message ||
+                                  "Product Restock Request Sent to Admin",
+                              );
+                              refetch();
+                            } catch (error: any) {
+                              toast.error(
+                                error?.data?.message ||
+                                  "Failed Product Restock Request",
+                              );
+                            }
+                          }}
+                          className="mr-2 border border-green-700 bg-blue-50 p-1 text-green-700 hover:bg-blue-100"
                         >
-                          <FaBarcode className="" />
-                        </ButtonSelf>
-                        <ButtonSelf
-                          onClick={() => router.push(`/product/${doc.slug}`)}
-                          className="mr-2 bg-red-50 p-1 text-yellow-700"
-                        >
-                          <FaEye className="" />
-                        </ButtonSelf>
-
-                        <>
-                          <Button
-                            type="default"
-                            onClick={() => {
-                              setSelectedProductId(doc.id);
-                              setIsModalOpen(true);
-                            }}
-                            className="mr-2 border-none bg-red-50 p-1 text-red-700 shadow-none hover:bg-red-100 hover:text-red-800"
-                          >
-                            <FaTrashAlt className="" />
-                          </Button>
-                        </>
-
-                        <ButtonSelf
-                          onClick={() =>
-                            router.push(`/seller/product/edit/${doc.id}`)
-                          }
-                          className="mr-2 bg-green-50 p-1 text-green-700"
-                        >
-                          <FaEdit className="" />
+                          Restock Request
                         </ButtonSelf>
                       </TableCell>
                     </TableRow>
@@ -613,4 +544,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default RejectedProductList;

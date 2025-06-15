@@ -72,7 +72,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
           }, 1600);
         }}
         onClick={() => {
-          router.push(`/product/${product.slug}`);
+          window.open(`/product/${product.slug}`, "_blank");
           if (setIsOpen) setIsOpen(false);
         }}
       >

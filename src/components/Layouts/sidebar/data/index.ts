@@ -28,6 +28,11 @@ export const getSellerNavData = (data: any) => [
             accessKey: "seller-product-list",
           },
           {
+            title: "Pending Product List",
+            url: "/seller/product/pending-product-list",
+            accessKey: "seller-pending-product-list",
+          },
+          {
             title: "Approved Product List",
             url: "/seller/product/approved-product-list",
             accessKey: "seller-approved-product-list",
@@ -42,19 +47,9 @@ export const getSellerNavData = (data: any) => [
             url: "/seller/product/request-product-list",
             accessKey: "seller-request-product-list",
           },
-          // {
-          //   title: "New Product Request",
-          //   url: "/seller/product/new-product-request",
-          //   accessKey: "seller-new-product-request",
-          // },
-          // {
-          //   title: "Restock Product Request",
-          //   url: "/seller/product/restock-product-request",
-          //   accessKey: "seller-restock-product-request",
-          // },
           {
             title: "Add Product",
-            url: "/seller/product/add-product",
+            url: "/seller/product/product-add",
             accessKey: "seller-product-add",
           },
         ],
@@ -157,6 +152,11 @@ export const getSellerNavData = (data: any) => [
             title: "Approved",
             url: "/seller/refund-request/approved",
             accessKey: "refund-approved",
+          },
+          {
+            title: "Under Review",
+            url: "/seller/refund-request/under-review",
+            accessKey: "refund-under-review",
           },
           {
             title: "Refunded",
@@ -300,6 +300,11 @@ export const getNavData = (data: any) => [
             title: "Approved",
             url: "/admin/refund-request/approved",
             accessKey: "refund-approved",
+          },
+          {
+            title: "Under Review",
+            url: "/admin/refund-request/under-review",
+            accessKey: "refund-under-review",
           },
           {
             title: "Refunded",
