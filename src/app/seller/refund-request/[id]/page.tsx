@@ -14,6 +14,11 @@ import {
   useChangeRefunRequestStatusMutation,
   useGetSingleRefundRequestDetailsQuery,
 } from "@/redux/services/admin/adminRefundRequest";
+import {
+  useChangeRefunRequestStatusSellerMutation,
+  useGetSingleRefundRequestDetailsSellerQuery,
+} from "@/redux/services/seller/sellerRefundRequest";
+
 interface RefundData {
   id: number;
   requestedDate: string;
@@ -87,14 +92,13 @@ const RefundDetails = () => {
   const navigate = useRouter();
   const params = useParams();
   const { id } = params;
-  const { data, isFetching, refetch } =
-    useGetSingleRefundRequestDetailsQuery(id);
-  const [changeStatus] = useChangeRefunRequestStatusMutation();
 
-  console.log("details data= ", data?.request);
-  // const [refundData] = useState(mockRefundData);
+  const { data, isFetching, refetch } =
+    useGetSingleRefundRequestDetailsSellerQuery(id);
+
+  const [changeStatus] = useChangeRefunRequestStatusSellerMutation();
+
   const refundData = data?.request;
-  // console.log("refund data",refundDatas)
 
   const handleAction = async (
     action: "approved" | "rejected" | "refunded" | "under-review",

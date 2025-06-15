@@ -102,10 +102,10 @@ function SliderTable() {
                   <TableRow key={slider.id}>
                     <TableCell>{slider.title}</TableCell>
                     <TableCell>
-                      {slider.banner !== "null" ? (
+                      {slider?.banner !== "null" ? (
                         <Image
-                          src={slider.banner}
-                          alt={slider.title}
+                          src={slider?.banner}
+                          alt={slider?.title}
                           width={100}
                           height={50}
                           className="rounded-md"
@@ -114,16 +114,16 @@ function SliderTable() {
                         "N/A"
                       )}
                     </TableCell>
-                    <TableCell>{slider.offer_name}</TableCell>
-                    <TableCell>{slider.type}</TableCell>
-                    <TableCell>{slider.details}</TableCell>
-                    <TableCell>{slider.index}</TableCell>
-                    <TableCell>{slider.productId}</TableCell>
+                    <TableCell>{slider?.offer_name}</TableCell>
+                    <TableCell>{slider?.type}</TableCell>
+                    <TableCell>{slider?.details}</TableCell>
+                    <TableCell>{slider?.index}</TableCell>
+                    <TableCell>{slider?.productId}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <ButtonSelf
                           onClick={() =>
-                            router.push(`/admin/slider/edit/${slider.id}`)
+                            router.push(`/admin/slider/edit/${slider?.id}`)
                           }
                           className="mr-2 bg-green-50 p-1 text-green-700"
                         >
@@ -132,7 +132,7 @@ function SliderTable() {
                         <Button
                           type="default"
                           onClick={() => {
-                            setSelectedProductId(slider.id);
+                            setSelectedProductId(slider?.id);
                             setIsModalOpen(true);
                           }}
                           className="mr-2 border-none bg-red-50 p-1 text-red-700 shadow-none hover:bg-red-100 hover:text-red-800"

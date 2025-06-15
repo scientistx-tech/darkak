@@ -1,4 +1,4 @@
-import 'remirror/styles/all.css';
+import "remirror/styles/all.css";
 import "@/css/satoshi.css";
 import "@/css/style.css";
 import "flatpickr/dist/flatpickr.min.css";
@@ -299,7 +299,6 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <DataLoader>
             {/* <UpdateNotice /> */}
             {children}
-            
           </DataLoader>
         </ReduxProvider>
         {bodyEndScripts.map((s: any) => (
@@ -317,8 +316,16 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 }
 
 async function fetchScripts() {
-  const res = await fetch("https://api.darkak.com.bd/api/public/script", {
-    cache: "no-store",
-  });
-  return res.json();
+  try {
+    const res = await fetch("https://api.darkak.com.bd/api/public/script", {
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+    return res.json();
+  } catch (error) {
+    console.error("Failed to fetch scripts:", error);
+    return []; // fallback
+  }
 }

@@ -18,6 +18,21 @@ export const sellerRefundRequestApi = baseApi.injectEndpoints({
       },
     }),
 
+    getAllUnderReviewRefundRequestSeller: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/seller/refund/get/under-review${queryString}`,
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+      },
+    }),
+
     getAllApprovedRefundRequestSeller: builder.query({
       query: (params?: Record<string, string>) => {
         const queryString = params
@@ -86,6 +101,7 @@ export const sellerRefundRequestApi = baseApi.injectEndpoints({
 export const {
   useGetAllRefundRequestSellerQuery,
   useGetAllApprovedRefundRequestSellerQuery,
+  useGetAllUnderReviewRefundRequestSellerQuery,
   useGetAllRejectedRefundRequestSellerQuery,
   useGetAllRefundedRefundRequestSellerQuery,
   useGetSingleRefundRequestDetailsSellerQuery,

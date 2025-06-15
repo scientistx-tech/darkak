@@ -99,7 +99,7 @@ const Page = () => {
                   <TableHead>Cupon Type</TableHead>
                   <TableHead>Duration</TableHead>
                   <TableHead>User Limit</TableHead>
-                  <TableHead>Discount Bearer</TableHead>
+                  <TableHead>Total Limit</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
@@ -159,6 +159,9 @@ const Page = () => {
                             <p>{doc?._count?.coupon_used}</p>
                           </span>
                         </div>
+                      </TableCell>
+                      <TableCell className="capitalize">
+                        {doc?.use_limit}
                       </TableCell>
                       <TableCell className="capitalize">
                         {doc?.bearer}

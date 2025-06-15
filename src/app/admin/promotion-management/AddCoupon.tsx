@@ -31,6 +31,7 @@ type FormDataType = {
   vendor: string;
   customer: number[];
   limit: string;
+  totalLimit: string;
   appliedLevel: string;
   categoryId?: string;
   subCategoryId?: string;
@@ -61,6 +62,7 @@ const AddCoupon = ({
     vendor: "",
     customer: [],
     limit: "",
+    totalLimit: "",
     appliedLevel: "",
     categoryId: "",
     subCategoryId: "",
@@ -117,6 +119,7 @@ const AddCoupon = ({
           ? doc.coupon_user.map((cu: any) => cu.userId)
           : [],
         limit: doc.limit ? String(doc.limit) : "",
+        totalLimit: doc.use_limit ? String(doc.use_limit) : "",
         appliedLevel: doc.categoryId
           ? "category"
           : doc.subCategoryId
@@ -161,6 +164,7 @@ const AddCoupon = ({
       code: formData.code,
       bearer: formData.bearer === "admin" ? "admin" : "seller",
       limit: formData.limit,
+      use_limit: formData.totalLimit,
       discount_type: formData.discountType,
       discount_amount: formData.discountAmount
         ? Number(formData.discountAmount)
@@ -210,6 +214,7 @@ const AddCoupon = ({
       vendor: "",
       customer: [],
       limit: "",
+      totalLimit: "",
       appliedLevel: "",
       categoryId: "",
       subCategoryId: "",
@@ -417,6 +422,17 @@ const AddCoupon = ({
               onChange={handleChange}
               className="w-full rounded border p-2"
               placeholder="Ex: 10"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label>Total Use</label>
+            <input
+              name="totalLimit"
+              value={formData.totalLimit}
+              onChange={handleChange}
+              className="w-full rounded border p-2"
+              placeholder="Ex: 100"
             />
           </div>
 

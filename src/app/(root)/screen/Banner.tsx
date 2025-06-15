@@ -38,7 +38,7 @@ const Banner: React.FC = () => {
             <BannerCart
               bgColour={bgColour}
               image={
-                slide.banner
+                slide?.banner
                   ? slide.banner
                   : slide.product.thumbnail || "/images/fallback.jpg"
               }

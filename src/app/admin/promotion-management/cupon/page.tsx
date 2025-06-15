@@ -94,6 +94,7 @@ const Page = () => {
                   <TableHead>Cupon Type</TableHead>
                   <TableHead>Duration</TableHead>
                   <TableHead>User Limit</TableHead>
+                  <TableHead>Total Limit</TableHead>
                   <TableHead>Discount Bearer</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
@@ -111,7 +112,7 @@ const Page = () => {
 
                 {!isLoading && couponsData?.coupons?.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center">
+                    <TableCell colSpan={8} className="text-center">
                       No scripts found.
                     </TableCell>
                   </TableRow>
@@ -154,6 +155,9 @@ const Page = () => {
                             <p>{doc?._count?.coupon_used}</p>
                           </span>
                         </div>
+                      </TableCell>
+                      <TableCell className="capitalize">
+                        {doc?.use_limit}
                       </TableCell>
                       <TableCell className="capitalize">
                         {doc?.bearer}

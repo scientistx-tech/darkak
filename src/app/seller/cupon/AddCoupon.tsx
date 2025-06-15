@@ -32,6 +32,7 @@ type FormDataType = {
   vendor: string;
   customer: number[];
   limit: string;
+  totalLimit: string;
   appliedLevel: string;
   categoryId?: string;
   subCategoryId?: string;
@@ -62,6 +63,7 @@ const AddCoupon = ({
     vendor: "",
     customer: [],
     limit: "",
+    totalLimit: "",
     appliedLevel: "",
     categoryId: "",
     subCategoryId: "",
@@ -121,6 +123,7 @@ const AddCoupon = ({
           ? doc.coupon_user.map((cu: any) => cu.userId)
           : [],
         limit: doc.limit ? String(doc.limit) : "",
+        totalLimit: doc.use_limit ? String(doc.use_limit) : "",
         appliedLevel: doc.categoryId
           ? "category"
           : doc.subCategoryId
@@ -163,8 +166,8 @@ const AddCoupon = ({
       type: formData.couponType,
       title: formData.title,
       code: formData.code,
-      bearer: formData.bearer === "admin" ? "admin" : "seller",
       limit: formData.limit,
+      use_limit: formData.totalLimit,
       discount_type: formData.discountType,
       discount_amount: formData.discountAmount
         ? Number(formData.discountAmount)
@@ -178,9 +181,6 @@ const AddCoupon = ({
       payload.userIds = formData.customer;
     }
 
-    if (formData.bearer === "vendor") {
-      payload.sellerId = formData.vendor;
-    }
     if (formData.appliedLevel === "category") {
       payload.categoryId = formData.categoryId;
     } else if (formData.appliedLevel === "subCategory") {
@@ -214,6 +214,7 @@ const AddCoupon = ({
       vendor: "",
       customer: [],
       limit: "",
+      totalLimit: "",
       appliedLevel: "",
       categoryId: "",
       subCategoryId: "",
@@ -281,42 +282,6 @@ const AddCoupon = ({
               className="w-full rounded border p-2"
             />
           </div>
-
-          <div className="flex flex-col gap-1">
-            <label>Coupon bearer</label>
-            <select
-              name="bearer"
-              value={formData.bearer}
-              onChange={handleChange}
-              className="w-full rounded border p-2"
-            >
-              <option>Select coupon bearer</option>
-              {couponBearers.map((b) => (
-                <option className="capitalize" key={b}>
-                  {b}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {formData.bearer === "vendor" && (
-            <div className="flex flex-col gap-1">
-              <label>Vendor</label>
-              <select
-                name="vendor"
-                value={formData.vendor}
-                onChange={handleChange}
-                className="w-full rounded border p-2"
-              >
-                <option>Select vendor</option>
-                {vendorsData?.vendors?.map((v: any) => (
-                  <option key={v.id} value={v?.id}>
-                    {v?.store_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
 
           <div className="flex flex-col gap-1">
             <label>Customer</label>
@@ -421,6 +386,17 @@ const AddCoupon = ({
               onChange={handleChange}
               className="w-full rounded border p-2"
               placeholder="Ex: 10"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label>Total Use</label>
+            <input
+              name="totalLimit"
+              value={formData.totalLimit}
+              onChange={handleChange}
+              className="w-full rounded border p-2"
+              placeholder="Ex: 100"
             />
           </div>
 
