@@ -84,11 +84,21 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (
   const [lowPrice, setLowPrice] = useState("");
   const [highPrice, setHighPrice] = useState("");
 
+  const searchParams = useSearchParams();
+
+  const categoryIdParams = searchParams.get("categoryId") || "";
+  const subCategoryIdParams = searchParams.get("subCategoryId") || "";
+  const subSubCategoryIdParams = searchParams.get("subSubCategoryId") || "";
+
   // redux hooks
   const { data: categoriesData } = useGetProductCategoriesQuery();
-  const { data: brandsData } = useGetBrandsPublicQuery({ search: brandSearch });
+  const { data: brandsData } = useGetBrandsPublicQuery({
+    search: brandSearch,
+    // categoryId: categoryIdParams,
+    // subCategoryId: subCategoryIdParams,
+    // subSubCategoryId: subSubCategoryIdParams,
+  });
 
-  const searchParams = useSearchParams();
   const router = useRouter();
 
   // Ref for auto-scroll to top of sidebar on filter change

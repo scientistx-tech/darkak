@@ -109,7 +109,8 @@ const PriceInfo = ({
   return (
     <div
       onClick={() => {
-        window.open(`/product/${product.slug}`, "_blank");
+        // window.open(`/product/${product.slug}`, "_blank");
+        router.push(`/product/${product.slug}`);
         if (setIsOpen) setIsOpen(false);
       }}
       className="group cursor-pointer"

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 
@@ -11,6 +12,7 @@ const Price = ({
   const [open, setOpen] = useState<boolean>(true);
   const [lowPrice, setLowPrice] = useState("");
   const [highPrice, setHighPrice] = useState("");
+  const router = useRouter();
 
   const handleOpenClose = () => {
     setOpen((pre) => !pre);
@@ -50,7 +52,12 @@ const Price = ({
               type="number"
               placeholder="00"
               value={lowPrice}
-              onChange={(e) => setLowPrice(e.target.value)}
+              onChange={(e) => {
+                setLowPrice(e.target.value);
+                // const params = new URLSearchParams(useSearchParams.toString());
+                // params.set("lowPrice", e.target.value);
+                // router.push(`?${params.toString()}`);
+              }}
               className="rounded-full border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
             />
           </div>
@@ -62,7 +69,12 @@ const Price = ({
               type="number"
               placeholder="00"
               value={highPrice}
-              onChange={(e) => setHighPrice(e.target.value)}
+              onChange={(e) => {
+                setHighPrice(e.target.value);
+                // const params = new URLSearchParams(useSearchParams.toString());
+                // params.set("highPrice", e.target.value);
+                // router.push(`?${params.toString()}`);
+              }}
               className="rounded-full border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
             />
           </div>

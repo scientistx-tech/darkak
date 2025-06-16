@@ -662,7 +662,7 @@ export default function ProductForm() {
     try {
       const res = await createProduct(payload).unwrap();
       toast.success("Successfully Product created");
-      router.push("/seller/product/product-list");
+      router.push("/seller/product/pending-product-list");
     } catch (error: any) {
       console.error(error);
       toast.error(error?.data?.message);
