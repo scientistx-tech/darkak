@@ -33,12 +33,26 @@ import {
   useDeleteProductSellerMutation,
   useGetApprovedProductsSellerQuery,
   useGetProductsSellerQuery,
+  useGetRequestedProductsSellerQuery,
   useUpdateDraftStatusSellerMutation,
   useUpdateFeatureStatusSellerMutation,
   useUpdateTodaysDealStatusSellerMutation,
 } from "@/redux/services/seller/sellerProductApis";
+import {
+  useChangeVendorsProductRequestStatusMutation,
+  useGetVendorsRequestedProductsQuery,
+} from "@/redux/services/admin/adminVendorApis";
+import { useGetBrandsQuery } from "@/redux/services/admin/adminBrandApis";
+import {
+  useGetCategoriesQuery,
+  useGetSubCategoriesQuery,
+  useGetSubSubCategoriesQuery,
+} from "@/redux/services/admin/adminCategoryApis";
+import { useDeleteProductMutation } from "@/redux/services/admin/adminProductApis";
+import { GiConfirmed } from "react-icons/gi";
+import { GiCancel } from "react-icons/gi";
 
-const ProductList = () => {
+const RequestedProductList = () => {
   const searchParams = useSearchParams();
   const initialPage = Number(searchParams.get("page")) || 1;
   const [currentPage, setCurrentPage] = useState(initialPage);
@@ -52,37 +66,36 @@ const ProductList = () => {
   const [selectedStock, setSelectedStock] = useState<string>("");
 
   const { data, isLoading, error, refetch } =
-    useGetApprovedProductsSellerQuery(queryParams);
+    useGetVendorsRequestedProductsQuery(queryParams);
 
-  const { data: brandsData } = useGetBrandsSellerQuery({});
+  const { data: brandsData } = useGetBrandsQuery({});
 
   const {
     data: categoriesData,
     isLoading: isCategoriesLoading,
     error: categoriesError,
     refetch: refetchCategories,
-  } = useGetCategoriesSellerQuery({});
+  } = useGetCategoriesQuery({});
 
   const {
     data: subCategoriesData,
     isLoading: isSubCategoriesLoading,
     error: subCategoriesError,
     refetch: refetchSubCategories,
-  } = useGetSubCategoriesSellerQuery({});
+  } = useGetSubCategoriesQuery({});
 
   const {
     data: subSubCategoriesData,
     isLoading: isSubSubCategoriesLoading,
     error: subSubCategoriesError,
     refetch: refetchSubSubCategories,
-  } = useGetSubSubCategoriesSellerQuery({});
+  } = useGetSubSubCategoriesQuery({});
+
+  const [changeStatus] = useChangeVendorsProductRequestStatusMutation();
 
   const token = useSelector((state: any) => state.auth.token);
 
-  const [deleteProduct] = useDeleteProductSellerMutation();
-  const [changeDealStatus] = useUpdateTodaysDealStatusSellerMutation();
-  const [changeFeatureStatus] = useUpdateFeatureStatusSellerMutation();
-  const [changePublishedStatus] = useUpdateDraftStatusSellerMutation();
+  const [deleteProduct] = useDeleteProductMutation();
 
   const [selectedProductId, setSelectedProductId] = useState<number | null>(
     null,
@@ -129,15 +142,39 @@ const ProductList = () => {
     }
   };
 
-  console.log("query", queryParams);
+  const handleApproveProduct = async (id: number) => {
+    try {
+      const res = await changeStatus({
+        id: id,
+        data: { status: "approved" },
+      }).unwrap();
+      toast.success(res?.message);
+      refetch();
+    } catch (error: any) {
+      toast.error(error?.data?.message);
+    }
+  };
+
+  const handleRejectProduct = async (id: number) => {
+    try {
+      const res = await changeStatus({
+        id: id,
+        data: { status: "rejected" },
+      }).unwrap();
+      toast.success(res?.message);
+      refetch();
+    } catch (error: any) {
+      toast.error(error?.data?.message);
+    }
+  };
 
   return (
     <RequireAccess permission="product-list">
       <div className="min-h-screen">
         <h2 className="mb-4 flex items-center gap-2 text-xl font-bold">
-          🏠 Approved Product List{" "}
+          🏠 Requested Vendor Product List{" "}
           <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">
-            {data?.data.length || 0}
+            {data?.data?.length || 0}
           </span>
         </h2>
 
@@ -393,12 +430,9 @@ const ProductList = () => {
                   <TableHead>SL</TableHead>
                   <TableHead>Thumbnail</TableHead>
                   <TableHead>Name</TableHead>
-                  <TableHead>Added By</TableHead>
                   <TableHead>Info</TableHead>
                   <TableHead>Total Stock</TableHead>
-                  <TableHead>Published</TableHead>
-                  <TableHead>Today&apos;s Deal</TableHead>
-                  <TableHead>Featured</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -412,7 +446,7 @@ const ProductList = () => {
                     </TableRow>
                   ))}
 
-                {!isLoading && data?.data.length <= 0 ? (
+                {!isLoading && data?.data?.length <= 0 ? (
                   <TableRow>
                     <TableCell
                       colSpan={10}
@@ -423,137 +457,58 @@ const ProductList = () => {
                   </TableRow>
                 ) : (
                   data?.data?.map((doc: any, i: number) => (
-                    <TableRow className="whitespace-nowrap" key={doc.id}>
+                    <TableRow className="whitespace-nowrap" key={doc?.id}>
                       <TableCell>{i + 1}</TableCell>
 
                       <TableCell>
                         <Image
-                          src={doc.thumbnail}
+                          src={doc?.product?.thumbnail}
                           className="aspect-[6/5] w-15 rounded-[5px] object-cover"
                           width={60}
                           height={60}
-                          alt={`${doc.title} image`}
+                          alt={`${doc?.product?.title} image`}
                         />
                       </TableCell>
 
-                      <TableCell>{doc.title}</TableCell>
-                      <TableCell>
-                        {doc.user.isAdmin
-                          ? "Admin"
-                          : doc.user.isModerator
-                            ? "Moderator"
-                            : "Seller"}
-                      </TableCell>
+                      <TableCell>{doc?.product?.title}</TableCell>
+
                       <TableCell className="flex flex-col gap-1">
                         <div className="flex items-center gap-2">
                           <p className="font-bold">Num of Sale:</p>
-                          <p>{doc._count.order_items}</p>
+                          <p>{doc?.product?._count?.order_items}</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <p className="font-bold">Base Price:</p>
-                          <p>{doc.price}</p>
+                          <p>{doc?.product?.price}</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <p className="font-bold">Rating:</p>
-                          <p>{doc._count.review} </p>
+                          <p>{doc?.product?._count?.review} </p>
                         </div>
                       </TableCell>
-                      <TableCell>{doc.stock}</TableCell>
+                      <TableCell>{doc?.product?.stock}</TableCell>
                       <TableCell>
-                        <Switch.Root
-                          checked={!doc.drafted}
-                          onCheckedChange={async (checked) => {
-                            try {
-                              const res = await changePublishedStatus({
-                                id: doc.id,
-                                data: { status: !checked },
-                              }).unwrap();
-                              refetch();
-                              toast.success("Published status updated!");
-                            } catch (err) {
-                              toast.error("Failed to update published status");
-                            }
-                          }}
-                          className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-400 transition-colors data-[state=checked]:bg-teal-600"
-                        >
-                          <Switch.Thumb className="block h-4 w-4 rounded-full bg-white shadow-lg transition-transform data-[state=checked]:translate-x-6" />
-                        </Switch.Root>
+                        <p className="inline-block rounded-xl bg-teal-100 px-3 py-0.5 capitalize text-teal-600">
+                          {doc.status}
+                        </p>
                       </TableCell>
                       <TableCell>
-                        <Switch.Root
-                          checked={doc.deal}
-                          onCheckedChange={async (checked) => {
-                            try {
-                              const res = await changeDealStatus({
-                                id: doc.id,
-                                data: { status: checked },
-                              }).unwrap();
-                              refetch();
-                              toast.success("Todays Deal status updated!");
-                            } catch (err) {
-                              toast.error("Failed to update deal status");
-                            }
-                          }}
-                          className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-400 transition-colors data-[state=checked]:bg-teal-600"
-                        >
-                          <Switch.Thumb className="block h-4 w-4 rounded-full bg-white shadow-lg transition-transform data-[state=checked]:translate-x-6" />
-                        </Switch.Root>
-                      </TableCell>
-                      <TableCell>
-                        <Switch.Root
-                          checked={doc.feature}
-                          onCheckedChange={async (checked) => {
-                            try {
-                              const res = await changeFeatureStatus({
-                                id: doc.id,
-                                data: { status: checked },
-                              }).unwrap();
-                              refetch();
-                              toast.success("Featured status updated!");
-                            } catch (err) {
-                              toast.error("Failed to update feature status");
-                            }
-                          }}
-                          className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-400 transition-colors data-[state=checked]:bg-teal-600"
-                        >
-                          <Switch.Thumb className="block h-4 w-4 rounded-full bg-white shadow-lg transition-transform data-[state=checked]:translate-x-6" />
-                        </Switch.Root>
-                      </TableCell>
-                      <TableCell className="">
-                        <ButtonSelf
-                          // onClick={() => handleDelete(doc.id)}
-                          className="mr-2 bg-red-50 p-1 text-blue-700"
-                        >
-                          <FaBarcode className="" />
-                        </ButtonSelf>
-                        <ButtonSelf
-                          onClick={() => router.push(`/product/${doc.slug}`)}
-                          className="mr-2 bg-red-50 p-1 text-yellow-700"
-                        >
-                          <FaEye className="" />
-                        </ButtonSelf>
-
-                        <>
-                          <Button
-                            type="default"
-                            onClick={() => {
-                              setSelectedProductId(doc.id);
-                              setIsModalOpen(true);
-                            }}
-                            className="mr-2 border-none bg-red-50 p-1 text-red-700 shadow-none hover:bg-red-100 hover:text-red-800"
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => handleApproveProduct(doc?.id)}
+                            className="rounded border border-blue-700 bg-blue-50 px-2 py-1 text-blue-700 hover:bg-blue-200"
                           >
-                            <FaTrashAlt className="" />
-                          </Button>
-                        </>
-
-                        <ButtonSelf
-                          onClick={() =>
-                            router.push(`/seller/product/edit/${doc.id}`)
-                          }
-                          className="mr-2 bg-green-50 p-1 text-green-700"
-                        >
-                          <FaEdit className="" />
-                        </ButtonSelf>
+                            <GiConfirmed className="mr-2 inline" />
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => handleRejectProduct(doc?.id)}
+                            className="rounded border border-rose-700 bg-rose-50 px-2 py-1 text-rose-700 hover:bg-red-200"
+                          >
+                            <GiCancel className="mr-2 inline" />
+                            Reject
+                          </button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))
@@ -591,4 +546,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default RequestedProductList;

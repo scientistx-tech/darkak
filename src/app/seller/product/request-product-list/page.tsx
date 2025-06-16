@@ -384,27 +384,6 @@ const ProductList = () => {
               </div>
             </div>
             {/* more buttons*/}
-            <div className="flex items-center gap-x-2">
-              {/* <button className="flex items-center gap-2 rounded-md border-2 border-blue-400 px-4 py-2 text-sm font-medium text-blue-400">
-              <img
-                width={20}
-                height={20}
-                src="/images/icon/icon-excel.svg"
-                alt=""
-              />
-              Export
-            </button> */}
-              {/* <button className="rounded-md bg-cyan-500 px-4 py-2 text-sm font-medium text-white">
-              Limited Stocks
-            </button> */}
-              <button
-                onClick={() => router.push("/seller/product/product-add")}
-                className="flex items-center gap-x-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white"
-              >
-                <CiCirclePlus className="text-lg font-bold" />
-                <p>Add New Product</p>
-              </button>
-            </div>
           </div>
           {error ? (
             <p className="px-6 text-red-500">Error loading Products.</p>

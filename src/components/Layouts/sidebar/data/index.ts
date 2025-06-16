@@ -22,11 +22,11 @@ export const getSellerNavData = (data: any) => [
         title: "My Products",
         icon: BiLogoProductHunt,
         items: [
-          {
-            title: "Product List",
-            url: "/seller/product/product-list",
-            accessKey: "seller-product-list",
-          },
+          // {
+          //   title: "Product List",
+          //   url: "/seller/product/product-list",
+          //   accessKey: "seller-product-list",
+          // },
           {
             title: "Pending Product List",
             url: "/seller/product/pending-product-list",
@@ -186,7 +186,7 @@ export const getSellerNavData = (data: any) => [
   },
 ];
 
-export const getNavData = (data: any) => [
+export const getNavData = (data: any, vendorData: any) => [
   {
     label: "MAIN MENU",
     items: [
@@ -450,14 +450,24 @@ export const getNavData = (data: any) => [
             accessKey: "vendor-list",
             url: "/admin/vendors/vendor-list",
           },
-          // {
-          //   title: "Withdraws",
-          //   url: "/admin/vendors/withdraws",
-          // },
-          // {
-          //   title: "Withdrawal Methods",
-          //   url: "/admin/vendors/withdrawal-methods",
-          // },
+          {
+            title: "Requested Products",
+            accessKey: "vendor-requested-products",
+            url: "/admin/vendors/requested-products",
+            values: { vive: "neutral-1", value: vendorData?.newRequest },
+          },
+          {
+            title: "Approved Products",
+            accessKey: "vendor-approved-products",
+            url: "/admin/vendors/approved-products",
+            values: { vive: "positive", value: vendorData?.approved },
+          },
+          {
+            title: "Rejected Products",
+            accessKey: "vendor-rejected-products",
+            url: "/admin/vendors/rejected-products",
+            values: { vive: "negetive", value: vendorData?.rejected },
+          },
         ],
       },
 
@@ -513,6 +523,7 @@ export const getNavData = (data: any) => [
 
 import { useSelector } from "react-redux";
 import { useDashboardDataQuery } from "@/redux/services/admin/adminDashboard";
+import { useGetVendorsProductRequestCountsQuery } from "@/redux/services/admin/adminVendorApis";
 
 export const useFilteredNavData = () => {
   const moderatorAccess = useSelector(
@@ -523,9 +534,12 @@ export const useFilteredNavData = () => {
 
   // Fetch dashboard data
   const { data: dashboardData } = useDashboardDataQuery({});
+  const { data: vendorProductsCount } = useGetVendorsProductRequestCountsQuery(
+    {},
+  );
 
   // Get nav data with API data
-  const NAV_DATA = getNavData(dashboardData);
+  const NAV_DATA = getNavData(dashboardData, vendorProductsCount);
 
   const filterItems = (items: any[]): any[] => {
     return items

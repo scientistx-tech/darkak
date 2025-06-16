@@ -102,6 +102,56 @@ export const adminVendorApi = baseApi.injectEndpoints({
         body: data,
       }),
     }),
+
+    getVendorsRequestedProducts: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/admin/vendor/get-product-request/pending${queryString}`,
+          method: "GET",
+        };
+      },
+    }),
+
+    getVendorsApprovedProducts: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/admin/vendor/get-product-request/approved${queryString}`,
+          method: "GET",
+        };
+      },
+    }),
+    getVendorsRejectedProducts: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/admin/vendor/get-product-request/rejected${queryString}`,
+          method: "GET",
+        };
+      },
+    }),
+
+    changeVendorsProductRequestStatus: builder.mutation<any, any>({
+      query: ({ id, data }) => ({
+        url: `/admin/vendor/reuest/update/${id}`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    getVendorsProductRequestCounts: builder.query<any, any>({
+      query: () => ({
+        url: "/admin/vendor/get-product-request-count",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -116,4 +166,9 @@ export const {
   useCreateVendorMutation,
   useGetVendorComissionSettingQuery,
   useUpdateVendorComissionSettingMutation,
+  useGetVendorsRequestedProductsQuery,
+  useGetVendorsApprovedProductsQuery,
+  useGetVendorsRejectedProductsQuery,
+  useChangeVendorsProductRequestStatusMutation,
+  useGetVendorsProductRequestCountsQuery,
 } = adminVendorApi;

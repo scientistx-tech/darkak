@@ -11,6 +11,7 @@ import { useSidebarContext } from "./sidebar-context";
 import { getNavData, getSellerNavData, useFilteredNavData } from "./data";
 import { useSelector } from "react-redux";
 import { useDashboardDataQuery } from "@/redux/services/admin/adminDashboard";
+import { useGetVendorsProductRequestCountsQuery } from "@/redux/services/admin/adminVendorApis";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -29,10 +30,13 @@ export function Sidebar() {
 
   // Fetch dashboard data
   const { data: dashboardData } = useDashboardDataQuery({});
+  const { data: vendorProductsCount } = useGetVendorsProductRequestCountsQuery(
+    {},
+  );
 
-  console.log("data drom sidebar", dashboardData);
+  console.log("data drom count", vendorProductsCount);
   // Get nav data with API data
-  const NAV_DATA = getNavData(dashboardData);
+  const NAV_DATA = getNavData(dashboardData, vendorProductsCount);
   const SELLER_NAV_DATA = getSellerNavData(dashboardData);
 
   const filteredNavs = useFilteredNavData();
