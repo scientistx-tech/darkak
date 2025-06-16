@@ -4,7 +4,7 @@ import React from "react";
 import ProductCard from "@/components/shared/ProductCard";
 import Image from "next/image";
 import laptop from "@/Data/Demo/Rectangle 130 (1).png";
-import { motion } from "framer-motion";
+import { easeOut, motion } from "framer-motion";
 import { useGetBestDealProductsQuery } from "@/redux/services/client/products";
 import Link from "next/link";
 
@@ -16,7 +16,7 @@ const containerVariants = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: "easeOut",
+      ease: easeOut,
       staggerChildren: 0.1,
     },
   },
@@ -27,7 +27,7 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: "easeOut" },
+    transition: { duration: 0.4, ease: easeOut },
   },
 };
 
