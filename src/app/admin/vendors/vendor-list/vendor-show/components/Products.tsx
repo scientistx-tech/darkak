@@ -97,45 +97,51 @@ const Products = ({ id }: { id: string }) => {
                 <TableCell>{i + 1}</TableCell>
 
                 <TableCell>
-                  <Image
-                    src={doc.thumbnail}
-                    className="aspect-[6/5] w-15 rounded-[5px] object-cover"
-                    width={60}
-                    height={60}
-                    alt={`${doc.title} image`}
-                  />
+                  {doc?.thumbnail ? (
+                    <Image
+                      src={doc?.thumbnail}
+                      className="aspect-[6/5] w-15 rounded-[5px] object-cover"
+                      width={60}
+                      height={60}
+                      alt={`${doc?.title || "Product"} image`}
+                    />
+                  ) : (
+                    <div className="flex aspect-[6/5] w-15 items-center justify-center rounded-[5px] bg-gray-200 text-center text-xs text-gray-500">
+                      No Image
+                    </div>
+                  )}
                 </TableCell>
 
-                <TableCell>{doc.title}</TableCell>
+                <TableCell>{doc?.title}</TableCell>
                 <TableCell>
-                  {doc.user.isAdmin
+                  {doc?.user?.isAdmin
                     ? "Admin"
-                    : doc.user.isModerator
+                    : doc?.user?.isModerator
                       ? "Moderator"
                       : "Seller"}
                 </TableCell>
                 <TableCell className="flex flex-col gap-1">
                   <div className="flex items-center gap-2">
                     <p className="font-bold">Num of Sale:</p>
-                    <p>{doc._count.order_items}</p>
+                    <p>{doc?._count?.order_items}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <p className="font-bold">Base Price:</p>
-                    <p>{doc.price}</p>
+                    <p>{doc?.price}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <p className="font-bold">Rating:</p>
-                    <p>{doc._count.review} </p>
+                    <p>{doc?._count?.review} </p>
                   </div>
                 </TableCell>
-                <TableCell>{doc.stock}</TableCell>
+                <TableCell>{doc?.stock}</TableCell>
                 <TableCell>
                   <Switch.Root
-                    checked={!doc.drafted}
+                    checked={!doc?.drafted}
                     onCheckedChange={async (checked) => {
                       try {
                         const res = await changePublishedStatus({
-                          id: doc.id,
+                          id: doc?.id,
                           data: { status: !checked },
                         }).unwrap();
                         refetch();
@@ -151,11 +157,11 @@ const Products = ({ id }: { id: string }) => {
                 </TableCell>
                 <TableCell>
                   <Switch.Root
-                    checked={doc.deal}
+                    checked={doc?.deal}
                     onCheckedChange={async (checked) => {
                       try {
                         const res = await changeDealStatus({
-                          id: doc.id,
+                          id: doc?.id,
                           data: { status: checked },
                         }).unwrap();
                         refetch();
@@ -171,11 +177,11 @@ const Products = ({ id }: { id: string }) => {
                 </TableCell>
                 <TableCell>
                   <Switch.Root
-                    checked={doc.feature}
+                    checked={doc?.feature}
                     onCheckedChange={async (checked) => {
                       try {
                         const res = await changeFeatureStatus({
-                          id: doc.id,
+                          id: doc?.id,
                           data: { status: checked },
                         }).unwrap();
                         refetch();
@@ -191,13 +197,13 @@ const Products = ({ id }: { id: string }) => {
                 </TableCell>
                 <TableCell className="">
                   <ButtonSelf
-                    onClick={() => handleDelete(doc.id)}
+                    onClick={() => handleDelete(doc?.id)}
                     className="mr-2 bg-red-50 p-1 text-blue-700"
                   >
                     <FaBarcode className="" />
                   </ButtonSelf>
                   <ButtonSelf
-                    onClick={() => router.push(`/product/${doc.slug}`)}
+                    onClick={() => router.push(`/product/${doc?.slug}`)}
                     className="mr-2 bg-red-50 p-1 text-yellow-700"
                   >
                     <FaEye className="" />
@@ -207,7 +213,7 @@ const Products = ({ id }: { id: string }) => {
                     <Button
                       type="default"
                       onClick={() => {
-                        setSelectedProductId(doc.id);
+                        setSelectedProductId(doc?.id);
                         setIsModalOpen(true);
                       }}
                       className="mr-2 border-none bg-red-50 p-1 text-red-700 shadow-none hover:bg-red-100 hover:text-red-800"
@@ -228,6 +234,20 @@ const Products = ({ id }: { id: string }) => {
           )}
         </TableBody>
       </Table>
+      <Modal
+        title="Confirm Deletion"
+        open={isModalOpen}
+        onOk={() => {
+          if (selectedProductId !== null) {
+            handleDelete(selectedProductId);
+          }
+        }}
+        onCancel={() => setIsModalOpen(false)}
+        okText="Yes, Delete"
+        cancelText="Cancel"
+      >
+        <p>Are you sure you want to delete this product?</p>
+      </Modal>
     </div>
   );
 };
