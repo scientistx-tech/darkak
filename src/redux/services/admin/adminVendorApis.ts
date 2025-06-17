@@ -44,6 +44,7 @@ export const adminVendorApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+
     getVendorsOrder: builder.query({
       query: ({ id }) => ({
         url: `/admin/vendor/orders/${id}`,
@@ -126,6 +127,7 @@ export const adminVendorApi = baseApi.injectEndpoints({
         };
       },
     }),
+
     getVendorsRejectedProducts: builder.query({
       query: (params?: Record<string, string>) => {
         const queryString = params
@@ -152,6 +154,18 @@ export const adminVendorApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+
+    getVendorsRestockRequestedProducts: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/admin/vendor/get-product-request/re-request${queryString}`,
+          method: "GET",
+        };
+      },
+    }),
   }),
 });
 
@@ -171,4 +185,5 @@ export const {
   useGetVendorsRejectedProductsQuery,
   useChangeVendorsProductRequestStatusMutation,
   useGetVendorsProductRequestCountsQuery,
+  useGetVendorsRestockRequestedProductsQuery,
 } = adminVendorApi;

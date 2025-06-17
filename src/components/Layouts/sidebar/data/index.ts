@@ -12,7 +12,7 @@ import { BiSolidOffer } from "react-icons/bi";
 import { MdAddModerator } from "react-icons/md";
 import * as Icons from "../icons";
 import { BsTornado } from "react-icons/bs";
-import { url } from "inspector";
+import { SiDevexpress } from "react-icons/si";
 
 export const getSellerNavData = (data: any) => [
   {
@@ -402,6 +402,12 @@ export const getNavData = (data: any, vendorData: any) => [
         icon: BiSlider,
         items: [],
       },
+      {
+        title: "Ali Express Products",
+        accesskey: "ali-express",
+        url: "/admin/ali-express-products",
+        icon: SiDevexpress,
+      },
     ],
   },
   {
@@ -467,6 +473,12 @@ export const getNavData = (data: any, vendorData: any) => [
             accessKey: "vendor-rejected-products",
             url: "/admin/vendors/rejected-products",
             values: { vive: "negetive", value: vendorData?.rejected },
+          },
+          {
+            title: "Restock Request",
+            accessKey: "vendor-restock-request",
+            url: "/admin/vendors/restock-request",
+            values: { vive: "neutral-2", value: vendorData?.updateRequest },
           },
         ],
       },
