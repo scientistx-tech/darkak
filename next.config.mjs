@@ -37,6 +37,26 @@ const nextConfig = {
         hostname: "cdn.pixabay.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "ae01.alicdn.com",
+        port: "",
+      },
+      {
+        protocol: "https",
+        hostname: "ae02.alicdn.com",
+        port: "",
+      },
+      {
+        protocol: "https",
+        hostname: "ae03.alicdn.com",
+        port: "",
+      },
+      {
+        protocol: "https",
+        hostname: "ae04.alicdn.com",
+        port: "",
+      },
     ],
   },
   reactStrictMode: false,

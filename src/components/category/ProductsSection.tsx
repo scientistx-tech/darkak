@@ -5,6 +5,7 @@ import LeftSidebar from "@/components/category/leftSidebar/LeftSidebar";
 import CategoryFilter from "@/assets/svg/CategoryFilter";
 import { useGetAllProductsQuery } from "@/redux/services/client/products";
 import Pagination from "../shared/Pagination";
+import { toast } from "react-toastify";
 
 const ProductsSection = ({
   currentPage,
@@ -19,6 +20,9 @@ const ProductsSection = ({
   sortBy: string;
   searchValue: string;
 }) => {
+  const [isFetching, setIsFetching] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState<any>({});
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [sidebarFilters, setSidebarFilters] = useState<any>(() => {
     // Convert initialQuery values to numbers if possible
@@ -65,8 +69,27 @@ const ProductsSection = ({
     limit: 20,
   };
 
-  const { data, error, isLoading, refetch, isFetching } =
-    useGetAllProductsQuery(filtersWithPageAndLimit);
+  const fetchAllProducts = async () => {
+    const queryString = filtersWithPageAndLimit
+      ? `?${new URLSearchParams(filtersWithPageAndLimit).toString()}`
+      : "";
+    try {
+      setIsLoading(true), setIsFetching(true);
+      const response = await fetch(
+        `https://api.darkak.com.bd/api/public/filter${queryString}`,
+      );
+      const data = await response.json();
+      setData(data);
+    } catch (error: any) {
+      toast.error(error?.data?.message);
+    } finally {
+      setIsLoading(false), setIsFetching(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllProducts();
+  }, [sidebarFilters]);
 
   useEffect(() => {
     if (data?.data) {
