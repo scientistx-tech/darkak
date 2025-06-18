@@ -17,7 +17,7 @@ export default function ConnectingAliExpress() {
         const res = await fetch(
           `https://api.darkak.com.bd/api/aliexpress/get-access-token/${code}`,
           {
-            method: "POST",
+            method: "GET",
             headers: { "Content-Type": "application/json" },
           },
         );
