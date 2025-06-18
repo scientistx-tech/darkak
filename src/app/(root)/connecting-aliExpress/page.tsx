@@ -28,9 +28,9 @@ export default function ConnectingAliExpress() {
         const data = await res.json();
 
         console.log(data, "data");
-        console.log("token", data.token);
+        console.log("token", data.access_token);
 
-        Cookies.set("aliExpressToken", data.token, { expires: 25 });
+        Cookies.set("aliExpressToken", data?.access_token, { expires: 25 });
 
         router.replace("/admin/ali-express-products");
       } catch (error) {
@@ -45,9 +45,7 @@ export default function ConnectingAliExpress() {
     <div className="flex h-screen items-center justify-center">
       <div className="space-y-4 text-center">
         <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
-        <p className="text-lg font-semibold">
-          Connecting to AliExpress...{code}
-        </p>
+        <p className="text-lg font-semibold">Connecting to AliExpress</p>
         <p className="text-sm text-gray-500">
           Please wait while we complete the authentication.
         </p>
