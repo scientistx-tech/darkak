@@ -11,6 +11,9 @@ import EarningStatistics from "./EarningStatistics";
 import TopCustomers from "./TopCustomers";
 import MostPopularStores from "./MostPopularStores";
 import TopSellingProducts from "./TopSellingProducts";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import ModeratorLandingPage from "./ModeratorDashboard";
 
 const Dashboard: React.FC = () => {
   const { data, isLoading, error } = useDashboardDataQuery({});
@@ -20,6 +23,8 @@ const Dashboard: React.FC = () => {
   const [earningPeriod, setEarningPeriod] = useState<"year" | "month" | "week">(
     "year",
   );
+
+  const user = useSelector((state: RootState) => state.auth.user);
 
   if (isLoading)
     return (
@@ -43,6 +48,10 @@ const Dashboard: React.FC = () => {
       </div>
     );
   if (!data) return <div className="p-8 text-center">No data available</div>;
+
+  if (!user?.isAdmin && user?.isModerator) {
+    return <ModeratorLandingPage />;
+  }
 
   return (
     <div>

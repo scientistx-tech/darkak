@@ -428,7 +428,6 @@ const ProductList = () => {
                   <TableHead>SL</TableHead>
                   <TableHead>Thumbnail</TableHead>
                   <TableHead>Name</TableHead>
-                  <TableHead>Added By</TableHead>
                   <TableHead>Info</TableHead>
                   <TableHead>Total Stock</TableHead>
                   <TableHead>Published</TableHead>
@@ -471,14 +470,10 @@ const ProductList = () => {
                         />
                       </TableCell>
 
-                      <TableCell>{doc.title}</TableCell>
-                      <TableCell>
-                        {doc.user.isAdmin
-                          ? "Admin"
-                          : doc.user.isModerator
-                            ? "Moderator"
-                            : "Seller"}
+                      <TableCell className="max-w-[300px] overflow-hidden truncate whitespace-nowrap">
+                        {doc.title}
                       </TableCell>
+
                       <TableCell className="flex flex-col gap-1">
                         <div className="flex items-center gap-2">
                           <p className="font-bold">Num of Sale:</p>
