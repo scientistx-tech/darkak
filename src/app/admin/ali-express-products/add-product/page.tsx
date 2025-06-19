@@ -149,7 +149,9 @@ export default function AliExpressSearch() {
               <button
                 className="mt-auto w-full rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
                 onClick={() =>
-                  router.push(`/admin/ali-express-products/${item?.itemId}`)
+                  router.push(
+                    `/admin/ali-express-products/add-product/${item?.itemId}`,
+                  )
                 }
               >
                 Add

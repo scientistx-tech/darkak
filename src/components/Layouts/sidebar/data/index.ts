@@ -403,10 +403,22 @@ export const getNavData = (data: any, vendorData: any) => [
         items: [],
       },
       {
-        title: "Ali Express Products",
+        title: "Ali Express",
         accesskey: "ali-express",
-        url: "/admin/ali-express-products",
+        // url: "/admin/ali-express-products",
         icon: SiDevexpress,
+        items: [
+          {
+            title: "Add Product",
+            accessKey: "ali-express-add-product",
+            url: "/admin/ali-express-products/add-product",
+          },
+          {
+            title: "Product List",
+            accessKey: "ali-express-product-list",
+            url: "/admin/ali-express-products/product-list",
+          },
+        ],
       },
     ],
   },
@@ -536,6 +548,7 @@ export const getNavData = (data: any, vendorData: any) => [
 import { useSelector } from "react-redux";
 import { useDashboardDataQuery } from "@/redux/services/admin/adminDashboard";
 import { useGetVendorsProductRequestCountsQuery } from "@/redux/services/admin/adminVendorApis";
+import Item from "antd/es/list/Item";
 
 export const useFilteredNavData = () => {
   const moderatorAccess = useSelector(
