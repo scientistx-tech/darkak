@@ -29,7 +29,7 @@ import AsyncSelect from "react-select/async";
 import { useSelector } from "react-redux";
 import JoditEditor from "jodit-react";
 import Cookies from "js-cookie";
-import transformAliExpressProduct from "../utils/product";
+import transformAliExpressProduct from "../../utils/product";
 
 const CustomEditor = dynamic(
   () => import("@/app/admin/components/CustomEditor"),
@@ -300,9 +300,11 @@ const countryCodes = [
 const AliExpressProductEdit = () => {
   const params = useParams();
   const { id } = params;
+  const [aliExpressProductId, setAliExpressProductId] = useState("");
   const [formData, setFormData] = useState<any>({
     title: "",
     short_description: "",
+    aliexpress_benifit: "1",
     meta_title: "",
     meta_image: "",
     meta_description: "",
@@ -404,6 +406,10 @@ const AliExpressProductEdit = () => {
       );
       setFormData(transformed);
       setProductDetails(transformed);
+      setAliExpressProductId(
+        data?.aliexpress_ds_product_get_response?.result?.ae_item_base_info_dto
+          ?.product_id,
+      );
     } catch (err: any) {
       toast.error("Failed to fetch categories");
     }
@@ -546,6 +552,8 @@ const AliExpressProductEdit = () => {
       title: formData.title,
       code: formData.code || productSKU,
       short_description: formData.short_description,
+      aliexpress_benifit: Number(formData.aliexpress_benifit),
+      aliexpress_id: aliExpressProductId,
       meta_title: formData.meta_title,
       meta_image: formData.meta_image,
       video_link: formData.video_link,
@@ -617,6 +625,7 @@ const AliExpressProductEdit = () => {
     try {
       const res = await createProduct(payload).unwrap();
       toast.success("Successfully Product created");
+      router.push("/admin/ali-express-products/product-list");
     } catch (error: any) {
       console.error(error);
       toast.error(error?.data?.message);
@@ -939,7 +948,6 @@ const AliExpressProductEdit = () => {
             </label>
             <div className="relative mt-1 flex items-center gap-2">
               <input
-                readOnly
                 type="text"
                 name="code"
                 className="w-full rounded-md border border-gray-300 p-2"
@@ -1027,6 +1035,23 @@ const AliExpressProductEdit = () => {
                   {country}
                 </option>
               ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Benefit
+            </label>
+            <select
+              name="aliexpress_benifit"
+              value={formData.aliexpress_benifit}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+            >
+              <option value="1">1x</option>
+              <option value="2">2x</option>
+              <option value="3">3x</option>
+              <option value="4">4x</option>
+              <option value="5">5x</option>
             </select>
           </div>
         </div>

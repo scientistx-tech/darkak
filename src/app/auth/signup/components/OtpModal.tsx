@@ -1,3 +1,4 @@
+// otpModal.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -37,8 +38,21 @@ const OtpModal: React.FC<Props> = ({
     }
     return () => clearInterval(interval);
   }, [timer]);
+  const handleOtpPaste = (startIndex: number, pasteText: string) => {
+    const digits = pasteText
+      .replace(/\D/g, "")
+      .slice(0, otp.length - startIndex)
+      .split("");
+    const newOtp = [...otp];
 
+    digits.forEach((digit, i) => {
+      newOtp[startIndex + i] = digit;
+    });
+
+    setOtp(newOtp);
+  };
   const handleSubmit = async () => {
+    console.log("Otp", otp);
     setError("");
     const otpString = otp.join("").trim();
 
@@ -89,7 +103,11 @@ const OtpModal: React.FC<Props> = ({
         </p>
 
         <div className="flex justify-center">
-          <OTPInputs otp={otp} onChange={handleOtpChange} />
+          <OTPInputs
+            otp={otp}
+            onChange={handleOtpChange}
+            onPasteOtp={handleOtpPaste}
+          />
         </div>
 
         {error && (

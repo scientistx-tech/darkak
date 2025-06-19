@@ -89,6 +89,18 @@ export const adminApi = baseApi.injectEndpoints({
       },
     }),
 
+    getAliExpressProducts: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params
+          ? `?${new URLSearchParams(params).toString()}`
+          : "";
+        return {
+          url: `/aliexpress/products${queryString}`,
+          method: "GET",
+        };
+      },
+    }),
+
     getSingleProductDetails: builder.query({
       query: (id) => ({
         url: `/admin/product/details/${id}`,
@@ -189,6 +201,7 @@ export const {
   useUpdateProductAttributeMutation,
   useCreateProductMutation,
   useGetProductsQuery,
+  useGetAliExpressProductsQuery,
   useGetSingleProductDetailsQuery,
   useUpdateProductMutation,
   useUploadImagesMutation,
