@@ -304,7 +304,7 @@ const AliExpressProductEdit = () => {
   const [formData, setFormData] = useState<any>({
     title: "",
     short_description: "",
-    aliexpress_benifit: "1",
+    aliexpress_benifit: 1,
     meta_title: "",
     meta_image: "",
     meta_description: "",
@@ -315,7 +315,7 @@ const AliExpressProductEdit = () => {
     discount_type: "",
     discount: "",
     tax_amount: "",
-    tax_type: "",
+    tax_type: "include",
     available: "",
     warranty: "",
     warranty_time: "",
@@ -414,6 +414,7 @@ const AliExpressProductEdit = () => {
       toast.error("Failed to fetch categories");
     }
   };
+
   useEffect(() => {
     fetchSingleProductFromAliExpress();
   }, []);
@@ -441,12 +442,6 @@ const AliExpressProductEdit = () => {
     (field: keyof ProductFormData) => (value: string) => {
       setFormData((prev: any) => ({ ...prev, [field]: value }));
     };
-
-  const generateCode = () => {
-    const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-    setProductSKU(code);
-    setFormData((prev: any) => ({ ...prev, code }));
-  };
 
   const handleImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -550,9 +545,9 @@ const AliExpressProductEdit = () => {
 
     const payload: any = {
       title: formData.title,
-      code: formData.code || productSKU,
+      code: formData.code,
       short_description: formData.short_description,
-      aliexpress_benifit: Number(formData.aliexpress_benifit),
+      aliexpress_benifit: Number(formData.aliexpress_benifit) || 1,
       aliexpress_id: aliExpressProductId,
       meta_title: formData.meta_title,
       meta_image: formData.meta_image,
@@ -562,7 +557,7 @@ const AliExpressProductEdit = () => {
       discount_type: formData.discount_type as DiscountType,
       discount: formData.discount || "0",
       tax_amount: formData.tax_amount || "0",
-      tax_type: formData.tax_type,
+      tax_type: formData.tax_type || "exclude",
       available: formData.available,
       warranty: formData.warranty,
       warranty_time: formData.warranty_time,
@@ -948,6 +943,7 @@ const AliExpressProductEdit = () => {
             </label>
             <div className="relative mt-1 flex items-center gap-2">
               <input
+                readOnly
                 type="text"
                 name="code"
                 className="w-full rounded-md border border-gray-300 p-2"
