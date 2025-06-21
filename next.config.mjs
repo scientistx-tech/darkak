@@ -14,6 +14,11 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "api.darkak.com.bd",
+        port: "",
+      },
+      {
+        protocol: "https",
         hostname: "lh3.googleusercontent.com",
         port: "",
       },
