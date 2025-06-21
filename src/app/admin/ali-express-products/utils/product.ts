@@ -51,8 +51,10 @@ export default function transformAliExpressProduct(product: any) {
     price: String(Math.round(skuList?.[0]?.sku_price) || 0),
     discount_type: "flat", // assume flat
     discount: String(
-      Number(skuList?.[0]?.sku_price || 0) -
-        Number(skuList?.[0]?.offer_sale_price || 0),
+      Math.round(
+        Number(skuList?.[0]?.sku_price || 0) -
+          Number(skuList?.[0]?.offer_sale_price || 0),
+      ),
     ),
     tax_amount: "0", // not available
     tax_type: "include",
@@ -63,11 +65,11 @@ export default function transformAliExpressProduct(product: any) {
     stock: String(skuList?.[0]?.sku_available_stock || 0),
     minOrder: "1",
     unit: "piece",
-    code: "ALI-" + product.product_id,
+    code: skuList[0].sku_id,
     specification: "", // not available
     description: baseInfo.detail || "",
     warranty_details: "",
-    categoryId: String(baseInfo.category_id),
+    categoryId: "",
     subCategoryId: "",
     subSubCategoryId: "",
     brandId: "",

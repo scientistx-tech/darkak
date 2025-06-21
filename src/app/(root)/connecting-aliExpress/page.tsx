@@ -32,7 +32,7 @@ export default function ConnectingAliExpress() {
 
         Cookies.set("aliExpressToken", data?.access_token, { expires: 25 });
 
-        router.replace("/admin/ali-express-products");
+        router.replace("/admin/ali-express-products/add-product");
       } catch (error) {
         console.error(error);
         toast.error("Failed to connect to AliExpress.");
