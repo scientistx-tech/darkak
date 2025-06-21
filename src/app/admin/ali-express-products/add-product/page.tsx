@@ -168,7 +168,10 @@ export default function AliExpressSearch() {
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
         {isProductFetching
           ? Array.from({ length: 20 }).map((_, i) => (
-              <div className="flex animate-pulse flex-col overflow-hidden rounded-lg border bg-white shadow-md">
+              <div
+                key={i}
+                className="flex animate-pulse flex-col overflow-hidden rounded-lg border bg-white shadow-md"
+              >
                 {/* Image Skeleton */}
                 <div className="h-48 w-full bg-gray-200" />
 
