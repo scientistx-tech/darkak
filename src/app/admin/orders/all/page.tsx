@@ -52,16 +52,14 @@ const AllOrderList = () => {
   return (
     <RequireAccess permission="order-all">
       <div className="min-h-screen">
-        <h2 className="mb-4 flex items-center gap-2 text-xl font-bold">
-          🏠 All Orders{" "}
-          <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">
-            194
-          </span>
+        <h2 className="mb-4 flex items-center gap-2 text-xl font-bold dark:text-white">
+          🏠 All Orders{' '}
+          <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm text-green-600">194</span>
         </h2>
 
         <FilterOrders />
 
-        <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:shadow-card">
+        <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:text-white dark:shadow-card">
           {/* search box and export button */}
           <div className="flex items-center justify-between pb-6">
             <span>Order List</span>
@@ -85,7 +83,7 @@ const AllOrderList = () => {
                   onChange={(e) => {
                     setSearch(e.target.value);
                   }}
-                  className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none"
+                  className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none dark:bg-gray-500"
                 />
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                   <svg
@@ -135,21 +133,18 @@ const AllOrderList = () => {
 
                 {!isLoading && orderData?.data?.length <= 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="py-8 text-center text-red-500"
-                    >
+                    <TableCell colSpan={8} className="py-8 text-center text-red-500">
                       No Data to Show
                     </TableCell>
                   </TableRow>
                 ) : (
                   orderData?.data?.map((order: any, i: number) => (
-                    <TableRow key={order.id} className="text-black">
+                    <TableRow key={order.id} className="text-black dark:text-white">
                       <TableCell>{i + 1}</TableCell>
                       <TableCell>{order?.orderId}</TableCell>
                       <TableCell>{order.date}</TableCell>
-                      <TableCell className="flex items-start">
-                        <div className="flex flex-col gap-2">
+                      <TableCell className="flex items-center">
+                        <div className="flex flex-col items-center gap-2">
                           <p>{order.name}</p>
                           <div>
                             <Image
@@ -165,7 +160,7 @@ const AllOrderList = () => {
                       </TableCell>
                       <TableCell>{order.order_type}</TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-col items-center gap-2">
                           <p>{order.subTotal + order.deliveryFee}</p>
                           <div className="flex">
                             {order.paid ? (
@@ -182,35 +177,35 @@ const AllOrderList = () => {
                       </TableCell>
                       <TableCell>
                         <div className="flex justify-center">
-                          {order.status === "pending" ? (
+                          {order.status === 'pending' ? (
                             <p className="rounded-lg border border-blue-700 bg-blue-50 px-2 py-0.5 text-center font-bold text-blue-700">
                               Pending
                             </p>
-                          ) : order.status === "confirmed" ? (
+                          ) : order.status === 'confirmed' ? (
                             <p className="rounded-lg border border-green-700 bg-green-50 px-2 py-0.5 text-center font-bold text-green-700">
                               Confirmed
                             </p>
-                          ) : order.status === "packaging" ? (
+                          ) : order.status === 'packaging' ? (
                             <p className="rounded-lg border border-yellow-700 bg-yellow-50 px-2 py-0.5 text-center font-bold text-yellow-700">
                               Packaging
                             </p>
-                          ) : order.status === "out_for_delivery" ? (
+                          ) : order.status === 'out_for_delivery' ? (
                             <p className="rounded-lg border border-yellow-700 bg-yellow-50 px-2 py-0.5 text-center font-bold text-yellow-700">
                               Out For Delivery
                             </p>
-                          ) : order.status === "delivered" ? (
+                          ) : order.status === 'delivered' ? (
                             <p className="rounded-lg border border-green-700 bg-green-50 px-2 py-0.5 text-center font-bold text-green-700">
                               Delivered
                             </p>
-                          ) : order.status === "returned" ? (
+                          ) : order.status === 'returned' ? (
                             <p className="rounded-lg border border-red-700 bg-red-50 px-2 py-0.5 text-center font-bold text-red-700">
                               Returned
                             </p>
-                          ) : order.status === "cancelled" ? (
+                          ) : order.status === 'cancelled' ? (
                             <p className="rounded-lg border border-red-700 bg-red-50 px-2 py-0.5 text-center font-bold text-red-700">
                               Cancelled
                             </p>
-                          ) : order.status === "failed_to_delivery" ? (
+                          ) : order.status === 'failed_to_delivery' ? (
                             <p className="rounded-lg border border-red-700 bg-red-50 px-2 py-0.5 text-center font-bold text-red-700">
                               Failed To Deliver
                             </p>
@@ -223,8 +218,8 @@ const AllOrderList = () => {
                       </TableCell>
                       <TableCell>
                         {order?.courier_status === null
-                          ? "N/A"
-                          : order?.courier_status.split("_").join(" ")}
+                          ? 'N/A'
+                          : order?.courier_status.split('_').join(' ')}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center justify-center gap-2">

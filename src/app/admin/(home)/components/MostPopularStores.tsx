@@ -19,9 +19,9 @@ const MostPopularStores: React.FC<MostPopularStoresProps> = ({ stores }) => {
   const topFiveStores = stores.slice(0, 5);
 
   return (
-    <div className="overflow-hidden rounded-lg bg-white shadow">
+    <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-dark">
       <div className="border-b p-4">
-        <h3 className="text-md font-semibold">Most Popular Stores</h3>
+        <h3 className="text-md font-semibold dark:text-white">Most Popular Stores</h3>
       </div>
       <div className="divide-y">
         {topFiveStores.map((store) => (
@@ -39,18 +39,18 @@ const MostPopularStores: React.FC<MostPopularStoresProps> = ({ stores }) => {
                 )}
               </div>
               <div>
-                <h4 className="text-sm font-medium">{store.store_name}</h4>
+                <h4 className="text-sm font-medium dark:text-white">{store.store_name}</h4>
               </div>
             </div>
             <div className="flex items-center">
-              <ShoppingCart className="mr-1 h-4 w-4 text-gray-400" />
-              <span className="text-xs font-medium">{store._count.orders}</span>
+              <ShoppingCart className="mr-1 h-4 w-4 text-gray-400 dark:text-blue-500 " />
+              <span className="text-xs font-medium dark:text-white">{store._count.orders}</span>
             </div>
           </div>
         ))}
 
         {topFiveStores.length === 0 && (
-          <div className="p-4 text-center text-gray-500">
+          <div className="p-4 text-center text-gray-500 dark:text-white">
             No stores data available
           </div>
         )}
