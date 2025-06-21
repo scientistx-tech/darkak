@@ -49,6 +49,7 @@ export default function transformAliExpressProduct(product: any) {
     ae_item_sku_info_dtos: product?.ae_item_sku_info_dtos,
     video_link: "", // not available
     thumbnail: multimedia.image_urls?.split(";")[0] || "",
+    base_price: String(Math.round(skuList?.[0]?.offer_sale_price) || 0),
     price: String(Math.round(skuList?.[0]?.offer_sale_price) || 0),
     discount_type: "flat", // assume flat
     discount: "",

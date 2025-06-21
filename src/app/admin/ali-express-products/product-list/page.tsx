@@ -580,15 +580,6 @@ const ProductList = () => {
                             <FaTrashAlt className="" />
                           </Button>
                         </>
-
-                        <ButtonSelf
-                          onClick={() =>
-                            router.push(`/admin/product/edit/${doc.id}`)
-                          }
-                          className="mr-2 bg-green-50 p-1 text-green-700"
-                        >
-                          <FaEdit className="" />
-                        </ButtonSelf>
                       </TableCell>
                     </TableRow>
                   ))
