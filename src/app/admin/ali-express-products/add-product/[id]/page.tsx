@@ -334,6 +334,7 @@ const AliExpressProductEdit = () => {
     keywords: "",
     drafted: false,
     images: [],
+    ae_item_sku_info_dtos: {},
     delivery_info: {
       delivery_time: "",
       delivery_charge: "",
@@ -395,12 +396,28 @@ const AliExpressProductEdit = () => {
   const token = useSelector((state: any) => state.auth.token);
   const aliExpresstoken = Cookies.get("aliExpressToken");
 
+  const fetchProductShippingInfo = async (skuId: string) => {
+    try {
+      const response = await fetch(
+        `https://api.darkak.com.bd/api/aliexpress/get-product-shiping/${aliExpresstoken}?queryDeliveryReq={"quantity":1,"shipToCountry":"BD","productId":${id},"language":"en_US","locale":"en_US","selectedSkuId":${skuId},"currency":"BDT"}`,
+      );
+      const data = await response.json();
+      console.log("shp data", data);
+    } catch (error: any) {
+      toast.error(error?.data?.message);
+    }
+  };
+
   const fetchSingleProductFromAliExpress = async () => {
     try {
       const response = await fetch(
         `https://api.darkak.com.bd/api/aliexpress/get-product-details/${aliExpresstoken}?ship_to_country=BD&product_id=${id}&target_currency=BDT&target_language=en_US`,
       );
       const data = await response.json();
+      const shippingFee = fetchProductShippingInfo(
+        data?.aliexpress_ds_product_get_response?.result?.ae_item_sku_info_dtos
+          ?.ae_item_sku_info_d_t_o[0].sku_id,
+      );
       const transformed = transformAliExpressProduct(
         data?.aliexpress_ds_product_get_response?.result,
       );
@@ -582,6 +599,7 @@ const AliExpressProductEdit = () => {
         .map((k: any) => k.trim())
         .filter(Boolean),
       images: formData.images,
+      ae_item_sku_info_dtos: formData.ae_item_sku_info_dtos,
       delivery_info: {
         delivery_time: formData.delivery_info.delivery_time,
         delivery_charge: formData.delivery_info.delivery_charge,
