@@ -18,7 +18,7 @@ import {
 } from "@/redux/services/admin/adminBrandApis";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import Button from "../../components/Button";
+
 import { CiCirclePlus } from "react-icons/ci";
 import FilterOrders from "./FilterOrders";
 import { useGetOrdersQuery } from "@/redux/services/admin/adminOrderApis";
@@ -29,6 +29,8 @@ import { useRouter } from "next/navigation";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import OrderInvoicePDF from "../[id]/components/OrderInvoicePDF";
 import RequireAccess from "@/components/Layouts/RequireAccess";
+import Button from "../../../components/Button";
+import { useGetAliExpressOrdersQuery } from "@/redux/services/admin/adminAli-ExpressOrderApi";
 
 const AllOrderList = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -39,7 +41,7 @@ const AllOrderList = () => {
     isLoading,
     error,
     refetch,
-  } = useGetOrdersQuery({ page: String(currentPage), search });
+  } = useGetAliExpressOrdersQuery({ page: String(currentPage), search });
 
   console.log("orderData", orderData);
 

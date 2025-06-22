@@ -56,21 +56,19 @@ const Dashboard: React.FC = () => {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="mb-1 text-2xl font-semibold">Welcome Admin</h1>
-        <p className="text-gray-600">
+        <h1 className="mb-1 text-2xl font-semibold dark:text-white">Welcome Admin</h1>
+        <p className="text-gray-600 dark:text-gray-200">
           Monitor your business analytics and statistics.
         </p>
       </div>
 
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-lg font-semibold">
+        <h2 className="flex items-center gap-2 text-lg font-semibold dark:text-white">
           <BarChart3 className="h-5 w-5 text-blue-600" />
           Business Analytics
         </h2>
         <div className="text-right">
-          <h3 className="text-sm font-medium text-gray-500">
-            Overall statistics
-          </h3>
+          <h3 className="text-sm font-medium text-gray-500 dark:text-white">Overall statistics</h3>
         </div>
       </div>
 
@@ -96,28 +94,28 @@ const Dashboard: React.FC = () => {
       {/* Charts Section */}
       <div className="mt-6">
         {/* Order Statistics */}
-        <div className="rounded-lg bg-white p-4 shadow">
+        <div className="rounded-lg bg-white p-4 shadow dark:bg-gray-dark">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-md flex items-center gap-2 font-semibold">
+            <h3 className="text-md flex items-center gap-2 font-semibold dark:text-white">
               <BarChart3 className="h-4 w-4 text-blue-600" />
               Order Statistics
             </h3>
             <div className="flex space-x-2">
               <button
-                onClick={() => setOrderPeriod("year")}
-                className={`rounded px-2 py-1 text-xs ${orderPeriod === "year" ? "bg-blue-600 text-white" : "bg-gray-100"}`}
+                onClick={() => setOrderPeriod('year')}
+                className={`rounded px-2 py-1 text-xs ${orderPeriod === 'year' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-black'}`}
               >
                 This Year
               </button>
               <button
-                onClick={() => setOrderPeriod("month")}
-                className={`rounded px-2 py-1 text-xs ${orderPeriod === "month" ? "bg-blue-600 text-white" : "bg-gray-100"}`}
+                onClick={() => setOrderPeriod('month')}
+                className={`rounded px-2 py-1 text-xs ${orderPeriod === 'month' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-black'}`}
               >
                 This Month
               </button>
               <button
-                onClick={() => setOrderPeriod("week")}
-                className={`rounded px-2 py-1 text-xs ${orderPeriod === "week" ? "bg-blue-600 text-white" : "bg-gray-100"}`}
+                onClick={() => setOrderPeriod('week')}
+                className={`rounded px-2 py-1 text-xs ${orderPeriod === 'week' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-black'}`}
               >
                 This Week
               </button>
@@ -147,28 +145,28 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Earning Statistics */}
-      <div className="mt-6 rounded-lg bg-white p-4 shadow">
+      <div className="mt-6 rounded-lg bg-white p-4 shadow dark:bg-white/20">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-md flex items-center gap-2 font-semibold">
+          <h3 className="text-md flex items-center gap-2 font-semibold dark:text-white">
             <BarChart4 className="h-4 w-4 text-blue-600" />
             Earning Statistics
           </h3>
           <div className="flex space-x-2">
             <button
-              onClick={() => setEarningPeriod("year")}
-              className={`rounded px-2 py-1 text-xs ${earningPeriod === "year" ? "bg-blue-600 text-white" : "bg-gray-100"}`}
+              onClick={() => setEarningPeriod('year')}
+              className={`rounded px-2 py-1 text-xs ${earningPeriod === 'year' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-black'}`}
             >
               This Year
             </button>
             <button
-              onClick={() => setEarningPeriod("month")}
-              className={`rounded px-2 py-1 text-xs ${earningPeriod === "month" ? "bg-blue-600 text-white" : "bg-gray-100"}`}
+              onClick={() => setEarningPeriod('month')}
+              className={`rounded px-2 py-1 text-xs ${earningPeriod === 'month' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-black'}`}
             >
               This Month
             </button>
             <button
-              onClick={() => setEarningPeriod("week")}
-              className={`rounded px-2 py-1 text-xs ${earningPeriod === "week" ? "bg-blue-600 text-white" : "bg-gray-100"}`}
+              onClick={() => setEarningPeriod('week')}
+              className={`rounded px-2 py-1 text-xs ${earningPeriod === 'week' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-black'}`}
             >
               This Week
             </button>
