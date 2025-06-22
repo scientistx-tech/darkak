@@ -11,8 +11,8 @@ import {
   ChartOptions,
 } from "chart.js";
 import { useOrderStatisticsQuery } from "@/redux/services/admin/adminDashboard";
+import { useTheme } from "next-themes";
 
-// Register ChartJS components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -28,27 +28,29 @@ interface OrderStatisticsProps {
 
 const OrderStatistics: React.FC<OrderStatisticsProps> = ({ period }) => {
   const { data, isLoading, error } = useOrderStatisticsQuery({ period });
+  const { theme } = useTheme(); // ✅ useTheme hook
+
+  const isDarkMode = theme === "dark";
 
   if (isLoading)
     return (
-      <div className="flex h-80 items-center justify-center">
+      <div className="flex h-80 items-center justify-center dark:text-white">
         Loading chart data...
       </div>
     );
   if (error)
     return (
-      <div className="flex h-80 items-center justify-center text-red-500">
+      <div className="flex h-80 items-center justify-center text-red-500 dark:text-white">
         Error loading chart data
       </div>
     );
   if (!data)
     return (
-      <div className="flex h-80 items-center justify-center">
+      <div className="flex h-80 items-center justify-center dark:text-white">
         No data available
       </div>
     );
 
-  // Chart options
   const options: ChartOptions<"bar"> = {
     responsive: true,
     maintainAspectRatio: false,
@@ -56,6 +58,7 @@ const OrderStatistics: React.FC<OrderStatisticsProps> = ({ period }) => {
       legend: {
         position: "bottom",
         labels: {
+          color: isDarkMode ? "#ffffff" : "#4B5563",
           boxWidth: 12,
           padding: 20,
         },
@@ -63,6 +66,9 @@ const OrderStatistics: React.FC<OrderStatisticsProps> = ({ period }) => {
       tooltip: {
         mode: "index",
         intersect: false,
+        backgroundColor: isDarkMode ? "#1F2937" : "#ffffff", // dark: gray-800, light: white
+        titleColor: isDarkMode ? "#ffffff" : "#111827", // dark: white, light: gray-900
+        bodyColor: isDarkMode ? "#E5E7EB" : "#4B5563", // dark: gray-200, light: gray-600
       },
     },
     scales: {
@@ -70,17 +76,23 @@ const OrderStatistics: React.FC<OrderStatisticsProps> = ({ period }) => {
         grid: {
           display: false,
         },
+        ticks: {
+          color: isDarkMode ? "#D1D5DB" : "#4B5563", // gray-300 or gray-600
+        },
       },
       y: {
         beginAtZero: true,
         grid: {
-          borderDash: [2, 4],
+        
+          color: isDarkMode ? "#374151" : "#E5E7EB", // gray-700 or gray-200
+        },
+        ticks: {
+          color: isDarkMode ? "#D1D5DB" : "#4B5563",
         },
       },
     },
-  } as ChartOptions<"bar">;
+  };
 
-  // Chart data
   const chartData = {
     labels: data.labels,
     datasets: [
@@ -106,11 +118,11 @@ const OrderStatistics: React.FC<OrderStatisticsProps> = ({ period }) => {
       <div className="mb-4 flex items-center space-x-4">
         <div className="flex items-center">
           <span className="mr-2 inline-block h-3 w-3 rounded-full bg-blue-400"></span>
-          <span className="text-sm text-gray-600">Inhouse</span>
+          <span className="text-sm text-gray-600 dark:text-white">Inhouse</span>
         </div>
         <div className="flex items-center">
           <span className="mr-2 inline-block h-3 w-3 rounded-full bg-red-400"></span>
-          <span className="text-sm text-gray-600">Vendor</span>
+          <span className="text-sm text-gray-600 dark:text-white">Vendor</span>
         </div>
       </div>
       <Bar options={options} data={chartData} />
