@@ -557,7 +557,12 @@ const ProductList = () => {
                           <FaBarcode className="" />
                         </ButtonSelf>
                         <ButtonSelf
-                          onClick={() => router.push(`/product/${doc.slug}`)}
+                          onClick={() =>
+                            window.open(
+                              `https://www.aliexpress.com/item/${doc?.aliexpress_id}.html`,
+                              "_blank",
+                            )
+                          }
                           className="mr-2 bg-red-50 p-1 text-yellow-700"
                         >
                           <FaEye className="" />
@@ -575,15 +580,6 @@ const ProductList = () => {
                             <FaTrashAlt className="" />
                           </Button>
                         </>
-
-                        <ButtonSelf
-                          onClick={() =>
-                            router.push(`/admin/product/edit/${doc.id}`)
-                          }
-                          className="mr-2 bg-green-50 p-1 text-green-700"
-                        >
-                          <FaEdit className="" />
-                        </ButtonSelf>
                       </TableCell>
                     </TableRow>
                   ))

@@ -29,7 +29,7 @@ export default function transformAliExpressProduct(product: any) {
           title: prop.sku_property_value,
           price: Number(sku.offer_sale_price),
           stock: sku.sku_available_stock,
-          sku: sku.sku_id,
+          sku: sku.sku_attr,
           image: prop.sku_image,
           productId: product.product_id,
         });
@@ -46,16 +46,13 @@ export default function transformAliExpressProduct(product: any) {
     meta_image: multimedia.image_urls?.split(";")[0] || "",
     meta_description: baseInfo.subject || "",
     meta_keywords: keywords.map((k: any) => k.attr_value).join(","),
+    ae_item_sku_info_dtos: product?.ae_item_sku_info_dtos,
     video_link: "", // not available
     thumbnail: multimedia.image_urls?.split(";")[0] || "",
-    price: String(Math.round(skuList?.[0]?.sku_price) || 0),
+    base_price: String(Math.round(skuList?.[0]?.offer_sale_price) || 0),
+    price: String(Math.round(skuList?.[0]?.offer_sale_price) || 0),
     discount_type: "flat", // assume flat
-    discount: String(
-      Math.round(
-        Number(skuList?.[0]?.sku_price || 0) -
-          Number(skuList?.[0]?.offer_sale_price || 0),
-      ),
-    ),
+    discount: "",
     tax_amount: "0", // not available
     tax_type: "include",
     available: "in-stock",

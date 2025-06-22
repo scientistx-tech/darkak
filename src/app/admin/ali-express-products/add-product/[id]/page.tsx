@@ -30,6 +30,7 @@ import { useSelector } from "react-redux";
 import JoditEditor from "jodit-react";
 import Cookies from "js-cookie";
 import transformAliExpressProduct from "../../utils/product";
+import ShippingModal from "../../components/ShippingModal";
 
 const CustomEditor = dynamic(
   () => import("@/app/admin/components/CustomEditor"),
@@ -311,6 +312,7 @@ const AliExpressProductEdit = () => {
     meta_keywords: "",
     video_link: "",
     thumbnail: "",
+    base_price: "",
     price: "",
     discount_type: "",
     discount: "",
@@ -334,6 +336,7 @@ const AliExpressProductEdit = () => {
     keywords: "",
     drafted: false,
     images: [],
+    ae_item_sku_info_dtos: {},
     delivery_info: {
       delivery_time: "",
       delivery_charge: "",
@@ -373,6 +376,8 @@ const AliExpressProductEdit = () => {
     label: string;
   } | null>(null);
   const [productDetails, setProductDetails] = useState<any>([]);
+  const [shippingInfo, setShippingInfo] = useState<any[]>([]);
+  const [shippingFee, setShippingFee] = useState<number>(0);
 
   // load all categories, sub categories, sub sub categories and brands
   const { data: categoriesData } = useGetCategoriesQuery({});
@@ -380,12 +385,7 @@ const AliExpressProductEdit = () => {
   const { data: subSubCategoriesData } = useGetSubSubCategoriesQuery({});
   const { data: brandsData } = useGetBrandsQuery({});
   const { data: attributesData } = useGetProductAttributesQuery({});
-  const {
-    data: productData,
-    error,
-    isLoading,
-    refetch,
-  } = useGetSingleProductDetailsQuery(id);
+
   const [uploadImages] = useUploadImagesMutation();
   const [createProduct] = useCreateProductMutation();
   const [updateProduct, { isLoading: loadingUpadate }] =
@@ -395,12 +395,32 @@ const AliExpressProductEdit = () => {
   const token = useSelector((state: any) => state.auth.token);
   const aliExpresstoken = Cookies.get("aliExpressToken");
 
+  const fetchProductShippingInfo = async (skuId: string) => {
+    try {
+      const response = await fetch(
+        `https://api.darkak.com.bd/api/aliexpress/get-product-shiping/${aliExpresstoken}?queryDeliveryReq={"quantity":1,"shipToCountry":"BD","productId":${id},"language":"en_US","locale":"en_US","selectedSkuId":${skuId},"currency":"BDT"}`,
+      );
+      const data = await response.json();
+      console.log("shp data", data);
+      setShippingInfo(
+        data?.aliexpress_ds_freight_query_response?.result?.delivery_options
+          ?.delivery_option_d_t_o,
+      );
+    } catch (error: any) {
+      toast.error(error?.data?.message);
+    }
+  };
+
   const fetchSingleProductFromAliExpress = async () => {
     try {
       const response = await fetch(
         `https://api.darkak.com.bd/api/aliexpress/get-product-details/${aliExpresstoken}?ship_to_country=BD&product_id=${id}&target_currency=BDT&target_language=en_US`,
       );
       const data = await response.json();
+      const shippingFee = fetchProductShippingInfo(
+        data?.aliexpress_ds_product_get_response?.result?.ae_item_sku_info_dtos
+          ?.ae_item_sku_info_d_t_o[0].sku_id,
+      );
       const transformed = transformAliExpressProduct(
         data?.aliexpress_ds_product_get_response?.result,
       );
@@ -414,6 +434,23 @@ const AliExpressProductEdit = () => {
       toast.error("Failed to fetch categories");
     }
   };
+
+  useEffect(() => {
+    let calculatedPrice = 0;
+    const price = Number(formData?.base_price) || 0;
+    console.log("rpicde", price);
+    const fee = Number(shippingFee) || 0;
+    console.log("fee", fee);
+    const benefit = Number(formData?.aliexpress_benifit) || 1;
+    console.log("benefit", benefit);
+
+    calculatedPrice = Math.round((price + fee) * benefit);
+    console.log("calculated", calculatedPrice);
+    setFormData((prev: any) => ({
+      ...prev,
+      price: calculatedPrice,
+    }));
+  }, [shippingFee, formData.aliexpress_benifit]);
 
   useEffect(() => {
     fetchSingleProductFromAliExpress();
@@ -582,6 +619,7 @@ const AliExpressProductEdit = () => {
         .map((k: any) => k.trim())
         .filter(Boolean),
       images: formData.images,
+      ae_item_sku_info_dtos: formData.ae_item_sku_info_dtos,
       delivery_info: {
         delivery_time: formData.delivery_info.delivery_time,
         delivery_charge: formData.delivery_info.delivery_charge,
@@ -1464,6 +1502,7 @@ const AliExpressProductEdit = () => {
                     <div className="flex w-full flex-col gap-1">
                       <label htmlFor="option_title">Option Title</label>
                       <input
+                        readOnly
                         type="text"
                         placeholder="Option Title"
                         value={option.title}
@@ -1484,6 +1523,7 @@ const AliExpressProductEdit = () => {
                     <div className="flex w-full flex-col gap-1">
                       <label htmlFor="option_price">Price</label>
                       <input
+                        readOnly
                         type="number"
                         placeholder="Price"
                         value={option.price}
@@ -1504,6 +1544,7 @@ const AliExpressProductEdit = () => {
                     <div className="flex w-full flex-col gap-1">
                       <label htmlFor="stock">Stock</label>
                       <input
+                        readOnly
                         type="number"
                         placeholder="stock"
                         value={option.stock}
@@ -1523,6 +1564,7 @@ const AliExpressProductEdit = () => {
                     <div className="flex w-full flex-col gap-1">
                       <label htmlFor="item_sku">Code</label>
                       <input
+                        readOnly
                         type="string"
                         placeholder="sku"
                         value={option.sku}
@@ -2034,6 +2076,10 @@ const AliExpressProductEdit = () => {
           Schedule
         </button> */}
       </div>
+      <ShippingModal
+        shippingData={shippingInfo}
+        setShippingFee={setShippingFee}
+      />
     </div>
   );
 };

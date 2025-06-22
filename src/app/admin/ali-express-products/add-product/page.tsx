@@ -21,6 +21,10 @@ export default function AliExpressSearch() {
     categories[0]?.category_id || "",
   );
   const [isProductFetching, setIsProductFetching] = useState(false);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(1000);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
   const token = Cookies.get("aliExpressToken");
 
   const fetchCategories = async () => {
@@ -45,9 +49,9 @@ export default function AliExpressSearch() {
     setIsProductFetching(true);
 
     try {
-      const url = `https://api.darkak.com.bd/api/aliexpress/get-product-search/${token}?countryCode=BD&keyWord=${searchTerm}&local=en_US&currency=BDT&pageIndex=${pageIndex}&pageSize=${
+      const url = `https://api.darkak.com.bd/api/aliexpress/get-product-search/${token}?countryCode=BD&keyWord=${searchTerm}&searchExtend={'min':'${minPrice}','max':'${maxPrice}'}&local=en_US&currency=BDT&pageIndex=${pageIndex}&pageSize=${
         pageSize
-      }`;
+      }&sortBy=${sortOrder}`;
 
       const response = await fetch(url, { method: "GET" });
       const result = await response.json();
@@ -73,7 +77,7 @@ export default function AliExpressSearch() {
 
   useEffect(() => {
     if (searchTerm) fetchProductsFromAliExpress();
-  }, [pageIndex]);
+  }, [pageIndex, sortOrder, minPrice, maxPrice]);
 
   useEffect(() => {
     if (token) fetchCategories();
@@ -121,11 +125,53 @@ export default function AliExpressSearch() {
           Search
         </button>
       </div>
+      <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center">
+        <div className="flex w-full flex-col gap-2 md:w-64">
+          <label className="text-sm font-medium text-gray-700">
+            Price Range (BDT)
+          </label>
+          <div className="flex items-center gap-2">
+            <input
+              type="number"
+              value={minPrice}
+              onChange={(e) => setMinPrice(Number(e.target.value))}
+              className="w-full rounded border px-2 py-1 text-sm"
+              placeholder="Min"
+            />
+            <span>-</span>
+            <input
+              type="number"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(Number(e.target.value))}
+              className="w-full rounded border px-2 py-1 text-sm"
+              placeholder="Max"
+            />
+          </div>
+        </div>
+
+        {/* Sort Order */}
+        <div className="flex flex-col gap-2 md:w-48">
+          <label className="text-sm font-medium text-gray-700">
+            Sort Price
+          </label>
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
+            className="rounded border px-2 py-2 text-sm shadow focus:outline-none"
+          >
+            <option value="asc">Low to High</option>
+            <option value="desc">High to Low</option>
+          </select>
+        </div>
+      </div>
 
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
         {isProductFetching
           ? Array.from({ length: 20 }).map((_, i) => (
-              <div className="flex animate-pulse flex-col overflow-hidden rounded-lg border bg-white shadow-md">
+              <div
+                key={i}
+                className="flex animate-pulse flex-col overflow-hidden rounded-lg border bg-white shadow-md"
+              >
                 {/* Image Skeleton */}
                 <div className="h-48 w-full bg-gray-200" />
 
