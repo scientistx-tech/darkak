@@ -1,11 +1,11 @@
-"use client";
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { Product } from "@/app/(root)/types/ProductType";
-import { message } from "antd";
-import PriceInfo from "./PriceInfo";
-import RightIcons from "./RightIcons";
-import { useRouter } from "next/navigation";
+'use client';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Product } from '@/app/(root)/types/ProductType';
+import { message } from 'antd';
+import PriceInfo from './PriceInfo';
+import RightIcons from './RightIcons';
+import { useRouter } from 'next/navigation';
 
 interface ProductCardProps {
   product: Product;
@@ -22,17 +22,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
 
   const success = () => {
     messageApi.open({
-      type: "success",
-      content: "Link copied to clipboard!",
+      type: 'success',
+      content: 'Link copied to clipboard!',
     });
   };
 
   // Combine thumbnail and images, ensuring no duplicates and thumbnail is first
   const allImages = [
     product.thumbnail,
-    ...(product.Image || []).map((img: any) =>
-      typeof img === "string" ? img : img?.url,
-    ),
+    ...(product.Image || []).map((img: any) => (typeof img === 'string' ? img : img?.url)),
   ].filter((img, idx, arr) => img && arr.indexOf(img) === idx);
 
   // Only use the first image for the slider
@@ -49,7 +47,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
       {/* Discount badge */}
       {product.discount > 0 && (
         <div className="absolute left-0 top-5 z-20 rounded-r-full bg-secondaryBlue px-4 py-1 text-center text-xs font-semibold text-secondaryWhite">
-          {product.discount}%
+          {Math.round(product.discount)}%
           <br />
           OFF
         </div>
@@ -81,7 +79,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
         <div
           className="absolute inset-0 bg-[#E6EFFF]"
           style={{
-            clipPath: "polygon(0 0, 100% 0, 100% 38%, 0% 100%)",
+            clipPath: 'polygon(0 0, 100% 0, 100% 38%, 0% 100%)',
             zIndex: 0,
           }}
         />
@@ -106,8 +104,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
             onClick={() => setActiveImage(i)}
             className={`h-2 w-4 cursor-pointer rounded-full transition-all duration-300 hover:bg-secondaryBlue ${
               i === activeImage
-                ? "w-8 bg-secondaryBlue"
-                : "border-[1px] border-secondaryLiteBlue bg-secondaryWhite"
+                ? 'w-8 bg-secondaryBlue'
+                : 'border-[1px] border-secondaryLiteBlue bg-secondaryWhite'
             }`}
           />
         ))}
