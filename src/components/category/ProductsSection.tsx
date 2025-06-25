@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import ProductCard from "@/components/shared/ProductCard";
-import { Product } from "@/app/(root)/types/ProductType";
-import LeftSidebar from "@/components/category/leftSidebar/LeftSidebar";
-import CategoryFilter from "@/assets/svg/CategoryFilter";
-import { useGetAllProductsQuery } from "@/redux/services/client/products";
-import Pagination from "../shared/Pagination";
-import { toast } from "react-toastify";
+import React, { useEffect, useState } from 'react';
+import ProductCard from '@/components/shared/ProductCard';
+import { Product } from '@/app/(root)/types/ProductType';
+import LeftSidebar from '@/components/category/leftSidebar/LeftSidebar';
+import CategoryFilter from '@/assets/svg/CategoryFilter';
+import { useGetAllProductsQuery } from '@/redux/services/client/products';
+import Pagination from '../shared/Pagination';
+import { toast } from 'react-toastify';
 
 const ProductsSection = ({
   currentPage,
@@ -29,8 +29,8 @@ const ProductsSection = ({
     const parsed = Object.fromEntries(
       Object.entries(initialQuery || {}).map(([k, v]) => [
         k,
-        !isNaN(Number(v)) && v !== "" ? Number(v) : v,
-      ]),
+        !isNaN(Number(v)) && v !== '' ? Number(v) : v,
+      ])
     );
     return parsed;
   });
@@ -42,7 +42,7 @@ const ProductsSection = ({
       setSidebarFilters((prevFilters: any) => ({
         ...prevFilters,
         sort: sortBy,
-        search: searchValue || "", // Add search value if provided
+        search: searchValue || '', // Add search value if provided
       }));
     }
   }, [sortBy, searchValue]);
@@ -52,12 +52,12 @@ const ProductsSection = ({
     const parsed = Object.fromEntries(
       Object.entries(initialQuery || {}).map(([k, v]) => [
         k,
-        !isNaN(Number(v)) && v !== "" ? Number(v) : v,
-      ]),
+        !isNaN(Number(v)) && v !== '' ? Number(v) : v,
+      ])
     );
     setSidebarFilters((prev: any) => {
       const next = { ...parsed };
-      if (prev.sort || sortBy) next.sort = prev.sort || sortBy || "";
+      if (prev.sort || sortBy) next.sort = prev.sort || sortBy || '';
       return next;
     });
   }, [initialQuery, sortBy]); // Add sortBy to the dependency array
@@ -72,12 +72,10 @@ const ProductsSection = ({
   const fetchAllProducts = async () => {
     const queryString = filtersWithPageAndLimit
       ? `?${new URLSearchParams(filtersWithPageAndLimit).toString()}`
-      : "";
+      : '';
     try {
       setIsLoading(true), setIsFetching(true);
-      const response = await fetch(
-        `https://api.darkak.com.bd/api/public/filter${queryString}`,
-      );
+      const response = await fetch(`https://api.darkak.com.bd/api/public/filter${queryString}`);
       const data = await response.json();
       setData(data);
     } catch (error: any) {
@@ -87,9 +85,11 @@ const ProductsSection = ({
     }
   };
 
+  console.log('visibleCount', visibleCount);
+
   useEffect(() => {
     fetchAllProducts();
-  }, [sidebarFilters]);
+  }, [sidebarFilters, visibleCount]);
 
   useEffect(() => {
     if (data?.data) {
@@ -118,9 +118,9 @@ const ProductsSection = ({
 
   // Lock scroll when sidebar is open
   useEffect(() => {
-    document.body.style.overflow = isSidebarOpen ? "hidden" : "auto";
+    document.body.style.overflow = isSidebarOpen ? 'hidden' : 'auto';
     return () => {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     };
   }, [isSidebarOpen]);
 
@@ -129,7 +129,7 @@ const ProductsSection = ({
   };
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if ((e.target as HTMLDivElement).id === "sidebar-overlay") {
+    if ((e.target as HTMLDivElement).id === 'sidebar-overlay') {
       closeSidebar();
     }
   };
@@ -139,7 +139,7 @@ const ProductsSection = ({
     setSidebarFilters((prev: any) => {
       // Merge, but avoid duplicate params (prefer new filters, but keep sort)
       const merged = { ...prev, ...filters };
-      if (prev.sort || sortBy) merged.sort = prev.sort || sortBy || "";
+      if (prev.sort || sortBy) merged.sort = prev.sort || sortBy || '';
       return merged;
     });
   };
@@ -202,10 +202,7 @@ const ProductsSection = ({
         <div className="grid w-full grid-cols-2 gap-4 lg:w-4/5 lg:grid-cols-3 xl:grid-cols-4">
           {isLoading &&
             Array.from({ length: 20 }).map((_, i) => (
-              <div
-                key={i}
-                className="animate-pulse rounded-lg bg-gray-100 p-4 shadow-sm"
-              >
+              <div key={i} className="animate-pulse rounded-lg bg-gray-100 p-4 shadow-sm">
                 <div className="mb-3 h-36 w-full rounded bg-gray-200" />
                 <div className="mb-2 h-4 w-3/4 rounded bg-gray-200" />
                 <div className="mb-1 h-3 w-1/2 rounded bg-gray-200" />
@@ -239,9 +236,7 @@ const ProductsSection = ({
                 />
                 <circle cx="36" cy="28" r="3" fill="#60a5fa" />
               </svg>
-              <h3 className="mb-2 text-xl font-bold text-blue-700">
-                No Products Found
-              </h3>
+              <h3 className="mb-2 text-xl font-bold text-blue-700">No Products Found</h3>
               <p className="mb-1 text-gray-500">
                 We couldn&rsquo;t find any products matching your filters.
               </p>
@@ -264,7 +259,7 @@ const ProductsSection = ({
             className="rounded bg-blue-600 px-6 py-2 text-white transition duration-300 hover:bg-blue-700"
             disabled={isFetching}
           >
-            {isFetching ? "Loading..." : "See More"}
+            {isFetching ? 'Loading...' : 'See More'}
           </button>
         </div>
       )}
