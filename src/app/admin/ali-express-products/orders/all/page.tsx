@@ -227,7 +227,7 @@ const AllOrderList = () => {
                         <div className="flex items-center justify-center gap-2">
                           <Button
                             onClick={() => {
-                              router.push(`/admin/orders/${order.id}`);
+                              router.push(`/admin/ali-express-products/orders/${order.id}`);
                             }}
                             className="rounded-full bg-blue-100 p-1 text-base text-blue-700"
                           >

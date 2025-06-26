@@ -25,7 +25,7 @@ export default function OrderDetailsPage() {
 
   console.log("Order ID:", id);
 
-  console.log("Order Details Data:", orderDetailsData);
+  console.log("Order Details Datads:", orderDetailsData);
 
   return (
     <div className="space-y-6">
