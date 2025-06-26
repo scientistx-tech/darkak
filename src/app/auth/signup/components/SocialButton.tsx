@@ -1,15 +1,17 @@
-import { auth, provider, signInWithPopup } from "@/utils/firebase";
-import { useDispatch } from "react-redux";
-import { setUser } from "@/redux/slices/authSlice";
-import { toast } from "react-toastify";
-import { convertFirebaseToAppUser } from "@/utils/convertFirebaseUser";
-import { FaGoogle, FaFacebookF, FaPhoneAlt } from "react-icons/fa";
-import {
-  useUserGoogleAuthenticationMutation,
-  useGetUserQuery,
-} from "@/redux/services/authApis";
+import { auth, provider, signInWithPopup } from '@/utils/firebase';
+import { useDispatch } from 'react-redux';
+import { setUser } from '@/redux/slices/authSlice';
+import { toast } from 'react-toastify';
+import { convertFirebaseToAppUser } from '@/utils/convertFirebaseUser';
+import { FaGoogle, FaFacebookF, FaPhoneAlt } from 'react-icons/fa';
+import { useUserGoogleAuthenticationMutation, useGetUserQuery } from '@/redux/services/authApis';
 
-const SocialButton = () => {
+interface SocialButtonProps {
+  signUpMedium: string;
+  setSignUpMedium: (medium: string) => void;
+}
+
+const SocialButton = ({ signUpMedium, setSignUpMedium }: SocialButtonProps) => {
   const dispatch = useDispatch();
   const [userGoogleAuthentication] = useUserGoogleAuthenticationMutation();
 
@@ -21,41 +23,46 @@ const SocialButton = () => {
 
       const userValue = await userGoogleAuthentication({
         token: firebaseToken,
-        name: user.displayName || "Unknown User",
+        name: user.displayName || 'Unknown User',
       }).unwrap();
 
-      toast.success("Google login successful!");
+      toast.success('Google login successful!');
       dispatch(setUser(userValue));
     } catch (error: any) {
-      toast.error("Google login failed!");
+      toast.error('Google login failed!');
       console.error(error);
     }
   };
 
   const handleFacebookLogin = () => {
-    toast.info("Facebook login not implemented yet.");
+    toast.info('Facebook login not implemented yet.');
   };
 
   const handlePhoneLogin = () => {
-    toast.info("Phone login not implemented yet.");
+    // toast.info('Phone login not implemented yet.');
+    if (signUpMedium === 'phone') {
+      setSignUpMedium('email');
+    } else {
+      setSignUpMedium('phone');
+    }
   };
 
   const buttonData = [
     {
-      text: "LOGIN WITH GOOGLE",
-      color: "bg-[#DB4437] hover:bg-[#c5392f]",
+      text: 'LOGIN WITH GOOGLE',
+      color: 'bg-[#DB4437] hover:bg-[#c5392f]',
       icon: <FaGoogle size={20} />,
       onClick: handleGoogleLogin,
     },
     {
-      text: "LOGIN WITH FACEBOOK",
-      color: "bg-[#3b5998] hover:bg-[#2d4373]",
+      text: 'LOGIN WITH FACEBOOK',
+      color: 'bg-[#3b5998] hover:bg-[#2d4373]',
       icon: <FaFacebookF size={20} />,
       onClick: handleFacebookLogin,
     },
     {
-      text: "LOGIN WITH PHONE",
-      color: "bg-[#34A853] hover:bg-[#2e8b47]",
+      text: `LOGIN WITH ${signUpMedium === 'phone' ? 'EMAIL' : 'PHONE'}`,
+      color: 'bg-[#34A853] hover:bg-[#2e8b47]',
       icon: <FaPhoneAlt size={20} />,
       onClick: handlePhoneLogin,
     },

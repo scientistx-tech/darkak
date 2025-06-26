@@ -1,14 +1,14 @@
-"use client";
-import { Product } from "@/app/(root)/types/ProductType";
-import { useAddToCartMutation } from "@/redux/services/client/myCart";
-import { setCart } from "@/redux/slices/authSlice";
-import { AppDispatch, RootState } from "@/redux/store";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FaShoppingCart } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import { Rating } from "react-simple-star-rating";
+'use client';
+import { Product } from '@/app/(root)/types/ProductType';
+import { useAddToCartMutation } from '@/redux/services/client/myCart';
+import { setCart } from '@/redux/slices/authSlice';
+import { AppDispatch, RootState } from '@/redux/store';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { FaShoppingCart } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { Rating } from 'react-simple-star-rating';
 
 const PriceInfo = ({
   product,
@@ -30,9 +30,9 @@ const PriceInfo = ({
   let discountPrice = price;
 
   if (hasDiscount) {
-    if (discountType === "flat") {
+    if (discountType === 'flat') {
       discountPrice = price - discount;
-    } else if (discountType === "percentage") {
+    } else if (discountType === 'percentage') {
       discountPrice = price - (price * discount) / 100;
     }
   }
@@ -57,9 +57,7 @@ const PriceInfo = ({
     };
 
     // Extract first option from each item (if any)
-    const selectedOptions = product.items
-      ?.map((item: any) => item.options?.[0])
-      .filter(Boolean);
+    const selectedOptions = product.items?.map((item: any) => item.options?.[0]).filter(Boolean);
     cart.cart_items = selectedOptions.map((option: any) => ({ option }));
 
     return cart;
@@ -70,17 +68,17 @@ const PriceInfo = ({
     e.stopPropagation(); // Prevent navigation to product detail page
 
     const cartObject = buildCartObject(product);
-    console.log("cartobject", cartObject);
+    console.log('cartobject', cartObject);
     try {
-      localStorage.setItem("checkout_items", JSON.stringify([cartObject]));
+      localStorage.setItem('checkout_items', JSON.stringify([cartObject]));
       dispatch(setCart(Math.random()));
       // toast.success("Item added to cart!");
-      router.push("/easy-checkout");
+      router.push('/easy-checkout');
     } catch (error: any) {
       if (error?.status === 401) {
-        return router.replace("/auth/login");
+        return router.replace('/auth/login');
       }
-      toast.error(error?.data?.message || "Failed to add to cart");
+      toast.error(error?.data?.message || 'Failed to add to cart');
     }
   };
 
@@ -98,12 +96,12 @@ const PriceInfo = ({
         optionIds,
       }).unwrap();
       dispatch(setCart(Math.random()));
-      toast.success("Item added to cart!");
+      toast.success('Item added to cart!');
     } catch (error: any) {
       if (error?.status === 401) {
-        return router.replace("/auth/login");
+        return router.replace('/auth/login');
       }
-      toast.error(error?.data?.message || "Failed to add to cart");
+      toast.error(error?.data?.message || 'Failed to add to cart');
     }
   };
   return (
@@ -117,22 +115,21 @@ const PriceInfo = ({
     >
       <div className="flex flex-col justify-between space-y-2 p-2 text-center md:h-[150px] md:space-y-1 lg:space-y-2 xl:h-[200px] xl:space-y-0 xl:p-6 2xl:h-[170px]">
         <div className="flex flex-wrap items-center justify-center gap-1">
-          {hasDiscount && (
-            <span className="text-sm font-semibold text-primaryBlue">
-              Price {discountPrice} BDT
-            </span>
-          )}
           <span
-            className={`hidden text-sm text-gray-600 sm:block ${
-              hasDiscount ? "line-through" : ""
-            }`}
+            className={`hidden text-sm text-gray-600 sm:block ${hasDiscount ? 'line-through' : ''}`}
           >
             {price} BDT
           </span>
+
+          {hasDiscount && (
+            <span className="ml-2 text-sm font-semibold text-primaryBlue">
+              Price {Math.round(discountPrice)} BDT
+            </span>
+          )}
         </div>
         <h3
           className="truncate text-center text-sm font-semibold text-primaryDarkBlue transition-all duration-300 group-hover:text-secondaryBlue md:line-clamp-2 md:whitespace-normal"
-          style={{ maxWidth: "100%" }}
+          style={{ maxWidth: '100%' }}
           title={product.title}
         >
           {product.title}
@@ -188,11 +185,7 @@ const PriceInfo = ({
                     stroke="currentColor"
                     strokeWidth="4"
                   ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8z"
-                  ></path>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
                 </svg>
               ) : (
                 <FaShoppingCart />
