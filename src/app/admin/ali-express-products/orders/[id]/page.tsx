@@ -25,7 +25,7 @@ export default function OrderDetailsPage() {
 
   console.log("Order ID:", id);
 
-  console.log("Order Details Data:", orderDetailsData);
+  console.log("Order Details Datads:", orderDetailsData);
 
   return (
     <div className="space-y-6">
@@ -35,13 +35,8 @@ export default function OrderDetailsPage() {
             onClick={() => router.back()}
             className="h-8 w-8 cursor-pointer rounded-full bg-gray-3 p-2 text-slate-800 hover:bg-gray-4"
           />
-          <Image
-            width={40}
-            height={40}
-            src="/images/icon/icon_order.png"
-            alt=""
-          />
-          <h1 className="text-xl font-bold">Order Details</h1>
+          <Image width={40} height={40} src="/images/icon/icon_order.png" alt="" />
+          <h1 className="text-xl font-bold dark:text-white">Order Details</h1>
         </div>
         <div className="flex gap-2">
           <PrintButton orderDetails={orderDetailsData} />
@@ -53,23 +48,14 @@ export default function OrderDetailsPage() {
           <OrderSummary orderDetails={orderDetailsData} />
         </div>
         <div className="space-y-4">
-          {orderDetailsData?.status !== "cancelled" &&
-            orderDetailsData?.status !== "failed_to_delivery" &&
-            orderDetailsData?.status !== "delivered" && (
-              <OrderStatusPanel
-                orderDetails={orderDetailsData}
-                refetch={refetch}
-              />
+          {orderDetailsData?.status !== 'cancelled' &&
+            orderDetailsData?.status !== 'failed_to_delivery' &&
+            orderDetailsData?.status !== 'delivered' && (
+              <OrderStatusPanel orderDetails={orderDetailsData} refetch={refetch} />
             )}
           <CustomerInfo orderDetails={orderDetailsData} />
-          <AddressCard
-            orderDetails={orderDetailsData}
-            title="Shipping address"
-          />
-          <AddressCard
-            orderDetails={orderDetailsData}
-            title="Billing address"
-          />
+          <AddressCard orderDetails={orderDetailsData} title="Shipping address" />
+          <AddressCard orderDetails={orderDetailsData} title="Billing address" />
         </div>
       </div>
     </div>

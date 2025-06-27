@@ -1,45 +1,44 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
-import { toast } from "react-toastify";
-import Image from "next/image";
-import Pagination from "@/components/shared/Pagination";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
+import { toast } from 'react-toastify';
+import Image from 'next/image';
+import Pagination from '@/components/shared/Pagination';
 
 export default function AliExpressSearch() {
   const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState("shirt");
+  const [searchTerm, setSearchTerm] = useState('shirt');
   const [aliExpressProducts, setAliExpressProducts] = useState<any[]>([]);
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize] = useState(20);
   const [totalCount, setTotalCount] = useState(0);
-  const [categories, setCategories] = useState<
-    { category_id: string; category_name: string }[]
-  >([]);
+  const [categories, setCategories] = useState<{ category_id: string; category_name: string }[]>(
+    []
+  );
   const [selectedCategory, setSelectedCategory] = useState<string>(
-    categories[0]?.category_id || "",
+    categories[0]?.category_id || ''
   );
   const [isProductFetching, setIsProductFetching] = useState(false);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-  const token = Cookies.get("aliExpressToken");
+  const token = Cookies.get('aliExpressToken');
 
   const fetchCategories = async () => {
     try {
       const response = await fetch(
-        `https://api.darkak.com.bd/api/aliexpress/get-product-category/${token}`,
+        `https://api.darkak.com.bd/api/aliexpress/get-product-category/${token}`
       );
       const data = await response.json();
       setCategories(
-        data?.aliexpress_ds_category_get_response?.resp_result?.result
-          ?.categories?.category || [],
+        data?.aliexpress_ds_category_get_response?.resp_result?.result?.categories?.category || []
       );
-      setSelectedCategory(categories[0]?.category_id || "");
+      setSelectedCategory(categories[0]?.category_id || '');
     } catch (err: any) {
-      toast.error("Failed to fetch categories");
+      toast.error('Failed to fetch categories');
     }
   };
 
@@ -53,7 +52,7 @@ export default function AliExpressSearch() {
         pageSize
       }&sortBy=${sortOrder}`;
 
-      const response = await fetch(url, { method: "GET" });
+      const response = await fetch(url, { method: 'GET' });
       const result = await response.json();
       const data = result?.aliexpress_ds_text_search_response?.data;
 
@@ -62,7 +61,7 @@ export default function AliExpressSearch() {
         setTotalCount(data.totalCount || 0);
       }
     } catch (error: any) {
-      toast.error(error?.message || "Failed to fetch products");
+      toast.error(error?.message || 'Failed to fetch products');
     } finally {
       setIsProductFetching(false);
     }
@@ -71,7 +70,7 @@ export default function AliExpressSearch() {
   useEffect(() => {
     if (!token) {
       window.location.href =
-        "https://api-sg.aliexpress.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=https://darkak.com.bd/connecting-aliExpress&client_id=514372";
+        'https://api-sg.aliexpress.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=https://darkak.com.bd/connecting-aliExpress&client_id=514372';
     }
   }, []);
 
@@ -84,7 +83,7 @@ export default function AliExpressSearch() {
   }, [token]);
 
   const getAbsoluteUrl = (url: string) => {
-    if (url.startsWith("//")) return "https:" + url;
+    if (url.startsWith('//')) return 'https:' + url;
     return url;
   };
 
@@ -98,7 +97,7 @@ export default function AliExpressSearch() {
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search AliExpress products..."
           className="w-full rounded border px-4 py-2 shadow focus:outline-none focus:ring-2 focus:ring-blue-500"
-          onKeyDown={(e) => e.key === "Enter" && fetchProductsFromAliExpress()}
+          onKeyDown={(e) => e.key === 'Enter' && fetchProductsFromAliExpress()}
         />
 
         {/* Category Dropdown */}
@@ -127,9 +126,7 @@ export default function AliExpressSearch() {
       </div>
       <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center">
         <div className="flex w-full flex-col gap-2 md:w-64">
-          <label className="text-sm font-medium text-gray-700">
-            Price Range (BDT)
-          </label>
+          <label className="text-sm font-medium text-gray-700">Price Range (BDT)</label>
           <div className="flex items-center gap-2">
             <input
               type="number"
@@ -151,12 +148,10 @@ export default function AliExpressSearch() {
 
         {/* Sort Order */}
         <div className="flex flex-col gap-2 md:w-48">
-          <label className="text-sm font-medium text-gray-700">
-            Sort Price
-          </label>
+          <label className="text-sm font-medium text-gray-700">Sort Price</label>
           <select
             value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
+            onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
             className="rounded border px-2 py-2 text-sm shadow focus:outline-none"
           >
             <option value="asc">Low to High</option>
@@ -212,10 +207,9 @@ export default function AliExpressSearch() {
                     <p>
                       <span className="font-semibold text-green-600">
                         {item.salePriceFormat || `BDT ${item.targetSalePrice}`}
-                      </span>{" "}
+                      </span>{' '}
                       <span className="text-xs text-gray-400 line-through">
-                        {item.targetOriginalPrice &&
-                          `BDT ${item.targetOriginalPrice}`}
+                        {item.targetOriginalPrice && `BDT ${item.targetOriginalPrice}`}
                       </span>
                     </p>
                     <p className="text-red-500">{item.discount} OFF</p>
@@ -223,16 +217,27 @@ export default function AliExpressSearch() {
                       ⭐ {item.score} | 🛒 {item.orders} orders
                     </p>
                   </div>
-                  <button
-                    className="mt-auto w-full rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
-                    onClick={() =>
-                      router.push(
-                        `/admin/ali-express-products/add-product/${item?.itemId}`,
-                      )
-                    }
-                  >
-                    Add
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      className="mt-auto w-full rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+                      onClick={() =>
+                        window.open(
+                          `https://www.aliexpress.com/item/${item?.itemId}.html`,
+                          '_blank'
+                        )
+                      }
+                    >
+                      View
+                    </button>
+                    <button
+                      className="mt-auto w-full rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+                      onClick={() =>
+                        router.push(`/admin/ali-express-products/add-product/${item?.itemId}`)
+                      }
+                    >
+                      Add
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

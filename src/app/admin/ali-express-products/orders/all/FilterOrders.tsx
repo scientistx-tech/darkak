@@ -7,7 +7,7 @@ const FilterOrders = () => {
       <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3 xl:grid-cols-4">
         <div>
           <label className="mb-1 block text-sm font-medium dark:text-gray-300">Order Type</label>
-          <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm dark:bg-gray-500 dark:text-white">
+          <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm dark:bg-gray-700 dark:text-white">
             <option>All</option>
             <option value="">In House Order</option>
             <option value="">Vendor Order</option>
@@ -18,7 +18,7 @@ const FilterOrders = () => {
           <label className="mb-1 block text-sm font-medium dark:text-gray-300">Store</label>
           <select
             disabled
-            className="w-full rounded border border-gray-300 px-3 py-2 text-sm dark:bg-gray-500 dark:text-white"
+            className="w-full rounded border border-gray-300 px-3 py-2 text-sm dark:bg-gray-700 dark:text-white"
           >
             <option value="in-house">In House</option>
             <option value="in-house">In House</option>
@@ -26,13 +26,13 @@ const FilterOrders = () => {
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium dark:text-gray-300">Customer</label>
-          <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm dark:bg-gray-500 dark:text-white">
+          <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm dark:bg-gray-700 dark:text-white">
             <option>Select from dropdown</option>
           </select>
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium dark:text-gray-300">Data Type</label>
-          <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm dark:bg-gray-500 dark:text-white">
+          <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm dark:bg-gray-700 dark:text-white">
             <option>Select from dropdown</option>
             <option value="">This Year</option>
             <option value="">This Month</option>
