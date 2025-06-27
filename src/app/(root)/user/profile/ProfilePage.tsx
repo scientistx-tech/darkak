@@ -17,6 +17,7 @@ import OrderHistory from "./components/OrderHistory";
 import TrackOrder from "./components/TrackOrder";
 import ReviewHistory from "./components/ReviewHistory";
 import ReturnAndRefund from "./components/ReturnAndRefund";
+import CustomerCare from "./components/CustomerCare";
 
 const ProfilePage: React.FC = () => {
   const { data, isLoading, isError, refetch } = useGetUserQuery(undefined);
@@ -145,6 +146,11 @@ const ProfilePage: React.FC = () => {
             {activeTab === "review" && (
               <motion.div key="review" {...animationProps}>
                 <ReviewHistory />
+              </motion.div>
+            )}
+            {activeTab === "customer" && (
+              <motion.div key="customer" {...animationProps}>
+                <CustomerCare />
               </motion.div>
             )}
           </AnimatePresence>
