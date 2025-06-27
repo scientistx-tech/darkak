@@ -1,6 +1,9 @@
 import Image from "next/image";
 import { RxCross2 } from "react-icons/rx";
-
+import React, { useState } from 'react';
+import CreateOrderModal, { LogisticsAddress,OrderItem } from "./CreateOrderModal";
+import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 export default function OrderSummary({ orderDetails }: any) {
   // Calculate item price (sum of all item prices * quantity)
   const itemPrice = orderDetails?.order_items?.reduce(
@@ -38,33 +41,82 @@ export default function OrderSummary({ orderDetails }: any) {
 
   // Total (from orderDetails.total, or calculate)
   const total = subTotal - couponDiscount + vatTax + shippingFee;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<OrderItem | null>(null);
+
+  const handleOpenModal = (item: OrderItem) => {
+    setSelectedItem(item);
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setSelectedItem(null);
+  };
+const token = Cookies.get("aliExpressToken");
+console.log(token);
+  const handleSubmit = async (logistics_address: LogisticsAddress, item: OrderItem) => {
+    const payload = {
+      param_place_order_request4_open_api_d_t_o: {
+        out_order_id: orderDetails.orderId,
+        logistics_address,
+        product_items: {
+          product_count: item.quantity,
+          product_id: item.product.aliexpress_id,
+          sku_attr: item.ae_sku_attr,
+        },
+      },
+      itemId: orderDetails.id,
+    };
+    try {
+      const res = await fetch(`https://api.darkak.com.bd/api/aliexpress/create-order/${token}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success('Order placed successfully!');
+
+      } else {
+        toast.error(`Failed to place order: ${data?.message || 'Server Error'}`);
+        console.error(' Error Response:', data);
+      }
+    } catch (error) {
+      toast.error('Network or Server Error');
+
+    }
+    console.log('Submitted Payload:', payload);
+    setIsModalOpen(false);
+    setSelectedItem(null);
+  };
   return (
     <div className="rounded border bg-white p-4 text-black shadow">
       {/* order header */}
       <div className="mb-10 flex justify-between">
         <div className="flex flex-col gap-4">
-          <p className="text-sm text-gray-900">
-            Order ID: # {orderDetails?.orderId}
-          </p>
+          <p className="text-sm text-gray-900">Order IDdd: # {orderDetails?.orderId}</p>
           <h2 className="text-sm text-gray-5">10 Jan, 2024 , 06:28 PM</h2>
         </div>
         <div className="flex flex-col items-end gap-3 font-sans text-sm">
           <span>
-            Status:{" "}
+            Statusgg:{' '}
             <p className="ml-1 inline rounded-full bg-blue-100 px-5 py-1 font-bold text-blue-700">
               {orderDetails?.status.toUpperCase()}
             </p>
           </span>
           <span>
-            Payment Method:{" "}
+            Payment Method:{' '}
             <p className="ml-1 inline font-bold text-gray-5">
-              {orderDetails?.paymentType === "cod"
-                ? "Cash On Delivery"
-                : "Online Payment"}
+              {orderDetails?.paymentType === 'cod' ? 'Cash On Delivery' : 'Online Payment'}
             </p>
           </span>
           <div className="flex items-center">
-            Payment Status:{" "}
+            Payment Status:{' '}
             <div className="ml-1 inline rounded-full font-bold text-green-600">
               {orderDetails?.paid ? (
                 <p className="font-bold text-green-600">Paid</p>
@@ -84,12 +136,13 @@ export default function OrderSummary({ orderDetails }: any) {
 
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b text-left">
+          <tr className="space-x-2 border-b text-left">
             <th>SL</th>
-            <th>Item Details</th>
+            <th>Item Detailsaaa</th>
             <th className="text-right">Item Price</th>
             <th className="text-right">Discount</th>
             <th className="text-right">Total</th>
+            <th className="text-right">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -97,51 +150,62 @@ export default function OrderSummary({ orderDetails }: any) {
             <tr key={i} className="mb-1 border-b py-2">
               <td>{i + 1}</td>
               <td className="flex items-center gap-2">
-                <Image
-                  width={50}
-                  height={50}
-                  src={item?.product?.thumbnail}
-                  alt=""
-                />
+                <Image width={50} height={50} src={item?.product?.thumbnail} alt="" />
                 <div className="flex flex-col">
                   <p className="text-sm font-bold text-slate-800">
                     {`${item?.product?.title} (${item?.product?.code})`}
                     <div className="ml-3 inline-block text-gray-6">
                       <RxCross2 className="inline" />
-                      {item?.quantity}{" "}
+                      {item?.quantity}{' '}
                     </div>
                   </p>
                   <div className="flex items-center gap-2 text-sm text-gray-5">
                     <div>
                       {item?.options?.map((option: any, i: number) => (
                         <div key={i} className="text-slate-900">
-                          <p className="inline">{option?.item?.title}:</p>{" "}
-                          {option?.title}
+                          <p className="inline">{option?.item?.title}:</p> {option?.title}
                         </div>
                       ))}
                     </div>
                   </div>
                 </div>
               </td>
+              <td className="text-right">৳{item?.product?.price * item?.quantity}</td>
               <td className="text-right">
-                ৳{item?.product?.price * item?.quantity}
-              </td>
-              <td className="text-right">
-                {item?.product?.discount_type === "flat" && "৳"}
+                {item?.product?.discount_type === 'flat' && '৳'}
                 {item?.product?.discount}
-                {item?.product?.discount_type === "percentage" && "%"}
+                {item?.product?.discount_type === 'percentage' && '%'}
               </td>
               <td className="text-right">
                 ৳
-                {item?.product?.discount_type === "flat"
+                {item?.product?.discount_type === 'flat'
                   ? item?.product?.price - item?.product?.discount
-                  : item?.product?.price -
-                    (item?.product?.discount * item?.product?.price) / 100}
+                  : item?.product?.price - (item?.product?.discount * item?.product?.price) / 100}
+              </td>
+              <td>
+                {' '}
+                <button
+                  onClick={() => handleOpenModal(item)}
+                  className="rounded-lg bg-green-200 px-2 py-1 text-sm font-semibold text-green-700"
+                >
+                  {' '}
+                  Order
+                </button>
+                <CreateOrderModal
+                  isOpen={isModalOpen}
+                  onCancel={handleCancel}
+                  onSubmit={handleSubmit}
+                  orderItem={selectedItem}
+                  orderId={item.orderId}
+                  itemId={item.id}
+                ></CreateOrderModal>
               </td>
             </tr>
+
           ))}
         </tbody>
       </table>
+
       <div className="mt-4 flex flex-row justify-end space-y-1">
         <div className="flex w-[50%] items-center justify-between">
           <div className="flex flex-col gap-2 text-right font-bold text-gray-5">

@@ -56,14 +56,14 @@ const PendingOrderList = () => {
   return (
     <RequireAccess permission="order-pending">
       <div className="min-h-screen">
-        <h2 className="mb-4 flex items-center gap-2 text-xl font-bold">
+        <h2 className="mb-4 flex items-center gap-2 text-xl font-bold dark:text-white ">
           🏠 Pending Orders{" "}
-          <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">
+          <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm text-green-600">
             {orderData?.total}
           </span>
         </h2>
         <FilterOrders />
-        <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:shadow-card">
+        <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:text-white  dark:shadow-card">
           {/* search box and export button */}
           <div className="flex items-center justify-between pb-6">
             <span>Order List</span>
@@ -87,7 +87,7 @@ const PendingOrderList = () => {
                   onChange={(e) => {
                     setSearch(e.target.value);
                   }}
-                  className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none"
+                  className="w-full rounded-md dark:bg-gray-700 border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none"
                 />
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                   <svg

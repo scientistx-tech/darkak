@@ -138,9 +138,9 @@ const ProductList = () => {
 
   return (
     <RequireAccess permission="product-list">
-      <div className="min-h-screen">
+      <div className="min-h-screen overflow-x-auto">
         <h2 className="mb-4 flex items-center gap-2 text-xl font-bold">
-          🏠 In House Product List{" "}
+          🏠 In House Product List{' '}
           <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">
             {data?.data.length || 0}
           </span>
@@ -225,13 +225,11 @@ const ProductList = () => {
               >
                 <option value="">Select Sub Sub Category</option>
                 {subSubCategoriesData?.data &&
-                  subSubCategoriesData?.data?.map(
-                    (subSubCat: any, i: number) => (
-                      <option key={subSubCat?.id} value={subSubCat?.id}>
-                        {subSubCat?.title}
-                      </option>
-                    ),
-                  )}
+                  subSubCategoriesData?.data?.map((subSubCat: any, i: number) => (
+                    <option key={subSubCat?.id} value={subSubCat?.id}>
+                      {subSubCat?.title}
+                    </option>
+                  ))}
               </select>
             </div>
 
@@ -256,11 +254,11 @@ const ProductList = () => {
             <button
               className="rounded bg-gray-100 px-4 py-2 text-gray-700 hover:bg-gray-200"
               onClick={() => {
-                setSelectedBrandId("");
-                setSelectedCategoryId("");
-                setSelectedSubCategoryId("");
-                setSelectedSubSubCategoryId("");
-                setSelectedStock("");
+                setSelectedBrandId('');
+                setSelectedCategoryId('');
+                setSelectedSubCategoryId('');
+                setSelectedSubSubCategoryId('');
+                setSelectedStock('');
                 setQueryParams({});
               }}
             >
@@ -288,7 +286,7 @@ const ProductList = () => {
           </div>
         </div>
 
-        <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:shadow-card">
+        <div className="mt-8 overflow-x-auto bg-white p-5 dark:bg-gray-dark dark:shadow-card">
           {/* search box and export button */}
           <div className="flex items-center justify-between pb-6">
             {/* search box */}
@@ -402,7 +400,7 @@ const ProductList = () => {
               Limited Stocks
             </button> */}
               <button
-                onClick={() => router.push("/admin/product/add-product")}
+                onClick={() => router.push('/admin/product/add-product')}
                 className="flex items-center gap-x-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white"
               >
                 <CiCirclePlus className="text-lg font-bold" />
@@ -413,9 +411,9 @@ const ProductList = () => {
           {error ? (
             <p className="px-6 text-red-500">Error loading Products.</p>
           ) : (
-            <Table>
+            <Table className="overflow-x-auto">
               <TableHeader>
-                <TableRow className="whitespace-nowrap border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
+                <TableRow className=" border-t text-base">
                   <TableHead>SL</TableHead>
                   <TableHead>Thumbnail</TableHead>
                   <TableHead>Name</TableHead>
@@ -440,16 +438,13 @@ const ProductList = () => {
 
                 {!isLoading && data?.data.length <= 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={10}
-                      className="py-8 text-center text-red-500"
-                    >
+                    <TableCell colSpan={10} className="py-8 text-center text-red-500">
                       No Data to Show
                     </TableCell>
                   </TableRow>
                 ) : (
                   data?.data?.map((doc: any, i: number) => (
-                    <TableRow className="whitespace-nowrap" key={doc.id}>
+                    <TableRow className="" key={doc.id}>
                       <TableCell>{i + 1}</TableCell>
 
                       <TableCell>
@@ -464,11 +459,7 @@ const ProductList = () => {
 
                       <TableCell>{doc.title}</TableCell>
                       <TableCell>
-                        {doc.user.isAdmin
-                          ? "Admin"
-                          : doc.user.isModerator
-                            ? "Moderator"
-                            : "Seller"}
+                        {doc.user.isAdmin ? 'Admin' : doc.user.isModerator ? 'Moderator' : 'Seller'}
                       </TableCell>
                       <TableCell className="flex flex-col gap-1">
                         <div className="flex items-center gap-2">
@@ -495,9 +486,9 @@ const ProductList = () => {
                                 data: { status: !checked },
                               }).unwrap();
                               refetch();
-                              toast.success("Published status updated!");
+                              toast.success('Published status updated!');
                             } catch (err) {
-                              toast.error("Failed to update published status");
+                              toast.error('Failed to update published status');
                             }
                           }}
                           className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-400 transition-colors data-[state=checked]:bg-teal-600"
@@ -515,9 +506,9 @@ const ProductList = () => {
                                 data: { status: checked },
                               }).unwrap();
                               refetch();
-                              toast.success("Todays Deal status updated!");
+                              toast.success('Todays Deal status updated!');
                             } catch (err) {
-                              toast.error("Failed to update deal status");
+                              toast.error('Failed to update deal status');
                             }
                           }}
                           className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-400 transition-colors data-[state=checked]:bg-teal-600"
@@ -535,9 +526,9 @@ const ProductList = () => {
                                 data: { status: checked },
                               }).unwrap();
                               refetch();
-                              toast.success("Featured status updated!");
+                              toast.success('Featured status updated!');
                             } catch (err) {
-                              toast.error("Failed to update feature status");
+                              toast.error('Failed to update feature status');
                             }
                           }}
                           className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-400 transition-colors data-[state=checked]:bg-teal-600"
@@ -573,9 +564,7 @@ const ProductList = () => {
                         </>
 
                         <ButtonSelf
-                          onClick={() =>
-                            router.push(`/admin/product/edit/${doc.id}`)
-                          }
+                          onClick={() => router.push(`/admin/product/edit/${doc.id}`)}
                           className="mr-2 bg-green-50 p-1 text-green-700"
                         >
                           <FaEdit className="" />
@@ -602,7 +591,7 @@ const ProductList = () => {
         </div> */}
         <Modal
           title="Product Delete"
-          closable={{ "aria-label": "Custom Close Button" }}
+          closable={{ 'aria-label': 'Custom Close Button' }}
           open={isModalOpen}
           onOk={() => {
             if (selectedProductId) handleOk(selectedProductId);
