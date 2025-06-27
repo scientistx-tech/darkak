@@ -85,7 +85,7 @@ const AllOrderList = () => {
                   onChange={(e) => {
                     setSearch(e.target.value);
                   }}
-                  className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none dark:bg-gray-500"
+                  className="w-full rounded-md border dark:bg-gray-700 border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none dark:bg-gray-500"
                 />
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                   <svg
@@ -227,7 +227,7 @@ const AllOrderList = () => {
                         <div className="flex items-center justify-center gap-2">
                           <Button
                             onClick={() => {
-                              router.push(`/admin/orders/${order.id}`);
+                              router.push(`/admin/ali-express-products/orders/${order.id}`);
                             }}
                             className="rounded-full bg-blue-100 p-1 text-base text-blue-700"
                           >

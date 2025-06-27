@@ -33,7 +33,7 @@ export default function OrderDetailsPage() {
         <div className="flex items-center gap-2">
           <FaLeftLong
             onClick={() => router.back()}
-            className="h-8 w-8 cursor-pointer rounded-full bg-gray-3 p-2 text-slate-800 hover:bg-gray-4"
+            className="h-8 w-8 cursor-pointer rounded-full bg-gray-3 dark:bg-gray-dark dark:text-white  p-2 text-slate-800 hover:bg-gray-4"
           />
           <Image
             width={40}
@@ -41,7 +41,7 @@ export default function OrderDetailsPage() {
             src="/images/icon/icon_order.png"
             alt=""
           />
-          <h1 className="text-xl font-bold">Order Details</h1>
+          <h1 className="text-xl font-bold dark:text-white ">Order Details</h1>
         </div>
         <div className="flex gap-2">
           <PrintButton orderDetails={orderDetailsData} />

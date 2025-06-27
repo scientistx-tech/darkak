@@ -6,7 +6,7 @@ export default function AddressCard({
   orderDetails: any;
 }) {
   return (
-    <div className="rounded border bg-white p-4 text-slate-900 shadow">
+    <div className="rounded border bg-white dark:bg-gray-dark dark:text-white p-4 text-slate-900 shadow">
       <div className="flex items-center gap-2">
         <img
           width={20}
@@ -16,7 +16,7 @@ export default function AddressCard({
         />
         <h3 className="mb-2 font-semibold">{title}</h3>
       </div>
-      <p>Name: {orderDetails?.name}</p>
+      <p>Name: {orderDetails?.name} hi gi</p>
       <p>District: {orderDetails?.district}</p>
       <p>Country: {orderDetails?.division}</p>
       <p className="text-sm text-gray-500">{orderDetails?.area}</p>

@@ -209,7 +209,7 @@ const Header: React.FC = () => {
             animate={{ opacity: 1, height: 40 }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="mx-auto hidden w-full grid-cols-3 items-center overflow-visible bg-primary px-4 text-white md:grid md:px-6 lg:px-12"
+            className="mx-auto hidden w-full grid-cols-3 items-center overflow-visible bg-primary px-4 text-white lg:grid md:px-6 lg:px-12"
           >
             <p>🎉 Eid Mubarak & Grand Opening Celebration! 🎉</p>
             <p className="text-center">✨ Flat 30% OFF on All Products! ✨</p>
@@ -290,12 +290,12 @@ const Header: React.FC = () => {
         )}
 
         {/* Main Header */}
-        <div className="mx-auto flex h-[65px] w-full items-center justify-between bg-primaryBlue px-4 text-white md:h-[70px] md:px-6 lg:px-12">
+        <div className="mx-auto flex h-[65px] w-full items-center justify-between bg-primaryBlue px-4 text-white md:h-[70px] md:px-6 xl:px-12">
           <Link href="/" className="">
             <Image alt="Darkak-Logo" src={logo} height={50} className="" />
           </Link>
 
-          <div className="hidden grid-flow-col items-center gap-8 md:grid">
+          <div className="hidden grid-flow-col  items-center gap-8 lg:grid">
             {/* Home Link */}
             <NavLink href="/" className="font-serif text-lg hover:text-primary">
               Home
@@ -360,7 +360,7 @@ const Header: React.FC = () => {
             </div>
           </div>
 
-          <div className="hidden grid-flow-col gap-5 md:grid">
+          <div className="hidden grid-flow-col gap-5 lg:grid">
             <Link
               href="/user/profile"
               className={`text-2xl transition-all duration-300 hover:scale-110 hover:text-primary ${
@@ -418,7 +418,7 @@ const Header: React.FC = () => {
           {/* For mobile menu Button */}
           <button
             onClick={open ? onClose : showDrawer}
-            className="transition-all duration-500 ease-in-out hover:scale-110 md:hidden"
+            className="transition-all duration-500 ease-in-out hover:scale-110 lg:hidden"
           >
             <div className="relative h-6 w-6">
               <span

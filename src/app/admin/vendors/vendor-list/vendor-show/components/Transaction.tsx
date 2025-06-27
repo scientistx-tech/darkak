@@ -47,9 +47,9 @@ const Transaction = ({ id }: { id: string }) => {
         </div>
       </div>
       <div className="overflow-x-auto">
-        <Table className="min-w-[900px]">
+        <Table className="overflow-x-auto">
           <TableHeader>
-            <TableRow className="whitespace-nowrap border-t text-base [&>th]:h-auto [&>th]:py-3 sm:[&>th]:py-4.5">
+            <TableRow className="border-t text-sm ">
               <TableHead>SL</TableHead>
               <TableHead>Vendor Name</TableHead>
               <TableHead>Customer Name</TableHead>
@@ -78,16 +78,13 @@ const Transaction = ({ id }: { id: string }) => {
 
             {!isLoading && data?.data?.length <= 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={14}
-                  className="py-8 text-center text-red-500"
-                >
+                <TableCell colSpan={14} className="py-8 text-center text-red-500">
                   No Data to Show
                 </TableCell>
               </TableRow>
             ) : (
               data?.data?.map((doc: any, i: number) => (
-                <TableRow className="whitespace-nowrap" key={doc.id}>
+                <TableRow className="" key={doc.id}>
                   {/* Table data here */}
                 </TableRow>
               ))
