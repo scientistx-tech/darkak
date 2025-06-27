@@ -7,7 +7,9 @@ import {
   FaPen,
   FaStar,
   FaMapMarkerAlt,
+  FaCommentDots,
 } from "react-icons/fa";
+
 
 // Define the type for allowed tab names
 type TabKey =
@@ -17,7 +19,8 @@ type TabKey =
   | "order"
   | "review"
   | "track"
-  | "return";
+  | "return"
+  | "customer";
 
 // Props interface
 interface MenuItemsProps {
@@ -111,6 +114,18 @@ const MenuItems: React.FC<MenuItemsProps> = ({ setActiveTab, activeTab }) => {
         >
           <FaShippingFast />
           Return & Refund
+        </button>
+
+        <button
+          onClick={() => setActiveTab("customer")}
+          className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
+            activeTab === "customer"
+              ? "bg-primaryBlue text-white"
+              : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
+          }`}
+        >
+         <FaCommentDots />
+          Customer Care
         </button>
       </div>
     </div>
