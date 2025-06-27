@@ -70,9 +70,14 @@ type ProductFormData = {
   meta_keywords: string;
   video_link: string;
   thumbnail: string;
+  slug: string;
+  meta_alt: string;
   price: string;
+  price_mobile: string;
   discount_type: string;
+  discount_type_mobile: string;
   discount: string;
+  discount_mobile: string;
   tax_amount: string;
   tax_type: string;
   available: string;
@@ -310,9 +315,14 @@ const AliExpressProductEdit = () => {
     video_link: '',
     thumbnail: '',
     base_price: '',
+    slug: '',
+    meta_alt: '',
     price: '',
+    price_mobile: '',
     discount_type: '',
+    discount_type_mobile: '',
     discount: '',
+    discount_mobile: '',
     tax_amount: '',
     tax_type: 'include',
     available: '',
@@ -376,18 +386,13 @@ const AliExpressProductEdit = () => {
   const [shippingInfo, setShippingInfo] = useState<any[]>([]);
   const [shippingFee, setShippingFee] = useState<number>(0);
 
-  // load all categories, sub categories, sub sub categories and brands
-  const { data: categoriesData } = useGetCategoriesQuery({});
-  const { data: subCategoriesData } = useGetSubCategoriesQuery({});
-  const { data: subSubCategoriesData } = useGetSubSubCategoriesQuery({});
-  const { data: brandsData } = useGetBrandsQuery({});
   const { data: attributesData } = useGetProductAttributesQuery({});
 
   const [uploadImages] = useUploadImagesMutation();
-  const [createProduct] = useCreateProductMutation();
-  const [updateProduct, { isLoading: loadingUpadate }] = useUpdateProductMutation();
+  const [createProduct, { isLoading: isCreating }] = useCreateProductMutation();
 
   const router = useRouter();
+
   const token = useSelector((state: any) => state.auth.token);
   const aliExpresstoken = Cookies.get('aliExpressToken');
 
@@ -540,6 +545,9 @@ const AliExpressProductEdit = () => {
     if (!formData.short_description) return 'Short Description is required';
     if (!formData.meta_title) return 'Meta Title is required';
     if (!formData.meta_image) return 'Meta Image is required';
+    if (!formData.meta_alt) return 'Meta Alt is required';
+    if (!formData.slug) return 'Slug is required';
+    if (!formData.price_mobile) return 'Mobile Price is required';
     if (!formData.thumbnail) return 'Thumbnail is required';
     if (!formData.price) return 'Price is required';
     if (!formData.unit) return 'Unit is required';
@@ -572,9 +580,14 @@ const AliExpressProductEdit = () => {
       meta_image: formData.meta_image,
       video_link: formData.video_link,
       thumbnail: formData.thumbnail,
+      slug: formData.slug,
+      meta_alt: formData.meta_alt,
+      price_mobile: formData.price_mobile,
       price: formData.price, // keep as string
       discount_type: formData.discount_type as DiscountType,
+      discount_type_mobile: formData.discount_type_mobile as DiscountType,
       discount: formData.discount || '0',
+      discount_mobile: formData.discount_mobile || '0',
       tax_amount: formData.tax_amount || '0',
       tax_type: formData.tax_type || 'exclude',
       available: formData.available,
@@ -756,6 +769,19 @@ const AliExpressProductEdit = () => {
               name="title"
               placeholder="Title"
               value={formData.title}
+              onChange={handleChange}
+              className="w-full rounded border p-2"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="slug">
+              Product Slug {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}{' '}
+              <span className="text-xs text-red-500">* Avoid Slash and Space</span>
+            </label>
+            <input
+              name="slug"
+              placeholder="Slug"
+              value={formData.slug}
               onChange={handleChange}
               className="w-full rounded border p-2"
             />
@@ -1161,6 +1187,20 @@ const AliExpressProductEdit = () => {
           </div>
 
           <div>
+            <label className="text-sm font-medium text-gray-700">
+              Unit price Mobile <span className="text-red-500">*</span>{' '}
+            </label>
+            <input
+              name="price_mobile"
+              type="number"
+              placeholder="Unit price for Mobile"
+              value={formData.price_mobile}
+              onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            />
+          </div>
+
+          <div>
             <label className="text-sm font-medium text-gray-700">Minimum order quantity</label>
             <input
               type="number"
@@ -1194,12 +1234,34 @@ const AliExpressProductEdit = () => {
               <option value="percentage">Percentage</option>
             </select>
           </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700">Discount Type Mobile</label>
+            <select
+              name="discount_type_mobile"
+              value={formData.discount_type_mobile}
+              onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            >
+              <option value="flat">Flat</option>
+              <option value="percentage">Percentage</option>
+            </select>
+          </div>
 
           <div>
             <label className="text-sm font-medium text-gray-700">Discount amount</label>
             <input
               name="discount"
               value={formData.discount}
+              type="number"
+              onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700">Discount amount Mobile</label>
+            <input
+              name="discount_mobile"
+              value={formData.discount_mobile}
               type="number"
               onChange={handleChange}
               className="mt-1 w-full rounded-md border p-2"
@@ -1696,6 +1758,18 @@ const AliExpressProductEdit = () => {
           </div>
           <div>
             <label className="text-sm font-medium text-gray-700">
+              Alt Tag <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="meta_alt"
+              type="text"
+              value={formData.meta_alt}
+              onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700">
               Meta Keywords <span className="text-red-500">*</span>
             </label>
             <input
@@ -1837,6 +1911,7 @@ const AliExpressProductEdit = () => {
                     'eraser',
                     'copyformat',
                     'fullsize',
+                    'source',
                   ],
                 }}
                 value={formData.description}
@@ -1986,7 +2061,7 @@ const AliExpressProductEdit = () => {
             imagesUploading || metaImageUploading || thumbnailUploading || optionImageUploading
           }
         >
-          {loadingUpadate ? 'Updating..' : 'Update'}
+          {isCreating ? 'Submiting..' : 'Submit'}
         </button>
         {/* <button
           type="button"

@@ -1,32 +1,32 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useRef } from "react";
-import dynamic from "next/dynamic";
+import React, { useState, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import {
   useDeleteSubSubCategoryMutation,
   useGetCategoriesQuery,
   useGetSubCategoriesQuery,
   useGetSubSubCategoriesQuery,
-} from "@/redux/services/admin/adminCategoryApis";
-import { useGetBrandsQuery } from "@/redux/services/admin/adminBrandApis";
+} from '@/redux/services/admin/adminCategoryApis';
+import { useGetBrandsQuery } from '@/redux/services/admin/adminBrandApis';
 import {
   useCreateProductMutation,
   useGetProductAttributesQuery,
   useUploadImagesMutation,
-} from "@/redux/services/admin/adminProductApis";
-import axios from "axios";
-import { log } from "util";
-import Image from "next/image";
-import { toast } from "react-toastify";
-import { Router } from "next/router";
-import { useRouter } from "next/navigation";
-import { FaTrashAlt } from "react-icons/fa";
-import AsyncSelect from "react-select/async";
-import { useSelector } from "react-redux";
-import { useAccess } from "@/hooks/use-access";
-import CustomEditor from "../../components/CustomEditor";
-import RequireAccess from "@/components/Layouts/RequireAccess";
-import JoditEditor from "jodit-react";
+} from '@/redux/services/admin/adminProductApis';
+import axios from 'axios';
+import { log } from 'util';
+import Image from 'next/image';
+import { toast } from 'react-toastify';
+import { Router } from 'next/router';
+import { useRouter } from 'next/navigation';
+import { FaTrashAlt } from 'react-icons/fa';
+import AsyncSelect from 'react-select/async';
+import { useSelector } from 'react-redux';
+import { useAccess } from '@/hooks/use-access';
+import CustomEditor from '../../components/CustomEditor';
+import RequireAccess from '@/components/Layouts/RequireAccess';
+import JoditEditor from 'jodit-react';
 
 // --- Type Definitions ---
 type DeliveryInfo = {
@@ -53,7 +53,7 @@ type AttributeItem = {
   options: AttributeOption[];
 };
 
-type DiscountType = "flat" | "percentage";
+type DiscountType = 'flat' | 'percentage';
 
 type ProductFormData = {
   title: string;
@@ -64,9 +64,14 @@ type ProductFormData = {
   meta_keywords: string;
   video_link: string;
   thumbnail: string;
+  slug: string;
+  meta_alt: string;
   price: string;
+  price_mobile: string;
   discount_type: string;
+  discount_type_mobile: string;
   discount: string;
+  discount_mobile: string;
   tax_amount: string;
   tax_type: string;
   available: string;
@@ -92,243 +97,248 @@ type ProductFormData = {
 };
 
 const countryCodes = [
-  "AF",
-  "AL",
-  "DZ",
-  "AS",
-  "AD",
-  "AO",
-  "AI",
-  "AQ",
-  "AG",
-  "AR",
-  "AM",
-  "AW",
-  "AU",
-  "AT",
-  "AZ",
-  "BS",
-  "BH",
-  "BD",
-  "BB",
-  "BY",
-  "BE",
-  "BZ",
-  "BJ",
-  "BM",
-  "BT",
-  "BO",
-  "BA",
-  "BW",
-  "BR",
-  "BN",
-  "BG",
-  "BF",
-  "BI",
-  "KH",
-  "CM",
-  "CA",
-  "CV",
-  "CF",
-  "TD",
-  "CL",
-  "CN",
-  "CO",
-  "KM",
-  "CG",
-  "CD",
-  "CR",
-  "CI",
-  "HR",
-  "CU",
-  "CY",
-  "CZ",
-  "DK",
-  "DJ",
-  "DM",
-  "DO",
-  "EC",
-  "EG",
-  "SV",
-  "GQ",
-  "ER",
-  "EE",
-  "ET",
-  "FJ",
-  "FI",
-  "FR",
-  "GA",
-  "GM",
-  "GE",
-  "DE",
-  "GH",
-  "GR",
-  "GD",
-  "GT",
-  "GN",
-  "GW",
-  "GY",
-  "HT",
-  "HN",
-  "HU",
-  "IS",
-  "IN",
-  "ID",
-  "IR",
-  "IQ",
-  "IE",
-  "IL",
-  "IT",
-  "JM",
-  "JP",
-  "JO",
-  "KZ",
-  "KE",
-  "KI",
-  "KR",
-  "KW",
-  "KG",
-  "LA",
-  "LV",
-  "LB",
-  "LS",
-  "LR",
-  "LY",
-  "LI",
-  "LT",
-  "LU",
-  "MG",
-  "MW",
-  "MY",
-  "MV",
-  "ML",
-  "MT",
-  "MH",
-  "MR",
-  "MU",
-  "MX",
-  "FM",
-  "MD",
-  "MC",
-  "MN",
-  "ME",
-  "MA",
-  "MZ",
-  "MM",
-  "NA",
-  "NR",
-  "NP",
-  "NL",
-  "NZ",
-  "NI",
-  "NE",
-  "NG",
-  "NO",
-  "OM",
-  "PK",
-  "PW",
-  "PA",
-  "PG",
-  "PY",
-  "PE",
-  "PH",
-  "PL",
-  "PT",
-  "QA",
-  "RO",
-  "RU",
-  "RW",
-  "KN",
-  "LC",
-  "VC",
-  "WS",
-  "SM",
-  "ST",
-  "SA",
-  "SN",
-  "RS",
-  "SC",
-  "SL",
-  "SG",
-  "SK",
-  "SI",
-  "SB",
-  "SO",
-  "ZA",
-  "ES",
-  "LK",
-  "SD",
-  "SR",
-  "SE",
-  "CH",
-  "SY",
-  "TW",
-  "TJ",
-  "TZ",
-  "TH",
-  "TL",
-  "TG",
-  "TO",
-  "TT",
-  "TN",
-  "TR",
-  "TM",
-  "UG",
-  "UA",
-  "AE",
-  "GB",
-  "US",
-  "UY",
-  "UZ",
-  "VU",
-  "VA",
-  "VE",
-  "VN",
-  "YE",
-  "ZM",
-  "ZW",
+  'AF',
+  'AL',
+  'DZ',
+  'AS',
+  'AD',
+  'AO',
+  'AI',
+  'AQ',
+  'AG',
+  'AR',
+  'AM',
+  'AW',
+  'AU',
+  'AT',
+  'AZ',
+  'BS',
+  'BH',
+  'BD',
+  'BB',
+  'BY',
+  'BE',
+  'BZ',
+  'BJ',
+  'BM',
+  'BT',
+  'BO',
+  'BA',
+  'BW',
+  'BR',
+  'BN',
+  'BG',
+  'BF',
+  'BI',
+  'KH',
+  'CM',
+  'CA',
+  'CV',
+  'CF',
+  'TD',
+  'CL',
+  'CN',
+  'CO',
+  'KM',
+  'CG',
+  'CD',
+  'CR',
+  'CI',
+  'HR',
+  'CU',
+  'CY',
+  'CZ',
+  'DK',
+  'DJ',
+  'DM',
+  'DO',
+  'EC',
+  'EG',
+  'SV',
+  'GQ',
+  'ER',
+  'EE',
+  'ET',
+  'FJ',
+  'FI',
+  'FR',
+  'GA',
+  'GM',
+  'GE',
+  'DE',
+  'GH',
+  'GR',
+  'GD',
+  'GT',
+  'GN',
+  'GW',
+  'GY',
+  'HT',
+  'HN',
+  'HU',
+  'IS',
+  'IN',
+  'ID',
+  'IR',
+  'IQ',
+  'IE',
+  'IL',
+  'IT',
+  'JM',
+  'JP',
+  'JO',
+  'KZ',
+  'KE',
+  'KI',
+  'KR',
+  'KW',
+  'KG',
+  'LA',
+  'LV',
+  'LB',
+  'LS',
+  'LR',
+  'LY',
+  'LI',
+  'LT',
+  'LU',
+  'MG',
+  'MW',
+  'MY',
+  'MV',
+  'ML',
+  'MT',
+  'MH',
+  'MR',
+  'MU',
+  'MX',
+  'FM',
+  'MD',
+  'MC',
+  'MN',
+  'ME',
+  'MA',
+  'MZ',
+  'MM',
+  'NA',
+  'NR',
+  'NP',
+  'NL',
+  'NZ',
+  'NI',
+  'NE',
+  'NG',
+  'NO',
+  'OM',
+  'PK',
+  'PW',
+  'PA',
+  'PG',
+  'PY',
+  'PE',
+  'PH',
+  'PL',
+  'PT',
+  'QA',
+  'RO',
+  'RU',
+  'RW',
+  'KN',
+  'LC',
+  'VC',
+  'WS',
+  'SM',
+  'ST',
+  'SA',
+  'SN',
+  'RS',
+  'SC',
+  'SL',
+  'SG',
+  'SK',
+  'SI',
+  'SB',
+  'SO',
+  'ZA',
+  'ES',
+  'LK',
+  'SD',
+  'SR',
+  'SE',
+  'CH',
+  'SY',
+  'TW',
+  'TJ',
+  'TZ',
+  'TH',
+  'TL',
+  'TG',
+  'TO',
+  'TT',
+  'TN',
+  'TR',
+  'TM',
+  'UG',
+  'UA',
+  'AE',
+  'GB',
+  'US',
+  'UY',
+  'UZ',
+  'VU',
+  'VA',
+  'VE',
+  'VN',
+  'YE',
+  'ZM',
+  'ZW',
 ];
 
 export default function ProductForm() {
   const [formData, setFormData] = useState<ProductFormData>({
-    title: "",
-    short_description: "",
-    meta_title: "",
-    meta_image: "",
-    meta_description: "",
-    meta_keywords: "",
-    video_link: "",
-    thumbnail: "",
-    price: "",
-    discount_type: "flat",
-    discount: "",
-    tax_amount: "",
-    tax_type: "include",
-    available: "in-stock",
-    warranty: "darkak",
-    warranty_time: "",
-    region: "BD",
-    stock: "",
-    minOrder: "1",
-    unit: "kg",
-    code: "",
-    specification: "",
-    description: "",
-    warranty_details: "",
-    categoryId: "",
-    subCategoryId: "",
-    subSubCategoryId: "",
-    brandId: "",
-    keywords: "",
+    title: '',
+    short_description: '',
+    meta_title: '',
+    meta_image: '',
+    meta_description: '',
+    meta_keywords: '',
+    video_link: '',
+    thumbnail: '',
+    slug: '',
+    meta_alt: '',
+    price: '',
+    price_mobile: '',
+    discount_type: '',
+    discount_type_mobile: '',
+    discount: '',
+    discount_mobile: '',
+    tax_amount: '',
+    tax_type: 'include',
+    available: 'in-stock',
+    warranty: 'darkak',
+    warranty_time: '',
+    region: 'BD',
+    stock: '',
+    minOrder: '1',
+    unit: 'kg',
+    code: '',
+    specification: '',
+    description: '',
+    warranty_details: '',
+    categoryId: '',
+    subCategoryId: '',
+    subSubCategoryId: '',
+    brandId: '',
+    keywords: '',
     drafted: false,
     images: [],
     delivery_info: {
-      delivery_time: "",
-      delivery_charge: "",
-      delivery_time_outside: "",
-      delivery_charge_outside: "",
-      return_days: "",
-      multiply: "",
+      delivery_time: '',
+      delivery_charge: '',
+      delivery_time_outside: '',
+      delivery_charge_outside: '',
+      return_days: '',
+      multiply: '',
     } as DeliveryInfo,
     items: [],
   });
@@ -337,14 +347,14 @@ export default function ProductForm() {
   const warrantyEditor = useRef(null);
   const specificationEditor = useRef(null);
   const [short_description, setShortDescription] = useState<any>();
-  const [currentLanguage, setCurrentLanguage] = useState("en");
-  const [productSKU, setProductSKU] = useState("5Y5LMO");
+  const [currentLanguage, setCurrentLanguage] = useState('en');
+  const [productSKU, setProductSKU] = useState('5Y5LMO');
   const [multiplyShipping, setMultiplyShipping] = useState(false);
   const [thumbnailUploading, setThumbnailUploading] = useState(false);
   const [imagesUploading, setImagesUploading] = useState(false);
   const [metaImageUploading, setMetaImageUploading] = useState(false);
   const [optionImageUploading, setOptionImageUploading] = useState(false);
-  const [currentTab, setCurrentTab] = useState<string>("desc");
+  const [currentTab, setCurrentTab] = useState<string>('desc');
   const [selectedBrand, setSelectedBrand] = useState<{
     value: string;
     label: string;
@@ -378,15 +388,12 @@ export default function ProductForm() {
   const router = useRouter();
 
   const loadBrandOptions = async (inputValue: string) => {
-    const res = await fetch(
-      `https://api.darkak.com.bd/api/admin/brand/get?search=${inputValue}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    const res = await fetch(`https://api.darkak.com.bd/api/admin/brand/get?search=${inputValue}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
     const json = await res.json();
     return json.data.map((item: any) => ({
       value: item.id,
@@ -398,11 +405,11 @@ export default function ProductForm() {
     const res = await fetch(
       `https://api.darkak.com.bd/api/admin/category/create?search=${inputValue}`,
       {
-        method: "GET",
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
     const json = await res.json();
     return json.data.map((item: any) => ({
@@ -412,24 +419,24 @@ export default function ProductForm() {
   };
 
   const loadSubCategoryOptions = async (inputValue: string) => {
-    console.log("selc cat", formData.categoryId);
+    console.log('selc cat', formData.categoryId);
     if (!formData.categoryId) return [];
     const res = await fetch(
       `https://api.darkak.com.bd/api/admin/category/sub-category?search=${inputValue}`,
       {
-        method: "GET",
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
     const json = await res.json();
     // Filter by selected categoryId
     const filtered = json.data.filter(
-      (item: any) => String(item.categoryId) === String(formData.categoryId),
+      (item: any) => String(item.categoryId) === String(formData.categoryId)
     );
 
-    console.log("fil cat", filtered);
+    console.log('fil cat', filtered);
 
     return filtered.map((item: any) => ({
       value: item.id,
@@ -442,17 +449,16 @@ export default function ProductForm() {
     const res = await fetch(
       `https://api.darkak.com.bd/api/admin/category/sub-sub-category?search=${inputValue}`,
       {
-        method: "GET",
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
     const json = await res.json();
     // Filter by selected subCategoryId
     const filtered = json.data.filter(
-      (item: any) =>
-        String(item.subCategoryId) === String(formData.subCategoryId),
+      (item: any) => String(item.subCategoryId) === String(formData.subCategoryId)
     );
     return filtered.map((item: any) => ({
       value: item.id,
@@ -461,17 +467,13 @@ export default function ProductForm() {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleDeliveryChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const handleDeliveryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -479,10 +481,9 @@ export default function ProductForm() {
     }));
   };
 
-  const handleEditorChange =
-    (field: keyof ProductFormData) => (value: string) => {
-      setFormData((prev) => ({ ...prev, [field]: value }));
-    };
+  const handleEditorChange = (field: keyof ProductFormData) => (value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const generateCode = () => {
     const code = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -492,9 +493,9 @@ export default function ProductForm() {
 
   const handleImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    type: "images" | "thumbnail" | "meta_image" | "option_image" = "images",
+    type: 'images' | 'thumbnail' | 'meta_image' | 'option_image' = 'images',
     attributeIndex?: number,
-    optionIndex?: number,
+    optionIndex?: number
   ) => {
     e.preventDefault && e.preventDefault();
 
@@ -502,15 +503,11 @@ export default function ProductForm() {
     if (!files.length) return;
 
     try {
-      if (
-        type === "option_image" &&
-        attributeIndex !== undefined &&
-        optionIndex !== undefined
-      ) {
+      if (type === 'option_image' && attributeIndex !== undefined && optionIndex !== undefined) {
         // Upload image for a specific option
         setOptionImageUploading(true);
         const imgForm = new FormData();
-        imgForm.append("images", files[0]);
+        imgForm.append('images', files[0]);
         const res = await uploadImages(imgForm).unwrap();
         const url = res[0];
         setFormData((prev) => {
@@ -518,11 +515,11 @@ export default function ProductForm() {
           updatedItems[attributeIndex].options[optionIndex].image = url;
           return { ...prev, items: updatedItems };
         });
-      } else if (type === "images") {
+      } else if (type === 'images') {
         // Upload all images in one request
         setImagesUploading(true);
         const imgForm = new FormData();
-        files.forEach((file) => imgForm.append("images", file));
+        files.forEach((file) => imgForm.append('images', file));
         const res = await uploadImages(imgForm).unwrap();
 
         const uploadedUrls = res || [];
@@ -533,53 +530,53 @@ export default function ProductForm() {
       } else {
         // Upload single file for thumbnail or meta_image
 
-        if (type === "thumbnail") {
+        if (type === 'thumbnail') {
           setThumbnailUploading(true);
           const imgForm = new FormData();
-          imgForm.append("images", files[0]);
+          imgForm.append('images', files[0]);
           const res = await uploadImages(imgForm).unwrap();
           const url = res[0];
           setFormData((prev) => ({ ...prev, thumbnail: url }));
-        } else if (type === "meta_image") {
+        } else if (type === 'meta_image') {
           setMetaImageUploading(true);
           const imgForm = new FormData();
-          imgForm.append("images", files[0]);
+          imgForm.append('images', files[0]);
           const res = await uploadImages(imgForm).unwrap();
           const url = res[0];
           setFormData((prev) => ({ ...prev, meta_image: url }));
         }
       }
     } catch (error) {
-      console.error("Image upload failed", error);
+      console.error('Image upload failed', error);
     } finally {
       setThumbnailUploading(false);
       setMetaImageUploading(false);
       setImagesUploading(false);
       setOptionImageUploading(false);
-      e.target.value = ""; // Reset input
+      e.target.value = ''; // Reset input
     }
   };
 
   function validateProductForm(formData: ProductFormData): string | null {
-    if (!formData.title) return "Product Name is required";
-    if (!formData.short_description) return "Short Description is required";
-    if (!formData.meta_title) return "Meta Title is required";
-    if (!formData.meta_image) return "Meta Image is required";
-    if (!formData.thumbnail) return "Thumbnail is required";
-    if (!formData.price) return "Price is required";
-    if (!formData.unit) return "Unit is required";
-    if (!formData.categoryId) return "Category is required";
-    if (!formData.brandId) return "Brand is required";
-    if (!formData.keywords) return "Keywords are required";
-    if (!formData.delivery_info.delivery_time)
-      return "Delivery Time is required";
-    if (!formData.delivery_info.delivery_charge)
-      return "Delivery Charge is required";
-    if (!formData.delivery_info.delivery_time_outside)
-      return "Delivery Time Outside is required";
+    if (!formData.title) return 'Product Name is required';
+    if (!formData.short_description) return 'Short Description is required';
+    if (!formData.meta_title) return 'Meta Title is required';
+    if (!formData.meta_image) return 'Meta Image is required';
+    if (!formData.thumbnail) return 'Thumbnail is required';
+    if (!formData.price) return 'Price is required';
+    if (!formData.meta_alt) return 'Meta Alt is required';
+    if (!formData.slug) return 'Slug is required';
+    if (!formData.price_mobile) return 'Mobile Price is required';
+    if (!formData.unit) return 'Unit is required';
+    if (!formData.categoryId) return 'Category is required';
+    if (!formData.brandId) return 'Brand is required';
+    if (!formData.keywords) return 'Keywords are required';
+    if (!formData.delivery_info.delivery_time) return 'Delivery Time is required';
+    if (!formData.delivery_info.delivery_charge) return 'Delivery Charge is required';
+    if (!formData.delivery_info.delivery_time_outside) return 'Delivery Time Outside is required';
     if (!formData.delivery_info.delivery_charge_outside)
-      return "Delivery Charge Outside is required";
-    if (!formData.delivery_info.return_days) return "Return Days is required";
+      return 'Delivery Charge Outside is required';
+    if (!formData.delivery_info.return_days) return 'Return Days is required';
     return null; // All good!
   }
 
@@ -598,31 +595,36 @@ export default function ProductForm() {
       meta_image: formData.meta_image,
       video_link: formData.video_link,
       thumbnail: formData.thumbnail,
+      slug: formData.slug,
+      meta_alt: formData.meta_alt,
+      price_mobile: formData.price_mobile,
       price: formData.price, // keep as string
       discount_type: formData.discount_type as DiscountType,
-      discount: formData.discount || "0",
-      tax_amount: formData.tax_amount || "0",
+      discount_type_mobile: formData.discount_type_mobile as DiscountType,
+      discount: formData.discount || '0',
+      discount_mobile: formData.discount_mobile || '0',
+      tax_amount: formData.tax_amount || '0',
       tax_type: formData.tax_type,
       available: formData.available,
       warranty: formData.warranty,
       warranty_time: formData.warranty_time,
       region: formData.region,
       stock: String(getMainStock()),
-      minOrder: formData.minOrder || "1",
+      minOrder: formData.minOrder || '1',
       unit: formData.unit,
       specification: formData.specification,
       description: formData.description,
       warranty_details: formData.warranty_details,
       meta_description: formData.meta_description,
       meta_keywords: formData.meta_keywords
-        .split(",")
+        .split(',')
         .map((k) => k.trim())
         .filter(Boolean),
       categoryId: formData.categoryId,
       drafted: isDraft,
       brandId: formData.brandId,
       keywords: formData.keywords
-        .split(",")
+        .split(',')
         .map((k) => k.trim())
         .filter(Boolean),
       images: formData.images,
@@ -632,24 +634,22 @@ export default function ProductForm() {
         delivery_time_outside: formData.delivery_info.delivery_time_outside,
         delivery_charge_outside: formData.delivery_info.delivery_charge_outside,
         return_days: formData.delivery_info.return_days,
-        multiply: multiplyShipping ? "true" : "false",
+        multiply: multiplyShipping ? 'true' : 'false',
       },
       items: formData.items.map((item) => ({
-        attributeId: item.attributeId || "",
-        title: item.title || "",
+        attributeId: item.attributeId || '',
+        title: item.title || '',
         options: item.options.map((opt) => ({
           ...opt,
-          price:
-            typeof opt.price === "string" ? parseFloat(opt.price) : opt.price,
-          stock:
-            typeof opt.stock === "string" ? parseInt(opt.stock) : opt.stock,
+          price: typeof opt.price === 'string' ? parseFloat(opt.price) : opt.price,
+          stock: typeof opt.stock === 'string' ? parseInt(opt.stock) : opt.stock,
           sku:
             opt.sku !== undefined
               ? String(opt.sku)
               : opt.stock !== undefined
                 ? String(opt.stock)
-                : "",
-          image: opt.image || "",
+                : '',
+          image: opt.image || '',
         })),
       })),
     };
@@ -663,8 +663,8 @@ export default function ProductForm() {
     // Send payload to API
     try {
       const res = await createProduct(payload).unwrap();
-      toast.success("Successfully Product created");
-      router.push("/admin/product/product-list");
+      toast.success('Successfully Product created');
+      router.push('/admin/product/product-list');
     } catch (error: any) {
       console.error(error);
       toast.error(error?.data?.message);
@@ -673,19 +673,12 @@ export default function ProductForm() {
 
   // Helper to compute main stock
   const getMainStock = () => {
-    const colorItem = formData.items.find(
-      (item) => item.title?.toLowerCase() === "color",
-    );
-    if (
-      colorItem &&
-      Array.isArray(colorItem.options) &&
-      colorItem.options.length > 0
-    ) {
+    const colorItem = formData.items.find((item) => item.title?.toLowerCase() === 'color');
+    if (colorItem && Array.isArray(colorItem.options) && colorItem.options.length > 0) {
       return colorItem.options.reduce((sum, opt) => {
         let stockNum = 0;
-        if (typeof opt.stock === "number") stockNum = opt.stock;
-        else if (typeof opt.stock === "string")
-          stockNum = parseInt(opt.stock) || 0;
+        if (typeof opt.stock === 'number') stockNum = opt.stock;
+        else if (typeof opt.stock === 'string') stockNum = parseInt(opt.stock) || 0;
         return sum + stockNum;
       }, 0);
     }
@@ -695,24 +688,17 @@ export default function ProductForm() {
   // Auto-calculate stock based on Color attribute options
   useEffect(() => {
     // Find Color attribute (case-insensitive)
-    const colorItem = formData.items.find(
-      (item) => item.title?.toLowerCase() === "color",
-    );
-    if (
-      colorItem &&
-      Array.isArray(colorItem.options) &&
-      colorItem.options.length > 0
-    ) {
+    const colorItem = formData.items.find((item) => item.title?.toLowerCase() === 'color');
+    if (colorItem && Array.isArray(colorItem.options) && colorItem.options.length > 0) {
       // Sum all option stocks (handle string/number/undefined)
       const totalStock = colorItem.options.reduce((sum, opt) => {
         let stockNum = 0;
-        if (typeof opt.stock === "number") stockNum = opt.stock;
-        else if (typeof opt.stock === "string")
-          stockNum = parseInt(opt.stock) || 0;
+        if (typeof opt.stock === 'number') stockNum = opt.stock;
+        else if (typeof opt.stock === 'string') stockNum = parseInt(opt.stock) || 0;
         return sum + stockNum;
       }, 0);
       // Always set stock to totalStock if Color exists
-      if (formData.stock !== String(totalStock) || formData.stock === "") {
+      if (formData.stock !== String(totalStock) || formData.stock === '') {
         setFormData((prev) => ({ ...prev, stock: String(totalStock) }));
       }
     }
@@ -720,28 +706,26 @@ export default function ProductForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(formData.items)]);
 
-  console.log(formData, "dataa");
+  console.log(formData, 'dataa');
 
   return (
     <RequireAccess permission="product-add">
       <div className="mx-auto w-full">
-        <h1 className="mb-4 flex items-center gap-2 text-xl font-bold">
-          🛍️ Add Product
-        </h1>
+        <h1 className="mb-4 flex items-center gap-2 text-xl font-bold">🛍️ Add Product</h1>
 
         {/* name and desc */}
         <div className="bg-white p-5">
           {/* language tabs */}
           <div className="mb-4 flex items-center gap-x-5">
             <div
-              className={`${currentLanguage === "en" ? "border-b-2 border-blue-500 text-blue-500" : ""} flex cursor-pointer py-2 text-sm font-medium tracking-wider`}
-              onClick={() => setCurrentLanguage("en")}
+              className={`${currentLanguage === 'en' ? 'border-b-2 border-blue-500 text-blue-500' : ''} flex cursor-pointer py-2 text-sm font-medium tracking-wider`}
+              onClick={() => setCurrentLanguage('en')}
             >
               <button>English (EN)</button>
             </div>
             <div
-              className={`${currentLanguage === "bn" ? "border-b-2 border-blue-500 text-blue-500" : ""} cursor-pointer py-2 text-sm font-medium tracking-wider`}
-              onClick={() => setCurrentLanguage("bn")}
+              className={`${currentLanguage === 'bn' ? 'border-b-2 border-blue-500 text-blue-500' : ''} cursor-pointer py-2 text-sm font-medium tracking-wider`}
+              onClick={() => setCurrentLanguage('bn')}
             >
               <button>Bengali (BD)</button>
             </div>
@@ -750,7 +734,7 @@ export default function ProductForm() {
           <div className="flex flex-col gap-y-3">
             <div className="flex flex-col gap-2">
               <label htmlFor="title">
-                Product Name {`( ${currentLanguage === "en" ? "EN" : "BD"})`}{" "}
+                Product Name {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}{' '}
                 <span className="text-red-500">*</span>
               </label>
               <input
@@ -761,10 +745,23 @@ export default function ProductForm() {
                 className="w-full rounded border p-2"
               />
             </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="slug">
+                Product Slug {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}{' '}
+                <span className="text-xs text-red-500">* Avoid Slash and Space</span>
+              </label>
+              <input
+                name="slug"
+                placeholder="Slug"
+                value={formData.slug}
+                onChange={handleChange}
+                className="w-full rounded border p-2"
+              />
+            </div>
 
             <div className="flex flex-col gap-2">
               <label htmlFor="title">
-                Description {`( ${currentLanguage === "en" ? "EN" : "BD"})`}{" "}
+                Description {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}{' '}
                 <span className="text-red-500">*</span>
               </label>
               {/* <textarea
@@ -778,49 +775,50 @@ export default function ProductForm() {
                 ref={editor}
                 config={{
                   askBeforePasteHTML: false,
-                  defaultActionOnPaste: "insert_only_text",
+                  defaultActionOnPaste: 'insert_only_text',
                   uploader: {
                     insertImageAsBase64URI: true,
                   },
                   style: {
                     // background: "#E3E3E3",
                   },
-                  placeholder: "Start writing",
-                  height: "450px",
+                  placeholder: 'Start writing',
+                  height: '450px',
                   toolbar: true,
                   buttons: [
-                    "bold",
-                    "italic",
-                    "underline",
-                    "strikethrough",
-                    "|",
-                    "ul",
-                    "ol", // <-- Add these for bullet and numbered lists
-                    "outdent",
-                    "indent",
-                    "|",
-                    "font",
-                    "fontsize",
-                    "brush",
-                    "paragraph",
-                    "|",
-                    "image",
-                    "video",
-                    "table",
-                    "link",
-                    "|",
-                    "align",
-                    "undo",
-                    "redo",
-                    "hr",
-                    "eraser",
-                    "copyformat",
-                    "fullsize",
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikethrough',
+                    '|',
+                    'ul',
+                    'ol', // <-- Add these for bullet and numbered lists
+                    'outdent',
+                    'indent',
+                    '|',
+                    'font',
+                    'fontsize',
+                    'brush',
+                    'paragraph',
+                    '|',
+                    'image',
+                    'video',
+                    'table',
+                    'link',
+                    '|',
+                    'align',
+                    'undo',
+                    'redo',
+                    'hr',
+                    'eraser',
+                    'copyformat',
+                    'fullsize',
+                    'source',
                   ],
                 }}
                 value={formData.short_description}
                 onBlur={(newContent) => {
-                  handleEditorChange("short_description")(newContent);
+                  handleEditorChange('short_description')(newContent);
                 }} // preferred to use only this option to update the content for performance reasons
                 // onChange={newContent => {}}
               />
@@ -846,9 +844,9 @@ export default function ProductForm() {
                   setSelectedCategory(option);
                   setFormData((prev) => ({
                     ...prev,
-                    categoryId: option?.value || "",
-                    subCategoryId: "", // reset
-                    subSubCategoryId: "", // reset
+                    categoryId: option?.value || '',
+                    subCategoryId: '', // reset
+                    subSubCategoryId: '', // reset
                   }));
                   setSelectedSubCategory(null);
                   setSelectedSubSubCategory(null);
@@ -858,18 +856,16 @@ export default function ProductForm() {
                 styles={{
                   container: (base) => ({
                     ...base,
-                    height: "40px",
-                    marginTop: "0.25rem",
+                    height: '40px',
+                    marginTop: '0.25rem',
                   }),
-                  control: (base) => ({ ...base, height: "40px" }),
+                  control: (base) => ({ ...base, height: '40px' }),
                 }}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Sub Category
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Sub Category</label>
               <AsyncSelect
                 key={formData.categoryId}
                 cacheOptions
@@ -880,8 +876,8 @@ export default function ProductForm() {
                   setSelectedSubCategory(option);
                   setFormData((prev) => ({
                     ...prev,
-                    subCategoryId: option?.value || "",
-                    subSubCategoryId: "",
+                    subCategoryId: option?.value || '',
+                    subSubCategoryId: '',
                   }));
                   setSelectedSubSubCategory(null);
                 }}
@@ -890,18 +886,16 @@ export default function ProductForm() {
                 styles={{
                   container: (base) => ({
                     ...base,
-                    height: "40px",
-                    marginTop: "0.25rem",
+                    height: '40px',
+                    marginTop: '0.25rem',
                   }),
-                  control: (base) => ({ ...base, height: "40px" }),
+                  control: (base) => ({ ...base, height: '40px' }),
                 }}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Sub Sub Category
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Sub Sub Category</label>
               <AsyncSelect
                 key={formData.subCategoryId}
                 cacheOptions
@@ -912,7 +906,7 @@ export default function ProductForm() {
                   setSelectedSubSubCategory(option);
                   setFormData((prev) => ({
                     ...prev,
-                    subSubCategoryId: option?.value || "",
+                    subSubCategoryId: option?.value || '',
                   }));
                 }}
                 placeholder="Select Sub Sub Category"
@@ -920,10 +914,10 @@ export default function ProductForm() {
                 styles={{
                   container: (base) => ({
                     ...base,
-                    height: "40px",
-                    marginTop: "0.25rem",
+                    height: '40px',
+                    marginTop: '0.25rem',
                   }),
-                  control: (base) => ({ ...base, height: "40px" }),
+                  control: (base) => ({ ...base, height: '40px' }),
                 }}
               />
             </div>
@@ -941,7 +935,7 @@ export default function ProductForm() {
                   setSelectedBrand(option);
                   setFormData((prev) => ({
                     ...prev,
-                    brandId: option?.value || "",
+                    brandId: option?.value || '',
                   }));
                 }}
                 placeholder="Select Brand"
@@ -949,10 +943,10 @@ export default function ProductForm() {
                 styles={{
                   container: (base) => ({
                     ...base,
-                    height: "40px",
-                    marginTop: "0.25rem",
+                    height: '40px',
+                    marginTop: '0.25rem',
                   }),
-                  control: (base) => ({ ...base, height: "40px" }),
+                  control: (base) => ({ ...base, height: '40px' }),
                 }}
               />
             </div>
@@ -1012,9 +1006,7 @@ export default function ProductForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Warranty
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Warranty</label>
               <select
                 name="warranty"
                 value={formData.warranty}
@@ -1027,9 +1019,7 @@ export default function ProductForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Warranty Time
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Warranty Time</label>
               <div className="relative mt-1 flex items-center gap-2">
                 <input
                   type="text"
@@ -1042,9 +1032,7 @@ export default function ProductForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Region
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Region</label>
               <select
                 name="region"
                 onChange={handleChange}
@@ -1155,7 +1143,7 @@ export default function ProductForm() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             <div>
               <label className="text-sm font-medium text-gray-700">
-                Unit price <span className="text-red-500">*</span>{" "}
+                Unit price <span className="text-red-500">*</span>{' '}
               </label>
               <input
                 name="price"
@@ -1166,11 +1154,22 @@ export default function ProductForm() {
                 className="mt-1 w-full rounded-md border p-2"
               />
             </div>
-
             <div>
               <label className="text-sm font-medium text-gray-700">
-                Minimum order quantity
+                Unit price Mobile <span className="text-red-500">*</span>{' '}
               </label>
+              <input
+                name="price_mobile"
+                type="number"
+                placeholder="Unit price for Mobile"
+                value={formData.price_mobile}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700">Minimum order quantity</label>
               <input
                 type="number"
                 name="minOrder"
@@ -1181,25 +1180,19 @@ export default function ProductForm() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">
-                Current stock quantity
-              </label>
+              <label className="text-sm font-medium text-gray-700">Current stock quantity</label>
               <input
                 name="stock"
                 value={getMainStock()}
                 type="number"
                 onChange={handleChange}
                 className="mt-1 w-full rounded-md border p-2"
-                disabled={formData.items.some(
-                  (item) => item.title?.toLowerCase() === "color",
-                )}
+                disabled={formData.items.some((item) => item.title?.toLowerCase() === 'color')}
               />
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">
-                Discount Type
-              </label>
+              <label className="text-sm font-medium text-gray-700">Discount Type</label>
               <select
                 name="discount_type"
                 value={formData.discount_type}
@@ -1212,9 +1205,20 @@ export default function ProductForm() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">
-                Discount amount
-              </label>
+              <label className="text-sm font-medium text-gray-700">Discount Type Mobile</label>
+              <select
+                name="discount_type_mobile"
+                value={formData.discount_type_mobile}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              >
+                <option value="flat">Flat</option>
+                <option value="percentage">Percentage</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700">Discount amount</label>
               <input
                 name="discount"
                 value={formData.discount}
@@ -1225,9 +1229,18 @@ export default function ProductForm() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">
-                Tax amount (%)
-              </label>
+              <label className="text-sm font-medium text-gray-700">Discount amount Mobile</label>
+              <input
+                name="discount_mobile"
+                value={formData.discount_mobile}
+                type="number"
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700">Tax amount (%)</label>
               <input
                 type="number"
                 name="tax_amount"
@@ -1238,9 +1251,7 @@ export default function ProductForm() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">
-                Tax Type
-              </label>
+              <label className="text-sm font-medium text-gray-700">Tax Type</label>
               <select
                 name="tax_type"
                 value={formData.tax_type}
@@ -1281,15 +1292,13 @@ export default function ProductForm() {
             <label className="mb-1 block text-sm font-semibold text-gray-700">
               Product thumbnail <span className="text-red-500">*</span>
             </label>
-            <p className="mb-2 text-xs text-blue-600">
-              Ratio 1:1 (500 x 500 px)
-            </p>
+            <p className="mb-2 text-xs text-blue-600">Ratio 1:1 (500 x 500 px)</p>
             <div className="relative flex h-32 items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
               <input
                 type="file"
                 accept="image/*"
                 className="absolute inset-0 cursor-pointer opacity-0"
-                onChange={(e) => handleImageUpload(e, "thumbnail")}
+                onChange={(e) => handleImageUpload(e, 'thumbnail')}
                 style={{ zIndex: 1 }}
               />
               <div className="relative z-10 text-center text-sm text-gray-500">
@@ -1307,10 +1316,10 @@ export default function ProductForm() {
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setFormData((prev) => ({ ...prev, thumbnail: "" }));
+                        setFormData((prev) => ({ ...prev, thumbnail: '' }));
                       }}
                       className="mt-2 rounded bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600"
-                      style={{ zIndex: 20, position: "relative" }}
+                      style={{ zIndex: 20, position: 'relative' }}
                     >
                       Remove
                     </button>
@@ -1335,12 +1344,8 @@ export default function ProductForm() {
             <label className="mb-1 block text-sm font-semibold text-gray-700">
               Upload additional image
             </label>
-            <p className="mb-2 text-xs text-blue-600">
-              Ratio 1:1 (500 x 500 px)
-            </p>
-            <p className="mb-2 text-sm text-gray-600">
-              Upload additional product images
-            </p>
+            <p className="mb-2 text-xs text-blue-600">Ratio 1:1 (500 x 500 px)</p>
+            <p className="mb-2 text-sm text-gray-600">Upload additional product images</p>
             <div className="relative flex h-32 cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
               <input
                 type="file"
@@ -1348,7 +1353,7 @@ export default function ProductForm() {
                 multiple
                 name="images"
                 className="absolute inset-0 cursor-pointer opacity-0"
-                onChange={(e) => handleImageUpload(e, "images")}
+                onChange={(e) => handleImageUpload(e, 'images')}
               />
               <div className="relative z-10 w-full text-center text-sm text-gray-500">
                 {formData.images.length > 0 ? (
@@ -1403,7 +1408,7 @@ export default function ProductForm() {
           <div className="">
             <div>
               <label className="text-sm font-medium text-gray-700">
-                Youtube video link{" "}
+                Youtube video link{' '}
                 <span className="text-blue-500">
                   (Optional please provide embed link not direct link.)
                 </span>
@@ -1428,18 +1433,18 @@ export default function ProductForm() {
               {/* Attribute Title */}
               <div className="flex items-center gap-4">
                 <select
-                  value={attribute.attributeId || ""}
+                  value={attribute.attributeId || ''}
                   onChange={(e) => {
                     const selectedId = e.target.value;
-                    console.log(selectedId, "selectedid");
+                    console.log(selectedId, 'selectedid');
 
                     const selectedAttr = attributesData?.data?.find(
-                      (a: any) => Number(a.id) === Number(selectedId),
+                      (a: any) => Number(a.id) === Number(selectedId)
                     );
-                    console.log("Selected Attribute:", selectedAttr);
+                    console.log('Selected Attribute:', selectedAttr);
 
                     // const selectedTitle = selectedAttr?.title || "";
-                    const selectedTitle = "";
+                    const selectedTitle = '';
                     const updatedItems = [...formData.items];
                     updatedItems[attributeIndex] = {
                       ...updatedItems[attributeIndex],
@@ -1452,13 +1457,11 @@ export default function ProductForm() {
                 >
                   <option value="">Select Attribute</option>
                   {attributesData &&
-                    attributesData?.data?.map(
-                      (attribute: { id: string; title: string }) => (
-                        <option key={attribute.id} value={attribute.id}>
-                          {attribute?.title}
-                        </option>
-                      ),
-                    )}
+                    attributesData?.data?.map((attribute: { id: string; title: string }) => (
+                      <option key={attribute.id} value={attribute.id}>
+                        {attribute?.title}
+                      </option>
+                    ))}
                 </select>
                 <button
                   onClick={() => {
@@ -1489,9 +1492,8 @@ export default function ProductForm() {
                           value={option.title}
                           onChange={(e) => {
                             const updatedItems = [...formData.items];
-                            updatedItems[attributeIndex].options[
-                              optionIndex
-                            ].title = e.target.value;
+                            updatedItems[attributeIndex].options[optionIndex].title =
+                              e.target.value;
                             setFormData((prev) => ({
                               ...prev,
                               items: updatedItems,
@@ -1509,9 +1511,9 @@ export default function ProductForm() {
                           value={option.price}
                           onChange={(e) => {
                             const updatedItems = [...formData.items];
-                            updatedItems[attributeIndex].options[
-                              optionIndex
-                            ].price = parseFloat(e.target.value);
+                            updatedItems[attributeIndex].options[optionIndex].price = parseFloat(
+                              e.target.value
+                            );
                             setFormData((prev) => ({
                               ...prev,
                               items: updatedItems,
@@ -1529,9 +1531,9 @@ export default function ProductForm() {
                           value={option.stock}
                           onChange={(e) => {
                             const updatedItems = [...formData.items];
-                            updatedItems[attributeIndex].options[
-                              optionIndex
-                            ].stock = parseFloat(e.target.value);
+                            updatedItems[attributeIndex].options[optionIndex].stock = parseFloat(
+                              e.target.value
+                            );
                             setFormData((prev) => ({
                               ...prev,
                               items: updatedItems,
@@ -1548,9 +1550,7 @@ export default function ProductForm() {
                           value={option.sku}
                           onChange={(e) => {
                             const updatedItems = [...formData.items];
-                            updatedItems[attributeIndex].options[
-                              optionIndex
-                            ].sku = e.target.value;
+                            updatedItems[attributeIndex].options[optionIndex].sku = e.target.value;
                             setFormData((prev) => ({
                               ...prev,
                               items: updatedItems,
@@ -1570,12 +1570,7 @@ export default function ProductForm() {
                             accept="image/*"
                             className="absolute inset-0 cursor-pointer opacity-0"
                             onChange={(e) =>
-                              handleImageUpload(
-                                e,
-                                "option_image",
-                                attributeIndex,
-                                optionIndex,
-                              )
+                              handleImageUpload(e, 'option_image', attributeIndex, optionIndex)
                             }
                             style={{ zIndex: 1 }}
                           />
@@ -1594,16 +1589,14 @@ export default function ProductForm() {
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     const updatedItems = [...formData.items];
-                                    updatedItems[attributeIndex].options[
-                                      optionIndex
-                                    ].image = "";
+                                    updatedItems[attributeIndex].options[optionIndex].image = '';
                                     setFormData((prev) => ({
                                       ...prev,
                                       items: updatedItems,
                                     }));
                                   }}
                                   className="mt-1 rounded bg-red-500 px-2 py-0.5 text-xs text-white hover:bg-red-600"
-                                  style={{ zIndex: 20, position: "relative" }}
+                                  style={{ zIndex: 20, position: 'relative' }}
                                 >
                                   Remove
                                 </button>
@@ -1628,10 +1621,7 @@ export default function ProductForm() {
                   <button
                     onClick={() => {
                       const updatedItems = [...formData.items];
-                      updatedItems[attributeIndex].options.splice(
-                        optionIndex,
-                        1,
-                      );
+                      updatedItems[attributeIndex].options.splice(optionIndex, 1);
                       setFormData((prev) => ({ ...prev, items: updatedItems }));
                     }}
                     className=""
@@ -1646,7 +1636,7 @@ export default function ProductForm() {
                 onClick={() => {
                   const updatedItems = [...formData.items];
                   updatedItems[attributeIndex].options.push({
-                    title: "",
+                    title: '',
                     price: 0,
                     stock: 1,
                   });
@@ -1667,8 +1657,8 @@ export default function ProductForm() {
                 items: [
                   ...prev.items,
                   {
-                    attributeId: "", // <-- always present!
-                    title: "",
+                    attributeId: '', // <-- always present!
+                    title: '',
                     options: [],
                   },
                 ],
@@ -1703,10 +1693,9 @@ export default function ProductForm() {
                 </span>
                 <span
                   className={`text-xs font-semibold ${
-                    formData.meta_title.length < 50 ||
-                    formData.meta_title.length > 60
-                      ? "text-red-500"
-                      : "text-green-600"
+                    formData.meta_title.length < 50 || formData.meta_title.length > 60
+                      ? 'text-red-500'
+                      : 'text-green-600'
                   }`}
                 >
                   {formData.meta_title.length} chars
@@ -1722,6 +1711,18 @@ export default function ProductForm() {
                 name="meta_keywords"
                 type="string"
                 value={formData.meta_keywords}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700">
+                Alt Tag <span className="text-red-500">*</span>
+              </label>
+              <input
+                name="meta_alt"
+                type="text"
+                value={formData.meta_alt}
                 onChange={handleChange}
                 className="mt-1 w-full rounded-md border p-2"
               />
@@ -1744,10 +1745,9 @@ export default function ProductForm() {
                 </span>
                 <span
                   className={`text-xs font-semibold ${
-                    formData.meta_description.length < 150 ||
-                    formData.meta_description.length > 160
-                      ? "text-red-500"
-                      : "text-green-600"
+                    formData.meta_description.length < 150 || formData.meta_description.length > 160
+                      ? 'text-red-500'
+                      : 'text-green-600'
                   }`}
                 >
                   {formData.meta_description.length} chars
@@ -1758,16 +1758,14 @@ export default function ProductForm() {
               <label className="mb-2 inline text-sm font-semibold text-gray-700">
                 Meta Image <span className="text-red-500">*</span>
               </label>
-              <p className="mb-2 inline text-xs text-blue-600">
-                Ratio 1:1 (500 x 500 px)
-              </p>
+              <p className="mb-2 inline text-xs text-blue-600">Ratio 1:1 (500 x 500 px)</p>
               <div className="relative mt-1 flex h-32 cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
                 <input
                   type="file"
                   accept="image/*"
                   name="meta_image"
                   className="absolute inset-0 cursor-pointer opacity-0"
-                  onChange={(e) => handleImageUpload(e, "meta_image")}
+                  onChange={(e) => handleImageUpload(e, 'meta_image')}
                 />
                 <div className="relative z-10 text-center text-sm text-gray-500">
                   {formData.meta_image ? (
@@ -1784,10 +1782,10 @@ export default function ProductForm() {
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setFormData((prev) => ({ ...prev, meta_image: "" }));
+                          setFormData((prev) => ({ ...prev, meta_image: '' }));
                         }}
                         className="mt-2 rounded bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600"
-                        style={{ zIndex: 20, position: "relative" }}
+                        style={{ zIndex: 20, position: 'relative' }}
                       >
                         Remove
                       </button>
@@ -1814,20 +1812,20 @@ export default function ProductForm() {
           {/* tabs */}
           <div>
             <span
-              onClick={() => setCurrentTab("desc")}
-              className={`cursor-pointer rounded px-6 py-2 ${currentTab === "desc" && "border-2 border-blue"}`}
+              onClick={() => setCurrentTab('desc')}
+              className={`cursor-pointer rounded px-6 py-2 ${currentTab === 'desc' && 'border-2 border-blue'}`}
             >
               Description
             </span>
             <span
-              onClick={() => setCurrentTab("spec")}
-              className={`cursor-pointer rounded px-6 py-2 ${currentTab === "spec" && "border-2 border-blue"}`}
+              onClick={() => setCurrentTab('spec')}
+              className={`cursor-pointer rounded px-6 py-2 ${currentTab === 'spec' && 'border-2 border-blue'}`}
             >
               Specifications
             </span>
             <span
-              onClick={() => setCurrentTab("warrn")}
-              className={`cursor-pointer rounded px-6 py-2 ${currentTab === "warrn" && "border-2 border-blue"}`}
+              onClick={() => setCurrentTab('warrn')}
+              className={`cursor-pointer rounded px-6 py-2 ${currentTab === 'warrn' && 'border-2 border-blue'}`}
             >
               Warranties
             </span>
@@ -1836,116 +1834,116 @@ export default function ProductForm() {
           {/* content */}
 
           <div className="mt-5">
-            {currentTab === "desc" ? (
+            {currentTab === 'desc' ? (
               <div className="flex flex-col gap-2">
                 <label htmlFor="description">
                   Description
-                  {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+                  {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}
                 </label>
                 <JoditEditor
                   ref={descriptionEditor}
                   config={{
                     askBeforePasteHTML: false,
-                    defaultActionOnPaste: "insert_only_text",
+                    defaultActionOnPaste: 'insert_only_text',
                     uploader: {
                       insertImageAsBase64URI: true,
                     },
                     style: {
                       // background: "#E3E3E3",
                     },
-                    placeholder: "Start writing description",
-                    height: "450px",
+                    placeholder: 'Start writing description',
+                    height: '450px',
                     toolbar: true,
                     buttons: [
-                      "bold",
-                      "italic",
-                      "underline",
-                      "strikethrough",
-                      "|",
-                      "ul",
-                      "ol", // <-- Add these for bullet and numbered lists
-                      "outdent",
-                      "indent",
-                      "|",
-                      "font",
-                      "fontsize",
-                      "brush",
-                      "paragraph",
-                      "|",
-                      "image",
-                      "video",
-                      "table",
-                      "link",
-                      "|",
-                      "align",
-                      "undo",
-                      "redo",
-                      "hr",
-                      "eraser",
-                      "copyformat",
-                      "fullsize",
+                      'bold',
+                      'italic',
+                      'underline',
+                      'strikethrough',
+                      '|',
+                      'ul',
+                      'ol', // <-- Add these for bullet and numbered lists
+                      'outdent',
+                      'indent',
+                      '|',
+                      'font',
+                      'fontsize',
+                      'brush',
+                      'paragraph',
+                      '|',
+                      'image',
+                      'video',
+                      'table',
+                      'link',
+                      '|',
+                      'align',
+                      'undo',
+                      'redo',
+                      'hr',
+                      'eraser',
+                      'copyformat',
+                      'fullsize',
                     ],
                   }}
                   value={formData.description}
                   onBlur={(newContent) => {
-                    handleEditorChange("description")(newContent);
+                    handleEditorChange('description')(newContent);
                   }} // preferred to use only this option to update the content for performance reasons
                   // onChange={newContent => {}}
                 />
               </div>
-            ) : currentTab === "spec" ? (
+            ) : currentTab === 'spec' ? (
               <div className="flex flex-col gap-2">
                 <label htmlFor="specification">
                   Specification
-                  {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+                  {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}
                 </label>
                 <JoditEditor
                   ref={specificationEditor}
                   config={{
                     askBeforePasteHTML: false,
-                    defaultActionOnPaste: "insert_only_text",
+                    defaultActionOnPaste: 'insert_only_text',
                     uploader: {
                       insertImageAsBase64URI: true,
                     },
                     style: {
                       // background: "#E3E3E3",
                     },
-                    placeholder: "Start writing specification",
-                    height: "450px",
+                    placeholder: 'Start writing specification',
+                    height: '450px',
                     toolbar: true,
                     buttons: [
-                      "bold",
-                      "italic",
-                      "underline",
-                      "strikethrough",
-                      "|",
-                      "ul",
-                      "ol", // <-- Add these for bullet and numbered lists
-                      "outdent",
-                      "indent",
-                      "|",
-                      "font",
-                      "fontsize",
-                      "brush",
-                      "paragraph",
-                      "|",
-                      "image",
-                      "video",
-                      "table",
-                      "link",
-                      "|",
-                      "align",
-                      "undo",
-                      "redo",
-                      "hr",
-                      "eraser",
-                      "copyformat",
-                      "fullsize",
+                      'bold',
+                      'italic',
+                      'underline',
+                      'strikethrough',
+                      '|',
+                      'ul',
+                      'ol', // <-- Add these for bullet and numbered lists
+                      'outdent',
+                      'indent',
+                      '|',
+                      'font',
+                      'fontsize',
+                      'brush',
+                      'paragraph',
+                      '|',
+                      'image',
+                      'video',
+                      'table',
+                      'link',
+                      '|',
+                      'align',
+                      'undo',
+                      'redo',
+                      'hr',
+                      'eraser',
+                      'copyformat',
+                      'fullsize',
                     ],
                   }}
                   value={formData.specification}
                   onBlur={(newContent) => {
-                    handleEditorChange("specification")(newContent);
+                    handleEditorChange('specification')(newContent);
                   }} // preferred to use only this option to update the content for performance reasons
                   // onChange={newContent => {}}
                 />
@@ -1954,55 +1952,55 @@ export default function ProductForm() {
               <div className="flex flex-col gap-2">
                 <label htmlFor="warranty_details">
                   Warranty details
-                  {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+                  {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}
                 </label>
                 <JoditEditor
                   ref={warrantyEditor}
                   config={{
                     askBeforePasteHTML: false,
-                    defaultActionOnPaste: "insert_only_text",
+                    defaultActionOnPaste: 'insert_only_text',
                     uploader: {
                       insertImageAsBase64URI: true,
                     },
                     style: {
                       // background: "#E3E3E3",
                     },
-                    placeholder: "Start writing warranty details",
-                    height: "450px",
+                    placeholder: 'Start writing warranty details',
+                    height: '450px',
                     toolbar: true,
                     buttons: [
-                      "bold",
-                      "italic",
-                      "underline",
-                      "strikethrough",
-                      "|",
-                      "ul",
-                      "ol", // <-- Add these for bullet and numbered lists
-                      "outdent",
-                      "indent",
-                      "|",
-                      "font",
-                      "fontsize",
-                      "brush",
-                      "paragraph",
-                      "|",
-                      "image",
-                      "video",
-                      "table",
-                      "link",
-                      "|",
-                      "align",
-                      "undo",
-                      "redo",
-                      "hr",
-                      "eraser",
-                      "copyformat",
-                      "fullsize",
+                      'bold',
+                      'italic',
+                      'underline',
+                      'strikethrough',
+                      '|',
+                      'ul',
+                      'ol', // <-- Add these for bullet and numbered lists
+                      'outdent',
+                      'indent',
+                      '|',
+                      'font',
+                      'fontsize',
+                      'brush',
+                      'paragraph',
+                      '|',
+                      'image',
+                      'video',
+                      'table',
+                      'link',
+                      '|',
+                      'align',
+                      'undo',
+                      'redo',
+                      'hr',
+                      'eraser',
+                      'copyformat',
+                      'fullsize',
                     ],
                   }}
                   value={formData.warranty_details}
                   onBlur={(newContent) => {
-                    handleEditorChange("warranty_details")(newContent);
+                    handleEditorChange('warranty_details')(newContent);
                   }} // preferred to use only this option to update the content for performance reasons
                   // onChange={newContent => {}}
                 />
@@ -2017,10 +2015,7 @@ export default function ProductForm() {
             onClick={() => handleSubmit(true)}
             className="rounded bg-yellow-600 px-4 py-2 text-white shadow"
             disabled={
-              imagesUploading ||
-              metaImageUploading ||
-              thumbnailUploading ||
-              optionImageUploading
+              imagesUploading || metaImageUploading || thumbnailUploading || optionImageUploading
             }
           >
             Draft
@@ -2030,10 +2025,7 @@ export default function ProductForm() {
             onClick={() => handleSubmit(false)}
             className="rounded bg-blue-600 px-4 py-2 text-white shadow"
             disabled={
-              imagesUploading ||
-              metaImageUploading ||
-              thumbnailUploading ||
-              optionImageUploading
+              imagesUploading || metaImageUploading || thumbnailUploading || optionImageUploading
             }
           >
             Publish
@@ -2043,10 +2035,7 @@ export default function ProductForm() {
             // onClick={handleSubmit}
             className="cursor-not-allowed rounded bg-teal-600 px-4 py-2 text-white shadow"
             disabled={
-              imagesUploading ||
-              metaImageUploading ||
-              thumbnailUploading ||
-              optionImageUploading
+              imagesUploading || metaImageUploading || thumbnailUploading || optionImageUploading
             }
           >
             Schedule
