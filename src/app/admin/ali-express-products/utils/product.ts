@@ -21,9 +21,7 @@ export default function transformAliExpressProduct(product: any) {
       }
 
       const group = attributesMap.get(key);
-      const alreadyExists = group.options.find(
-        (opt: any) => opt.title === prop.sku_property_value,
-      );
+      const alreadyExists = group.options.find((opt: any) => opt.title === prop.sku_property_value);
       if (!alreadyExists) {
         group.options.push({
           title: prop.sku_property_value,
@@ -40,45 +38,45 @@ export default function transformAliExpressProduct(product: any) {
   const keywords = product.ae_item_properties?.ae_item_property || [];
 
   return {
-    title: baseInfo.subject || "",
-    short_description: "", // not available
-    meta_title: baseInfo.subject || "",
-    meta_image: multimedia.image_urls?.split(";")[0] || "",
-    meta_description: baseInfo.subject || "",
-    meta_keywords: keywords.map((k: any) => k.attr_value).join(","),
-    ae_item_sku_info_dtos: product?.ae_item_sku_info_dtos,
-    video_link: "", // not available
-    thumbnail: multimedia.image_urls?.split(";")[0] || "",
+    title: baseInfo.subject || '',
+    short_description: '', // not available
+    meta_title: baseInfo.subject || '',
+    meta_image: multimedia.image_urls?.split(';')[0] || '',
+    meta_description: baseInfo.subject || '',
+    meta_keywords: keywords.map((k: any) => k.attr_value).join(','),
+    ae_sku_property_dtos: product?.ae_item_sku_info_dtos,
+    video_link: '', // not available
+    thumbnail: multimedia.image_urls?.split(';')[0] || '',
     base_price: String(Math.round(skuList?.[0]?.offer_sale_price) || 0),
     price: String(Math.round(skuList?.[0]?.offer_sale_price) || 0),
-    discount_type: "flat", // assume flat
-    discount: "",
-    tax_amount: "0", // not available
-    tax_type: "include",
-    available: "in-stock",
-    warranty: "darkak",
-    warranty_time: "",
-    region: product.ae_store_info?.store_country_code || "CN",
+    discount_type: 'flat', // assume flat
+    discount: '',
+    tax_amount: '0', // not available
+    tax_type: 'include',
+    available: 'in-stock',
+    warranty: 'darkak',
+    warranty_time: '',
+    region: product.ae_store_info?.store_country_code || 'CN',
     stock: String(skuList?.[0]?.sku_available_stock || 0),
-    minOrder: "1",
-    unit: "piece",
+    minOrder: '1',
+    unit: 'piece',
     code: skuList[0].sku_id,
-    specification: "", // not available
-    description: baseInfo.detail || "",
-    warranty_details: "",
-    categoryId: "",
-    subCategoryId: "",
-    subSubCategoryId: "",
-    brandId: "",
-    keywords: keywords.map((k: any) => k.attr_value).join(","),
-    images: multimedia.image_urls?.split(";") || [],
+    specification: '', // not available
+    description: baseInfo.detail || '',
+    warranty_details: '',
+    categoryId: '',
+    subCategoryId: '',
+    subSubCategoryId: '',
+    brandId: '',
+    keywords: keywords.map((k: any) => k.attr_value).join(','),
+    images: multimedia.image_urls?.split(';') || [],
     delivery_info: {
-      delivery_time: String(delivery.delivery_time || "7"),
-      delivery_charge: "",
-      delivery_time_outside: String(delivery.delivery_time || "7"),
-      delivery_charge_outside: "",
-      return_days: "7",
-      multiply: "false",
+      delivery_time: String(delivery.delivery_time || '7'),
+      delivery_charge: '',
+      delivery_time_outside: String(delivery.delivery_time || '7'),
+      delivery_charge_outside: '',
+      return_days: '7',
+      multiply: 'false',
     },
     items: Array.from(attributesMap.values()),
     drafted: false,
