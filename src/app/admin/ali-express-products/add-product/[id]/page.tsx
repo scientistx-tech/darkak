@@ -70,14 +70,15 @@ type ProductFormData = {
   meta_keywords: string;
   video_link: string;
   thumbnail: string;
+  thumbnail_alt: string;
   slug: string;
   meta_alt: string;
   price: string;
-  price_mobile: string;
   discount_type: string;
   discount_type_mobile: string;
   discount: string;
   discount_mobile: string;
+  images: { url: string; alt: string }[];
   tax_amount: string;
   tax_type: string;
   available: string;
@@ -97,7 +98,6 @@ type ProductFormData = {
   subSubCategoryId: string;
   brandId: string;
   keywords: string;
-  images: string[];
   delivery_info: DeliveryInfo;
   items: AttributeItem[];
 };
@@ -314,15 +314,15 @@ const AliExpressProductEdit = () => {
     meta_keywords: '',
     video_link: '',
     thumbnail: '',
-    base_price: '',
+    thumbnail_alt: '',
     slug: '',
     meta_alt: '',
     price: '',
-    price_mobile: '',
     discount_type: '',
     discount_type_mobile: '',
     discount: '',
     discount_mobile: '',
+    images: [],
     tax_amount: '',
     tax_type: 'include',
     available: '',
@@ -342,7 +342,6 @@ const AliExpressProductEdit = () => {
     brandId: '',
     keywords: '',
     drafted: false,
-    images: [],
     ae_sku_property_dtos: {},
     delivery_info: {
       delivery_time: '',
@@ -498,18 +497,6 @@ const AliExpressProductEdit = () => {
           updatedItems[attributeIndex].options[optionIndex].image = url;
           return { ...prev, items: updatedItems };
         });
-      } else if (type === 'images') {
-        // Upload all images in one request
-        setImagesUploading(true);
-        const imgForm = new FormData();
-        files.forEach((file) => imgForm.append('images', file));
-        const res = await uploadImages(imgForm).unwrap();
-
-        const uploadedUrls = res || [];
-        setFormData((prev: any) => ({
-          ...prev,
-          images: [...prev.images, ...uploadedUrls],
-        }));
       } else {
         // Upload single file for thumbnail or meta_image
 
@@ -540,6 +527,49 @@ const AliExpressProductEdit = () => {
     }
   };
 
+  const handleAdditionalImagesUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    e.preventDefault && e.preventDefault();
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    try {
+      setImagesUploading(true);
+      const imgForm = new FormData();
+      imgForm.append('images', files[0]);
+      const res = await uploadImages(imgForm).unwrap();
+      const url = res[0];
+
+      setFormData((prev: any) => {
+        const updatedImages = [...prev.images];
+        updatedImages[index] = { ...updatedImages[index], url };
+        return { ...prev, images: updatedImages };
+      });
+    } catch (error) {
+      console.error('Image upload failed', error);
+    } finally {
+      setImagesUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleAltChange = (index: number, alt: string) => {
+    setFormData((prev: any) => {
+      const updatedImages = [...prev.images];
+      updatedImages[index] = { ...updatedImages[index], alt };
+      return { ...prev, images: updatedImages };
+    });
+  };
+
+  const addImageField = () => {
+    setFormData((prev: any) => ({
+      ...prev,
+      images: [...prev.images, { url: '', alt: '' }],
+    }));
+  };
+
   function validateProductForm(formData: ProductFormData): string | null {
     if (!formData.title) return 'Product Name is required';
     if (!formData.short_description) return 'Short Description is required';
@@ -547,7 +577,6 @@ const AliExpressProductEdit = () => {
     if (!formData.meta_image) return 'Meta Image is required';
     if (!formData.meta_alt) return 'Meta Alt is required';
     if (!formData.slug) return 'Slug is required';
-    if (!formData.price_mobile) return 'Mobile Price is required';
     if (!formData.thumbnail) return 'Thumbnail is required';
     if (!formData.price) return 'Price is required';
     if (!formData.unit) return 'Unit is required';
@@ -580,9 +609,9 @@ const AliExpressProductEdit = () => {
       meta_image: formData.meta_image,
       video_link: formData.video_link,
       thumbnail: formData.thumbnail,
+      thumbnail_alt: formData.thumbnail_alt,
       slug: formData.slug,
       meta_alt: formData.meta_alt,
-      price_mobile: formData.price_mobile,
       price: formData.price, // keep as string
       discount_type: formData.discount_type as DiscountType,
       discount_type_mobile: formData.discount_type_mobile as DiscountType,
@@ -834,6 +863,7 @@ const AliExpressProductEdit = () => {
                   'eraser',
                   'copyformat',
                   'fullsize',
+                  'source',
                 ],
               }}
               value={formData.short_description}
@@ -1187,20 +1217,6 @@ const AliExpressProductEdit = () => {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              Unit price Mobile <span className="text-red-500">*</span>{' '}
-            </label>
-            <input
-              name="price_mobile"
-              type="number"
-              placeholder="Unit price for Mobile"
-              value={formData.price_mobile}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-md border p-2"
-            />
-          </div>
-
-          <div>
             <label className="text-sm font-medium text-gray-700">Minimum order quantity</label>
             <input
               type="number"
@@ -1223,7 +1239,7 @@ const AliExpressProductEdit = () => {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">Discount Type</label>
+            <label className="text-sm font-medium text-gray-700">Discount Type Web</label>
             <select
               name="discount_type"
               value={formData.discount_type}
@@ -1248,7 +1264,7 @@ const AliExpressProductEdit = () => {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">Discount amount</label>
+            <label className="text-sm font-medium text-gray-700">Discount amount Web</label>
             <input
               name="discount"
               value={formData.discount}
@@ -1268,6 +1284,19 @@ const AliExpressProductEdit = () => {
             />
           </div>
 
+          <div>
+            <label className="text-sm font-medium text-gray-700">Accept Payment Type</label>
+            <select
+              name="payment_type"
+              // value={formData.discount_type}
+              // onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            >
+              <option value="cod">Cash On Delivery</option>
+              <option value="online">Online</option>
+              <option value="both">Both</option>
+            </select>
+          </div>
           <div>
             <label className="text-sm font-medium text-gray-700">Tax amount (%)</label>
             <input
@@ -1315,7 +1344,7 @@ const AliExpressProductEdit = () => {
       </div>
 
       {/* thumbnail and images */}
-      <div className="mt-5 flex flex-col gap-6 md:flex-row">
+      <div className="mt-5 flex flex-col gap-6">
         {/* Thumbnail Upload */}
         <div className="flex-1 rounded-lg border bg-white p-4 shadow">
           <label className="mb-1 block text-sm font-semibold text-gray-700">
@@ -1366,67 +1395,83 @@ const AliExpressProductEdit = () => {
               )}
             </div>
           </div>
+          <div className="mt-2">
+            <label className="text-sm font-medium text-gray-700">
+              Thumbnail Alt <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="thumbnail_alt"
+              type="text"
+              value={formData.thumbnail_alt}
+              onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            />
+          </div>
         </div>
 
         {/* Additional Images Upload */}
-        <div className="flex-[2] rounded-lg border bg-white p-4 shadow">
-          <label className="mb-1 block text-sm font-semibold text-gray-700">
-            Upload additional image
+        <div className="rounded-lg border bg-white p-4 shadow">
+          <label className="mb-2 block text-sm font-semibold text-gray-700">
+            Upload Product Images
           </label>
-          <p className="mb-2 text-xs text-blue-600">Ratio 1:1 (500 x 500 px)</p>
-          <p className="mb-2 text-sm text-gray-600">Upload additional product images</p>
-          <div className="relative flex h-32 cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              name="images"
-              className="absolute inset-0 cursor-pointer opacity-0"
-              onChange={(e) => handleImageUpload(e, 'images')}
-            />
-            <div className="relative z-10 w-full text-center text-sm text-gray-500">
-              {formData.images.length > 0 ? (
-                <div className="flex flex-wrap justify-center gap-2">
-                  {formData.images.map((img: any, idx: any) => (
-                    <div key={idx} className="group relative">
-                      <Image
-                        src={img}
-                        alt={`Product image ${idx + 1}`}
-                        width={80}
-                        height={80}
-                        className="rounded border object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setFormData((prev: any) => ({
-                            ...prev,
-                            images: prev.images.filter((_: any, i: any) => i !== idx),
-                          }));
-                        }}
-                        className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white opacity-80 hover:opacity-100"
-                        style={{ zIndex: 10 }}
-                        title="Remove"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <>
-                  <p className="text-blue-600">
-                    {imagesUploading ? (
-                      <p className="mt-3">Uploading...</p>
-                    ) : (
-                      <p>Click to Upload</p>
-                    )}
+
+          <button
+            type="button"
+            onClick={addImageField}
+            className="mb-4 rounded bg-blue-600 px-4 py-1 text-white hover:bg-blue-700"
+          >
+            + Add Image
+          </button>
+
+          {formData.images.map((img: any, idx: any) => (
+            <div
+              key={idx}
+              className="mb-4 flex flex-col items-start gap-2 rounded border border-b border-slate-400 p-4"
+            >
+              <div className="relative flex h-32 w-full cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="absolute inset-0 cursor-pointer opacity-0"
+                  onChange={(e) => handleAdditionalImagesUpload(e, idx)}
+                />
+                {img.url ? (
+                  <Image
+                    src={img.url}
+                    alt={`Uploaded ${idx + 1}`}
+                    width={100}
+                    height={100}
+                    className="rounded object-cover"
+                  />
+                ) : (
+                  <p className="z-10 text-sm text-blue-600">
+                    {imagesUploading ? 'Uploading...' : 'Click to Upload'}
                   </p>
-                </>
-              )}
+                )}
+              </div>
+
+              <input
+                type="text"
+                placeholder="Enter image alt text"
+                value={img.alt}
+                onChange={(e) => handleAltChange(idx, e.target.value)}
+                className="w-full rounded border px-3 py-2 text-sm"
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setFormData((prev: any) => ({
+                    ...prev,
+                    images: prev.images.filter((_: any, i: any) => i !== idx),
+                  }))
+                }
+                className="border-red-500 bg-red-100 px-2 py-0.5 text-sm text-red-500 hover:underline"
+              >
+                Remove
+              </button>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
@@ -1969,6 +2014,7 @@ const AliExpressProductEdit = () => {
                     'eraser',
                     'copyformat',
                     'fullsize',
+                    'source',
                   ],
                 }}
                 value={formData.specification}
@@ -2026,6 +2072,7 @@ const AliExpressProductEdit = () => {
                     'eraser',
                     'copyformat',
                     'fullsize',
+                    'source',
                   ],
                 }}
                 value={formData.warranty_details}
