@@ -69,7 +69,10 @@ export default function transformAliExpressProduct(product: any) {
     subSubCategoryId: '',
     brandId: '',
     keywords: keywords.map((k: any) => k.attr_value).join(','),
-    images: multimedia.image_urls?.split(';') || [],
+    images: (multimedia.image_urls?.split(';') || []).map((url: string, index: number) => ({
+      url,
+      alt: `Product image ${index + 1}`, // or leave alt: '' if you want it blank
+    })),
     delivery_info: {
       delivery_time: String(delivery.delivery_time || '7'),
       delivery_charge: '',
