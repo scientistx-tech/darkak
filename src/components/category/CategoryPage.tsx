@@ -13,7 +13,7 @@ export default function CategoryPage({ initialQuery }: { initialQuery?: Record<s
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
-  const categoryTitle = initialQuery.categoryId || 'All Products';
+  const categoryTitle = initialQuery?.categoryId || 'All Products';
 
   console.log('lll', currentPage, totalPages);
 
