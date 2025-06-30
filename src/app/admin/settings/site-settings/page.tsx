@@ -4,6 +4,8 @@ import { Tabs } from 'antd';
 import type { TabsProps } from 'antd';
 import Content from './components/Content';
 import Banner from './components/Banner';
+import BannerTable from './components/BannerTable';
+import FaqManager from './components/FAQ';
 
 const onChange = (key: string) => {
   console.log(key);
@@ -18,12 +20,12 @@ const items: TabsProps['items'] = [
   {
     key: '2',
     label: 'Banner',
-    children: <Banner></Banner>,
+    children: <BannerTable></BannerTable>,
   },
   {
     key: '3',
     label: 'FAQ',
-    children: 'Content of Tab Pane 3',
+    children: <FaqManager></FaqManager>,
   },
 ];
 

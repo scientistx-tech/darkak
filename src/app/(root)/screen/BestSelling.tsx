@@ -7,7 +7,7 @@ import ProductCard from "@/components/shared/ProductCard";
 import laptop from "@/Data/Demo/Rectangle 130 (1).png";
 import { useGetBestSellingProductsQuery } from "@/redux/services/client/products";
 import Link from "next/link";
-
+import { useGetHomeContentQuery } from "@/redux/services/client/homeContentApi";
 const containerVariants = {
   hidden: {},
   visible: {
@@ -24,6 +24,11 @@ const itemVariants = {
 
 const BestSelling: React.FC = () => {
   const { data, error, isLoading, refetch } = useGetBestSellingProductsQuery("");
+    const { data:banner } = useGetHomeContentQuery();
+  
+    if (isLoading || error) return null; // optional loading/error handling
+  
+    const mostVisitedBanner = banner?.banners?.find((banner: any) => banner.type === 'best_selling');
 
   return (
     <motion.section
@@ -43,24 +48,47 @@ const BestSelling: React.FC = () => {
 
       <div className="relative grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:gap-8">
         {/* LEFT SIDE BANNER */}
-        <motion.div
-          variants={itemVariants}
-          className="absulate hidden flex-col justify-between rounded-xl bg-[#4C84FF] p-6 text-white md:mt-[-45px] md:flex md:h-[425px] lg:mt-[-40px] lg:h-[420px] xl:mt-[-40px] xl:h-[450px] 2xl:mt-[-50px]"
-        >
-          <div>
-            <h3 className="mb-3 text-sm font-semibold">SUMMER OFFER</h3>
-            <p className="text-2xl font-semibold leading-tight">
-              GET 10% DISCOUNT ON <br /> FIRST PURCHASE
-            </p>
-          </div>
-          <div className="mt-auto flex justify-center pt-8">
-            <Image
-              src={laptop}
-              alt="Offer Laptop"
-              className="w-[200px] object-contain"
-            />
-          </div>
-        </motion.div>
+        {/* LEFT SIDE BANNER */}
+        <div className="relative hidden w-[236px] md:block">
+          {mostVisitedBanner ? (
+            <Link href="#">
+              <motion.div
+                className="absolute bottom-0 right-0 z-10 hidden w-[236px] flex-col justify-between overflow-hidden rounded-xl bg-[#4C84FF] p-6 text-white md:flex"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 425, opacity: 1 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+              >
+                <div className="space-y-2">
+                  <h3 className="text-sm font-semibold uppercase">
+                    {mostVisitedBanner?.type.replace('_', ' ')}
+                  </h3>
+
+                  <p className="line-clamp-2 break-words text-xl font-semibold leading-tight">
+                    {mostVisitedBanner?.title}
+                  </p>
+
+                  <p className="line-clamp-3 break-words text-sm leading-snug text-white/90">
+                    {mostVisitedBanner?.details}
+                  </p>
+                </div>
+
+                {mostVisitedBanner?.image && (
+                  <div className="mt-auto flex justify-center pt-8">
+                    <Image
+                      src={mostVisitedBanner.image}
+                      alt="Banner Image"
+                      width={200}
+                      height={200}
+                      className="w-[200px] object-contain"
+                    />
+                  </div>
+                )}
+              </motion.div>
+            </Link>
+          ) : (
+            <div className="absolute bottom-0 right-0 hidden h-[425px] w-[236px] rounded-xl bg-[#4C84FF] md:flex" />
+          )}
+        </div>
 
         {/* PRODUCT CARDS */}
         {data?.data.slice(0, 9).map((product: any) => (
