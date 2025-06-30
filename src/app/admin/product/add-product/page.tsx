@@ -45,6 +45,7 @@ type AttributeOption = {
   stock?: number | string;
   key?: string;
   sku?: string;
+  alt?: string;
 };
 
 type AttributeItem = {
@@ -308,8 +309,8 @@ export default function ProductForm() {
     slug: '',
     meta_alt: '',
     price: '',
-    discount_type: '',
-    discount_type_mobile: '',
+    discount_type: 'flat',
+    discount_type_mobile: 'flat',
     discount: '',
     discount_mobile: '',
     images: [],
@@ -371,6 +372,7 @@ export default function ProductForm() {
     value: string;
     label: string;
   } | null>(null);
+  const [isSlugModified, setIsSlugModified] = useState(false);
 
   //  redux hooks
   const { data: attributesData } = useGetProductAttributesQuery({});
@@ -463,7 +465,28 @@ export default function ProductForm() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setFormData((prev) => {
+      if (name === 'title') {
+        setIsSlugModified(false);
+        return {
+          ...prev,
+          title: value,
+          slug: isSlugModified ? prev.slug : value.trim().replace(/\s+/g, '-'),
+        };
+      }
+
+      // If the user edits 'b', mark it as manually modified
+      if (name === 'slug') {
+        setIsSlugModified(true);
+      }
+
+      // Default behavior for all other fields
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
   };
 
   const handleDeliveryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -586,6 +609,7 @@ export default function ProductForm() {
     if (!formData.meta_title) return 'Meta Title is required';
     if (!formData.meta_image) return 'Meta Image is required';
     if (!formData.thumbnail) return 'Thumbnail is required';
+    if (!formData.thumbnail_alt) return 'Thumbnail is required';
     if (!formData.price) return 'Price is required';
     if (!formData.meta_alt) return 'Meta Alt is required';
     if (!formData.slug) return 'Slug is required';
@@ -617,6 +641,7 @@ export default function ProductForm() {
       meta_image: formData.meta_image,
       video_link: formData.video_link,
       thumbnail: formData.thumbnail,
+      thumbnail_alt: formData.thumbnail_alt,
       slug: formData.slug,
       meta_alt: formData.meta_alt,
       price: formData.price, // keep as string
@@ -671,6 +696,7 @@ export default function ProductForm() {
                 ? String(opt.stock)
                 : '',
           image: opt.image || '',
+          alt: opt.alt || '',
         })),
       })),
     };
@@ -708,23 +734,18 @@ export default function ProductForm() {
 
   // Auto-calculate stock based on Color attribute options
   useEffect(() => {
-    // Find Color attribute (case-insensitive)
     const colorItem = formData.items.find((item) => item.title?.toLowerCase() === 'color');
     if (colorItem && Array.isArray(colorItem.options) && colorItem.options.length > 0) {
-      // Sum all option stocks (handle string/number/undefined)
       const totalStock = colorItem.options.reduce((sum, opt) => {
         let stockNum = 0;
         if (typeof opt.stock === 'number') stockNum = opt.stock;
         else if (typeof opt.stock === 'string') stockNum = parseInt(opt.stock) || 0;
         return sum + stockNum;
       }, 0);
-      // Always set stock to totalStock if Color exists
       if (formData.stock !== String(totalStock) || formData.stock === '') {
         setFormData((prev) => ({ ...prev, stock: String(totalStock) }));
       }
     }
-    // If no Color attribute, do nothing (stock input is used)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(formData.items)]);
 
   console.log(formData, 'dataa');
@@ -1655,6 +1676,24 @@ export default function ProductForm() {
                         </div>
                       </div>
                     </div>
+                    <div className="mt-2">
+                      <label>
+                        Option Alt <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={option.alt}
+                        onChange={(e) => {
+                          const updatedItems = [...formData.items];
+                          updatedItems[attributeIndex].options[optionIndex].alt = e.target.value;
+                          setFormData((prev) => ({
+                            ...prev,
+                            items: updatedItems,
+                          }));
+                        }}
+                        className="mt-1 w-full rounded-md border p-2"
+                      />
+                    </div>
                   </div>
 
                   <button
@@ -1741,7 +1780,6 @@ export default function ProductForm() {
                 </span>
               </div>
             </div>
-
             <div>
               <label className="text-sm font-medium text-gray-700">
                 Meta Keywords <span className="text-red-500">*</span>
@@ -1750,18 +1788,6 @@ export default function ProductForm() {
                 name="meta_keywords"
                 type="string"
                 value={formData.meta_keywords}
-                onChange={handleChange}
-                className="mt-1 w-full rounded-md border p-2"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700">
-                Alt Tag <span className="text-red-500">*</span>
-              </label>
-              <input
-                name="meta_alt"
-                type="text"
-                value={formData.meta_alt}
                 onChange={handleChange}
                 className="mt-1 w-full rounded-md border p-2"
               />
@@ -1842,6 +1868,18 @@ export default function ProductForm() {
                   )}
                 </div>
               </div>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700">
+                Alt Tag <span className="text-red-500">*</span>
+              </label>
+              <input
+                name="meta_alt"
+                type="text"
+                value={formData.meta_alt}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              />
             </div>
           </div>
         </div>
