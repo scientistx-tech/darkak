@@ -1,3 +1,4 @@
+import ContentSection from "@/components/Layouts/root/ContentSection";
 import Link from "next/link";
 import React from "react";
 import {
@@ -10,6 +11,7 @@ import {
   FaQuestionCircle,
   FaUserShield,
 } from "react-icons/fa";
+import FaqSection from "./FaqSection";
 
 const topFeatures = [
   {
@@ -59,9 +61,11 @@ const bottomLinks = [
 
 const FeatureSection = () => {
   return (
-    <section className="md: mit-10 mt-8 w-full">
+    <section className="md:mt-10 mt-8 w-full">
+      <ContentSection></ContentSection>
+<FaqSection></FaqSection>
       {/* Top Features */}
-      <div className="grid grid-cols-1 gap-6 rounded-xl bg-blue-50 px-4 py-8 text-center md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid mt-10 grid-cols-1 gap-6 rounded-xl bg-blue-50 px-4 py-8 text-center md:grid-cols-2 lg:grid-cols-4">
         {topFeatures.map((feature, index) => (
           <div key={index} className="flex flex-col items-center gap-2">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow">

@@ -1,14 +1,13 @@
-"use client";
+'use client';
 
-import React from "react";
-import ProductCard from "@/components/shared/ProductCard";
-import Image from "next/image";
-import laptop from "@/Data/Demo/Rectangle 130 (1).png";
-import { easeOut, motion } from "framer-motion";
-import { useGetBestDealProductsQuery } from "@/redux/services/client/products";
-import Link from "next/link";
+import React from 'react';
+import ProductCard from '@/components/shared/ProductCard';
+import Image from 'next/image';
+import { easeOut, motion } from 'framer-motion';
+import { useGetBestDealProductsQuery } from '@/redux/services/client/products';
+import { useGetHomeContentQuery } from '@/redux/services/client/homeContentApi';
+import Link from 'next/link';
 
-// Framer Motion variants
 const containerVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
@@ -32,54 +31,72 @@ const itemVariants = {
 };
 
 const BestDeals: React.FC = () => {
-  const { data, error, isLoading, refetch } = useGetBestDealProductsQuery("");
-  if (data?.data === 0) {
-    return null;
-  }
+  const { data, error, isLoading } = useGetBestDealProductsQuery('');
+  const { data: banner } = useGetHomeContentQuery();
+
+  if (isLoading || error || !data?.data) return null;
+
+  const todaysDealBanner = banner?.banners?.find((b: any) => b.type === 'todays_deal');
 
   return (
     <motion.section
-      className="container mx-auto mt-0 px-2"
+      className="container mx-auto mt-15 px-2"
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
+      animate="visible"
       variants={containerVariants}
     >
-      <motion.div
-        className="mb-1 flex items-center justify-between"
-        variants={itemVariants}
-      >
+      <div className="mb-1 flex items-center justify-between">
         <h2 className="text-2xl font-semibold text-primaryDarkBlue md:ml-[33%] lg:ml-[25%] xl:ml-[20%]">
-          TO DAYS DEAL
+        TODAYS DEAL
         </h2>
         <Link href="/more/todays-deal" className="">
           <span className="cursor-pointer text-2xl">→</span>
         </Link>
-      </motion.div>
+      </div>
 
-      <motion.div
-        className="relative grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:gap-8"
-        variants={containerVariants}
-      >
+      <div className="relative grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:gap-8">
         {/* LEFT SIDE BANNER */}
-        <motion.div
-          className="absulate hidden flex-col justify-between rounded-xl bg-[#4C84FF] p-6 text-white md:mt-[-45px] md:flex md:h-[425px] lg:mt-[-40px] lg:h-[420px] xl:mt-[-40px] xl:h-[450px] 2xl:mt-[-50px]"
-          variants={itemVariants}
-        >
-          <div>
-            <h3 className="mb-3 text-sm font-semibold">SUMMER OFFER</h3>
-            <p className="text-2xl font-semibold leading-tight">
-              GET 10% DISCOUNT ON <br /> FIRST PURCHASE
-            </p>
-          </div>
-          <div className="mt-auto flex justify-center pt-8">
-            <Image
-              src={laptop}
-              alt="Offer Laptop"
-              className="w-[200px] object-contain"
-            />
-          </div>
-        </motion.div>
+        {/* LEFT SIDE BANNER */}
+        <div className="relative hidden w-[236px] md:block">
+          {todaysDealBanner ? (
+            <Link href="#">
+              <motion.div
+                className="absolute bottom-0 right-0 z-10 hidden w-[236px] flex-col justify-between overflow-hidden rounded-xl bg-[#4C84FF] p-6 text-white md:flex"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 425, opacity: 1 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+              >
+                <div className="space-y-2">
+                  <h3 className="text-sm font-semibold uppercase">
+                    {todaysDealBanner?.type.replace('_', ' ')}
+                  </h3>
+
+                  <p className="line-clamp-2 break-words text-xl font-semibold leading-tight">
+                    {todaysDealBanner?.title}
+                  </p>
+
+                  <p className="line-clamp-3 break-words text-sm leading-snug text-white/90">
+                    {todaysDealBanner?.details}
+                  </p>
+                </div>
+
+                {todaysDealBanner?.image && (
+                  <div className="mt-auto flex justify-center pt-8">
+                    <Image
+                      src={todaysDealBanner.image}
+                      alt="Banner Image"
+                      width={200}
+                      height={200}
+                      className="w-[200px] object-contain"
+                    />
+                  </div>
+                )}
+              </motion.div>
+            </Link>
+          ) : (
+            <div className="absolute bottom-0 right-0 hidden h-[425px] w-[236px] rounded-xl bg-[#4C84FF] md:flex" />
+          )}
+        </div>
 
         {/* PRODUCT CARDS */}
         {data?.data.slice(0, 9).map((product: any) => (
@@ -87,7 +104,7 @@ const BestDeals: React.FC = () => {
             <ProductCard product={product} />
           </motion.div>
         ))}
-      </motion.div>
+      </div>
     </motion.section>
   );
 };
