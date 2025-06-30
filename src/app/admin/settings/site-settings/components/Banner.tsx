@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
-import { useUploadImagesMutation } from '@/redux/services/admin/adminProductApis';
+import { useGetProductsQuery, useUploadImagesMutation } from '@/redux/services/admin/adminProductApis';
+import { useUpdatePageBannerMutation } from '@/redux/services/admin/adminBannerApi';
 // import { useUploadImagesMutation } from '@/redux/services/admin/adminProductApis';
 // import { useCreateBannerMutation } from '@/redux/services/admin/adminBannerApis'; // <- You create this API
 
@@ -12,22 +13,31 @@ type BannerFormData = {
   title: string;
   details: string;
   image: string;
-  productId: number;
+  productId:string
 };
-
-const BannerForm = () => {
+type Props = {
+  onSuccess: () => void;
+};
+const BannerForm = ({ onSuccess }: Props) => {
+  const queryParams = { limit: "1000" }; // Adjust as needed
+  const {
+    data: productData,
+    isLoading: loadingProducts,
+    error: productError,
+  } = useGetProductsQuery(queryParams);
+  console.log('Product data = ', productData);
   const [formData, setFormData] = useState<BannerFormData>({
     type: 'featured',
     title: '',
     details: '',
     image: '',
-    productId: 0,
+    productId: ' ',
   });
 
   const [imageUploading, setImageUploading] = useState(false);
 
   const [uploadImages] = useUploadImagesMutation();
-//   const [updateBanner] = useUpdatePageBannerMutation();
+  const [updateBanner] = useUpdatePageBannerMutation();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -59,13 +69,24 @@ const BannerForm = () => {
   };
 
   const handleSubmit = async () => {
-    console.log(formData)
-    // try {
-    //   const res = await updateBanner(formData).unwrap();
-    //   toast.success(res?.message || 'Banner created successfully!');
-    // } catch (error: any) {
-    //   toast.error(error?.data?.message || 'Failed to create banner.');
-    // }
+    console.log(formData);
+    try {
+      const res = await updateBanner(formData).unwrap();
+      toast.success(res?.message || 'Banner created successfully!');
+      // ✅ Reset form
+      setFormData({
+        type: 'featured',
+        title: '',
+        details: '',
+        image: '',
+        productId: '',
+      });
+
+      // ✅ Call onSuccess to close modal
+      onSuccess();
+    } catch (error: any) {
+      toast.error(error?.data?.message || 'Failed to create banner.');
+    }
   };
 
   return (
@@ -79,12 +100,10 @@ const BannerForm = () => {
           className="mt-1 w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="featured">Featured</option>
-          <option value="promotion"> most_visited</option>
-          <option value="seasonal">best_selling</option>
-          <option value="seasonal">new_arrival
-          </option>
-          <option value="seasonal">  todays_deal
-          </option>
+          <option value="most_visited"> Most visited</option>
+          <option value="best_selling">Best Selling</option>
+          <option value="new_arrival">New Arrival</option>
+          <option value="todays_deal">Todays Deal</option>
         </select>
       </div>
 
@@ -108,16 +127,24 @@ const BannerForm = () => {
           className="w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-
+      {/* product Id */}
       <div>
-        <label className="block text-sm font-medium">Product ID</label>
-        <input
-          type="number"
+        <label className="block text-sm font-medium">Select Product</label>
+        <select
           name="productId"
           value={formData.productId}
           onChange={handleChange}
           className="mt-1 w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        >
+          <option value="">Select a product</option>
+          {loadingProducts && <option>Loading products...</option>}
+          {productError && <option>Error loading products</option>}
+          {productData?.data?.map((product: any) => (
+            <option key={product.id} value={product.id}>
+              {product.title}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Image Upload */}

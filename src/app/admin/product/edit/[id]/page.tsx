@@ -48,6 +48,7 @@ type AttributeOption = {
   stock?: number | string;
   key?: string;
   sku?: string;
+  alt: string;
 };
 
 type AttributeItem = {
@@ -450,6 +451,7 @@ const ProductEdit = () => {
               stock: opt.stock,
               sku: opt.sku,
               image: opt.image,
+              alt: opt.alt,
             })),
         })),
         drafted: p.drafted,
@@ -717,6 +719,7 @@ const ProductEdit = () => {
                 ? String(opt.stock)
                 : '',
           image: opt.image || '',
+          alt: opt.alt || '',
         })),
       })),
     };
@@ -1715,6 +1718,24 @@ const ProductEdit = () => {
                       </div>
                     </div>
                   </div>
+                  <div className="mt-2">
+                    <label>
+                      Option Alt <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={option.alt}
+                      onChange={(e) => {
+                        const updatedItems = [...formData.items];
+                        updatedItems[attributeIndex].options[optionIndex].alt = e.target.value;
+                        setFormData((prev) => ({
+                          ...prev,
+                          items: updatedItems,
+                        }));
+                      }}
+                      className="mt-1 w-full rounded-md border p-2"
+                    />
+                  </div>
                 </div>
 
                 <button
@@ -1738,6 +1759,7 @@ const ProductEdit = () => {
                   title: '',
                   price: 0,
                   stock: 1,
+                  alt: '',
                 });
                 setFormData((prev) => ({ ...prev, items: updatedItems }));
               }}
