@@ -262,15 +262,25 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       <head>
         <GTMHead />
         {headerScripts.map((s: any) => {
-          const isMeta = s.script.trim().startsWith('<meta ');
-          return isMeta ? (
-            <div key={s.id} dangerouslySetInnerHTML={{ __html: s.script }} />
-          ) : (
+          const isMeta = s.script.trim().startsWith('<meta');
+          const match = s.script.match(/name="([^"]+)"\s+content="([^"]+)"/);
+
+          if (isMeta && match) {
+            return (
+              <meta
+                key={s.id} // ✅ Important: add `key` for React list rendering
+                name={match[1]}
+                content={match[2]}
+              />
+            );
+          }
+
+          return (
             <Script key={s.id} id={`header-script-${s.id}`} strategy="beforeInteractive">
               {s.script}
             </Script>
           );
-        })} 
+        })}
       </head>
       <body>
         {bodyTopScripts.map((s: any) => (
