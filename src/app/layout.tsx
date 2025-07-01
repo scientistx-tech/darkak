@@ -270,7 +270,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               {s.script}
             </Script>
           );
-        })}
+        })} 
       </head>
       <body>
         {bodyTopScripts.map((s: any) => (
