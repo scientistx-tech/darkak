@@ -6,7 +6,29 @@ import SortBy from '@/components/category/SortBy';
 import ProductsSection from '@/components/category/ProductsSection';
 import Pagination from '../shared/Pagination';
 
-export default function CategoryPage({ initialQuery }: { initialQuery?: Record<string, string> }) {
+export default function CategoryPage({
+  initialQuery,
+  data,
+  sidebarFilters,
+  setSidebarFilters,
+  visibleCount,
+  setVisibleCount,
+  isLoading,
+  setIsLoading,
+  isFetching,
+  setIsFetching,
+}: {
+  initialQuery?: Record<string, string>;
+  data: any;
+  sidebarFilters: {};
+  setSidebarFilters: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
+  visibleCount: number;
+  setVisibleCount: React.Dispatch<React.SetStateAction<number>>;
+  isLoading: boolean;
+  setIsLoading: (value: boolean) => void;
+  isFetching: boolean;
+  setIsFetching: (value: boolean) => void;
+}) {
   const [searchValue, setSearchValue] = useState<string>('');
 
   const [sortBy, setSortBy] = useState('newer');
@@ -16,6 +38,8 @@ export default function CategoryPage({ initialQuery }: { initialQuery?: Record<s
   const categoryTitle = initialQuery?.categoryId || 'All Products';
 
   console.log('lll', currentPage, totalPages);
+
+  console.log('setSidebarFilters type:', typeof setSidebarFilters);
 
   return (
     <div>
@@ -28,11 +52,20 @@ export default function CategoryPage({ initialQuery }: { initialQuery?: Record<s
         setSearchValue={setSearchValue}
       />
       <ProductsSection
+        data={data}
         currentPage={currentPage}
         setTotalPages={setTotalPages}
         initialQuery={initialQuery}
         sortBy={sortBy}
         searchValue={searchValue}
+        sidebarFilters={sidebarFilters}
+        setSidebarFilters={setSidebarFilters}
+        visibleCount={visibleCount}
+        setVisibleCount={setVisibleCount}
+        isLoading={isLoading}
+        setIsLoading={setIsLoading}
+        isFetching={isFetching}
+        setIsFetching={setIsFetching}
       />
       {/* <div className="px-10">
         <Pagination

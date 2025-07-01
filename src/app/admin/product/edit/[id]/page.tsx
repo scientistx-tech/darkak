@@ -665,6 +665,7 @@ const ProductEdit = () => {
       meta_image: formData.meta_image,
       video_link: formData.video_link,
       thumbnail: formData.thumbnail,
+      thumbnail_alt: formData.thumbnail_alt,
       slug: formData.slug,
       meta_alt: formData.meta_alt,
       price: formData.price, // keep as string
