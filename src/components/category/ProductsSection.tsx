@@ -8,34 +8,38 @@ import Pagination from '../shared/Pagination';
 import { toast } from 'react-toastify';
 
 const ProductsSection = ({
+  data,
   currentPage,
   setTotalPages,
   initialQuery,
   sortBy,
   searchValue,
+  sidebarFilters,
+  setSidebarFilters,
+  visibleCount,
+  setVisibleCount,
+  isLoading,
+  setIsLoading,
+  isFetching,
+  setIsFetching,
 }: {
+  data: any;
   currentPage: number;
   setTotalPages: (total: number) => void;
   initialQuery?: Record<string, string>;
   sortBy: string;
   searchValue: string;
+  sidebarFilters: {};
+  setSidebarFilters: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
+  visibleCount: number;
+  setVisibleCount: React.Dispatch<React.SetStateAction<number>>;
+  isLoading: boolean;
+  setIsLoading: (value: boolean) => void;
+  isFetching: boolean;
+  setIsFetching: (value: boolean) => void;
 }) => {
-  const [isFetching, setIsFetching] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState<any>({});
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [sidebarFilters, setSidebarFilters] = useState<any>(() => {
-    // Convert initialQuery values to numbers if possible
-    const parsed = Object.fromEntries(
-      Object.entries(initialQuery || {}).map(([k, v]) => [
-        k,
-        !isNaN(Number(v)) && v !== '' ? Number(v) : v,
-      ])
-    );
-    return parsed;
-  });
   const [products, setProducts] = useState<Product[]>([]);
-  const [visibleCount, setVisibleCount] = useState(1); // pages loaded so far
 
   useEffect(() => {
     if (sortBy) {
@@ -62,34 +66,7 @@ const ProductsSection = ({
     });
   }, [initialQuery, sortBy]); // Add sortBy to the dependency array
 
-  // Add currentPage to sidebarFilters before calling useGetAllProductsQuery
-  const filtersWithPageAndLimit = {
-    ...sidebarFilters,
-    page: visibleCount,
-    limit: 20,
-  };
-
-  const fetchAllProducts = async () => {
-    const queryString = filtersWithPageAndLimit
-      ? `?${new URLSearchParams(filtersWithPageAndLimit).toString()}`
-      : '';
-    try {
-      setIsLoading(true), setIsFetching(true);
-      const response = await fetch(`https://api.darkak.com.bd/api/public/filter${queryString}`);
-      const data = await response.json();
-      setData(data);
-    } catch (error: any) {
-      toast.error(error?.data?.message);
-    } finally {
-      setIsLoading(false), setIsFetching(false);
-    }
-  };
-
   console.log('visibleCount', visibleCount);
-
-  useEffect(() => {
-    fetchAllProducts();
-  }, [sidebarFilters, visibleCount]);
 
   useEffect(() => {
     if (data?.data) {
@@ -143,6 +120,8 @@ const ProductsSection = ({
       return merged;
     });
   };
+
+  console.log(sidebarFilters, 'sidebar filter in psection');
 
   return (
     <>
@@ -255,7 +234,7 @@ const ProductsSection = ({
       {products.length > 0 && visibleCount < (data?.totalPage || 1) && (
         <div className="mt-6 flex w-full justify-end pr-10">
           <button
-            onClick={() => setVisibleCount((prev) => prev + 1)}
+            onClick={() => setVisibleCount((prev: number) => prev + 1)}
             className="rounded bg-blue-600 px-6 py-2 text-white transition duration-300 hover:bg-blue-700"
             disabled={isFetching}
           >
