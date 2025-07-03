@@ -6,7 +6,7 @@ const ContentSection = () => {
   const { data: home } = useGetHomeContentQuery();
     return (
         <div className="rounded-xl bg-blue-50 px-4 py-8 text-center">
-        <h2 className="text-lg text-black font-medium">{home?.content?.footer_title} </h2>
+        <h2 className="text-lg text-black font-medium">{home?.content?.content} </h2>
         </div>
     );
 };
