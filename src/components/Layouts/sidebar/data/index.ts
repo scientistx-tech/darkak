@@ -665,18 +665,6 @@ export const getNavData = (data: any, vendorData: any) => [
             url: "/admin/seo/contact-us-page",
           },
           {
-            title: "Profile Page",
-            url: "/admin/seo/profile-page",
-          },
-          {
-            title: "Wishlist Page",
-            url: "/admin/seo/wishlist-page",
-          },
-          {
-            title: "Cart Page",
-            url: "/admin/seo/cart-page",
-          },
-          {
             title: "CheckOut Page",
             url: "/admin/seo/checkout-page",
           },
