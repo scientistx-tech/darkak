@@ -132,13 +132,6 @@ export default function ContentCart() {
       >
         Save Content
       </button>
-
-      {/* FAQ Section Placeholder */}
-      <div className="mt-10 w-full">
-        <label className="mb-2 block font-medium text-gray-700">FAQ:</label>
-        {/* Add your FAQ input fields here */}
-        <p className="text-sm text-gray-500">You can build your dynamic FAQ form here.</p>
-      </div>
     </div>
   );
 }

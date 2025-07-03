@@ -4,9 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ContentCart from './components/ContentCart';
 import SeoCart from './components/SeoCart';
 import BannerCart from './components/BannerCart';
+import FaqCart from './components/FaqCart';
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState<'seo' | 'content' | 'banner'>('seo');
+  const [activeTab, setActiveTab] = useState<'seo' | 'content' | 'banner' | 'faq'>('seo');
 
   return (
     <div className="">
@@ -14,7 +15,7 @@ export default function HomePage() {
       <p className="mb-6 text-gray-700">This is the SEO section for managing Home page metadata.</p>
 
       {/* Toggle Buttons */}
-      <div className="mb-6 flex gap-4">
+      <div className="mb-6 flex gap-4 flex-wrap">
         <button
           onClick={() => setActiveTab('seo')}
           className={`rounded-md px-4 py-2 text-white ${
@@ -32,6 +33,14 @@ export default function HomePage() {
           Content Section
         </button>
         <button
+          onClick={() => setActiveTab('faq')}
+          className={`rounded-md px-4 py-2 text-white ${
+            activeTab === 'faq' ? 'bg-blue-600' : 'bg-gray-400 hover:bg-gray-500'
+          }`}
+        >
+          FAQ Section
+        </button>
+        <button
           onClick={() => setActiveTab('banner')}
           className={`rounded-md px-4 py-2 text-white ${
             activeTab === 'banner' ? 'bg-blue-600' : 'bg-gray-400 hover:bg-gray-500'
@@ -39,6 +48,7 @@ export default function HomePage() {
         >
           Banner Section
         </button>
+        
       </div>
 
       {/* Animated Section */}
@@ -77,6 +87,18 @@ export default function HomePage() {
               transition={{ duration: 0.3 }}
             >
               <BannerCart />
+            </motion.div>
+          )}
+
+          {activeTab === 'faq' && (
+            <motion.div
+              key="faq"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              <FaqCart />
             </motion.div>
           )}
         </AnimatePresence>

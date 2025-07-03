@@ -48,11 +48,6 @@ export default function ContentCart() {
       >
         Save Content
       </button>
-
-      {/* FAQ Section */}
-      <div className="mt-8 w-full">
-        <label className="block font-medium text-gray-700">FAQ:</label>
-      </div>
     </div>
   );
 }
