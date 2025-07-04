@@ -1,12 +1,10 @@
 'use client';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import ContentCart from './components/ContentCart';
 import SeoCart from './components/SeoCart';
-import FaqCart from './components/FaqCart';
 
 export default function FAQPage() {
-  const [activeTab, setActiveTab] = useState<'seo' | 'content' | 'faq'>('seo');
+  const [activeTab, setActiveTab] = useState<'seo' >('seo');
 
   return (
     <div className="">
@@ -25,22 +23,7 @@ export default function FAQPage() {
         >
           Meta Section
         </button>
-        <button
-          onClick={() => setActiveTab('content')}
-          className={`rounded-md px-4 py-2 text-white ${
-            activeTab === 'content' ? 'bg-blue-600' : 'bg-gray-400 hover:bg-gray-500'
-          }`}
-        >
-          Content Section
-        </button>
-        <button
-          onClick={() => setActiveTab('faq')}
-          className={`rounded-md px-4 py-2 text-white ${
-            activeTab === 'faq' ? 'bg-blue-600' : 'bg-gray-400 hover:bg-gray-500'
-          }`}
-        >
-          FAQ Section
-        </button>
+       
       </div>
 
       {/* Animated Section */}
@@ -58,29 +41,7 @@ export default function FAQPage() {
             </motion.div>
           )}
 
-          {activeTab === 'content' && (
-            <motion.div
-              key="content"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-            >
-              <ContentCart />
-            </motion.div>
-          )}
-
-          {activeTab === 'faq' && (
-            <motion.div
-              key="faq"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-            >
-              <FaqCart />
-            </motion.div>
-          )}
+         
         </AnimatePresence>
       </div>
     </div>

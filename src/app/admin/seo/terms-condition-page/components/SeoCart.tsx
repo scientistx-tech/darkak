@@ -19,7 +19,7 @@ export default function SeoCart() {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`${BASE_URL}/public/page-seo/contact`) ///will cahnge type "contact","about"
+      .get(`${BASE_URL}/public/page-seo/terms_condition`) ///will cahnge type "terms_condition","about"
       .then((res) => {
         const data = res.data?.data;
         setMetaTitle(data?.meta_title || '');
@@ -70,7 +70,7 @@ export default function SeoCart() {
       }
 
       const payload = {
-        type: 'contact',
+        type: 'terms_condition',
         meta_title: metaTitle,
         meta_description: metaDescription,
         meta_keywords: keywords,
