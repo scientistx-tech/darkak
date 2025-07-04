@@ -19,7 +19,7 @@ export default function SeoCart() {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`${BASE_URL}/public/page-seo/vendor`) ///will cahnge type "category","about"
+      .get(`${BASE_URL}/public/page-seo/vendor`) ///will cahnge type "vendor","about"
       .then((res) => {
         const data = res.data?.data;
         setMetaTitle(data?.meta_title || '');

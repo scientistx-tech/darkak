@@ -19,7 +19,7 @@ export default function SeoCart() {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`${BASE_URL}/public/page-seo/product`) ///will cahnge type "category","about"
+      .get(`${BASE_URL}/public/page-seo/moderator_login`) ///will cahnge type "moderator_login","about"
       .then((res) => {
         const data = res.data?.data;
         setMetaTitle(data?.meta_title || '');
@@ -70,7 +70,7 @@ export default function SeoCart() {
       }
 
       const payload = {
-        type: 'product',
+        type: 'moderator_login',
         meta_title: metaTitle,
         meta_description: metaDescription,
         meta_keywords: keywords,
