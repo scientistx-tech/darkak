@@ -67,7 +67,9 @@ export default function SeoCart() {
           },
         });
         uploadedUrl = uploadRes.data?.[0];
+        console.log(uploadRes.data)
       }
+
 
       const payload = {
         type: 'home',
