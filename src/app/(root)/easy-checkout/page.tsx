@@ -3,8 +3,10 @@ import EasyCheckout from './EasyCheckout'
 
 
 import getSeoData from '../getSeoData';
+// Fetch metadata for SEO
 export async function generateMetadata() {
-  const data = await getSeoData('category');
+  const data = await getSeoData('check_out');
+  //console.log(data);
 
   return {
     title: data?.data?.meta_title || '',
@@ -24,7 +26,6 @@ export async function generateMetadata() {
     },
   };
 }
-
 export default function page() {
   return (
     <div>
