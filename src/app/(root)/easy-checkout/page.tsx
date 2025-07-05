@@ -1,15 +1,10 @@
 import React from 'react'
 import EasyCheckout from './EasyCheckout'
-import { Metadata } from 'next';
-// export const metadata: Metadata = {
-//   title: "Checkout"
-// };
+
 
 import getSeoData from '../getSeoData';
-// Fetch metadata for SEO
 export async function generateMetadata() {
-  const data = await getSeoData('check_out');
-  //console.log(data);
+  const data = await getSeoData('category');
 
   return {
     title: data?.data?.meta_title || '',
@@ -29,10 +24,10 @@ export async function generateMetadata() {
     },
   };
 }
+
 export default function page() {
   return (
     <div>
-        <div className="h-[65px] md:h-[109px] w-full"/>
         <EasyCheckout />
     </div>
   )
