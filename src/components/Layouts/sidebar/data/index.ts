@@ -15,6 +15,7 @@ import { BsTornado } from "react-icons/bs";
 import { FaListAlt } from "react-icons/fa";
 import { IoMdAddCircle } from "react-icons/io";
 import { FaRegListAlt } from "react-icons/fa";
+import { RiSeoLine } from "react-icons/ri";
 export const getSellerNavData = (data: any) => [
   {
     label: "Seller Dashboard",
@@ -635,6 +636,69 @@ export const getNavData = (data: any, vendorData: any) => [
           {
             title: "Site Settings",
             url: "/admin/settings/site-settings",
+          },
+        ],
+      },
+      {
+        title: "SEO",
+        accessKey: "seo",
+        icon: RiSeoLine,
+        items: [
+          {
+            title: "Home Page",
+            url: "/admin/seo/home-page",
+          },
+          {
+            title: "Category Page",
+            url: "/admin/seo/category-page",
+          },
+          {
+            title: "Product Page",
+            url: "/admin/seo/product-page",
+          },
+          {
+            title: "Vendor Page",
+            url: "/admin/seo/vendor-page",
+          },
+          {
+            title: "Contact Us Page",
+            url: "/admin/seo/contact-us-page",
+          },
+          {
+            title: "CheckOut Page",
+            url: "/admin/seo/checkout-page",
+          },
+          {
+            title: "About Us Page",
+            url: "/admin/seo/about-us-page",
+          },
+          {
+            title: "Private Policy Page",
+            url: "/admin/seo/private-policy-page",
+          },
+          {
+            title: "Terms Condition Page",
+            url: "/admin/seo/terms-condition-page",
+          },
+          {
+            title: "FAQ Page",
+            url: "/admin/seo/faq-page",
+          },
+          {
+            title: "SignUp Page",
+            url: "/admin/seo/signup-page",
+          },
+          {
+            title: "LogIn Page",
+            url: "/admin/seo/login-page",
+          },
+          {
+            title: "Forgot Password Page",
+            url: "/admin/seo/forgot-password-page",
+          },
+          {
+            title: "Moderator LonIn Page",
+            url: "/admin/seo/moderator-login-page",
           },
         ],
       },
