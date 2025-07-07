@@ -1,41 +1,42 @@
-import { useCreateDeliveryMutation } from "@/redux/services/admin/adminCourierApis";
+import { useCreateDeliveryMutation } from '@/redux/services/admin/adminCourierApis';
 import {
   useCreateModeratorMutation,
   useUpdateModeratorAccessMutation,
-} from "@/redux/services/admin/adminModeratorApis";
-import { useUpdateOrderStatusMutation } from "@/redux/services/admin/adminOrderApis";
-import { Modal } from "antd";
-import { EmailAuthCredential } from "firebase/auth";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import { FiEye, FiEyeOff } from "react-icons/fi";
+} from '@/redux/services/admin/adminModeratorApis';
+import { useUpdateOrderStatusMutation } from '@/redux/services/admin/adminOrderApis';
+import { Modal } from 'antd';
+import { EmailAuthCredential } from 'firebase/auth';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 const accessList = [
-  "order-pending",
-  "order-confirm",
-  "order-packaging",
-  "order-out-for-delivery",
-  "order-delivered",
-  "order-returned",
-  "order-failed-to-deliver",
-  "order-cancelled",
-  "refund-pending",
-  "refund-approved",
-  "refund-refunded",
-  "refund-rejected",
-  "category",
-  "sub-category",
-  "sub-sub-category",
-  "brand",
-  "attribute",
-  "product-list",
-  "product-add",
-  "sliders",
-  "customer-list",
-  "customer-review",
-  "add-vendor",
-  "vendor-list",
+  'order-pending',
+  'order-confirm',
+  'order-packaging',
+  'order-out-for-delivery',
+  'order-delivered',
+  'order-returned',
+  'order-failed-to-deliver',
+  'order-cancelled',
+  'refund-pending',
+  'refund-approved',
+  'refund-refunded',
+  'refund-rejected',
+  'category',
+  'sub-category',
+  'sub-sub-category',
+  'brand',
+  'attribute',
+  'product-list',
+  'product-add',
+  'sliders',
+  'customer-list',
+  'customer-review',
+  'add-vendor',
+  'vendor-list',
+  'seo',
 ];
 
 const AddModeratorModal = ({
@@ -60,17 +61,16 @@ const AddModeratorModal = ({
     value: { id: number; moderator_access: { access: string }[] };
   }) => void;
 }) => {
-  const [fullName, setFullName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [fullName, setFullName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [selectedAccessList, setSelectedAccessList] = useState<string[]>([]);
-  const [confirmAddModeratorLoading, setConfirmAddModeratorLoading] =
-    useState<boolean>(false);
+  const [confirmAddModeratorLoading, setConfirmAddModeratorLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  console.log("isEditable", isEditable);
+  console.log('isEditable', isEditable);
 
-  console.log("selectedList", selectedAccessList);
+  console.log('selectedList', selectedAccessList);
 
   // redux hooks
   const [createModerator] = useCreateModeratorMutation();
@@ -84,7 +84,7 @@ const AddModeratorModal = ({
       : [];
     setSelectedAccessList(filteredList);
 
-    console.log("fil", filteredList);
+    console.log('fil', filteredList);
   }, [isEditable]);
 
   const handleAddModeratorModalOk = async () => {
@@ -101,7 +101,7 @@ const AddModeratorModal = ({
           id: Number(id),
           data: payload,
         }).unwrap();
-        toast.success(res?.message || "Successfully Update Moderator Access");
+        toast.success(res?.message || 'Successfully Update Moderator Access');
       } else {
         // Prepare payload
         const payload = {
@@ -111,7 +111,7 @@ const AddModeratorModal = ({
           accessList: selectedAccessList,
         };
         const res = await createModerator(payload).unwrap();
-        toast.success(res?.message || "Successfully Created Moderator");
+        toast.success(res?.message || 'Successfully Created Moderator');
       }
       refetch();
     } catch (error: any) {
@@ -121,7 +121,7 @@ const AddModeratorModal = ({
       setOpenAddModeratorCourierModal(false);
       setIsEditable({
         status: false,
-        value: { id: 0, moderator_access: [{ access: "" }] },
+        value: { id: 0, moderator_access: [{ access: '' }] },
       });
     }
   };
@@ -130,13 +130,13 @@ const AddModeratorModal = ({
     setOpenAddModeratorCourierModal(false);
     setIsEditable({
       status: false,
-      value: { id: 0, moderator_access: [{ access: "" }] },
+      value: { id: 0, moderator_access: [{ access: '' }] },
     });
   };
 
   return (
     <Modal
-      title={`${isEditable?.status ? "Edit" : "Add New"} Moderator ${isEditable?.status ? "Access" : ""}`}
+      title={`${isEditable?.status ? 'Edit' : 'Add New'} Moderator ${isEditable?.status ? 'Access' : ''}`}
       open={openAddModeratorModal}
       onOk={handleAddModeratorModalOk}
       confirmLoading={confirmAddModeratorLoading}
@@ -145,11 +145,9 @@ const AddModeratorModal = ({
       <div className="space-y-4">
         {!isEditable?.status && (
           <>
-            {" "}
+            {' '}
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-900">
-                Name
-              </label>
+              <label className="mb-1 block text-sm font-medium text-slate-900">Name</label>
               <input
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
@@ -160,9 +158,7 @@ const AddModeratorModal = ({
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-900">
-                Email
-              </label>
+              <label className="mb-1 block text-sm font-medium text-slate-900">Email</label>
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -173,15 +169,13 @@ const AddModeratorModal = ({
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-900">
-                Password
-              </label>
+              <label className="mb-1 block text-sm font-medium text-slate-900">Password</label>
               <div className="relative">
                 <input
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full rounded border p-2 pr-10 text-slate-900"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   name=""
                   id=""
                 />
@@ -218,9 +212,7 @@ const AddModeratorModal = ({
                     type="button"
                     className="ml-1 text-red-500 hover:text-red-700"
                     onClick={() =>
-                      setSelectedAccessList(
-                        selectedAccessList.filter((item) => item !== ac),
-                      )
+                      setSelectedAccessList(selectedAccessList.filter((item) => item !== ac))
                     }
                   >
                     ×
@@ -239,7 +231,7 @@ const AddModeratorModal = ({
               if (selected && !selectedAccessList.includes(selected)) {
                 setSelectedAccessList([...selectedAccessList, selected]);
               }
-              e.target.value = ""; // reset to placeholder
+              e.target.value = ''; // reset to placeholder
             }}
           >
             <option value="">Select Section</option>
