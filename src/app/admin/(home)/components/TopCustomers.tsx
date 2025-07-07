@@ -20,9 +20,9 @@ const TopCustomers: React.FC<TopCustomersProps> = ({ customers }) => {
   const topFiveCustomers = customers.slice(0, 5);
 
   return (
-    <div className="overflow-hidden rounded-lg bg-white shadow">
+    <div className="overflow-hidden rounded-lg bg-white dark:bg-gray-dark shadow">
       <div className="border-b p-4">
-        <h3 className="text-md font-semibold">Top Customer</h3>
+        <h3 className="text-md font-semibold dark:text-white">Top Customer</h3>
       </div>
       <div className="divide-y">
         {topFiveCustomers.map((customer) => (
@@ -43,19 +43,19 @@ const TopCustomers: React.FC<TopCustomersProps> = ({ customers }) => {
                 )}
               </div>
               <div>
-                <h4 className="text-sm font-medium">{customer.name}</h4>
-                <p className="text-xs text-gray-500">{customer.email}</p>
+                <h4 className="text-sm font-medium dark:text-white">{customer.name}</h4>
+                <p className="text-xs text-gray-500 dark:text-gray-100">{customer.email}</p>
               </div>
             </div>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-gray-500 dark:text-white">
               Orders:{" "}
-              <span className="font-medium">{customer._count.orders}</span>
+              <span className="font-medium dark:text-white">{customer._count.orders}</span>
             </div>
           </div>
         ))}
 
         {topFiveCustomers.length === 0 && (
-          <div className="p-4 text-center text-gray-500">
+          <div className="p-4 text-center text-gray-500 dark:text-white">
             No customers data available
           </div>
         )}

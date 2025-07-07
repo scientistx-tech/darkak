@@ -1,40 +1,38 @@
-"use client";
+'use client';
 import {
   useGetSingleProductDetailsQuery,
   useUpdateProductMutation,
-} from "@/redux/services/admin/adminProductApis";
-import { useParams } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
+} from '@/redux/services/admin/adminProductApis';
+import { useParams } from 'next/navigation';
+import React, { useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import {
   useDeleteSubSubCategoryMutation,
   useGetCategoriesQuery,
   useGetSubCategoriesQuery,
   useGetSubSubCategoriesQuery,
-} from "@/redux/services/admin/adminCategoryApis";
-import { useGetBrandsQuery } from "@/redux/services/admin/adminBrandApis";
+} from '@/redux/services/admin/adminCategoryApis';
+import { useGetBrandsQuery } from '@/redux/services/admin/adminBrandApis';
 import {
   useCreateProductMutation,
   useGetProductAttributesQuery,
   useUploadImagesMutation,
-} from "@/redux/services/admin/adminProductApis";
-import axios from "axios";
-import { log } from "util";
-import Image from "next/image";
-import { toast } from "react-toastify";
-import { Router } from "next/router";
-import { useRouter } from "next/navigation";
-import { FaTrashAlt } from "react-icons/fa";
-import AsyncSelect from "react-select/async";
-import { useSelector } from "react-redux";
-import JoditEditor from "jodit-react";
-import Cookies from "js-cookie";
-import transformAliExpressProduct from "../../utils/product";
+} from '@/redux/services/admin/adminProductApis';
+import axios from 'axios';
+import { log } from 'util';
+import Image from 'next/image';
+import { toast } from 'react-toastify';
+import { Router } from 'next/router';
+import { useRouter } from 'next/navigation';
+import { FaTrashAlt } from 'react-icons/fa';
+import AsyncSelect from 'react-select/async';
+import { useSelector } from 'react-redux';
+import JoditEditor from 'jodit-react';
+import Cookies from 'js-cookie';
+import transformAliExpressProduct from '../../utils/product';
+import ShippingModal from '../../components/ShippingModal';
 
-const CustomEditor = dynamic(
-  () => import("@/app/admin/components/CustomEditor"),
-  { ssr: false },
-);
+const CustomEditor = dynamic(() => import('@/app/admin/components/CustomEditor'), { ssr: false });
 
 // --- Type Definitions ---
 type DeliveryInfo = {
@@ -61,7 +59,7 @@ type AttributeItem = {
   options: AttributeOption[];
 };
 
-type DiscountType = "flat" | "percentage";
+type DiscountType = 'flat' | 'percentage';
 
 type ProductFormData = {
   title: string;
@@ -72,9 +70,15 @@ type ProductFormData = {
   meta_keywords: string;
   video_link: string;
   thumbnail: string;
+  thumbnail_alt: string;
+  slug: string;
+  meta_alt: string;
   price: string;
   discount_type: string;
+  discount_type_mobile: string;
   discount: string;
+  discount_mobile: string;
+  images: { url: string; alt: string }[];
   tax_amount: string;
   tax_type: string;
   available: string;
@@ -94,254 +98,258 @@ type ProductFormData = {
   subSubCategoryId: string;
   brandId: string;
   keywords: string;
-  images: string[];
   delivery_info: DeliveryInfo;
   items: AttributeItem[];
 };
 
 const countryCodes = [
-  "AF",
-  "AL",
-  "DZ",
-  "AS",
-  "AD",
-  "AO",
-  "AI",
-  "AQ",
-  "AG",
-  "AR",
-  "AM",
-  "AW",
-  "AU",
-  "AT",
-  "AZ",
-  "BS",
-  "BH",
-  "BD",
-  "BB",
-  "BY",
-  "BE",
-  "BZ",
-  "BJ",
-  "BM",
-  "BT",
-  "BO",
-  "BA",
-  "BW",
-  "BR",
-  "BN",
-  "BG",
-  "BF",
-  "BI",
-  "KH",
-  "CM",
-  "CA",
-  "CV",
-  "CF",
-  "TD",
-  "CL",
-  "CN",
-  "CO",
-  "KM",
-  "CG",
-  "CD",
-  "CR",
-  "CI",
-  "HR",
-  "CU",
-  "CY",
-  "CZ",
-  "DK",
-  "DJ",
-  "DM",
-  "DO",
-  "EC",
-  "EG",
-  "SV",
-  "GQ",
-  "ER",
-  "EE",
-  "ET",
-  "FJ",
-  "FI",
-  "FR",
-  "GA",
-  "GM",
-  "GE",
-  "DE",
-  "GH",
-  "GR",
-  "GD",
-  "GT",
-  "GN",
-  "GW",
-  "GY",
-  "HT",
-  "HN",
-  "HU",
-  "IS",
-  "IN",
-  "ID",
-  "IR",
-  "IQ",
-  "IE",
-  "IL",
-  "IT",
-  "JM",
-  "JP",
-  "JO",
-  "KZ",
-  "KE",
-  "KI",
-  "KR",
-  "KW",
-  "KG",
-  "LA",
-  "LV",
-  "LB",
-  "LS",
-  "LR",
-  "LY",
-  "LI",
-  "LT",
-  "LU",
-  "MG",
-  "MW",
-  "MY",
-  "MV",
-  "ML",
-  "MT",
-  "MH",
-  "MR",
-  "MU",
-  "MX",
-  "FM",
-  "MD",
-  "MC",
-  "MN",
-  "ME",
-  "MA",
-  "MZ",
-  "MM",
-  "NA",
-  "NR",
-  "NP",
-  "NL",
-  "NZ",
-  "NI",
-  "NE",
-  "NG",
-  "NO",
-  "OM",
-  "PK",
-  "PW",
-  "PA",
-  "PG",
-  "PY",
-  "PE",
-  "PH",
-  "PL",
-  "PT",
-  "QA",
-  "RO",
-  "RU",
-  "RW",
-  "KN",
-  "LC",
-  "VC",
-  "WS",
-  "SM",
-  "ST",
-  "SA",
-  "SN",
-  "RS",
-  "SC",
-  "SL",
-  "SG",
-  "SK",
-  "SI",
-  "SB",
-  "SO",
-  "ZA",
-  "ES",
-  "LK",
-  "SD",
-  "SR",
-  "SE",
-  "CH",
-  "SY",
-  "TW",
-  "TJ",
-  "TZ",
-  "TH",
-  "TL",
-  "TG",
-  "TO",
-  "TT",
-  "TN",
-  "TR",
-  "TM",
-  "UG",
-  "UA",
-  "AE",
-  "GB",
-  "US",
-  "UY",
-  "UZ",
-  "VU",
-  "VA",
-  "VE",
-  "VN",
-  "YE",
-  "ZM",
-  "ZW",
+  'AF',
+  'AL',
+  'DZ',
+  'AS',
+  'AD',
+  'AO',
+  'AI',
+  'AQ',
+  'AG',
+  'AR',
+  'AM',
+  'AW',
+  'AU',
+  'AT',
+  'AZ',
+  'BS',
+  'BH',
+  'BD',
+  'BB',
+  'BY',
+  'BE',
+  'BZ',
+  'BJ',
+  'BM',
+  'BT',
+  'BO',
+  'BA',
+  'BW',
+  'BR',
+  'BN',
+  'BG',
+  'BF',
+  'BI',
+  'KH',
+  'CM',
+  'CA',
+  'CV',
+  'CF',
+  'TD',
+  'CL',
+  'CN',
+  'CO',
+  'KM',
+  'CG',
+  'CD',
+  'CR',
+  'CI',
+  'HR',
+  'CU',
+  'CY',
+  'CZ',
+  'DK',
+  'DJ',
+  'DM',
+  'DO',
+  'EC',
+  'EG',
+  'SV',
+  'GQ',
+  'ER',
+  'EE',
+  'ET',
+  'FJ',
+  'FI',
+  'FR',
+  'GA',
+  'GM',
+  'GE',
+  'DE',
+  'GH',
+  'GR',
+  'GD',
+  'GT',
+  'GN',
+  'GW',
+  'GY',
+  'HT',
+  'HN',
+  'HU',
+  'IS',
+  'IN',
+  'ID',
+  'IR',
+  'IQ',
+  'IE',
+  'IL',
+  'IT',
+  'JM',
+  'JP',
+  'JO',
+  'KZ',
+  'KE',
+  'KI',
+  'KR',
+  'KW',
+  'KG',
+  'LA',
+  'LV',
+  'LB',
+  'LS',
+  'LR',
+  'LY',
+  'LI',
+  'LT',
+  'LU',
+  'MG',
+  'MW',
+  'MY',
+  'MV',
+  'ML',
+  'MT',
+  'MH',
+  'MR',
+  'MU',
+  'MX',
+  'FM',
+  'MD',
+  'MC',
+  'MN',
+  'ME',
+  'MA',
+  'MZ',
+  'MM',
+  'NA',
+  'NR',
+  'NP',
+  'NL',
+  'NZ',
+  'NI',
+  'NE',
+  'NG',
+  'NO',
+  'OM',
+  'PK',
+  'PW',
+  'PA',
+  'PG',
+  'PY',
+  'PE',
+  'PH',
+  'PL',
+  'PT',
+  'QA',
+  'RO',
+  'RU',
+  'RW',
+  'KN',
+  'LC',
+  'VC',
+  'WS',
+  'SM',
+  'ST',
+  'SA',
+  'SN',
+  'RS',
+  'SC',
+  'SL',
+  'SG',
+  'SK',
+  'SI',
+  'SB',
+  'SO',
+  'ZA',
+  'ES',
+  'LK',
+  'SD',
+  'SR',
+  'SE',
+  'CH',
+  'SY',
+  'TW',
+  'TJ',
+  'TZ',
+  'TH',
+  'TL',
+  'TG',
+  'TO',
+  'TT',
+  'TN',
+  'TR',
+  'TM',
+  'UG',
+  'UA',
+  'AE',
+  'GB',
+  'US',
+  'UY',
+  'UZ',
+  'VU',
+  'VA',
+  'VE',
+  'VN',
+  'YE',
+  'ZM',
+  'ZW',
 ];
 
 const AliExpressProductEdit = () => {
   const params = useParams();
   const { id } = params;
-  const [aliExpressProductId, setAliExpressProductId] = useState("");
+  const [aliExpressProductId, setAliExpressProductId] = useState('');
   const [formData, setFormData] = useState<any>({
-    title: "",
-    short_description: "",
+    title: '',
+    short_description: '',
     aliexpress_benifit: 1,
-    meta_title: "",
-    meta_image: "",
-    meta_description: "",
-    meta_keywords: "",
-    video_link: "",
-    thumbnail: "",
-    price: "",
-    discount_type: "",
-    discount: "",
-    tax_amount: "",
-    tax_type: "include",
-    available: "",
-    warranty: "",
-    warranty_time: "",
-    region: "",
-    stock: "",
-    minOrder: "",
-    unit: "",
-    code: "",
-    specification: "",
-    description: "",
-    warranty_details: "",
-    categoryId: "",
-    subCategoryId: "",
-    subSubCategoryId: "",
-    brandId: "",
-    keywords: "",
-    drafted: false,
+    meta_title: '',
+    meta_image: '',
+    meta_description: '',
+    meta_keywords: '',
+    video_link: '',
+    thumbnail: '',
+    thumbnail_alt: '',
+    slug: '',
+    meta_alt: '',
+    price: '',
+    discount_type: '',
+    discount_type_mobile: '',
+    discount: '',
+    discount_mobile: '',
     images: [],
-    ae_item_sku_info_dtos: {},
+    tax_amount: '',
+    tax_type: 'include',
+    available: '',
+    warranty: '',
+    warranty_time: '',
+    region: '',
+    stock: '',
+    minOrder: '',
+    unit: '',
+    code: '',
+    specification: '',
+    description: '',
+    warranty_details: '',
+    categoryId: '',
+    subCategoryId: '',
+    subSubCategoryId: '',
+    brandId: '',
+    keywords: '',
+    drafted: false,
+    ae_sku_property_dtos: {},
     delivery_info: {
-      delivery_time: "",
-      delivery_charge: "",
-      delivery_time_outside: "",
-      delivery_charge_outside: "",
-      return_days: "",
-      multiply: "",
+      delivery_time: '',
+      delivery_charge: '',
+      delivery_time_outside: '',
+      delivery_charge_outside: '',
+      return_days: '',
+      multiply: '',
     } as DeliveryInfo,
     items: [],
   });
@@ -349,14 +357,14 @@ const AliExpressProductEdit = () => {
   const descriptionEditor = useRef(null);
   const warrantyEditor = useRef(null);
   const specificationEditor = useRef(null);
-  const [currentLanguage, setCurrentLanguage] = useState("en");
-  const [productSKU, setProductSKU] = useState("5Y5LMO");
+  const [currentLanguage, setCurrentLanguage] = useState('en');
+  const [productSKU, setProductSKU] = useState('5Y5LMO');
   const [multiplyShipping, setMultiplyShipping] = useState(false);
   const [thumbnailUploading, setThumbnailUploading] = useState(false);
   const [imagesUploading, setImagesUploading] = useState(false);
   const [metaImageUploading, setMetaImageUploading] = useState(false);
   const [optionImageUploading, setOptionImageUploading] = useState(false);
-  const [currentTab, setCurrentTab] = useState<string>("desc");
+  const [currentTab, setCurrentTab] = useState<string>('desc');
   const [selectedBrand, setSelectedBrand] = useState<{
     value: string;
     label: string;
@@ -374,35 +382,29 @@ const AliExpressProductEdit = () => {
     label: string;
   } | null>(null);
   const [productDetails, setProductDetails] = useState<any>([]);
+  const [shippingInfo, setShippingInfo] = useState<any[]>([]);
+  const [shippingFee, setShippingFee] = useState<number>(0);
 
-  // load all categories, sub categories, sub sub categories and brands
-  const { data: categoriesData } = useGetCategoriesQuery({});
-  const { data: subCategoriesData } = useGetSubCategoriesQuery({});
-  const { data: subSubCategoriesData } = useGetSubSubCategoriesQuery({});
-  const { data: brandsData } = useGetBrandsQuery({});
   const { data: attributesData } = useGetProductAttributesQuery({});
-  const {
-    data: productData,
-    error,
-    isLoading,
-    refetch,
-  } = useGetSingleProductDetailsQuery(id);
+
   const [uploadImages] = useUploadImagesMutation();
-  const [createProduct] = useCreateProductMutation();
-  const [updateProduct, { isLoading: loadingUpadate }] =
-    useUpdateProductMutation();
+  const [createProduct, { isLoading: isCreating }] = useCreateProductMutation();
 
   const router = useRouter();
+
   const token = useSelector((state: any) => state.auth.token);
-  const aliExpresstoken = Cookies.get("aliExpressToken");
+  const aliExpresstoken = Cookies.get('aliExpressToken');
 
   const fetchProductShippingInfo = async (skuId: string) => {
     try {
       const response = await fetch(
-        `https://api.darkak.com.bd/api/aliexpress/get-product-shiping/${aliExpresstoken}?queryDeliveryReq={"quantity":1,"shipToCountry":"BD","productId":${id},"language":"en_US","locale":"en_US","selectedSkuId":${skuId},"currency":"BDT"}`,
+        `https://api.darkak.com.bd/api/aliexpress/get-product-shiping/${aliExpresstoken}?queryDeliveryReq={"quantity":1,"shipToCountry":"BD","productId":${id},"language":"en_US","locale":"en_US","selectedSkuId":${skuId},"currency":"BDT"}`
       );
       const data = await response.json();
-      console.log("shp data", data);
+      console.log('shp data', data);
+      setShippingInfo(
+        data?.aliexpress_ds_freight_query_response?.result?.delivery_options?.delivery_option_d_t_o
+      );
     } catch (error: any) {
       toast.error(error?.data?.message);
     }
@@ -411,43 +413,55 @@ const AliExpressProductEdit = () => {
   const fetchSingleProductFromAliExpress = async () => {
     try {
       const response = await fetch(
-        `https://api.darkak.com.bd/api/aliexpress/get-product-details/${aliExpresstoken}?ship_to_country=BD&product_id=${id}&target_currency=BDT&target_language=en_US`,
+        `https://api.darkak.com.bd/api/aliexpress/get-product-details/${aliExpresstoken}?ship_to_country=BD&product_id=${id}&target_currency=BDT&target_language=en_US`
       );
       const data = await response.json();
       const shippingFee = fetchProductShippingInfo(
         data?.aliexpress_ds_product_get_response?.result?.ae_item_sku_info_dtos
-          ?.ae_item_sku_info_d_t_o[0].sku_id,
+          ?.ae_item_sku_info_d_t_o[0].sku_id
       );
       const transformed = transformAliExpressProduct(
-        data?.aliexpress_ds_product_get_response?.result,
+        data?.aliexpress_ds_product_get_response?.result
       );
       setFormData(transformed);
       setProductDetails(transformed);
       setAliExpressProductId(
-        data?.aliexpress_ds_product_get_response?.result?.ae_item_base_info_dto
-          ?.product_id,
+        data?.aliexpress_ds_product_get_response?.result?.ae_item_base_info_dto?.product_id
       );
     } catch (err: any) {
-      toast.error("Failed to fetch categories");
+      toast.error('Failed to fetch categories');
     }
   };
+
+  useEffect(() => {
+    let calculatedPrice = 0;
+    const price = Number(formData?.base_price) || 0;
+    console.log('rpicde', price);
+    const fee = Number(shippingFee) || 0;
+    console.log('fee', fee);
+    const benefit = Number(formData?.aliexpress_benifit) || 1;
+    console.log('benefit', benefit);
+
+    calculatedPrice = Math.round((price + fee) * benefit);
+    console.log('calculated', calculatedPrice);
+    setFormData((prev: any) => ({
+      ...prev,
+      price: calculatedPrice,
+    }));
+  }, [shippingFee, formData.aliexpress_benifit]);
 
   useEffect(() => {
     fetchSingleProductFromAliExpress();
   }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev: any) => ({ ...prev, [name]: value }));
   };
 
-  const handleDeliveryChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const handleDeliveryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev: any) => ({
       ...prev,
@@ -455,16 +469,15 @@ const AliExpressProductEdit = () => {
     }));
   };
 
-  const handleEditorChange =
-    (field: keyof ProductFormData) => (value: string) => {
-      setFormData((prev: any) => ({ ...prev, [field]: value }));
-    };
+  const handleEditorChange = (field: keyof ProductFormData) => (value: string) => {
+    setFormData((prev: any) => ({ ...prev, [field]: value }));
+  };
 
   const handleImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    type: "images" | "thumbnail" | "meta_image" | "option_image" = "images",
+    type: 'images' | 'thumbnail' | 'meta_image' | 'option_image' = 'images',
     attributeIndex?: number,
-    optionIndex?: number,
+    optionIndex?: number
   ) => {
     e.preventDefault && e.preventDefault();
 
@@ -472,15 +485,11 @@ const AliExpressProductEdit = () => {
     if (!files.length) return;
 
     try {
-      if (
-        type === "option_image" &&
-        attributeIndex !== undefined &&
-        optionIndex !== undefined
-      ) {
+      if (type === 'option_image' && attributeIndex !== undefined && optionIndex !== undefined) {
         // Upload image for a specific option
         setOptionImageUploading(true);
         const imgForm = new FormData();
-        imgForm.append("images", files[0]);
+        imgForm.append('images', files[0]);
         const res = await uploadImages(imgForm).unwrap();
         const url = res[0];
         setFormData((prev: any) => {
@@ -488,68 +497,98 @@ const AliExpressProductEdit = () => {
           updatedItems[attributeIndex].options[optionIndex].image = url;
           return { ...prev, items: updatedItems };
         });
-      } else if (type === "images") {
-        // Upload all images in one request
-        setImagesUploading(true);
-        const imgForm = new FormData();
-        files.forEach((file) => imgForm.append("images", file));
-        const res = await uploadImages(imgForm).unwrap();
-
-        const uploadedUrls = res || [];
-        setFormData((prev: any) => ({
-          ...prev,
-          images: [...prev.images, ...uploadedUrls],
-        }));
       } else {
         // Upload single file for thumbnail or meta_image
 
-        if (type === "thumbnail") {
+        if (type === 'thumbnail') {
           setThumbnailUploading(true);
           const imgForm = new FormData();
-          imgForm.append("images", files[0]);
+          imgForm.append('images', files[0]);
           const res = await uploadImages(imgForm).unwrap();
           const url = res[0];
           setFormData((prev: any) => ({ ...prev, thumbnail: url }));
-        } else if (type === "meta_image") {
+        } else if (type === 'meta_image') {
           setMetaImageUploading(true);
           const imgForm = new FormData();
-          imgForm.append("images", files[0]);
+          imgForm.append('images', files[0]);
           const res = await uploadImages(imgForm).unwrap();
           const url = res[0];
           setFormData((prev: any) => ({ ...prev, meta_image: url }));
         }
       }
     } catch (error) {
-      console.error("Image upload failed", error);
+      console.error('Image upload failed', error);
     } finally {
       setThumbnailUploading(false);
       setMetaImageUploading(false);
       setImagesUploading(false);
       setOptionImageUploading(false);
-      e.target.value = ""; // Reset input
+      e.target.value = ''; // Reset input
     }
   };
 
+  const handleAdditionalImagesUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    e.preventDefault && e.preventDefault();
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    try {
+      setImagesUploading(true);
+      const imgForm = new FormData();
+      imgForm.append('images', files[0]);
+      const res = await uploadImages(imgForm).unwrap();
+      const url = res[0];
+
+      setFormData((prev: any) => {
+        const updatedImages = [...prev.images];
+        updatedImages[index] = { ...updatedImages[index], url };
+        return { ...prev, images: updatedImages };
+      });
+    } catch (error) {
+      console.error('Image upload failed', error);
+    } finally {
+      setImagesUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleAltChange = (index: number, alt: string) => {
+    setFormData((prev: any) => {
+      const updatedImages = [...prev.images];
+      updatedImages[index] = { ...updatedImages[index], alt };
+      return { ...prev, images: updatedImages };
+    });
+  };
+
+  const addImageField = () => {
+    setFormData((prev: any) => ({
+      ...prev,
+      images: [...prev.images, { url: '', alt: '' }],
+    }));
+  };
+
   function validateProductForm(formData: ProductFormData): string | null {
-    if (!formData.title) return "Product Name is required";
-    if (!formData.short_description) return "Short Description is required";
-    if (!formData.meta_title) return "Meta Title is required";
-    if (!formData.meta_image) return "Meta Image is required";
-    if (!formData.thumbnail) return "Thumbnail is required";
-    if (!formData.price) return "Price is required";
-    if (!formData.unit) return "Unit is required";
-    if (!formData.categoryId) return "Category is required";
-    if (!formData.brandId) return "Brand is required";
-    if (!formData.keywords) return "Keywords are required";
-    if (!formData.delivery_info.delivery_time)
-      return "Delivery Time is required";
-    if (!formData.delivery_info.delivery_charge)
-      return "Delivery Charge is required";
-    if (!formData.delivery_info.delivery_time_outside)
-      return "Delivery Time Outside is required";
+    if (!formData.title) return 'Product Name is required';
+    if (!formData.short_description) return 'Short Description is required';
+    if (!formData.meta_title) return 'Meta Title is required';
+    if (!formData.meta_image) return 'Meta Image is required';
+    if (!formData.meta_alt) return 'Meta Alt is required';
+    if (!formData.slug) return 'Slug is required';
+    if (!formData.thumbnail) return 'Thumbnail is required';
+    if (!formData.price) return 'Price is required';
+    if (!formData.unit) return 'Unit is required';
+    if (!formData.categoryId) return 'Category is required';
+    if (!formData.brandId) return 'Brand is required';
+    if (!formData.keywords) return 'Keywords are required';
+    if (!formData.delivery_info.delivery_time) return 'Delivery Time is required';
+    if (!formData.delivery_info.delivery_charge) return 'Delivery Charge is required';
+    if (!formData.delivery_info.delivery_time_outside) return 'Delivery Time Outside is required';
     if (!formData.delivery_info.delivery_charge_outside)
-      return "Delivery Charge Outside is required";
-    if (!formData.delivery_info.return_days) return "Return Days is required";
+      return 'Delivery Charge Outside is required';
+    if (!formData.delivery_info.return_days) return 'Return Days is required';
     return null; // All good!
   }
 
@@ -570,24 +609,29 @@ const AliExpressProductEdit = () => {
       meta_image: formData.meta_image,
       video_link: formData.video_link,
       thumbnail: formData.thumbnail,
+      thumbnail_alt: formData.thumbnail_alt,
+      slug: formData.slug,
+      meta_alt: formData.meta_alt,
       price: formData.price, // keep as string
       discount_type: formData.discount_type as DiscountType,
-      discount: formData.discount || "0",
-      tax_amount: formData.tax_amount || "0",
-      tax_type: formData.tax_type || "exclude",
+      discount_type_mobile: formData.discount_type_mobile as DiscountType,
+      discount: formData.discount || '0',
+      discount_mobile: formData.discount_mobile || '0',
+      tax_amount: formData.tax_amount || '0',
+      tax_type: formData.tax_type || 'exclude',
       available: formData.available,
       warranty: formData.warranty,
       warranty_time: formData.warranty_time,
       region: formData.region,
-      stock: formData.stock || "0",
-      minOrder: formData.minOrder || "1",
+      stock: formData.stock || '0',
+      minOrder: formData.minOrder || '1',
       unit: formData.unit,
-      specification: formData.specification || "",
-      description: formData.description || "",
-      warranty_details: formData.warranty_details || "",
+      specification: formData.specification || '',
+      description: formData.description || '',
+      warranty_details: formData.warranty_details || '',
       meta_description: formData.meta_description,
       meta_keywords: formData.meta_keywords
-        .split(",")
+        .split(',')
         .map((k: any) => k.trim())
         .filter(Boolean),
       categoryId: formData.categoryId,
@@ -595,34 +639,32 @@ const AliExpressProductEdit = () => {
       drafted: isDraft,
       brandId: formData.brandId,
       keywords: formData.keywords
-        .split(",")
+        .split(',')
         .map((k: any) => k.trim())
         .filter(Boolean),
       images: formData.images,
-      ae_item_sku_info_dtos: formData.ae_item_sku_info_dtos,
+      ae_sku_property_dtos: formData.ae_sku_property_dtos,
       delivery_info: {
         delivery_time: formData.delivery_info.delivery_time,
         delivery_charge: formData.delivery_info.delivery_charge,
         delivery_time_outside: formData.delivery_info.delivery_time_outside,
         delivery_charge_outside: formData.delivery_info.delivery_charge_outside,
         return_days: formData.delivery_info.return_days,
-        multiply: multiplyShipping ? "true" : "false",
+        multiply: multiplyShipping ? 'true' : 'false',
       },
       items: formData.items.map((item: any) => ({
-        attributeId: item.attributeId || "",
+        attributeId: item.attributeId || '',
         options: item.options.map((opt: any) => ({
           ...opt,
-          price:
-            typeof opt.price === "string" ? parseFloat(opt.price) : opt.price,
-          stock:
-            typeof opt.stock === "string" ? parseInt(opt.stock) : opt.stock,
+          price: typeof opt.price === 'string' ? parseFloat(opt.price) : opt.price,
+          stock: typeof opt.stock === 'string' ? parseInt(opt.stock) : opt.stock,
           sku:
             opt.sku !== undefined
               ? String(opt.sku)
               : opt.stock !== undefined
                 ? String(opt.stock)
-                : "",
-          image: opt.image || "",
+                : '',
+          image: opt.image || '',
         })),
       })),
     };
@@ -637,8 +679,8 @@ const AliExpressProductEdit = () => {
     // Send payload to API
     try {
       const res = await createProduct(payload).unwrap();
-      toast.success("Successfully Product created");
-      router.push("/admin/ali-express-products/product-list");
+      toast.success('Successfully Product created');
+      router.push('/admin/ali-express-products/product-list');
     } catch (error: any) {
       console.error(error);
       toast.error(error?.data?.message);
@@ -646,15 +688,12 @@ const AliExpressProductEdit = () => {
   };
 
   const loadBrandOptions = async (inputValue: string) => {
-    const res = await fetch(
-      `https://api.darkak.com.bd/api/admin/brand/get?search=${inputValue}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    const res = await fetch(`https://api.darkak.com.bd/api/admin/brand/get?search=${inputValue}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
     const json = await res.json();
     return json.data.map((item: any) => ({
       value: item.id,
@@ -666,11 +705,11 @@ const AliExpressProductEdit = () => {
     const res = await fetch(
       `https://api.darkak.com.bd/api/admin/category/create?search=${inputValue}`,
       {
-        method: "GET",
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
     const json = await res.json();
     return json.data.map((item: any) => ({
@@ -680,24 +719,24 @@ const AliExpressProductEdit = () => {
   };
 
   const loadSubCategoryOptions = async (inputValue: string) => {
-    console.log("selc cat", formData.categoryId);
+    console.log('selc cat', formData.categoryId);
     if (!formData.categoryId) return [];
     const res = await fetch(
       `https://api.darkak.com.bd/api/admin/category/sub-category?search=${inputValue}`,
       {
-        method: "GET",
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
     const json = await res.json();
     // Filter by selected categoryId
     const filtered = json.data.filter(
-      (item: any) => String(item.categoryId) === String(formData.categoryId),
+      (item: any) => String(item.categoryId) === String(formData.categoryId)
     );
 
-    console.log("fil cat", filtered);
+    console.log('fil cat', filtered);
 
     return filtered.map((item: any) => ({
       value: item.id,
@@ -710,17 +749,16 @@ const AliExpressProductEdit = () => {
     const res = await fetch(
       `https://api.darkak.com.bd/api/admin/category/sub-sub-category?search=${inputValue}`,
       {
-        method: "GET",
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
     const json = await res.json();
     // Filter by selected subCategoryId
     const filtered = json.data.filter(
-      (item: any) =>
-        String(item.subCategoryId) === String(formData.subCategoryId),
+      (item: any) => String(item.subCategoryId) === String(formData.subCategoryId)
     );
     return filtered.map((item: any) => ({
       value: item.id,
@@ -730,23 +768,21 @@ const AliExpressProductEdit = () => {
 
   return (
     <div className="mx-auto w-full">
-      <h1 className="mb-4 flex items-center gap-2 text-xl font-bold">
-        🛍️ Edit Product
-      </h1>
+      <h1 className="mb-4 flex items-center gap-2 text-xl font-bold">🛍️ Edit Product</h1>
 
       {/* name and desc */}
       <div className="bg-white p-5">
         {/* language tabs */}
         <div className="mb-4 flex items-center gap-x-5">
           <div
-            className={`${currentLanguage === "en" ? "border-b-2 border-blue-500 text-blue-500" : ""} flex cursor-pointer py-2 text-sm font-medium tracking-wider`}
-            onClick={() => setCurrentLanguage("en")}
+            className={`${currentLanguage === 'en' ? 'border-b-2 border-blue-500 text-blue-500' : ''} flex cursor-pointer py-2 text-sm font-medium tracking-wider`}
+            onClick={() => setCurrentLanguage('en')}
           >
             <button>English (EN)</button>
           </div>
           <div
-            className={`${currentLanguage === "bn" ? "border-b-2 border-blue-500 text-blue-500" : ""} cursor-pointer py-2 text-sm font-medium tracking-wider`}
-            onClick={() => setCurrentLanguage("bn")}
+            className={`${currentLanguage === 'bn' ? 'border-b-2 border-blue-500 text-blue-500' : ''} cursor-pointer py-2 text-sm font-medium tracking-wider`}
+            onClick={() => setCurrentLanguage('bn')}
           >
             <button>Bengali (BD)</button>
           </div>
@@ -755,7 +791,7 @@ const AliExpressProductEdit = () => {
         <div className="flex flex-col gap-y-3">
           <div className="flex flex-col gap-2">
             <label htmlFor="title">
-              Product Name {`( ${currentLanguage === "en" ? "EN" : "BD"})`}{" "}
+              Product Name {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}{' '}
               <span className="text-red-500">*</span>
             </label>
             <input
@@ -766,59 +802,73 @@ const AliExpressProductEdit = () => {
               className="w-full rounded border p-2"
             />
           </div>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="slug">
+              Product Slug {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}{' '}
+              <span className="text-xs text-red-500">* Avoid Slash and Space</span>
+            </label>
+            <input
+              name="slug"
+              placeholder="Slug"
+              value={formData.slug}
+              onChange={handleChange}
+              className="w-full rounded border p-2"
+            />
+          </div>
 
           <div className="flex flex-col gap-2">
             <label htmlFor="title">
-              Description {`( ${currentLanguage === "en" ? "EN" : "BD"})`}{" "}
+              Description {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}{' '}
               <span className="text-red-500">*</span>
             </label>
             <JoditEditor
               ref={editor}
               config={{
                 askBeforePasteHTML: false,
-                defaultActionOnPaste: "insert_only_text",
+                defaultActionOnPaste: 'insert_only_text',
                 uploader: {
                   insertImageAsBase64URI: true,
                 },
                 style: {
                   // background: "#E3E3E3",
                 },
-                placeholder: "Start writing",
-                height: "450px",
+                placeholder: 'Start writing',
+                height: '450px',
                 toolbar: true,
                 buttons: [
-                  "bold",
-                  "italic",
-                  "underline",
-                  "strikethrough",
-                  "|",
-                  "ul",
-                  "ol", // <-- Add these for bullet and numbered lists
-                  "outdent",
-                  "indent",
-                  "|",
-                  "font",
-                  "fontsize",
-                  "brush",
-                  "paragraph",
-                  "|",
-                  "image",
-                  "video",
-                  "table",
-                  "link",
-                  "|",
-                  "align",
-                  "undo",
-                  "redo",
-                  "hr",
-                  "eraser",
-                  "copyformat",
-                  "fullsize",
+                  'bold',
+                  'italic',
+                  'underline',
+                  'strikethrough',
+                  '|',
+                  'ul',
+                  'ol', // <-- Add these for bullet and numbered lists
+                  'outdent',
+                  'indent',
+                  '|',
+                  'font',
+                  'fontsize',
+                  'brush',
+                  'paragraph',
+                  '|',
+                  'image',
+                  'video',
+                  'table',
+                  'link',
+                  '|',
+                  'align',
+                  'undo',
+                  'redo',
+                  'hr',
+                  'eraser',
+                  'copyformat',
+                  'fullsize',
+                  'source',
                 ],
               }}
               value={formData.short_description}
               onBlur={(newContent) => {
-                handleEditorChange("short_description")(newContent);
+                handleEditorChange('short_description')(newContent);
               }} // preferred to use only this option to update the content for performance reasons
               // onChange={newContent => {}}
             />
@@ -844,9 +894,9 @@ const AliExpressProductEdit = () => {
                 setSelectedCategory(option);
                 setFormData((prev: any) => ({
                   ...prev,
-                  categoryId: option?.value || "",
-                  subCategoryId: "", // reset
-                  subSubCategoryId: "", // reset
+                  categoryId: option?.value || '',
+                  subCategoryId: '', // reset
+                  subSubCategoryId: '', // reset
                 }));
                 setSelectedSubCategory(null);
                 setSelectedSubSubCategory(null);
@@ -856,18 +906,16 @@ const AliExpressProductEdit = () => {
               styles={{
                 container: (base) => ({
                   ...base,
-                  height: "40px",
-                  marginTop: "0.25rem",
+                  height: '40px',
+                  marginTop: '0.25rem',
                 }),
-                control: (base) => ({ ...base, height: "40px" }),
+                control: (base) => ({ ...base, height: '40px' }),
               }}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Sub Category
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Sub Category</label>
             <AsyncSelect
               key={formData.categoryId}
               cacheOptions
@@ -878,8 +926,8 @@ const AliExpressProductEdit = () => {
                 setSelectedSubCategory(option);
                 setFormData((prev: any) => ({
                   ...prev,
-                  subCategoryId: option?.value || "",
-                  subSubCategoryId: "",
+                  subCategoryId: option?.value || '',
+                  subSubCategoryId: '',
                 }));
                 setSelectedSubSubCategory(null);
               }}
@@ -888,18 +936,16 @@ const AliExpressProductEdit = () => {
               styles={{
                 container: (base) => ({
                   ...base,
-                  height: "40px",
-                  marginTop: "0.25rem",
+                  height: '40px',
+                  marginTop: '0.25rem',
                 }),
-                control: (base) => ({ ...base, height: "40px" }),
+                control: (base) => ({ ...base, height: '40px' }),
               }}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Sub Sub Category
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Sub Sub Category</label>
             <AsyncSelect
               key={formData.subCategoryId}
               cacheOptions
@@ -910,7 +956,7 @@ const AliExpressProductEdit = () => {
                 setSelectedSubSubCategory(option);
                 setFormData((prev: any) => ({
                   ...prev,
-                  subSubCategoryId: option?.value || "",
+                  subSubCategoryId: option?.value || '',
                 }));
               }}
               placeholder="Select Sub Sub Category"
@@ -918,10 +964,10 @@ const AliExpressProductEdit = () => {
               styles={{
                 container: (base) => ({
                   ...base,
-                  height: "40px",
-                  marginTop: "0.25rem",
+                  height: '40px',
+                  marginTop: '0.25rem',
                 }),
-                control: (base) => ({ ...base, height: "40px" }),
+                control: (base) => ({ ...base, height: '40px' }),
               }}
             />
           </div>
@@ -939,7 +985,7 @@ const AliExpressProductEdit = () => {
                 setSelectedBrand(option);
                 setFormData((prev: any) => ({
                   ...prev,
-                  brandId: option?.value || "",
+                  brandId: option?.value || '',
                 }));
               }}
               placeholder="Select Brand"
@@ -947,10 +993,10 @@ const AliExpressProductEdit = () => {
               styles={{
                 container: (base) => ({
                   ...base,
-                  height: "40px",
-                  marginTop: "0.25rem",
+                  height: '40px',
+                  marginTop: '0.25rem',
                 }),
-                control: (base) => ({ ...base, height: "40px" }),
+                control: (base) => ({ ...base, height: '40px' }),
               }}
             />
           </div>
@@ -1005,9 +1051,7 @@ const AliExpressProductEdit = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Warranty
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Warranty</label>
             <select
               name="warranty"
               value={formData.warranty}
@@ -1020,9 +1064,7 @@ const AliExpressProductEdit = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Warranty Time
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Warranty Time</label>
             <div className="relative mt-1 flex items-center gap-2">
               <input
                 type="text"
@@ -1035,9 +1077,7 @@ const AliExpressProductEdit = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Region
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Region</label>
             <select
               name="region"
               onChange={handleChange}
@@ -1052,9 +1092,7 @@ const AliExpressProductEdit = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Benefit
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Benefit</label>
             <select
               name="aliexpress_benifit"
               value={formData.aliexpress_benifit}
@@ -1165,7 +1203,7 @@ const AliExpressProductEdit = () => {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           <div>
             <label className="text-sm font-medium text-gray-700">
-              Unit price <span className="text-red-500">*</span>{" "}
+              Unit price <span className="text-red-500">*</span>{' '}
             </label>
             <input
               readOnly
@@ -1179,9 +1217,7 @@ const AliExpressProductEdit = () => {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              Minimum order quantity
-            </label>
+            <label className="text-sm font-medium text-gray-700">Minimum order quantity</label>
             <input
               type="number"
               name="minOrder"
@@ -1192,9 +1228,7 @@ const AliExpressProductEdit = () => {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              Current stock quantity
-            </label>
+            <label className="text-sm font-medium text-gray-700">Current stock quantity</label>
             <input
               name="stock"
               value={formData.stock}
@@ -1205,9 +1239,7 @@ const AliExpressProductEdit = () => {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              Discount Type
-            </label>
+            <label className="text-sm font-medium text-gray-700">Discount Type Web</label>
             <select
               name="discount_type"
               value={formData.discount_type}
@@ -1218,11 +1250,21 @@ const AliExpressProductEdit = () => {
               <option value="percentage">Percentage</option>
             </select>
           </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700">Discount Type Mobile</label>
+            <select
+              name="discount_type_mobile"
+              value={formData.discount_type_mobile}
+              onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            >
+              <option value="flat">Flat</option>
+              <option value="percentage">Percentage</option>
+            </select>
+          </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              Discount amount
-            </label>
+            <label className="text-sm font-medium text-gray-700">Discount amount Web</label>
             <input
               name="discount"
               value={formData.discount}
@@ -1231,11 +1273,32 @@ const AliExpressProductEdit = () => {
               className="mt-1 w-full rounded-md border p-2"
             />
           </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700">Discount amount Mobile</label>
+            <input
+              name="discount_mobile"
+              value={formData.discount_mobile}
+              type="number"
+              onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            />
+          </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              Tax amount (%)
-            </label>
+            <label className="text-sm font-medium text-gray-700">Accept Payment Type</label>
+            <select
+              name="payment_type"
+              // value={formData.discount_type}
+              // onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            >
+              <option value="cod">Cash On Delivery</option>
+              <option value="online">Online</option>
+              <option value="both">Both</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700">Tax amount (%)</label>
             <input
               type="number"
               name="tax_amount"
@@ -1246,9 +1309,7 @@ const AliExpressProductEdit = () => {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              Tax Type
-            </label>
+            <label className="text-sm font-medium text-gray-700">Tax Type</label>
             <select
               name="tax_type"
               value={formData.tax_type}
@@ -1283,7 +1344,7 @@ const AliExpressProductEdit = () => {
       </div>
 
       {/* thumbnail and images */}
-      <div className="mt-5 flex flex-col gap-6 md:flex-row">
+      <div className="mt-5 flex flex-col gap-6">
         {/* Thumbnail Upload */}
         <div className="flex-1 rounded-lg border bg-white p-4 shadow">
           <label className="mb-1 block text-sm font-semibold text-gray-700">
@@ -1295,7 +1356,7 @@ const AliExpressProductEdit = () => {
               type="file"
               accept="image/*"
               className="absolute inset-0 cursor-pointer opacity-0"
-              onChange={(e) => handleImageUpload(e, "thumbnail")}
+              onChange={(e) => handleImageUpload(e, 'thumbnail')}
               style={{ zIndex: 1 }}
             />
             <div className="relative z-10 text-center text-sm text-gray-500">
@@ -1313,10 +1374,10 @@ const AliExpressProductEdit = () => {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setFormData((prev: any) => ({ ...prev, thumbnail: "" }));
+                      setFormData((prev: any) => ({ ...prev, thumbnail: '' }));
                     }}
                     className="mt-2 rounded bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600"
-                    style={{ zIndex: 20, position: "relative" }}
+                    style={{ zIndex: 20, position: 'relative' }}
                   >
                     Remove
                   </button>
@@ -1334,71 +1395,83 @@ const AliExpressProductEdit = () => {
               )}
             </div>
           </div>
+          <div className="mt-2">
+            <label className="text-sm font-medium text-gray-700">
+              Thumbnail Alt <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="thumbnail_alt"
+              type="text"
+              value={formData.thumbnail_alt}
+              onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            />
+          </div>
         </div>
 
         {/* Additional Images Upload */}
-        <div className="flex-[2] rounded-lg border bg-white p-4 shadow">
-          <label className="mb-1 block text-sm font-semibold text-gray-700">
-            Upload additional image
+        <div className="rounded-lg border bg-white p-4 shadow">
+          <label className="mb-2 block text-sm font-semibold text-gray-700">
+            Upload Product Images
           </label>
-          <p className="mb-2 text-xs text-blue-600">Ratio 1:1 (500 x 500 px)</p>
-          <p className="mb-2 text-sm text-gray-600">
-            Upload additional product images
-          </p>
-          <div className="relative flex h-32 cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              name="images"
-              className="absolute inset-0 cursor-pointer opacity-0"
-              onChange={(e) => handleImageUpload(e, "images")}
-            />
-            <div className="relative z-10 w-full text-center text-sm text-gray-500">
-              {formData.images.length > 0 ? (
-                <div className="flex flex-wrap justify-center gap-2">
-                  {formData.images.map((img: any, idx: any) => (
-                    <div key={idx} className="group relative">
-                      <Image
-                        src={img}
-                        alt={`Product image ${idx + 1}`}
-                        width={80}
-                        height={80}
-                        className="rounded border object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setFormData((prev: any) => ({
-                            ...prev,
-                            images: prev.images.filter(
-                              (_: any, i: any) => i !== idx,
-                            ),
-                          }));
-                        }}
-                        className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white opacity-80 hover:opacity-100"
-                        style={{ zIndex: 10 }}
-                        title="Remove"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <>
-                  <p className="text-blue-600">
-                    {imagesUploading ? (
-                      <p className="mt-3">Uploading...</p>
-                    ) : (
-                      <p>Click to Upload</p>
-                    )}
+
+          <button
+            type="button"
+            onClick={addImageField}
+            className="mb-4 rounded bg-blue-600 px-4 py-1 text-white hover:bg-blue-700"
+          >
+            + Add Image
+          </button>
+
+          {formData.images.map((img: any, idx: any) => (
+            <div
+              key={idx}
+              className="mb-4 flex flex-col items-start gap-2 rounded border border-b border-slate-400 p-4"
+            >
+              <div className="relative flex h-32 w-full cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="absolute inset-0 cursor-pointer opacity-0"
+                  onChange={(e) => handleAdditionalImagesUpload(e, idx)}
+                />
+                {img.url ? (
+                  <Image
+                    src={img.url}
+                    alt={`Uploaded ${idx + 1}`}
+                    width={100}
+                    height={100}
+                    className="rounded object-cover"
+                  />
+                ) : (
+                  <p className="z-10 text-sm text-blue-600">
+                    {imagesUploading ? 'Uploading...' : 'Click to Upload'}
                   </p>
-                </>
-              )}
+                )}
+              </div>
+
+              <input
+                type="text"
+                placeholder="Enter image alt text"
+                value={img.alt}
+                onChange={(e) => handleAltChange(idx, e.target.value)}
+                className="w-full rounded border px-3 py-2 text-sm"
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setFormData((prev: any) => ({
+                    ...prev,
+                    images: prev.images.filter((_: any, i: any) => i !== idx),
+                  }))
+                }
+                className="border-red-500 bg-red-100 px-2 py-0.5 text-sm text-red-500 hover:underline"
+              >
+                Remove
+              </button>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
@@ -1409,7 +1482,7 @@ const AliExpressProductEdit = () => {
         <div className="">
           <div>
             <label className="text-sm font-medium text-gray-700">
-              Youtube video link{" "}
+              Youtube video link{' '}
               <span className="text-blue-500">
                 (Optional please provide embed link not direct link.)
               </span>
@@ -1434,7 +1507,7 @@ const AliExpressProductEdit = () => {
             {/* Attribute Title */}
             <div className="flex items-center gap-4">
               <select
-                value={attribute.attributeId || ""}
+                value={attribute.attributeId || ''}
                 onChange={(e) => {
                   const updatedItems = [...formData.items];
                   updatedItems[attributeIndex].attributeId = e.target.value;
@@ -1447,13 +1520,11 @@ const AliExpressProductEdit = () => {
               >
                 <option value="">Select Attribute</option>
                 {attributesData &&
-                  attributesData?.data?.map(
-                    (attribute: { id: string; title: string }) => (
-                      <option key={attribute.id} value={attribute.id}>
-                        {attribute?.title}
-                      </option>
-                    ),
-                  )}
+                  attributesData?.data?.map((attribute: { id: string; title: string }) => (
+                    <option key={attribute.id} value={attribute.id}>
+                      {attribute?.title}
+                    </option>
+                  ))}
               </select>
               <button
                 onClick={() => {
@@ -1482,14 +1553,13 @@ const AliExpressProductEdit = () => {
                     <div className="flex w-full flex-col gap-1">
                       <label htmlFor="option_title">Option Title</label>
                       <input
+                        readOnly
                         type="text"
                         placeholder="Option Title"
                         value={option.title}
                         onChange={(e) => {
                           const updatedItems = [...formData.items];
-                          updatedItems[attributeIndex].options[
-                            optionIndex
-                          ].title = e.target.value;
+                          updatedItems[attributeIndex].options[optionIndex].title = e.target.value;
                           setFormData((prev: any) => ({
                             ...prev,
                             items: updatedItems,
@@ -1502,14 +1572,15 @@ const AliExpressProductEdit = () => {
                     <div className="flex w-full flex-col gap-1">
                       <label htmlFor="option_price">Price</label>
                       <input
+                        readOnly
                         type="number"
                         placeholder="Price"
                         value={option.price}
                         onChange={(e) => {
                           const updatedItems = [...formData.items];
-                          updatedItems[attributeIndex].options[
-                            optionIndex
-                          ].price = parseFloat(e.target.value);
+                          updatedItems[attributeIndex].options[optionIndex].price = parseFloat(
+                            e.target.value
+                          );
                           setFormData((prev: any) => ({
                             ...prev,
                             items: updatedItems,
@@ -1522,14 +1593,15 @@ const AliExpressProductEdit = () => {
                     <div className="flex w-full flex-col gap-1">
                       <label htmlFor="stock">Stock</label>
                       <input
+                        readOnly
                         type="number"
                         placeholder="stock"
                         value={option.stock}
                         onChange={(e) => {
                           const updatedItems = [...formData.items];
-                          updatedItems[attributeIndex].options[
-                            optionIndex
-                          ].stock = parseFloat(e.target.value);
+                          updatedItems[attributeIndex].options[optionIndex].stock = parseFloat(
+                            e.target.value
+                          );
                           setFormData((prev: any) => ({
                             ...prev,
                             items: updatedItems,
@@ -1541,14 +1613,13 @@ const AliExpressProductEdit = () => {
                     <div className="flex w-full flex-col gap-1">
                       <label htmlFor="item_sku">Code</label>
                       <input
+                        readOnly
                         type="string"
                         placeholder="sku"
                         value={option.sku}
                         onChange={(e) => {
                           const updatedItems = [...formData.items];
-                          updatedItems[attributeIndex].options[
-                            optionIndex
-                          ].sku = e.target.value;
+                          updatedItems[attributeIndex].options[optionIndex].sku = e.target.value;
                           setFormData((prev: any) => ({
                             ...prev,
                             items: updatedItems,
@@ -1568,12 +1639,7 @@ const AliExpressProductEdit = () => {
                           accept="image/*"
                           className="absolute inset-0 cursor-pointer opacity-0"
                           onChange={(e) =>
-                            handleImageUpload(
-                              e,
-                              "option_image",
-                              attributeIndex,
-                              optionIndex,
-                            )
+                            handleImageUpload(e, 'option_image', attributeIndex, optionIndex)
                           }
                           style={{ zIndex: 1 }}
                         />
@@ -1592,16 +1658,14 @@ const AliExpressProductEdit = () => {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   const updatedItems = [...formData.items];
-                                  updatedItems[attributeIndex].options[
-                                    optionIndex
-                                  ].image = "";
+                                  updatedItems[attributeIndex].options[optionIndex].image = '';
                                   setFormData((prev: any) => ({
                                     ...prev,
                                     items: updatedItems,
                                   }));
                                 }}
                                 className="mt-1 rounded bg-red-500 px-2 py-0.5 text-xs text-white hover:bg-red-600"
-                                style={{ zIndex: 20, position: "relative" }}
+                                style={{ zIndex: 20, position: 'relative' }}
                               >
                                 Remove
                               </button>
@@ -1644,7 +1708,7 @@ const AliExpressProductEdit = () => {
               onClick={() => {
                 const updatedItems = [...formData.items];
                 updatedItems[attributeIndex].options.push({
-                  title: "",
+                  title: '',
                   price: 0,
                   stock: 1,
                 });
@@ -1665,8 +1729,8 @@ const AliExpressProductEdit = () => {
               items: [
                 ...prev.items,
                 {
-                  attributeId: "", // <-- always present!
-                  title: "",
+                  attributeId: '', // <-- always present!
+                  title: '',
                   options: [],
                 },
               ],
@@ -1701,10 +1765,9 @@ const AliExpressProductEdit = () => {
               </span>
               <span
                 className={`text-xs font-semibold ${
-                  formData.meta_title.length < 50 ||
-                  formData.meta_title.length > 60
-                    ? "text-red-500"
-                    : "text-green-600"
+                  formData.meta_title.length < 50 || formData.meta_title.length > 60
+                    ? 'text-red-500'
+                    : 'text-green-600'
                 }`}
               >
                 {formData.meta_title.length} chars
@@ -1729,15 +1792,26 @@ const AliExpressProductEdit = () => {
               </span>
               <span
                 className={`text-xs font-semibold ${
-                  formData.meta_description.length < 150 ||
-                  formData.meta_description.length > 160
-                    ? "text-red-500"
-                    : "text-green-600"
+                  formData.meta_description.length < 150 || formData.meta_description.length > 160
+                    ? 'text-red-500'
+                    : 'text-green-600'
                 }`}
               >
                 {formData.meta_description.length} chars
               </span>
             </div>
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              Alt Tag <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="meta_alt"
+              type="text"
+              value={formData.meta_alt}
+              onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            />
           </div>
           <div>
             <label className="text-sm font-medium text-gray-700">
@@ -1755,16 +1829,14 @@ const AliExpressProductEdit = () => {
             <label className="mb-1 block text-sm font-semibold text-gray-700">
               Meta Image <span className="text-red-500">*</span>
             </label>
-            <p className="mb-2 text-xs text-blue-600">
-              Ratio 1:1 (500 x 500 px)
-            </p>
+            <p className="mb-2 text-xs text-blue-600">Ratio 1:1 (500 x 500 px)</p>
             <div className="relative flex h-32 cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
               <input
                 type="file"
                 accept="image/*"
                 name="meta_image"
                 className="absolute inset-0 cursor-pointer opacity-0"
-                onChange={(e) => handleImageUpload(e, "meta_image")}
+                onChange={(e) => handleImageUpload(e, 'meta_image')}
               />
               <div className="relative z-10 text-center text-sm text-gray-500">
                 {formData.meta_image ? (
@@ -1783,11 +1855,11 @@ const AliExpressProductEdit = () => {
                         e.stopPropagation();
                         setFormData((prev: any) => ({
                           ...prev,
-                          meta_image: "",
+                          meta_image: '',
                         }));
                       }}
                       className="mt-2 rounded bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600"
-                      style={{ zIndex: 20, position: "relative" }}
+                      style={{ zIndex: 20, position: 'relative' }}
                     >
                       Remove
                     </button>
@@ -1814,20 +1886,20 @@ const AliExpressProductEdit = () => {
         {/* tabs */}
         <div>
           <span
-            onClick={() => setCurrentTab("desc")}
-            className={`cursor-pointer rounded px-6 py-2 ${currentTab === "desc" && "border-2 border-blue"}`}
+            onClick={() => setCurrentTab('desc')}
+            className={`cursor-pointer rounded px-6 py-2 ${currentTab === 'desc' && 'border-2 border-blue'}`}
           >
             Description
           </span>
           <span
-            onClick={() => setCurrentTab("spec")}
-            className={`cursor-pointer rounded px-6 py-2 ${currentTab === "spec" && "border-2 border-blue"}`}
+            onClick={() => setCurrentTab('spec')}
+            className={`cursor-pointer rounded px-6 py-2 ${currentTab === 'spec' && 'border-2 border-blue'}`}
           >
             Specifications
           </span>
           <span
-            onClick={() => setCurrentTab("warrn")}
-            className={`cursor-pointer rounded px-6 py-2 ${currentTab === "warrn" && "border-2 border-blue"}`}
+            onClick={() => setCurrentTab('warrn')}
+            className={`cursor-pointer rounded px-6 py-2 ${currentTab === 'warrn' && 'border-2 border-blue'}`}
           >
             Warranties
           </span>
@@ -1836,116 +1908,118 @@ const AliExpressProductEdit = () => {
         {/* content */}
 
         <div className="mt-5">
-          {currentTab === "desc" ? (
+          {currentTab === 'desc' ? (
             <div className="flex flex-col gap-2">
               <label htmlFor="description">
                 Description
-                {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+                {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}
               </label>
               <JoditEditor
                 ref={descriptionEditor}
                 config={{
                   askBeforePasteHTML: false,
-                  defaultActionOnPaste: "insert_only_text",
+                  defaultActionOnPaste: 'insert_only_text',
                   uploader: {
                     insertImageAsBase64URI: true,
                   },
                   style: {
                     // background: "#E3E3E3",
                   },
-                  placeholder: "Start writing description",
-                  height: "450px",
+                  placeholder: 'Start writing description',
+                  height: '450px',
                   toolbar: true,
                   buttons: [
-                    "bold",
-                    "italic",
-                    "underline",
-                    "strikethrough",
-                    "|",
-                    "ul",
-                    "ol", // <-- Add these for bullet and numbered lists
-                    "outdent",
-                    "indent",
-                    "|",
-                    "font",
-                    "fontsize",
-                    "brush",
-                    "paragraph",
-                    "|",
-                    "image",
-                    "video",
-                    "table",
-                    "link",
-                    "|",
-                    "align",
-                    "undo",
-                    "redo",
-                    "hr",
-                    "eraser",
-                    "copyformat",
-                    "fullsize",
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikethrough',
+                    '|',
+                    'ul',
+                    'ol', // <-- Add these for bullet and numbered lists
+                    'outdent',
+                    'indent',
+                    '|',
+                    'font',
+                    'fontsize',
+                    'brush',
+                    'paragraph',
+                    '|',
+                    'image',
+                    'video',
+                    'table',
+                    'link',
+                    '|',
+                    'align',
+                    'undo',
+                    'redo',
+                    'hr',
+                    'eraser',
+                    'copyformat',
+                    'fullsize',
+                    'source',
                   ],
                 }}
                 value={formData.description}
                 onBlur={(newContent) => {
-                  handleEditorChange("description")(newContent);
+                  handleEditorChange('description')(newContent);
                 }} // preferred to use only this option to update the content for performance reasons
                 // onChange={newContent => {}}
               />
             </div>
-          ) : currentTab === "spec" ? (
+          ) : currentTab === 'spec' ? (
             <div className="flex flex-col gap-2">
               <label htmlFor="specification">
                 Specification
-                {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+                {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}
               </label>
               <JoditEditor
                 ref={specificationEditor}
                 config={{
                   askBeforePasteHTML: false,
-                  defaultActionOnPaste: "insert_only_text",
+                  defaultActionOnPaste: 'insert_only_text',
                   uploader: {
                     insertImageAsBase64URI: true,
                   },
                   style: {
                     // background: "#E3E3E3",
                   },
-                  placeholder: "Start writing specification",
-                  height: "450px",
+                  placeholder: 'Start writing specification',
+                  height: '450px',
                   toolbar: true,
                   buttons: [
-                    "bold",
-                    "italic",
-                    "underline",
-                    "strikethrough",
-                    "|",
-                    "ul",
-                    "ol", // <-- Add these for bullet and numbered lists
-                    "outdent",
-                    "indent",
-                    "|",
-                    "font",
-                    "fontsize",
-                    "brush",
-                    "paragraph",
-                    "|",
-                    "image",
-                    "video",
-                    "table",
-                    "link",
-                    "|",
-                    "align",
-                    "undo",
-                    "redo",
-                    "hr",
-                    "eraser",
-                    "copyformat",
-                    "fullsize",
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikethrough',
+                    '|',
+                    'ul',
+                    'ol', // <-- Add these for bullet and numbered lists
+                    'outdent',
+                    'indent',
+                    '|',
+                    'font',
+                    'fontsize',
+                    'brush',
+                    'paragraph',
+                    '|',
+                    'image',
+                    'video',
+                    'table',
+                    'link',
+                    '|',
+                    'align',
+                    'undo',
+                    'redo',
+                    'hr',
+                    'eraser',
+                    'copyformat',
+                    'fullsize',
+                    'source',
                   ],
                 }}
                 value={formData.specification}
                 onBlur={(newContent) => {
-                  handleEditorChange("specification")(newContent);
+                  handleEditorChange('specification')(newContent);
                 }} // preferred to use only this option to update the content for performance reasons
                 // onChange={newContent => {}}
               />
@@ -1954,7 +2028,7 @@ const AliExpressProductEdit = () => {
             <div className="flex flex-col gap-2">
               <label htmlFor="warranty_details">
                 Warranty details
-                {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+                {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}
               </label>
               <JoditEditor
                 ref={warrantyEditor}
@@ -1963,46 +2037,47 @@ const AliExpressProductEdit = () => {
                   uploader: {
                     insertImageAsBase64URI: true,
                   },
-                  defaultActionOnPaste: "insert_only_text",
+                  defaultActionOnPaste: 'insert_only_text',
                   style: {
                     // background: "#E3E3E3",
                   },
-                  placeholder: "Start writing warranty details",
-                  height: "450px",
+                  placeholder: 'Start writing warranty details',
+                  height: '450px',
                   toolbar: true,
                   buttons: [
-                    "bold",
-                    "italic",
-                    "underline",
-                    "strikethrough",
-                    "|",
-                    "ul",
-                    "ol", // <-- Add these for bullet and numbered lists
-                    "outdent",
-                    "indent",
-                    "|",
-                    "font",
-                    "fontsize",
-                    "brush",
-                    "paragraph",
-                    "|",
-                    "image",
-                    "video",
-                    "table",
-                    "link",
-                    "|",
-                    "align",
-                    "undo",
-                    "redo",
-                    "hr",
-                    "eraser",
-                    "copyformat",
-                    "fullsize",
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikethrough',
+                    '|',
+                    'ul',
+                    'ol', // <-- Add these for bullet and numbered lists
+                    'outdent',
+                    'indent',
+                    '|',
+                    'font',
+                    'fontsize',
+                    'brush',
+                    'paragraph',
+                    '|',
+                    'image',
+                    'video',
+                    'table',
+                    'link',
+                    '|',
+                    'align',
+                    'undo',
+                    'redo',
+                    'hr',
+                    'eraser',
+                    'copyformat',
+                    'fullsize',
+                    'source',
                   ],
                 }}
                 value={formData.warranty_details}
                 onBlur={(newContent) => {
-                  handleEditorChange("warranty_details")(newContent);
+                  handleEditorChange('warranty_details')(newContent);
                 }} // preferred to use only this option to update the content for performance reasons
                 // onChange={newContent => {}}
               />
@@ -2030,13 +2105,10 @@ const AliExpressProductEdit = () => {
           onClick={() => handleSubmit(false)}
           className="rounded bg-blue-600 px-4 py-2 text-white shadow"
           disabled={
-            imagesUploading ||
-            metaImageUploading ||
-            thumbnailUploading ||
-            optionImageUploading
+            imagesUploading || metaImageUploading || thumbnailUploading || optionImageUploading
           }
         >
-          {loadingUpadate ? "Updating.." : "Update"}
+          {isCreating ? 'Submiting..' : 'Submit'}
         </button>
         {/* <button
           type="button"
@@ -2052,6 +2124,7 @@ const AliExpressProductEdit = () => {
           Schedule
         </button> */}
       </div>
+      <ShippingModal shippingData={shippingInfo} setShippingFee={setShippingFee} />
     </div>
   );
 };

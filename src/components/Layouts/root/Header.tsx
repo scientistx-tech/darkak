@@ -45,8 +45,10 @@ import ProductCard from "@/components/shared/ProductCard";
 import { useRouter } from "next/navigation";
 import { useGetSearchPublicQuery } from "@/redux/services/client/searchedProducts";
 import MobileDropdown from "./MobileDropdown";
+import { useGetHomeContentQuery } from "@/redux/services/client/homeContentApi";
 
 const Header: React.FC = () => {
+  const { data: home } = useGetHomeContentQuery();
   const { data: cart, refetch: cartRefetch } = useGetMyCartQuery();
   const { data: wishlist, refetch: wishRefetch } = useGetMyWishListQuery({
     page: 1,
@@ -196,9 +198,7 @@ const Header: React.FC = () => {
       <motion.div
         animate={{ y: show ? 0 : -130 }}
         transition={
-          show
-            ? { type: "spring", stiffness: 130, damping: 30 }
-            : { type: "spring", stiffness: 50 }
+          show ? { type: 'spring', stiffness: 130, damping: 30 } : { type: 'spring', stiffness: 50 }
         }
         className="fixed top-0 z-50 w-full"
       >
@@ -208,11 +208,11 @@ const Header: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 40 }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="mx-auto hidden w-full grid-cols-3 items-center overflow-visible bg-primary px-4 text-white md:grid md:px-6 lg:px-12"
+            transition={{ duration: 0.4, ease: 'easeInOut' }}
+            className="mx-auto hidden w-full grid-cols-3 items-center overflow-visible bg-primary px-4 text-white md:px-6 lg:grid lg:px-12"
           >
-            <p>🎉 Eid Mubarak & Grand Opening Celebration! 🎉</p>
-            <p className="text-center">✨ Flat 30% OFF on All Products! ✨</p>
+            <p>🎉 {home?.content?.header_first_title} 🎉</p>
+            <p className="text-center">✨ {home?.content?.header_second_title} ✨</p>
 
             {/* DropDown-menu */}
             <div className="flex w-full items-center justify-end gap-2">
@@ -224,17 +224,13 @@ const Header: React.FC = () => {
               >
                 <Image
                   alt="Language"
-                  src={selectedLang === "Bangla" ? Bangla : English}
+                  src={selectedLang === 'Bangla' ? Bangla : English}
                   width={20}
                   height={20}
                 />
-                <p className="text-sm font-medium uppercase text-primaryWhite">
-                  {selectedLang}
-                </p>
+                <p className="text-sm font-medium uppercase text-primaryWhite">{selectedLang}</p>
 
-                <p className="text-sm">
-                  {isDropdownOpen ? <UpOutlined /> : <DownOutlined />}
-                </p>
+                <p className="text-sm">{isDropdownOpen ? <UpOutlined /> : <DownOutlined />}</p>
 
                 <AnimatePresence>
                   {isDropdownOpen && (
@@ -243,17 +239,17 @@ const Header: React.FC = () => {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
                     >
                       <p
                         className="cursor-pointer px-4 py-2 text-sm uppercase text-primaryWhite hover:bg-primaryDarkBlue"
-                        onClick={() => handleLanguageChange("English")}
+                        onClick={() => handleLanguageChange('English')}
                       >
                         English
                       </p>
                       <p
                         className="cursor-pointer px-4 py-2 text-sm uppercase text-primaryWhite hover:bg-primaryDarkBlue"
-                        onClick={() => handleLanguageChange("Bangla")}
+                        onClick={() => handleLanguageChange('Bangla')}
                       >
                         Bangla
                       </p>
@@ -290,12 +286,12 @@ const Header: React.FC = () => {
         )}
 
         {/* Main Header */}
-        <div className="mx-auto flex h-[65px] w-full items-center justify-between bg-primaryBlue px-4 text-white md:h-[70px] md:px-6 lg:px-12">
+        <div className="mx-auto flex h-[65px] w-full items-center justify-between bg-primaryBlue px-4 text-white md:h-[70px] md:px-6 xl:px-12">
           <Link href="/" className="">
             <Image alt="Darkak-Logo" src={logo} height={50} className="" />
           </Link>
 
-          <div className="hidden grid-flow-col items-center gap-8 md:grid">
+          <div className="hidden grid-flow-col items-center gap-8 lg:grid">
             {/* Home Link */}
             <NavLink href="/" className="font-serif text-lg hover:text-primary">
               Home
@@ -304,18 +300,12 @@ const Header: React.FC = () => {
               <HeaderDropdown />
             </div>
 
-            <NavLink
-              href="/vendors"
-              className="font-serif text-lg hover:text-primary"
-            >
+            <NavLink href="/vendors" className="font-serif text-lg hover:text-primary">
               Vendors
             </NavLink>
 
             {/* Contact Us Link */}
-            <NavLink
-              href="/contact-us"
-              className="font-serif text-lg hover:text-primary"
-            >
+            <NavLink href="/contact-us" className="font-serif text-lg hover:text-primary">
               Contact Us
             </NavLink>
           </div>
@@ -329,7 +319,7 @@ const Header: React.FC = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onFocus={() => {
-                    if (searchTerm.trim() !== "") {
+                    if (searchTerm.trim() !== '') {
                       setIsOpen(true);
                     }
                   }}
@@ -338,7 +328,7 @@ const Header: React.FC = () => {
                 {searchTerm && (
                   <button
                     type="button"
-                    onClick={() => setSearchTerm("")}
+                    onClick={() => setSearchTerm('')}
                     className="absolute right-2 top-1/2 -translate-y-1/2 text-lg font-semibold text-gray-500 hover:text-black"
                   >
                     ×
@@ -360,11 +350,11 @@ const Header: React.FC = () => {
             </div>
           </div>
 
-          <div className="hidden grid-flow-col gap-5 md:grid">
+          <div className="hidden grid-flow-col gap-5 lg:grid">
             <Link
               href="/user/profile"
               className={`text-2xl transition-all duration-300 hover:scale-110 hover:text-primary ${
-                pathname === "/user/profile" ? "opacity-100" : "opacity-70"
+                pathname === '/user/profile' ? 'opacity-100' : 'opacity-70'
               }`}
             >
               <UserOutlined />
@@ -375,20 +365,14 @@ const Header: React.FC = () => {
               className="group text-2xl transition-all duration-300 hover:scale-110 hover:text-primary"
             >
               <HeartOutlined
-                className={` ${
-                  pathname === "/user/wishlist" ? "opacity-100" : "opacity-70"
-                }`}
+                className={` ${pathname === '/user/wishlist' ? 'opacity-100' : 'opacity-70'}`}
               />
               <div
                 className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-black group-hover:bg-primary group-hover:text-white ${
-                  pathname === "/user/wishlist"
-                    ? "bg-primary text-white"
-                    : "bg-white"
+                  pathname === '/user/wishlist' ? 'bg-primary text-white' : 'bg-white'
                 }`}
               >
-                <p className="text-[10px] font-semibold">
-                  {wishlist ? wishlist.data.length : "0"}
-                </p>
+                <p className="text-[10px] font-semibold">{wishlist ? wishlist.data.length : '0'}</p>
               </div>
             </Link>
 
@@ -397,20 +381,14 @@ const Header: React.FC = () => {
               className="group text-2xl transition-all duration-300 hover:scale-110 hover:text-primary"
             >
               <ShoppingCartOutlined
-                className={` ${
-                  pathname === "/user/cart" ? "opacity-100" : "opacity-70"
-                }`}
+                className={` ${pathname === '/user/cart' ? 'opacity-100' : 'opacity-70'}`}
               />
               <div
                 className={`absolute ml-[15px] mt-[-33px] flex h-[15px] w-[15px] items-center justify-center rounded-full text-black group-hover:bg-primary group-hover:text-white ${
-                  pathname === "/user/cart"
-                    ? "bg-primary text-white"
-                    : "bg-white"
+                  pathname === '/user/cart' ? 'bg-primary text-white' : 'bg-white'
                 }`}
               >
-                <p className="text-[10px] font-semibold">
-                  {cart ? cart.cart.length : "0"}
-                </p>
+                <p className="text-[10px] font-semibold">{cart ? cart.cart.length : '0'}</p>
               </div>
             </Link>
           </div>
@@ -418,19 +396,19 @@ const Header: React.FC = () => {
           {/* For mobile menu Button */}
           <button
             onClick={open ? onClose : showDrawer}
-            className="transition-all duration-500 ease-in-out hover:scale-110 md:hidden"
+            className="transition-all duration-500 ease-in-out hover:scale-110 lg:hidden"
           >
             <div className="relative h-6 w-6">
               <span
                 className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${
-                  open ? "opacity-0" : "opacity-100"
+                  open ? 'opacity-0' : 'opacity-100'
                 }`}
               >
                 <MenuOutlined className="text-xl" />
               </span>
               <span
                 className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${
-                  open ? "opacity-100" : "opacity-0"
+                  open ? 'opacity-100' : 'opacity-0'
                 }`}
               >
                 {/* <CloseOutlined className="text-xl" /> */}
@@ -471,7 +449,7 @@ const Header: React.FC = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onFocus={() => {
-                    if (searchTerm.trim() !== "") {
+                    if (searchTerm.trim() !== '') {
                       setIsOpen(true);
                     }
                   }}
@@ -528,7 +506,7 @@ const Header: React.FC = () => {
                 {submenuOpen && (
                   <motion.div
                     initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
+                    animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.3 }}
                     className="ml-[10%] overflow-hidden"
@@ -571,7 +549,7 @@ const Header: React.FC = () => {
             {/* Language Switcher */}
             <div className="mt-6 flex items-center gap-2">
               <Image
-                src={selectedLang === "Bangla" ? Bangla : English}
+                src={selectedLang === 'Bangla' ? Bangla : English}
                 alt="lang"
                 width={22}
                 height={22}
@@ -621,7 +599,7 @@ const Header: React.FC = () => {
                 <div className="relative flex flex-col items-center hover:text-primary">
                   <HeartOutlined className="text-xl" />
                   <span className="absolute -top-1 right-7 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primaryBlue text-[10px] text-white">
-                    {wishlist ? wishlist.data.length : "0"}
+                    {wishlist ? wishlist.data.length : '0'}
                   </span>
                   <span className="mt-1">Wishlist</span>
                 </div>
@@ -630,7 +608,7 @@ const Header: React.FC = () => {
                 <div className="relative flex flex-col items-center hover:text-primary">
                   <ShoppingCartOutlined className="text-xl" />
                   <span className="absolute -top-1 right-7 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primaryBlue text-[10px] text-white">
-                    {cart ? cart.cart.length : "0"}
+                    {cart ? cart.cart.length : '0'}
                   </span>
                   <span className="mt-1">Cart</span>
                 </div>
@@ -657,9 +635,7 @@ const Header: React.FC = () => {
             <>
               {/* LEFT: Categories */}
               <div className="w-full px-6 py-4 pb-4 lg:w-[30%] lg:border-r">
-                <h4 className="mb-2 border-b pb-4 text-lg font-bold text-black">
-                  Categories
-                </h4>
+                <h4 className="mb-2 border-b pb-4 text-lg font-bold text-black">Categories</h4>
                 <div className="search-custom-scrollbar h-full overflow-hidden overflow-y-auto pb-4 pt-2">
                   <ul className="pb-2">
                     {categories?.flatMap((category) => {

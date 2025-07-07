@@ -1,21 +1,35 @@
-"use client";
+import React from 'react'
+import CategoryPageServer from './CategoryPageServer'
 
-import React from "react";
-import CategoryPage from "@/components/category/CategoryPage";
-import { useSearchParams } from "next/navigation";
+import getSeoData from '../getSeoData';
+export async function generateMetadata() {
+  const data = await getSeoData('category');
 
-export default function Page() {
-  const searchParams = useSearchParams();
-  // Convert searchParams to a plain object
-  const query: Record<string, string> = {};
-  searchParams.forEach((value, key) => {
-    query[key] = value;
-  });
-
-  return (
-    <div className="w-full">
-      <div className="h-[65px] w-full md:h-[109px]" />
-      <CategoryPage initialQuery={query} />
-    </div>
-  );
+  return {
+    title: data?.data?.meta_title || '',
+    description: data?.data?.meta_description || '',
+    keywords: data?.data?.meta_keywords?.map((d: any) => d) || [],
+    openGraph: {
+      title: data?.data?.meta_title || '',
+      description: data?.data?.meta_description || '',
+      images: [
+        {
+          url: data?.data?.meta_image, // Update with your image URL
+          width: 1200,
+          height: 630,
+          alt: data?.data?.meta_alt,
+        },
+      ],
+    },
+  };
 }
+
+export default function page() {
+  return (
+    <div>
+      <div className="h-[65px] md:h-[109px] w-full" />
+      <CategoryPageServer />
+    </div>
+  )
+}
+

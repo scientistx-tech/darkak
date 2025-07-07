@@ -31,9 +31,9 @@ const TopSellingProducts: React.FC<TopSellingProductsProps> = ({
   };
 
   return (
-    <div className="overflow-hidden rounded-lg bg-white shadow">
+    <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-dark">
       <div className="border-b p-4">
-        <h3 className="text-md font-semibold">Top Selling Products</h3>
+        <h3 className="text-md font-semibold dark:text-white">Top Selling Products</h3>
       </div>
       <div className="divide-y">
         {topFiveProducts.map((product) => (
@@ -54,24 +54,25 @@ const TopSellingProducts: React.FC<TopSellingProductsProps> = ({
                 )}
               </div>
               <div>
-                <h4 className="line-clamp-1 text-sm font-medium">
+                <h4 className="line-clamp-1 text-sm font-medium  dark:text-white">
                   {product.title}
                 </h4>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-white">
                   {formatCurrency(product.price)}
                 </p>
               </div>
             </div>
-            <div className="flex items-center">
-              <span className="text-xs font-medium">
-                Sold: {product._count.order_items}
+            <div className="flex items-center dark:text-red-500 font-semibold">
+            Sold: 
+              <span className="text-xs font-medium dark:text-white">
+               {product._count.order_items}
               </span>
             </div>
           </div>
         ))}
 
         {topFiveProducts.length === 0 && (
-          <div className="p-4 text-center text-gray-500">
+          <div className="p-4 text-center text-gray-500 dark:text-white">
             No products data available
           </div>
         )}

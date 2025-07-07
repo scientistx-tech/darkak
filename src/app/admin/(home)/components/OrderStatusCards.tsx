@@ -44,11 +44,11 @@ const OrderStatusCards: React.FC<OrderStatusCardsProps> = ({ ordersCount }) => {
   return (
     <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {/* Pending */}
-      <div className="overflow-hidden rounded-lg bg-white shadow">
+      <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-dark">
         <div className="flex justify-between p-4">
           <div className="flex items-center gap-2">
             <Clock className="h-5 w-5 text-amber-500" />
-            <span className="text-sm font-medium">Pending</span>
+            <span className="text-sm font-medium dark:text-white">Pending</span>
           </div>
           <div className="rounded-md bg-amber-100 px-2 py-1 text-sm font-medium text-amber-800">
             {pending}
@@ -57,11 +57,11 @@ const OrderStatusCards: React.FC<OrderStatusCardsProps> = ({ ordersCount }) => {
       </div>
 
       {/* Confirmed */}
-      <div className="overflow-hidden rounded-lg bg-white shadow">
+      <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-dark">
         <div className="flex justify-between p-4">
           <div className="flex items-center gap-2">
             <CheckCircle className="h-5 w-5 text-green-500" />
-            <span className="text-sm font-medium">Confirmed</span>
+            <span className="text-sm font-medium dark:text-white">Confirmed</span>
           </div>
           <div className="rounded-md bg-green-100 px-2 py-1 text-sm font-medium text-green-800">
             {confirmed}
@@ -70,11 +70,11 @@ const OrderStatusCards: React.FC<OrderStatusCardsProps> = ({ ordersCount }) => {
       </div>
 
       {/* Packaging */}
-      <div className="overflow-hidden rounded-lg bg-white shadow">
+      <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-dark">
         <div className="flex justify-between p-4">
           <div className="flex items-center gap-2">
             <Package className="h-5 w-5 text-yellow-500" />
-            <span className="text-sm font-medium">Packaging</span>
+            <span className="text-sm font-medium dark:text-white">Packaging</span>
           </div>
           <div className="rounded-md bg-yellow-100 px-2 py-1 text-sm font-medium text-yellow-800">
             {packaging}
@@ -83,11 +83,11 @@ const OrderStatusCards: React.FC<OrderStatusCardsProps> = ({ ordersCount }) => {
       </div>
 
       {/* Out for delivery */}
-      <div className="overflow-hidden rounded-lg bg-white shadow">
+      <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-dark">
         <div className="flex justify-between p-4">
           <div className="flex items-center gap-2">
             <Truck className="h-5 w-5 text-blue-500" />
-            <span className="text-sm font-medium">Out for delivery</span>
+            <span className="text-sm font-medium dark:text-white">Out for delivery</span>
           </div>
           <div className="rounded-md bg-blue-100 px-2 py-1 text-sm font-medium text-blue-800">
             {outForDelivery}
@@ -96,11 +96,11 @@ const OrderStatusCards: React.FC<OrderStatusCardsProps> = ({ ordersCount }) => {
       </div>
 
       {/* Delivered */}
-      <div className="overflow-hidden rounded-lg bg-white shadow">
+      <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-dark">
         <div className="flex justify-between p-4">
           <div className="flex items-center gap-2">
             <Home className="h-5 w-5 text-green-600" />
-            <span className="text-sm font-medium">Delivered</span>
+            <span className="text-sm font-medium dark:text-white">Delivered</span>
           </div>
           <div className="rounded-md bg-green-100 px-2 py-1 text-sm font-medium text-green-800">
             {delivered}
@@ -109,11 +109,11 @@ const OrderStatusCards: React.FC<OrderStatusCardsProps> = ({ ordersCount }) => {
       </div>
 
       {/* Cancelled */}
-      <div className="overflow-hidden rounded-lg bg-white shadow">
+      <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-dark">
         <div className="flex justify-between p-4">
           <div className="flex items-center gap-2">
-            <XCircle className="h-5 w-5 text-gray-500" />
-            <span className="text-sm font-medium">Cancelled</span>
+            <XCircle className="h-5 w-5 text-red-500" />
+            <span className="text-sm font-medium dark:text-white">Cancelled</span>
           </div>
           <div className="rounded-md bg-gray-100 px-2 py-1 text-sm font-medium text-gray-800">
             {cancelled}
@@ -122,11 +122,11 @@ const OrderStatusCards: React.FC<OrderStatusCardsProps> = ({ ordersCount }) => {
       </div>
 
       {/* Returned */}
-      <div className="overflow-hidden rounded-lg bg-white shadow">
+      <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-dark">
         <div className="flex justify-between p-4">
           <div className="flex items-center gap-2">
             <RefreshCw className="h-5 w-5 text-indigo-500" />
-            <span className="text-sm font-medium">Returned</span>
+            <span className="text-sm font-medium dark:text-white">Returned</span>
           </div>
           <div className="rounded-md bg-indigo-100 px-2 py-1 text-sm font-medium text-indigo-800">
             {returned}
@@ -135,11 +135,11 @@ const OrderStatusCards: React.FC<OrderStatusCardsProps> = ({ ordersCount }) => {
       </div>
 
       {/* Failed to delivery */}
-      <div className="overflow-hidden rounded-lg bg-white shadow">
+      <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-dark">
         <div className="flex justify-between p-4">
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-500" />
-            <span className="text-sm font-medium">Failed to delivery</span>
+            <span className="text-sm font-medium dark:text-white">Failed to delivery</span>
           </div>
           <div className="rounded-md bg-red-100 px-2 py-1 text-sm font-medium text-red-800">
             {failedToDelivery}

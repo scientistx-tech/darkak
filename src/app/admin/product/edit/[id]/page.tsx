@@ -1,38 +1,35 @@
-"use client";
+'use client';
 import {
   useGetSingleProductDetailsQuery,
   useUpdateProductMutation,
-} from "@/redux/services/admin/adminProductApis";
-import { useParams } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
+} from '@/redux/services/admin/adminProductApis';
+import { useParams } from 'next/navigation';
+import React, { useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import {
   useDeleteSubSubCategoryMutation,
   useGetCategoriesQuery,
   useGetSubCategoriesQuery,
   useGetSubSubCategoriesQuery,
-} from "@/redux/services/admin/adminCategoryApis";
-import { useGetBrandsQuery } from "@/redux/services/admin/adminBrandApis";
+} from '@/redux/services/admin/adminCategoryApis';
+import { useGetBrandsQuery } from '@/redux/services/admin/adminBrandApis';
 import {
   useCreateProductMutation,
   useGetProductAttributesQuery,
   useUploadImagesMutation,
-} from "@/redux/services/admin/adminProductApis";
-import axios from "axios";
-import { log } from "util";
-import Image from "next/image";
-import { toast } from "react-toastify";
-import { Router } from "next/router";
-import { useRouter } from "next/navigation";
-import { FaTrashAlt } from "react-icons/fa";
-import AsyncSelect from "react-select/async";
-import { useSelector } from "react-redux";
-import JoditEditor from "jodit-react";
+} from '@/redux/services/admin/adminProductApis';
+import axios from 'axios';
+import { log } from 'util';
+import Image from 'next/image';
+import { toast } from 'react-toastify';
+import { Router } from 'next/router';
+import { useRouter } from 'next/navigation';
+import { FaTrashAlt } from 'react-icons/fa';
+import AsyncSelect from 'react-select/async';
+import { useSelector } from 'react-redux';
+import JoditEditor from 'jodit-react';
 
-const CustomEditor = dynamic(
-  () => import("@/app/admin/components/CustomEditor"),
-  { ssr: false },
-);
+const CustomEditor = dynamic(() => import('@/app/admin/components/CustomEditor'), { ssr: false });
 
 // --- Type Definitions ---
 type DeliveryInfo = {
@@ -51,6 +48,7 @@ type AttributeOption = {
   stock?: number | string;
   key?: string;
   sku?: string;
+  alt: string;
 };
 
 type AttributeItem = {
@@ -59,7 +57,7 @@ type AttributeItem = {
   options: AttributeOption[];
 };
 
-type DiscountType = "flat" | "percentage";
+type DiscountType = 'flat' | 'percentage';
 
 type ProductFormData = {
   title: string;
@@ -70,9 +68,15 @@ type ProductFormData = {
   meta_keywords: string;
   video_link: string;
   thumbnail: string;
+  thumbnail_alt: string;
+  slug: string;
+  meta_alt: string;
   price: string;
   discount_type: string;
+  discount_type_mobile: string;
   discount: string;
+  discount_mobile: string;
+  images: { url: string; alt: string }[];
   tax_amount: string;
   tax_type: string;
   available: string;
@@ -92,251 +96,255 @@ type ProductFormData = {
   subSubCategoryId: string;
   brandId: string;
   keywords: string;
-  images: string[];
   delivery_info: DeliveryInfo;
   items: AttributeItem[];
 };
 
 const countryCodes = [
-  "AF",
-  "AL",
-  "DZ",
-  "AS",
-  "AD",
-  "AO",
-  "AI",
-  "AQ",
-  "AG",
-  "AR",
-  "AM",
-  "AW",
-  "AU",
-  "AT",
-  "AZ",
-  "BS",
-  "BH",
-  "BD",
-  "BB",
-  "BY",
-  "BE",
-  "BZ",
-  "BJ",
-  "BM",
-  "BT",
-  "BO",
-  "BA",
-  "BW",
-  "BR",
-  "BN",
-  "BG",
-  "BF",
-  "BI",
-  "KH",
-  "CM",
-  "CA",
-  "CV",
-  "CF",
-  "TD",
-  "CL",
-  "CN",
-  "CO",
-  "KM",
-  "CG",
-  "CD",
-  "CR",
-  "CI",
-  "HR",
-  "CU",
-  "CY",
-  "CZ",
-  "DK",
-  "DJ",
-  "DM",
-  "DO",
-  "EC",
-  "EG",
-  "SV",
-  "GQ",
-  "ER",
-  "EE",
-  "ET",
-  "FJ",
-  "FI",
-  "FR",
-  "GA",
-  "GM",
-  "GE",
-  "DE",
-  "GH",
-  "GR",
-  "GD",
-  "GT",
-  "GN",
-  "GW",
-  "GY",
-  "HT",
-  "HN",
-  "HU",
-  "IS",
-  "IN",
-  "ID",
-  "IR",
-  "IQ",
-  "IE",
-  "IL",
-  "IT",
-  "JM",
-  "JP",
-  "JO",
-  "KZ",
-  "KE",
-  "KI",
-  "KR",
-  "KW",
-  "KG",
-  "LA",
-  "LV",
-  "LB",
-  "LS",
-  "LR",
-  "LY",
-  "LI",
-  "LT",
-  "LU",
-  "MG",
-  "MW",
-  "MY",
-  "MV",
-  "ML",
-  "MT",
-  "MH",
-  "MR",
-  "MU",
-  "MX",
-  "FM",
-  "MD",
-  "MC",
-  "MN",
-  "ME",
-  "MA",
-  "MZ",
-  "MM",
-  "NA",
-  "NR",
-  "NP",
-  "NL",
-  "NZ",
-  "NI",
-  "NE",
-  "NG",
-  "NO",
-  "OM",
-  "PK",
-  "PW",
-  "PA",
-  "PG",
-  "PY",
-  "PE",
-  "PH",
-  "PL",
-  "PT",
-  "QA",
-  "RO",
-  "RU",
-  "RW",
-  "KN",
-  "LC",
-  "VC",
-  "WS",
-  "SM",
-  "ST",
-  "SA",
-  "SN",
-  "RS",
-  "SC",
-  "SL",
-  "SG",
-  "SK",
-  "SI",
-  "SB",
-  "SO",
-  "ZA",
-  "ES",
-  "LK",
-  "SD",
-  "SR",
-  "SE",
-  "CH",
-  "SY",
-  "TW",
-  "TJ",
-  "TZ",
-  "TH",
-  "TL",
-  "TG",
-  "TO",
-  "TT",
-  "TN",
-  "TR",
-  "TM",
-  "UG",
-  "UA",
-  "AE",
-  "GB",
-  "US",
-  "UY",
-  "UZ",
-  "VU",
-  "VA",
-  "VE",
-  "VN",
-  "YE",
-  "ZM",
-  "ZW",
+  'AF',
+  'AL',
+  'DZ',
+  'AS',
+  'AD',
+  'AO',
+  'AI',
+  'AQ',
+  'AG',
+  'AR',
+  'AM',
+  'AW',
+  'AU',
+  'AT',
+  'AZ',
+  'BS',
+  'BH',
+  'BD',
+  'BB',
+  'BY',
+  'BE',
+  'BZ',
+  'BJ',
+  'BM',
+  'BT',
+  'BO',
+  'BA',
+  'BW',
+  'BR',
+  'BN',
+  'BG',
+  'BF',
+  'BI',
+  'KH',
+  'CM',
+  'CA',
+  'CV',
+  'CF',
+  'TD',
+  'CL',
+  'CN',
+  'CO',
+  'KM',
+  'CG',
+  'CD',
+  'CR',
+  'CI',
+  'HR',
+  'CU',
+  'CY',
+  'CZ',
+  'DK',
+  'DJ',
+  'DM',
+  'DO',
+  'EC',
+  'EG',
+  'SV',
+  'GQ',
+  'ER',
+  'EE',
+  'ET',
+  'FJ',
+  'FI',
+  'FR',
+  'GA',
+  'GM',
+  'GE',
+  'DE',
+  'GH',
+  'GR',
+  'GD',
+  'GT',
+  'GN',
+  'GW',
+  'GY',
+  'HT',
+  'HN',
+  'HU',
+  'IS',
+  'IN',
+  'ID',
+  'IR',
+  'IQ',
+  'IE',
+  'IL',
+  'IT',
+  'JM',
+  'JP',
+  'JO',
+  'KZ',
+  'KE',
+  'KI',
+  'KR',
+  'KW',
+  'KG',
+  'LA',
+  'LV',
+  'LB',
+  'LS',
+  'LR',
+  'LY',
+  'LI',
+  'LT',
+  'LU',
+  'MG',
+  'MW',
+  'MY',
+  'MV',
+  'ML',
+  'MT',
+  'MH',
+  'MR',
+  'MU',
+  'MX',
+  'FM',
+  'MD',
+  'MC',
+  'MN',
+  'ME',
+  'MA',
+  'MZ',
+  'MM',
+  'NA',
+  'NR',
+  'NP',
+  'NL',
+  'NZ',
+  'NI',
+  'NE',
+  'NG',
+  'NO',
+  'OM',
+  'PK',
+  'PW',
+  'PA',
+  'PG',
+  'PY',
+  'PE',
+  'PH',
+  'PL',
+  'PT',
+  'QA',
+  'RO',
+  'RU',
+  'RW',
+  'KN',
+  'LC',
+  'VC',
+  'WS',
+  'SM',
+  'ST',
+  'SA',
+  'SN',
+  'RS',
+  'SC',
+  'SL',
+  'SG',
+  'SK',
+  'SI',
+  'SB',
+  'SO',
+  'ZA',
+  'ES',
+  'LK',
+  'SD',
+  'SR',
+  'SE',
+  'CH',
+  'SY',
+  'TW',
+  'TJ',
+  'TZ',
+  'TH',
+  'TL',
+  'TG',
+  'TO',
+  'TT',
+  'TN',
+  'TR',
+  'TM',
+  'UG',
+  'UA',
+  'AE',
+  'GB',
+  'US',
+  'UY',
+  'UZ',
+  'VU',
+  'VA',
+  'VE',
+  'VN',
+  'YE',
+  'ZM',
+  'ZW',
 ];
 
 const ProductEdit = () => {
   const params = useParams();
   const { id } = params;
   const [formData, setFormData] = useState<ProductFormData>({
-    title: "",
-    short_description: "",
-    meta_title: "",
-    meta_image: "",
-    meta_description: "",
-    meta_keywords: "",
-    video_link: "",
-    thumbnail: "",
-    price: "",
-    discount_type: "",
-    discount: "",
-    tax_amount: "",
-    tax_type: "",
-    available: "",
-    warranty: "",
-    warranty_time: "",
-    region: "",
-    stock: "",
-    minOrder: "",
-    unit: "",
-    code: "",
-    specification: "",
-    description: "",
-    warranty_details: "",
-    categoryId: "",
-    subCategoryId: "",
-    subSubCategoryId: "",
-    brandId: "",
-    keywords: "",
-    drafted: false,
+    title: '',
+    short_description: '',
+    meta_title: '',
+    meta_image: '',
+    meta_description: '',
+    meta_keywords: '',
+    video_link: '',
+    thumbnail: '',
+    thumbnail_alt: '',
+    slug: '',
+    meta_alt: '',
+    price: '',
+    discount_type: '',
+    discount_type_mobile: '',
+    discount: '',
+    discount_mobile: '',
     images: [],
+    tax_amount: '',
+    tax_type: '',
+    available: '',
+    warranty: '',
+    warranty_time: '',
+    region: '',
+    stock: '',
+    minOrder: '',
+    unit: '',
+    code: '',
+    specification: '',
+    description: '',
+    warranty_details: '',
+    categoryId: '',
+    subCategoryId: '',
+    subSubCategoryId: '',
+    brandId: '',
+    keywords: '',
+    drafted: false,
     delivery_info: {
-      delivery_time: "",
-      delivery_charge: "",
-      delivery_time_outside: "",
-      delivery_charge_outside: "",
-      return_days: "",
-      multiply: "",
+      delivery_time: '',
+      delivery_charge: '',
+      delivery_time_outside: '',
+      delivery_charge_outside: '',
+      return_days: '',
+      multiply: '',
     } as DeliveryInfo,
     items: [],
   });
@@ -344,14 +352,14 @@ const ProductEdit = () => {
   const descriptionEditor = useRef(null);
   const warrantyEditor = useRef(null);
   const specificationEditor = useRef(null);
-  const [currentLanguage, setCurrentLanguage] = useState("en");
-  const [productSKU, setProductSKU] = useState("5Y5LMO");
+  const [currentLanguage, setCurrentLanguage] = useState('en');
+  const [productSKU, setProductSKU] = useState('5Y5LMO');
   const [multiplyShipping, setMultiplyShipping] = useState(false);
   const [thumbnailUploading, setThumbnailUploading] = useState(false);
   const [imagesUploading, setImagesUploading] = useState(false);
   const [metaImageUploading, setMetaImageUploading] = useState(false);
   const [optionImageUploading, setOptionImageUploading] = useState(false);
-  const [currentTab, setCurrentTab] = useState<string>("desc");
+  const [currentTab, setCurrentTab] = useState<string>('desc');
   const [selectedBrand, setSelectedBrand] = useState<{
     value: string;
     label: string;
@@ -375,16 +383,9 @@ const ProductEdit = () => {
   const { data: subSubCategoriesData } = useGetSubSubCategoriesQuery({});
   const { data: brandsData } = useGetBrandsQuery({});
   const { data: attributesData } = useGetProductAttributesQuery({});
-  const {
-    data: productData,
-    error,
-    isLoading,
-    refetch,
-  } = useGetSingleProductDetailsQuery(id);
+  const { data: productData, error, isLoading, refetch } = useGetSingleProductDetailsQuery(id);
   const [uploadImages] = useUploadImagesMutation();
-  const [createProduct] = useCreateProductMutation();
-  const [updateProduct, { isLoading: loadingUpadate }] =
-    useUpdateProductMutation();
+  const [updateProduct, { isLoading: loadingUpadate }] = useUpdateProductMutation();
 
   const router = useRouter();
   const token = useSelector((state: any) => state.auth.token);
@@ -394,21 +395,30 @@ const ProductEdit = () => {
       const p = productData.product;
       setFormData({
         title: p.title,
+        slug: p.slug,
         short_description: p.short_description,
         meta_title: p.meta_title,
         meta_image: p.meta_image,
         meta_description: p.meta_description,
-        meta_keywords: p.keywords.map((k: any) => k.key).join(","),
+        meta_keywords: p.keywords.map((k: any) => k.key).join(','),
         video_link: p.video_link,
         thumbnail: p.thumbnail,
+        thumbnail_alt: p.thumbnail_alt,
+        meta_alt: p.meta_alt,
         price: String(p.price),
         discount_type: p.discount_type,
+        discount_type_mobile: p.discount_type_mobile,
         discount: String(p.discount),
+        discount_mobile: String(p.discount_mobile),
+        images: p.Image.map((img: any) => ({
+          url: img.url,
+          alt: img.alt || '', // fallback to empty string if `alt` not present
+        })),
         tax_amount: String(p.tax_amount),
         tax_type: p.tax_type,
         available: p.available,
         warranty: p.warranty,
-        warranty_time: p.warranty_time || "",
+        warranty_time: p.warranty_time || '',
         region: p.region,
         stock: String(p.stock),
         minOrder: String(p.minOrder),
@@ -418,22 +428,17 @@ const ProductEdit = () => {
         description: p.description,
         warranty_details: p.warranty_details,
         categoryId: String(p.categoryId),
-        subCategoryId: String(p?.subCategoryId ? p?.subCategoryId : ""),
-        subSubCategoryId: String(
-          p?.subSubCategoryId ? p?.subSubCategoryId : "",
-        ),
+        subCategoryId: String(p?.subCategoryId ? p?.subCategoryId : ''),
+        subSubCategoryId: String(p?.subSubCategoryId ? p?.subSubCategoryId : ''),
         brandId: String(p.brandId),
-        keywords: p.keywords.map((k: any) => k.key).join(","),
-        images: p.Image.map((img: any) => img.url),
+        keywords: p.keywords.map((k: any) => k.key).join(','),
         delivery_info: {
           delivery_time: p.delivery_info.delivery_time,
           delivery_charge: String(p.delivery_info.delivery_charge),
           delivery_time_outside: p.delivery_info.delivery_time_outside,
-          delivery_charge_outside: String(
-            p.delivery_info.delivery_charge_outside,
-          ),
+          delivery_charge_outside: String(p.delivery_info.delivery_charge_outside),
           return_days: String(p.delivery_info.return_days),
-          multiply: p.delivery_info.multiply ? "true" : "false",
+          multiply: p.delivery_info.multiply ? 'true' : 'false',
         },
         items: p.items.map((item: any) => ({
           attributeId: String(item.id),
@@ -446,6 +451,7 @@ const ProductEdit = () => {
               stock: opt.stock,
               sku: opt.sku,
               image: opt.image,
+              alt: opt.alt,
             })),
         })),
         drafted: p.drafted,
@@ -459,22 +465,19 @@ const ProductEdit = () => {
           ? {
               value: String(p.brandId),
               label:
-                brandsData?.data?.find(
-                  (b: any) => String(b.id) === String(p.brandId),
-                )?.title || "",
+                brandsData?.data?.find((b: any) => String(b.id) === String(p.brandId))?.title || '',
             }
-          : null,
+          : null
       );
       setSelectedCategory(
         p?.categoryId
           ? {
               value: String(p.categoryId),
               label:
-                categoriesData?.data?.find(
-                  (c: any) => String(c.id) === String(p.categoryId),
-                )?.title || "",
+                categoriesData?.data?.find((c: any) => String(c.id) === String(p.categoryId))
+                  ?.title || '',
             }
-          : null,
+          : null
       );
       setSelectedSubCategory(
         p?.subCategoryId
@@ -482,10 +485,10 @@ const ProductEdit = () => {
               value: String(p.subCategoryId),
               label:
                 subCategoriesData?.data?.find(
-                  (sc: any) => String(sc.id) === String(p.subCategoryId),
-                )?.title || "",
+                  (sc: any) => String(sc.id) === String(p.subCategoryId)
+                )?.title || '',
             }
-          : null,
+          : null
       );
       setSelectedSubSubCategory(
         p?.subSubCategoryId
@@ -493,34 +496,24 @@ const ProductEdit = () => {
               value: String(p.subSubCategoryId),
               label:
                 subSubCategoriesData?.data?.find(
-                  (ssc: any) => String(ssc.id) === String(p.subSubCategoryId),
-                )?.title || "",
+                  (ssc: any) => String(ssc.id) === String(p.subSubCategoryId)
+                )?.title || '',
             }
-          : null,
+          : null
       );
     }
-  }, [
-    productData,
-    brandsData,
-    categoriesData,
-    subCategoriesData,
-    subSubCategoriesData,
-  ]);
+  }, [productData, brandsData, categoriesData, subCategoriesData, subSubCategoriesData]);
 
-  console.log("formdata", formData);
+  console.log('formdata', formData);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleDeliveryChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const handleDeliveryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -528,10 +521,9 @@ const ProductEdit = () => {
     }));
   };
 
-  const handleEditorChange =
-    (field: keyof ProductFormData) => (value: string) => {
-      setFormData((prev) => ({ ...prev, [field]: value }));
-    };
+  const handleEditorChange = (field: keyof ProductFormData) => (value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const generateCode = () => {
     const code = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -541,9 +533,9 @@ const ProductEdit = () => {
 
   const handleImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    type: "images" | "thumbnail" | "meta_image" | "option_image" = "images",
+    type: 'images' | 'thumbnail' | 'meta_image' | 'option_image' = 'images',
     attributeIndex?: number,
-    optionIndex?: number,
+    optionIndex?: number
   ) => {
     e.preventDefault && e.preventDefault();
 
@@ -551,15 +543,11 @@ const ProductEdit = () => {
     if (!files.length) return;
 
     try {
-      if (
-        type === "option_image" &&
-        attributeIndex !== undefined &&
-        optionIndex !== undefined
-      ) {
+      if (type === 'option_image' && attributeIndex !== undefined && optionIndex !== undefined) {
         // Upload image for a specific option
         setOptionImageUploading(true);
         const imgForm = new FormData();
-        imgForm.append("images", files[0]);
+        imgForm.append('images', files[0]);
         const res = await uploadImages(imgForm).unwrap();
         const url = res[0];
         setFormData((prev) => {
@@ -567,68 +555,98 @@ const ProductEdit = () => {
           updatedItems[attributeIndex].options[optionIndex].image = url;
           return { ...prev, items: updatedItems };
         });
-      } else if (type === "images") {
-        // Upload all images in one request
-        setImagesUploading(true);
-        const imgForm = new FormData();
-        files.forEach((file) => imgForm.append("images", file));
-        const res = await uploadImages(imgForm).unwrap();
-
-        const uploadedUrls = res || [];
-        setFormData((prev) => ({
-          ...prev,
-          images: [...prev.images, ...uploadedUrls],
-        }));
       } else {
         // Upload single file for thumbnail or meta_image
 
-        if (type === "thumbnail") {
+        if (type === 'thumbnail') {
           setThumbnailUploading(true);
           const imgForm = new FormData();
-          imgForm.append("images", files[0]);
+          imgForm.append('images', files[0]);
           const res = await uploadImages(imgForm).unwrap();
           const url = res[0];
           setFormData((prev) => ({ ...prev, thumbnail: url }));
-        } else if (type === "meta_image") {
+        } else if (type === 'meta_image') {
           setMetaImageUploading(true);
           const imgForm = new FormData();
-          imgForm.append("images", files[0]);
+          imgForm.append('images', files[0]);
           const res = await uploadImages(imgForm).unwrap();
           const url = res[0];
           setFormData((prev) => ({ ...prev, meta_image: url }));
         }
       }
     } catch (error) {
-      console.error("Image upload failed", error);
+      console.error('Image upload failed', error);
     } finally {
       setThumbnailUploading(false);
       setMetaImageUploading(false);
       setImagesUploading(false);
       setOptionImageUploading(false);
-      e.target.value = ""; // Reset input
+      e.target.value = ''; // Reset input
     }
   };
 
+  const handleAdditionalImagesUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    e.preventDefault && e.preventDefault();
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    try {
+      setImagesUploading(true);
+      const imgForm = new FormData();
+      imgForm.append('images', files[0]);
+      const res = await uploadImages(imgForm).unwrap();
+      const url = res[0];
+
+      setFormData((prev) => {
+        const updatedImages = [...prev.images];
+        updatedImages[index] = { ...updatedImages[index], url };
+        return { ...prev, images: updatedImages };
+      });
+    } catch (error) {
+      console.error('Image upload failed', error);
+    } finally {
+      setImagesUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleAltChange = (index: number, alt: string) => {
+    setFormData((prev) => {
+      const updatedImages = [...prev.images];
+      updatedImages[index] = { ...updatedImages[index], alt };
+      return { ...prev, images: updatedImages };
+    });
+  };
+
+  const addImageField = () => {
+    setFormData((prev) => ({
+      ...prev,
+      images: [...prev.images, { url: '', alt: '' }],
+    }));
+  };
+
   function validateProductForm(formData: ProductFormData): string | null {
-    if (!formData.title) return "Product Name is required";
-    if (!formData.short_description) return "Short Description is required";
-    if (!formData.meta_title) return "Meta Title is required";
-    if (!formData.meta_image) return "Meta Image is required";
-    if (!formData.thumbnail) return "Thumbnail is required";
-    if (!formData.price) return "Price is required";
-    if (!formData.unit) return "Unit is required";
-    if (!formData.categoryId) return "Category is required";
-    if (!formData.brandId) return "Brand is required";
-    if (!formData.keywords) return "Keywords are required";
-    if (!formData.delivery_info.delivery_time)
-      return "Delivery Time is required";
-    if (!formData.delivery_info.delivery_charge)
-      return "Delivery Charge is required";
-    if (!formData.delivery_info.delivery_time_outside)
-      return "Delivery Time Outside is required";
+    if (!formData.title) return 'Product Name is required';
+    if (!formData.short_description) return 'Short Description is required';
+    if (!formData.meta_title) return 'Meta Title is required';
+    if (!formData.meta_image) return 'Meta Image is required';
+    if (!formData.thumbnail) return 'Thumbnail is required';
+    if (!formData.price) return 'Price is required';
+    if (!formData.meta_alt) return 'Meta Alt is required';
+    if (!formData.slug) return 'Slug is required';
+    if (!formData.unit) return 'Unit is required';
+    if (!formData.categoryId) return 'Category is required';
+    if (!formData.brandId) return 'Brand is required';
+    if (!formData.keywords) return 'Keywords are required';
+    if (!formData.delivery_info.delivery_time) return 'Delivery Time is required';
+    if (!formData.delivery_info.delivery_charge) return 'Delivery Charge is required';
+    if (!formData.delivery_info.delivery_time_outside) return 'Delivery Time Outside is required';
     if (!formData.delivery_info.delivery_charge_outside)
-      return "Delivery Charge Outside is required";
-    if (!formData.delivery_info.return_days) return "Return Days is required";
+      return 'Delivery Charge Outside is required';
+    if (!formData.delivery_info.return_days) return 'Return Days is required';
     return null; // All good!
   }
 
@@ -647,24 +665,29 @@ const ProductEdit = () => {
       meta_image: formData.meta_image,
       video_link: formData.video_link,
       thumbnail: formData.thumbnail,
+      thumbnail_alt: formData.thumbnail_alt,
+      slug: formData.slug,
+      meta_alt: formData.meta_alt,
       price: formData.price, // keep as string
       discount_type: formData.discount_type as DiscountType,
-      discount: formData.discount || "0",
-      tax_amount: formData.tax_amount || "0",
+      discount_type_mobile: formData.discount_type_mobile as DiscountType,
+      discount: formData.discount || '0',
+      discount_mobile: formData.discount_mobile || '0',
+      tax_amount: formData.tax_amount || '0',
       tax_type: formData.tax_type,
       available: formData.available,
       warranty: formData.warranty,
       warranty_time: formData.warranty_time,
       region: formData.region,
-      stock: formData.stock || "0",
-      minOrder: formData.minOrder || "1",
+      stock: formData.stock || '0',
+      minOrder: formData.minOrder || '1',
       unit: formData.unit,
-      specification: formData.specification || "",
-      description: formData.description || "",
-      warranty_details: formData.warranty_details || "",
+      specification: formData.specification || '',
+      description: formData.description || '',
+      warranty_details: formData.warranty_details || '',
       meta_description: formData.meta_description,
       meta_keywords: formData.meta_keywords
-        .split(",")
+        .split(',')
         .map((k) => k.trim())
         .filter(Boolean),
       categoryId: formData.categoryId,
@@ -672,7 +695,7 @@ const ProductEdit = () => {
       drafted: isDraft,
       brandId: formData.brandId,
       keywords: formData.keywords
-        .split(",")
+        .split(',')
         .map((k) => k.trim())
         .filter(Boolean),
       images: formData.images,
@@ -682,23 +705,22 @@ const ProductEdit = () => {
         delivery_time_outside: formData.delivery_info.delivery_time_outside,
         delivery_charge_outside: formData.delivery_info.delivery_charge_outside,
         return_days: formData.delivery_info.return_days,
-        multiply: multiplyShipping ? "true" : "false",
+        multiply: multiplyShipping ? 'true' : 'false',
       },
       items: formData.items.map((item) => ({
-        attributeId: item.attributeId || "",
+        attributeId: item.attributeId || '',
         options: item.options.map((opt) => ({
           ...opt,
-          price:
-            typeof opt.price === "string" ? parseFloat(opt.price) : opt.price,
-          stock:
-            typeof opt.stock === "string" ? parseInt(opt.stock) : opt.stock,
+          price: typeof opt.price === 'string' ? parseFloat(opt.price) : opt.price,
+          stock: typeof opt.stock === 'string' ? parseInt(opt.stock) : opt.stock,
           sku:
             opt.sku !== undefined
               ? String(opt.sku)
               : opt.stock !== undefined
                 ? String(opt.stock)
-                : "",
-          image: opt.image || "",
+                : '',
+          image: opt.image || '',
+          alt: opt.alt || '',
         })),
       })),
     };
@@ -716,7 +738,7 @@ const ProductEdit = () => {
         id: productData.product.id,
         data: payload,
       }).unwrap();
-      toast.success("Product updated successfully");
+      toast.success('Product updated successfully');
       router.back();
     } catch (error: any) {
       console.error(error);
@@ -725,15 +747,12 @@ const ProductEdit = () => {
   };
 
   const loadBrandOptions = async (inputValue: string) => {
-    const res = await fetch(
-      `https://api.darkak.com.bd/api/admin/brand/get?search=${inputValue}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    const res = await fetch(`https://api.darkak.com.bd/api/admin/brand/get?search=${inputValue}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
     const json = await res.json();
     return json.data.map((item: any) => ({
       value: item.id,
@@ -745,11 +764,11 @@ const ProductEdit = () => {
     const res = await fetch(
       `https://api.darkak.com.bd/api/admin/category/create?search=${inputValue}`,
       {
-        method: "GET",
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
     const json = await res.json();
     return json.data.map((item: any) => ({
@@ -759,24 +778,24 @@ const ProductEdit = () => {
   };
 
   const loadSubCategoryOptions = async (inputValue: string) => {
-    console.log("selc cat", formData.categoryId);
+    console.log('selc cat', formData.categoryId);
     if (!formData.categoryId) return [];
     const res = await fetch(
       `https://api.darkak.com.bd/api/admin/category/sub-category?search=${inputValue}`,
       {
-        method: "GET",
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
     const json = await res.json();
     // Filter by selected categoryId
     const filtered = json.data.filter(
-      (item: any) => String(item.categoryId) === String(formData.categoryId),
+      (item: any) => String(item.categoryId) === String(formData.categoryId)
     );
 
-    console.log("fil cat", filtered);
+    console.log('fil cat', filtered);
 
     return filtered.map((item: any) => ({
       value: item.id,
@@ -789,17 +808,16 @@ const ProductEdit = () => {
     const res = await fetch(
       `https://api.darkak.com.bd/api/admin/category/sub-sub-category?search=${inputValue}`,
       {
-        method: "GET",
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
     const json = await res.json();
     // Filter by selected subCategoryId
     const filtered = json.data.filter(
-      (item: any) =>
-        String(item.subCategoryId) === String(formData.subCategoryId),
+      (item: any) => String(item.subCategoryId) === String(formData.subCategoryId)
     );
     return filtered.map((item: any) => ({
       value: item.id,
@@ -809,23 +827,21 @@ const ProductEdit = () => {
 
   return (
     <div className="mx-auto w-full">
-      <h1 className="mb-4 flex items-center gap-2 text-xl font-bold">
-        🛍️ Edit Product
-      </h1>
+      <h1 className="mb-4 flex items-center gap-2 text-xl font-bold">🛍️ Edit Product</h1>
 
       {/* name and desc */}
       <div className="bg-white p-5">
         {/* language tabs */}
         <div className="mb-4 flex items-center gap-x-5">
           <div
-            className={`${currentLanguage === "en" ? "border-b-2 border-blue-500 text-blue-500" : ""} flex cursor-pointer py-2 text-sm font-medium tracking-wider`}
-            onClick={() => setCurrentLanguage("en")}
+            className={`${currentLanguage === 'en' ? 'border-b-2 border-blue-500 text-blue-500' : ''} flex cursor-pointer py-2 text-sm font-medium tracking-wider`}
+            onClick={() => setCurrentLanguage('en')}
           >
             <button>English (EN)</button>
           </div>
           <div
-            className={`${currentLanguage === "bn" ? "border-b-2 border-blue-500 text-blue-500" : ""} cursor-pointer py-2 text-sm font-medium tracking-wider`}
-            onClick={() => setCurrentLanguage("bn")}
+            className={`${currentLanguage === 'bn' ? 'border-b-2 border-blue-500 text-blue-500' : ''} cursor-pointer py-2 text-sm font-medium tracking-wider`}
+            onClick={() => setCurrentLanguage('bn')}
           >
             <button>Bengali (BD)</button>
           </div>
@@ -834,7 +850,7 @@ const ProductEdit = () => {
         <div className="flex flex-col gap-y-3">
           <div className="flex flex-col gap-2">
             <label htmlFor="title">
-              Product Name {`( ${currentLanguage === "en" ? "EN" : "BD"})`}{" "}
+              Product Name {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}{' '}
               <span className="text-red-500">*</span>
             </label>
             <input
@@ -845,59 +861,73 @@ const ProductEdit = () => {
               className="w-full rounded border p-2"
             />
           </div>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="slug">
+              Product Slug {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}{' '}
+              <span className="text-xs text-red-500">* Avoid Slash and Space</span>
+            </label>
+            <input
+              name="slug"
+              placeholder="Slug"
+              value={formData.slug}
+              onChange={handleChange}
+              className="w-full rounded border p-2"
+            />
+          </div>
 
           <div className="flex flex-col gap-2">
             <label htmlFor="title">
-              Description {`( ${currentLanguage === "en" ? "EN" : "BD"})`}{" "}
+              Description {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}{' '}
               <span className="text-red-500">*</span>
             </label>
             <JoditEditor
               ref={editor}
               config={{
                 askBeforePasteHTML: false,
-                defaultActionOnPaste: "insert_only_text",
+                defaultActionOnPaste: 'insert_only_text',
                 uploader: {
                   insertImageAsBase64URI: true,
                 },
                 style: {
                   // background: "#E3E3E3",
                 },
-                placeholder: "Start writing",
-                height: "450px",
+                placeholder: 'Start writing',
+                height: '450px',
                 toolbar: true,
                 buttons: [
-                  "bold",
-                  "italic",
-                  "underline",
-                  "strikethrough",
-                  "|",
-                  "ul",
-                  "ol", // <-- Add these for bullet and numbered lists
-                  "outdent",
-                  "indent",
-                  "|",
-                  "font",
-                  "fontsize",
-                  "brush",
-                  "paragraph",
-                  "|",
-                  "image",
-                  "video",
-                  "table",
-                  "link",
-                  "|",
-                  "align",
-                  "undo",
-                  "redo",
-                  "hr",
-                  "eraser",
-                  "copyformat",
-                  "fullsize",
+                  'bold',
+                  'italic',
+                  'underline',
+                  'strikethrough',
+                  '|',
+                  'ul',
+                  'ol', // <-- Add these for bullet and numbered lists
+                  'outdent',
+                  'indent',
+                  '|',
+                  'font',
+                  'fontsize',
+                  'brush',
+                  'paragraph',
+                  '|',
+                  'image',
+                  'video',
+                  'table',
+                  'link',
+                  '|',
+                  'align',
+                  'undo',
+                  'redo',
+                  'hr',
+                  'eraser',
+                  'copyformat',
+                  'fullsize',
+                  'source',
                 ],
               }}
               value={formData.short_description}
               onBlur={(newContent) => {
-                handleEditorChange("short_description")(newContent);
+                handleEditorChange('short_description')(newContent);
               }} // preferred to use only this option to update the content for performance reasons
               // onChange={newContent => {}}
             />
@@ -923,9 +953,9 @@ const ProductEdit = () => {
                 setSelectedCategory(option);
                 setFormData((prev) => ({
                   ...prev,
-                  categoryId: option?.value || "",
-                  subCategoryId: "", // reset
-                  subSubCategoryId: "", // reset
+                  categoryId: option?.value || '',
+                  subCategoryId: '', // reset
+                  subSubCategoryId: '', // reset
                 }));
                 setSelectedSubCategory(null);
                 setSelectedSubSubCategory(null);
@@ -935,18 +965,16 @@ const ProductEdit = () => {
               styles={{
                 container: (base) => ({
                   ...base,
-                  height: "40px",
-                  marginTop: "0.25rem",
+                  height: '40px',
+                  marginTop: '0.25rem',
                 }),
-                control: (base) => ({ ...base, height: "40px" }),
+                control: (base) => ({ ...base, height: '40px' }),
               }}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Sub Category
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Sub Category</label>
             <AsyncSelect
               key={formData.categoryId}
               cacheOptions
@@ -957,8 +985,8 @@ const ProductEdit = () => {
                 setSelectedSubCategory(option);
                 setFormData((prev) => ({
                   ...prev,
-                  subCategoryId: option?.value || "",
-                  subSubCategoryId: "",
+                  subCategoryId: option?.value || '',
+                  subSubCategoryId: '',
                 }));
                 setSelectedSubSubCategory(null);
               }}
@@ -967,18 +995,16 @@ const ProductEdit = () => {
               styles={{
                 container: (base) => ({
                   ...base,
-                  height: "40px",
-                  marginTop: "0.25rem",
+                  height: '40px',
+                  marginTop: '0.25rem',
                 }),
-                control: (base) => ({ ...base, height: "40px" }),
+                control: (base) => ({ ...base, height: '40px' }),
               }}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Sub Sub Category
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Sub Sub Category</label>
             <AsyncSelect
               key={formData.subCategoryId}
               cacheOptions
@@ -989,7 +1015,7 @@ const ProductEdit = () => {
                 setSelectedSubSubCategory(option);
                 setFormData((prev) => ({
                   ...prev,
-                  subSubCategoryId: option?.value || "",
+                  subSubCategoryId: option?.value || '',
                 }));
               }}
               placeholder="Select Sub Sub Category"
@@ -997,10 +1023,10 @@ const ProductEdit = () => {
               styles={{
                 container: (base) => ({
                   ...base,
-                  height: "40px",
-                  marginTop: "0.25rem",
+                  height: '40px',
+                  marginTop: '0.25rem',
                 }),
-                control: (base) => ({ ...base, height: "40px" }),
+                control: (base) => ({ ...base, height: '40px' }),
               }}
             />
           </div>
@@ -1018,7 +1044,7 @@ const ProductEdit = () => {
                 setSelectedBrand(option);
                 setFormData((prev) => ({
                   ...prev,
-                  brandId: option?.value || "",
+                  brandId: option?.value || '',
                 }));
               }}
               placeholder="Select Brand"
@@ -1026,10 +1052,10 @@ const ProductEdit = () => {
               styles={{
                 container: (base) => ({
                   ...base,
-                  height: "40px",
-                  marginTop: "0.25rem",
+                  height: '40px',
+                  marginTop: '0.25rem',
                 }),
-                control: (base) => ({ ...base, height: "40px" }),
+                control: (base) => ({ ...base, height: '40px' }),
               }}
             />
           </div>
@@ -1089,9 +1115,7 @@ const ProductEdit = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Warranty
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Warranty</label>
             <select
               name="warranty"
               value={formData.warranty}
@@ -1104,9 +1128,7 @@ const ProductEdit = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Warranty Time
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Warranty Time</label>
             <div className="relative mt-1 flex items-center gap-2">
               <input
                 type="text"
@@ -1119,9 +1141,7 @@ const ProductEdit = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Region
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Region</label>
             <select
               name="region"
               onChange={handleChange}
@@ -1232,7 +1252,7 @@ const ProductEdit = () => {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           <div>
             <label className="text-sm font-medium text-gray-700">
-              Unit price <span className="text-red-500">*</span>{" "}
+              Unit price <span className="text-red-500">*</span>{' '}
             </label>
             <input
               name="price"
@@ -1243,11 +1263,8 @@ const ProductEdit = () => {
               className="mt-1 w-full rounded-md border p-2"
             />
           </div>
-
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              Minimum order quantity
-            </label>
+            <label className="text-sm font-medium text-gray-700">Minimum order quantity</label>
             <input
               type="number"
               name="minOrder"
@@ -1256,11 +1273,8 @@ const ProductEdit = () => {
               className="mt-1 w-full rounded-md border p-2"
             />
           </div>
-
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              Current stock quantity
-            </label>
+            <label className="text-sm font-medium text-gray-700">Current stock quantity</label>
             <input
               name="stock"
               value={formData.stock}
@@ -1269,11 +1283,8 @@ const ProductEdit = () => {
               className="mt-1 w-full rounded-md border p-2"
             />
           </div>
-
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              Discount Type
-            </label>
+            <label className="text-sm font-medium text-gray-700">Discount Type Web</label>
             <select
               name="discount_type"
               value={formData.discount_type}
@@ -1284,11 +1295,21 @@ const ProductEdit = () => {
               <option value="percentage">Percentage</option>
             </select>
           </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700">Discount Type Mobile</label>
+            <select
+              name="discount_type_mobile"
+              value={formData.discount_type_mobile}
+              onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            >
+              <option value="flat">Flat</option>
+              <option value="percentage">Percentage</option>
+            </select>
+          </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              Discount amount
-            </label>
+            <label className="text-sm font-medium text-gray-700">Discount amount Web</label>
             <input
               name="discount"
               value={formData.discount}
@@ -1297,11 +1318,31 @@ const ProductEdit = () => {
               className="mt-1 w-full rounded-md border p-2"
             />
           </div>
-
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              Tax amount (%)
-            </label>
+            <label className="text-sm font-medium text-gray-700">Discount amount Mobile</label>
+            <input
+              name="discount_mobile"
+              value={formData.discount_mobile}
+              type="number"
+              onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700">Accept Payment Type</label>
+            <select
+              name="payment_type"
+              // value={formData.discount_type}
+              // onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            >
+              <option value="cod">Cash On Delivery</option>
+              <option value="online">Online</option>
+              <option value="both">Both</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700">Tax amount (%)</label>
             <input
               type="number"
               name="tax_amount"
@@ -1310,11 +1351,8 @@ const ProductEdit = () => {
               className="mt-1 w-full rounded-md border p-2"
             />
           </div>
-
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              Tax Type
-            </label>
+            <label className="text-sm font-medium text-gray-700">Tax Type</label>
             <select
               name="tax_type"
               value={formData.tax_type}
@@ -1349,7 +1387,7 @@ const ProductEdit = () => {
       </div>
 
       {/* thumbnail and images */}
-      <div className="mt-5 flex flex-col gap-6 md:flex-row">
+      <div className="mt-5 flex flex-col gap-6">
         {/* Thumbnail Upload */}
         <div className="flex-1 rounded-lg border bg-white p-4 shadow">
           <label className="mb-1 block text-sm font-semibold text-gray-700">
@@ -1361,7 +1399,7 @@ const ProductEdit = () => {
               type="file"
               accept="image/*"
               className="absolute inset-0 cursor-pointer opacity-0"
-              onChange={(e) => handleImageUpload(e, "thumbnail")}
+              onChange={(e) => handleImageUpload(e, 'thumbnail')}
               style={{ zIndex: 1 }}
             />
             <div className="relative z-10 text-center text-sm text-gray-500">
@@ -1379,10 +1417,10 @@ const ProductEdit = () => {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setFormData((prev) => ({ ...prev, thumbnail: "" }));
+                      setFormData((prev) => ({ ...prev, thumbnail: '' }));
                     }}
                     className="mt-2 rounded bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600"
-                    style={{ zIndex: 20, position: "relative" }}
+                    style={{ zIndex: 20, position: 'relative' }}
                   >
                     Remove
                   </button>
@@ -1400,69 +1438,84 @@ const ProductEdit = () => {
               )}
             </div>
           </div>
+
+          <div className="mt-2">
+            <label className="text-sm font-medium text-gray-700">
+              Thumbnail Alt <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="thumbnail_alt"
+              type="text"
+              value={formData.thumbnail_alt}
+              onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            />
+          </div>
         </div>
 
         {/* Additional Images Upload */}
-        <div className="flex-[2] rounded-lg border bg-white p-4 shadow">
-          <label className="mb-1 block text-sm font-semibold text-gray-700">
-            Upload additional image
+        <div className="rounded-lg border bg-white p-4 shadow">
+          <label className="mb-2 block text-sm font-semibold text-gray-700">
+            Upload Product Images
           </label>
-          <p className="mb-2 text-xs text-blue-600">Ratio 1:1 (500 x 500 px)</p>
-          <p className="mb-2 text-sm text-gray-600">
-            Upload additional product images
-          </p>
-          <div className="relative flex h-32 cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              name="images"
-              className="absolute inset-0 cursor-pointer opacity-0"
-              onChange={(e) => handleImageUpload(e, "images")}
-            />
-            <div className="relative z-10 w-full text-center text-sm text-gray-500">
-              {formData.images.length > 0 ? (
-                <div className="flex flex-wrap justify-center gap-2">
-                  {formData.images.map((img, idx) => (
-                    <div key={idx} className="group relative">
-                      <Image
-                        src={img}
-                        alt={`Product image ${idx + 1}`}
-                        width={80}
-                        height={80}
-                        className="rounded border object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setFormData((prev) => ({
-                            ...prev,
-                            images: prev.images.filter((_, i) => i !== idx),
-                          }));
-                        }}
-                        className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white opacity-80 hover:opacity-100"
-                        style={{ zIndex: 10 }}
-                        title="Remove"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <>
-                  <p className="text-blue-600">
-                    {imagesUploading ? (
-                      <p className="mt-3">Uploading...</p>
-                    ) : (
-                      <p>Click to Upload</p>
-                    )}
+
+          <button
+            type="button"
+            onClick={addImageField}
+            className="mb-4 rounded bg-blue-600 px-4 py-1 text-white hover:bg-blue-700"
+          >
+            + Add Image
+          </button>
+
+          {formData.images.map((img, idx) => (
+            <div
+              key={idx}
+              className="mb-4 flex flex-col items-start gap-2 rounded border border-b border-slate-400 p-4"
+            >
+              <div className="relative flex h-32 w-full cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="absolute inset-0 cursor-pointer opacity-0"
+                  onChange={(e) => handleAdditionalImagesUpload(e, idx)}
+                />
+                {img.url ? (
+                  <Image
+                    src={img.url}
+                    alt={`Uploaded ${idx + 1}`}
+                    width={100}
+                    height={100}
+                    className="rounded object-cover"
+                  />
+                ) : (
+                  <p className="z-10 text-sm text-blue-600">
+                    {imagesUploading ? 'Uploading...' : 'Click to Upload'}
                   </p>
-                </>
-              )}
+                )}
+              </div>
+
+              <input
+                type="text"
+                placeholder="Enter image alt text"
+                value={img.alt}
+                onChange={(e) => handleAltChange(idx, e.target.value)}
+                className="w-full rounded border px-3 py-2 text-sm"
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    images: prev.images.filter((_, i) => i !== idx),
+                  }))
+                }
+                className="border-red-500 bg-red-100 px-2 py-0.5 text-sm text-red-500 hover:underline"
+              >
+                Remove
+              </button>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
@@ -1473,7 +1526,7 @@ const ProductEdit = () => {
         <div className="">
           <div>
             <label className="text-sm font-medium text-gray-700">
-              Youtube video link{" "}
+              Youtube video link{' '}
               <span className="text-blue-500">
                 (Optional please provide embed link not direct link.)
               </span>
@@ -1498,7 +1551,7 @@ const ProductEdit = () => {
             {/* Attribute Title */}
             <div className="flex items-center gap-4">
               <select
-                value={attribute.attributeId || ""}
+                value={attribute.attributeId || ''}
                 onChange={(e) => {
                   const updatedItems = [...formData.items];
                   updatedItems[attributeIndex].attributeId = e.target.value;
@@ -1508,13 +1561,11 @@ const ProductEdit = () => {
               >
                 <option value="">Select Attribute</option>
                 {attributesData &&
-                  attributesData?.data?.map(
-                    (attribute: { id: string; title: string }) => (
-                      <option key={attribute.id} value={attribute.id}>
-                        {attribute?.title}
-                      </option>
-                    ),
-                  )}
+                  attributesData?.data?.map((attribute: { id: string; title: string }) => (
+                    <option key={attribute.id} value={attribute.id}>
+                      {attribute?.title}
+                    </option>
+                  ))}
               </select>
               <button
                 onClick={() => {
@@ -1545,9 +1596,7 @@ const ProductEdit = () => {
                         value={option.title}
                         onChange={(e) => {
                           const updatedItems = [...formData.items];
-                          updatedItems[attributeIndex].options[
-                            optionIndex
-                          ].title = e.target.value;
+                          updatedItems[attributeIndex].options[optionIndex].title = e.target.value;
                           setFormData((prev) => ({
                             ...prev,
                             items: updatedItems,
@@ -1565,9 +1614,9 @@ const ProductEdit = () => {
                         value={option.price}
                         onChange={(e) => {
                           const updatedItems = [...formData.items];
-                          updatedItems[attributeIndex].options[
-                            optionIndex
-                          ].price = parseFloat(e.target.value);
+                          updatedItems[attributeIndex].options[optionIndex].price = parseFloat(
+                            e.target.value
+                          );
                           setFormData((prev) => ({
                             ...prev,
                             items: updatedItems,
@@ -1585,9 +1634,9 @@ const ProductEdit = () => {
                         value={option.stock}
                         onChange={(e) => {
                           const updatedItems = [...formData.items];
-                          updatedItems[attributeIndex].options[
-                            optionIndex
-                          ].stock = parseFloat(e.target.value);
+                          updatedItems[attributeIndex].options[optionIndex].stock = parseFloat(
+                            e.target.value
+                          );
                           setFormData((prev) => ({
                             ...prev,
                             items: updatedItems,
@@ -1604,9 +1653,7 @@ const ProductEdit = () => {
                         value={option.sku}
                         onChange={(e) => {
                           const updatedItems = [...formData.items];
-                          updatedItems[attributeIndex].options[
-                            optionIndex
-                          ].sku = e.target.value;
+                          updatedItems[attributeIndex].options[optionIndex].sku = e.target.value;
                           setFormData((prev) => ({
                             ...prev,
                             items: updatedItems,
@@ -1626,12 +1673,7 @@ const ProductEdit = () => {
                           accept="image/*"
                           className="absolute inset-0 cursor-pointer opacity-0"
                           onChange={(e) =>
-                            handleImageUpload(
-                              e,
-                              "option_image",
-                              attributeIndex,
-                              optionIndex,
-                            )
+                            handleImageUpload(e, 'option_image', attributeIndex, optionIndex)
                           }
                           style={{ zIndex: 1 }}
                         />
@@ -1650,16 +1692,14 @@ const ProductEdit = () => {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   const updatedItems = [...formData.items];
-                                  updatedItems[attributeIndex].options[
-                                    optionIndex
-                                  ].image = "";
+                                  updatedItems[attributeIndex].options[optionIndex].image = '';
                                   setFormData((prev) => ({
                                     ...prev,
                                     items: updatedItems,
                                   }));
                                 }}
                                 className="mt-1 rounded bg-red-500 px-2 py-0.5 text-xs text-white hover:bg-red-600"
-                                style={{ zIndex: 20, position: "relative" }}
+                                style={{ zIndex: 20, position: 'relative' }}
                               >
                                 Remove
                               </button>
@@ -1678,6 +1718,24 @@ const ProductEdit = () => {
                         </div>
                       </div>
                     </div>
+                  </div>
+                  <div className="mt-2">
+                    <label>
+                      Option Alt <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={option.alt}
+                      onChange={(e) => {
+                        const updatedItems = [...formData.items];
+                        updatedItems[attributeIndex].options[optionIndex].alt = e.target.value;
+                        setFormData((prev) => ({
+                          ...prev,
+                          items: updatedItems,
+                        }));
+                      }}
+                      className="mt-1 w-full rounded-md border p-2"
+                    />
                   </div>
                 </div>
 
@@ -1699,9 +1757,10 @@ const ProductEdit = () => {
               onClick={() => {
                 const updatedItems = [...formData.items];
                 updatedItems[attributeIndex].options.push({
-                  title: "",
+                  title: '',
                   price: 0,
                   stock: 1,
+                  alt: '',
                 });
                 setFormData((prev) => ({ ...prev, items: updatedItems }));
               }}
@@ -1720,8 +1779,8 @@ const ProductEdit = () => {
               items: [
                 ...prev.items,
                 {
-                  attributeId: "", // <-- always present!
-                  title: "",
+                  attributeId: '', // <-- always present!
+                  title: '',
                   options: [],
                 },
               ],
@@ -1756,10 +1815,9 @@ const ProductEdit = () => {
               </span>
               <span
                 className={`text-xs font-semibold ${
-                  formData.meta_title.length < 50 ||
-                  formData.meta_title.length > 60
-                    ? "text-red-500"
-                    : "text-green-600"
+                  formData.meta_title.length < 50 || formData.meta_title.length > 60
+                    ? 'text-red-500'
+                    : 'text-green-600'
                 }`}
               >
                 {formData.meta_title.length} chars
@@ -1784,15 +1842,26 @@ const ProductEdit = () => {
               </span>
               <span
                 className={`text-xs font-semibold ${
-                  formData.meta_description.length < 150 ||
-                  formData.meta_description.length > 160
-                    ? "text-red-500"
-                    : "text-green-600"
+                  formData.meta_description.length < 150 || formData.meta_description.length > 160
+                    ? 'text-red-500'
+                    : 'text-green-600'
                 }`}
               >
                 {formData.meta_description.length} chars
               </span>
             </div>
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              Alt Tag <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="meta_alt"
+              type="text"
+              value={formData.meta_alt}
+              onChange={handleChange}
+              className="mt-1 w-full rounded-md border p-2"
+            />
           </div>
           <div>
             <label className="text-sm font-medium text-gray-700">
@@ -1810,16 +1879,14 @@ const ProductEdit = () => {
             <label className="mb-1 block text-sm font-semibold text-gray-700">
               Meta Image <span className="text-red-500">*</span>
             </label>
-            <p className="mb-2 text-xs text-blue-600">
-              Ratio 1:1 (500 x 500 px)
-            </p>
+            <p className="mb-2 text-xs text-blue-600">Ratio 1:1 (500 x 500 px)</p>
             <div className="relative flex h-32 cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
               <input
                 type="file"
                 accept="image/*"
                 name="meta_image"
                 className="absolute inset-0 cursor-pointer opacity-0"
-                onChange={(e) => handleImageUpload(e, "meta_image")}
+                onChange={(e) => handleImageUpload(e, 'meta_image')}
               />
               <div className="relative z-10 text-center text-sm text-gray-500">
                 {formData.meta_image ? (
@@ -1836,10 +1903,10 @@ const ProductEdit = () => {
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setFormData((prev) => ({ ...prev, meta_image: "" }));
+                        setFormData((prev) => ({ ...prev, meta_image: '' }));
                       }}
                       className="mt-2 rounded bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600"
-                      style={{ zIndex: 20, position: "relative" }}
+                      style={{ zIndex: 20, position: 'relative' }}
                     >
                       Remove
                     </button>
@@ -1866,20 +1933,20 @@ const ProductEdit = () => {
         {/* tabs */}
         <div>
           <span
-            onClick={() => setCurrentTab("desc")}
-            className={`cursor-pointer rounded px-6 py-2 ${currentTab === "desc" && "border-2 border-blue"}`}
+            onClick={() => setCurrentTab('desc')}
+            className={`cursor-pointer rounded px-6 py-2 ${currentTab === 'desc' && 'border-2 border-blue'}`}
           >
             Description
           </span>
           <span
-            onClick={() => setCurrentTab("spec")}
-            className={`cursor-pointer rounded px-6 py-2 ${currentTab === "spec" && "border-2 border-blue"}`}
+            onClick={() => setCurrentTab('spec')}
+            className={`cursor-pointer rounded px-6 py-2 ${currentTab === 'spec' && 'border-2 border-blue'}`}
           >
             Specifications
           </span>
           <span
-            onClick={() => setCurrentTab("warrn")}
-            className={`cursor-pointer rounded px-6 py-2 ${currentTab === "warrn" && "border-2 border-blue"}`}
+            onClick={() => setCurrentTab('warrn')}
+            className={`cursor-pointer rounded px-6 py-2 ${currentTab === 'warrn' && 'border-2 border-blue'}`}
           >
             Warranties
           </span>
@@ -1888,116 +1955,116 @@ const ProductEdit = () => {
         {/* content */}
 
         <div className="mt-5">
-          {currentTab === "desc" ? (
+          {currentTab === 'desc' ? (
             <div className="flex flex-col gap-2">
               <label htmlFor="description">
                 Description
-                {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+                {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}
               </label>
               <JoditEditor
                 ref={descriptionEditor}
                 config={{
                   askBeforePasteHTML: false,
-                  defaultActionOnPaste: "insert_only_text",
+                  defaultActionOnPaste: 'insert_only_text',
                   uploader: {
                     insertImageAsBase64URI: true,
                   },
                   style: {
                     // background: "#E3E3E3",
                   },
-                  placeholder: "Start writing description",
-                  height: "450px",
+                  placeholder: 'Start writing description',
+                  height: '450px',
                   toolbar: true,
                   buttons: [
-                    "bold",
-                    "italic",
-                    "underline",
-                    "strikethrough",
-                    "|",
-                    "ul",
-                    "ol", // <-- Add these for bullet and numbered lists
-                    "outdent",
-                    "indent",
-                    "|",
-                    "font",
-                    "fontsize",
-                    "brush",
-                    "paragraph",
-                    "|",
-                    "image",
-                    "video",
-                    "table",
-                    "link",
-                    "|",
-                    "align",
-                    "undo",
-                    "redo",
-                    "hr",
-                    "eraser",
-                    "copyformat",
-                    "fullsize",
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikethrough',
+                    '|',
+                    'ul',
+                    'ol', // <-- Add these for bullet and numbered lists
+                    'outdent',
+                    'indent',
+                    '|',
+                    'font',
+                    'fontsize',
+                    'brush',
+                    'paragraph',
+                    '|',
+                    'image',
+                    'video',
+                    'table',
+                    'link',
+                    '|',
+                    'align',
+                    'undo',
+                    'redo',
+                    'hr',
+                    'eraser',
+                    'copyformat',
+                    'fullsize',
                   ],
                 }}
                 value={formData.description}
                 onBlur={(newContent) => {
-                  handleEditorChange("description")(newContent);
+                  handleEditorChange('description')(newContent);
                 }} // preferred to use only this option to update the content for performance reasons
                 // onChange={newContent => {}}
               />
             </div>
-          ) : currentTab === "spec" ? (
+          ) : currentTab === 'spec' ? (
             <div className="flex flex-col gap-2">
               <label htmlFor="specification">
                 Specification
-                {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+                {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}
               </label>
               <JoditEditor
                 ref={specificationEditor}
                 config={{
                   askBeforePasteHTML: false,
-                  defaultActionOnPaste: "insert_only_text",
+                  defaultActionOnPaste: 'insert_only_text',
                   uploader: {
                     insertImageAsBase64URI: true,
                   },
                   style: {
                     // background: "#E3E3E3",
                   },
-                  placeholder: "Start writing specification",
-                  height: "450px",
+                  placeholder: 'Start writing specification',
+                  height: '450px',
                   toolbar: true,
                   buttons: [
-                    "bold",
-                    "italic",
-                    "underline",
-                    "strikethrough",
-                    "|",
-                    "ul",
-                    "ol", // <-- Add these for bullet and numbered lists
-                    "outdent",
-                    "indent",
-                    "|",
-                    "font",
-                    "fontsize",
-                    "brush",
-                    "paragraph",
-                    "|",
-                    "image",
-                    "video",
-                    "table",
-                    "link",
-                    "|",
-                    "align",
-                    "undo",
-                    "redo",
-                    "hr",
-                    "eraser",
-                    "copyformat",
-                    "fullsize",
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikethrough',
+                    '|',
+                    'ul',
+                    'ol', // <-- Add these for bullet and numbered lists
+                    'outdent',
+                    'indent',
+                    '|',
+                    'font',
+                    'fontsize',
+                    'brush',
+                    'paragraph',
+                    '|',
+                    'image',
+                    'video',
+                    'table',
+                    'link',
+                    '|',
+                    'align',
+                    'undo',
+                    'redo',
+                    'hr',
+                    'eraser',
+                    'copyformat',
+                    'fullsize',
                   ],
                 }}
                 value={formData.specification}
                 onBlur={(newContent) => {
-                  handleEditorChange("specification")(newContent);
+                  handleEditorChange('specification')(newContent);
                 }} // preferred to use only this option to update the content for performance reasons
                 // onChange={newContent => {}}
               />
@@ -2006,7 +2073,7 @@ const ProductEdit = () => {
             <div className="flex flex-col gap-2">
               <label htmlFor="warranty_details">
                 Warranty details
-                {`( ${currentLanguage === "en" ? "EN" : "BD"})`}
+                {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}
               </label>
               <JoditEditor
                 ref={warrantyEditor}
@@ -2015,46 +2082,46 @@ const ProductEdit = () => {
                   uploader: {
                     insertImageAsBase64URI: true,
                   },
-                  defaultActionOnPaste: "insert_only_text",
+                  defaultActionOnPaste: 'insert_only_text',
                   style: {
                     // background: "#E3E3E3",
                   },
-                  placeholder: "Start writing warranty details",
-                  height: "450px",
+                  placeholder: 'Start writing warranty details',
+                  height: '450px',
                   toolbar: true,
                   buttons: [
-                    "bold",
-                    "italic",
-                    "underline",
-                    "strikethrough",
-                    "|",
-                    "ul",
-                    "ol", // <-- Add these for bullet and numbered lists
-                    "outdent",
-                    "indent",
-                    "|",
-                    "font",
-                    "fontsize",
-                    "brush",
-                    "paragraph",
-                    "|",
-                    "image",
-                    "video",
-                    "table",
-                    "link",
-                    "|",
-                    "align",
-                    "undo",
-                    "redo",
-                    "hr",
-                    "eraser",
-                    "copyformat",
-                    "fullsize",
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikethrough',
+                    '|',
+                    'ul',
+                    'ol', // <-- Add these for bullet and numbered lists
+                    'outdent',
+                    'indent',
+                    '|',
+                    'font',
+                    'fontsize',
+                    'brush',
+                    'paragraph',
+                    '|',
+                    'image',
+                    'video',
+                    'table',
+                    'link',
+                    '|',
+                    'align',
+                    'undo',
+                    'redo',
+                    'hr',
+                    'eraser',
+                    'copyformat',
+                    'fullsize',
                   ],
                 }}
                 value={formData.warranty_details}
                 onBlur={(newContent) => {
-                  handleEditorChange("warranty_details")(newContent);
+                  handleEditorChange('warranty_details')(newContent);
                 }} // preferred to use only this option to update the content for performance reasons
                 // onChange={newContent => {}}
               />
@@ -2082,13 +2149,10 @@ const ProductEdit = () => {
           onClick={() => handleSubmit(false)}
           className="rounded bg-blue-600 px-4 py-2 text-white shadow"
           disabled={
-            imagesUploading ||
-            metaImageUploading ||
-            thumbnailUploading ||
-            optionImageUploading
+            imagesUploading || metaImageUploading || thumbnailUploading || optionImageUploading
           }
         >
-          {loadingUpadate ? "Updating.." : "Update"}
+          {loadingUpadate ? 'Updating..' : 'Update'}
         </button>
         {/* <button
           type="button"

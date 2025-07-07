@@ -23,8 +23,10 @@ import { auth } from "@/utils/firebase";
 import { useGetProductCategoriesQuery } from "@/redux/services/client/categories";
 import { useAddSubscriberMutation } from "@/redux/services/client/subscribe";
 import { toast } from "react-toastify";
+import { useGetHomeContentQuery } from "@/redux/services/client/homeContentApi";
 
 function Footer() {
+  const { data: home } = useGetHomeContentQuery();
   const [addSubscriber, { isLoading: subscribeLoading }] =
     useAddSubscriberMutation();
   const [api, contextHolder] = notification.useNotification();
@@ -93,9 +95,7 @@ function Footer() {
           {/* Left-side */}
           <div className="w-full pl-5 md:w-2/3 md:pl-10">
             <div className="right-5 mt-[-65px] flex w-[97%] flex-col items-center justify-center rounded-md bg-[#F1F6FF] px-3 py-6 shadow-2xl md:w-[50%]">
-              <p className="text-xl font-semibold text-[#003084]">
-                SUBSCRIBE TO OUR NEWSLETTER
-              </p>
+              <p className="text-xl font-semibold text-[#003084]">SUBSCRIBE TO OUR NEWSLETTER</p>
               <div className="mt-5 flex w-[80%] rounded-full bg-white">
                 <input
                   onChange={(e) => setEmail(e.target.value)}
@@ -110,7 +110,7 @@ function Footer() {
                   disabled={subscribeLoading}
                   className="w-1/3 rounded-r-full bg-primary py-2 text-white transition-all duration-500 ease-in-out hover:bg-[#003084] disabled:opacity-60"
                 >
-                  {subscribeLoading ? "Loading..." : "SUBSCRIBE"}
+                  {subscribeLoading ? 'Loading...' : 'SUBSCRIBE'}
                 </button>
               </div>
             </div>
@@ -127,23 +127,15 @@ function Footer() {
               <div className="flex w-full flex-col md:w-2/3">
                 <div className="flex w-full">
                   <div className="flex w-1/2 flex-col">
-                    <p className="mb-3 text-xl text-[#BBD4FF] md:mb-5">
-                      Quick Links
-                    </p>
+                    <p className="mb-3 text-xl text-[#BBD4FF] md:mb-5">Quick Links</p>
 
                     <Link href="/" className="text-[#F6F6F6] hover:text-white">
                       Home
                     </Link>
-                    <Link
-                      href="/shop"
-                      className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3"
-                    >
+                    <Link href="/shop" className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3">
                       Shop
                     </Link>
-                    <Link
-                      href="/product"
-                      className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3"
-                    >
+                    <Link href="/product" className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3">
                       Product
                     </Link>
                     <Link
@@ -154,14 +146,9 @@ function Footer() {
                     </Link>
                   </div>
                   <div className="flex w-1/2 flex-col">
-                    <p className="mb-3 text-xl text-[#BBD4FF] md:mb-5">
-                      Support
-                    </p>
+                    <p className="mb-3 text-xl text-[#BBD4FF] md:mb-5">Support</p>
 
-                    <Link
-                      href="/about-us"
-                      className="text-[#F6F6F6] hover:text-white"
-                    >
+                    <Link href="/about-us" className="text-[#F6F6F6] hover:text-white">
                       About Us
                     </Link>
                     <Link
@@ -176,10 +163,7 @@ function Footer() {
                     >
                       Terms and Condition
                     </Link>
-                    <Link
-                      href="/faq"
-                      className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3"
-                    >
+                    <Link href="/faq" className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3">
                       FAQ
                     </Link>
                   </div>
@@ -199,9 +183,7 @@ function Footer() {
                 </div>
               </div>
               <div className="mt-8 flex flex-col md:mt-0 md:w-1/3">
-                <p className="mb-3 text-xl text-[#BBD4FF] md:mb-5">
-                  Product Categories
-                </p>
+                <p className="mb-3 text-xl text-[#BBD4FF] md:mb-5">Product Categories</p>
 
                 {isLoading ? (
                   [...Array(5)].map((_, i) => (
@@ -214,7 +196,7 @@ function Footer() {
                     <div key={cat.title} className="mb-1 md:mb-3">
                       <Link
                         href={{
-                          pathname: "/category",
+                          pathname: '/category',
                           query: { categoryId: cat.title },
                         }}
                         className="text-[#F6F6F6] hover:text-white"
@@ -250,7 +232,8 @@ function Footer() {
             </div>
             <div className="flex flex-col items-start justify-center md:items-end md:pr-10">
               <p className="mt-5 text-2xl font-medium text-[#BBD4FF] md:mt-16">
-                Flat 30% OFF on All Products!
+                {/* Flat 30% OFF on All Products! */}
+                {home?.content?.footer_title}
               </p>
 
               {user ? (
@@ -274,14 +257,14 @@ function Footer() {
               <p className="mt-5 text-xl text-[#BBD4FF] md:mt-8">Contact</p>
 
               <p className="mt-1 text-[#F6F6F6] opacity-55 transition-all duration-500 ease-in-out hover:text-white hover:opacity-100 md:mt-3">
-                Email:{" "}
+                Email:{' '}
                 <a href="mailto:info@darkak.com.bd" className="hover:underline">
-                  {" "}
+                  {' '}
                   info@darkak.com.bd
                 </a>
               </p>
               <p className="mt-1 text-[#F6F6F6] opacity-55 transition-all duration-500 ease-in-out hover:text-white hover:opacity-100 md:mt-3">
-                Phone:{" "}
+                Phone:{' '}
                 <a href="tel:01711726501" className="hover:underline">
                   01711726501
                 </a>
@@ -290,9 +273,7 @@ function Footer() {
                 Address: Upashahar , Bogura -5800
               </p>
 
-              <p className="mt-5 text-xl text-[#BBD4FF] md:mt-8">
-                Stay Connected
-              </p>
+              <p className="mt-5 text-xl text-[#BBD4FF] md:mt-8">Stay Connected</p>
 
               <div className="mb-[80px] mt-3 flex gap-4 md:mb-0">
                 <a

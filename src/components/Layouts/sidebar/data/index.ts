@@ -12,8 +12,10 @@ import { BiSolidOffer } from "react-icons/bi";
 import { MdAddModerator } from "react-icons/md";
 import * as Icons from "../icons";
 import { BsTornado } from "react-icons/bs";
-import { SiDevexpress } from "react-icons/si";
-
+import { FaListAlt } from "react-icons/fa";
+import { IoMdAddCircle } from "react-icons/io";
+import { FaRegListAlt } from "react-icons/fa";
+import { RiSeoLine } from "react-icons/ri";
 export const getSellerNavData = (data: any) => [
   {
     label: "Seller Dashboard",
@@ -402,24 +404,122 @@ export const getNavData = (data: any, vendorData: any) => [
         icon: BiSlider,
         items: [],
       },
+      // {
+      //   title: "Ali Express",
+      //   accesskey: "ali-express",
+      //   // url: "/admin/ali-express-products",
+      //   icon: SiDevexpress,
+      //   items: [
+      //     {
+      //       title: "Add Product",
+      //       accessKey: "ali-express-add-product",
+      //       url: "/admin/ali-express-products/add-product",
+      //     },
+      //     {
+      //       title: "Product List",
+      //       accessKey: "ali-express-product-list",
+      //       url: "/admin/ali-express-products/product-list",
+      //     },
+      //   ],
+      // },
+    ],
+  },
+  {
+    label: "Ali Express",
+    items: [
+   
       {
-        title: "Ali Express",
-        accesskey: "ali-express",
-        // url: "/admin/ali-express-products",
-        icon: SiDevexpress,
+        title: "Add Product",
+        icon: IoMdAddCircle,
+        accessKey: "ali-express-add-product",
+        url: "/admin/ali-express-products/add-product",
+        items: [],
+      },
+      {
+        title: "Product List",
+        icon: FaRegListAlt,
+        accessKey: "ali-express-product-list",
+        url: "/admin/ali-express-products/product-list",
+        items: [],
+      },
+      {
+        title: "Orders",
+        // accessKey: "orders",
+        icon: IoMdCart,
         items: [
           {
-            title: "Add Product",
-            accessKey: "ali-express-add-product",
-            url: "/admin/ali-express-products/add-product",
+            title: "All",
+            url: "/admin/ali-express-products/orders/all",
+            accessKey: "order-all",
+            values: { vive: "positive", value: data?.totalOrder },
           },
           {
-            title: "Product List",
-            accessKey: "ali-express-product-list",
-            url: "/admin/ali-express-products/product-list",
+            title: "Pending",
+            url: "/admin/ali-express-products/orders/pending",
+            accessKey: "order-pending",
+            values: { vive: "positive", value: data?.ordersCount[0].pending },
+          },
+          {
+            title: "Confirm",
+            url: "/admin/ali-express-products/orders/confirmed",
+            accessKey: "order-confirm",
+            values: {
+              vive: "neutral-1",
+              value: data?.ordersCount[1].confirmed,
+            },
+          },
+          {
+            title: "Packaging",
+            url: "/admin/ali-express-products/orders/packaging",
+            accessKey: "order-packaging",
+            values: {
+              vive: "neutral-2",
+              value: data?.ordersCount[2].packaging,
+            },
+          },
+          {
+            title: "Out For Delivery",
+            url: "/admin/ali-express-products/orders/out-for-delivery",
+            accessKey: "order-out-for-delivery",
+            values: {
+              vive: "neutral-2",
+              value: data?.ordersCount[3].out_for_delivery,
+            },
+          },
+          {
+            title: "Delivered",
+            url: "/admin/ali-express-products/orders/delivered",
+            accessKey: "order-delivered",
+            values: {
+              vive: "neutral-1",
+              value: data?.ordersCount[4].delivered,
+            },
+          },
+          {
+            title: "Returned",
+            url: "/admin/ali-express-products/orders/returned",
+            accessKey: "order-returned",
+            values: { vive: "negetive", value: data?.ordersCount[6].returned },
+          },
+          {
+            title: "Failled To Deliver",
+            url: "/admin/ali-express-products/orders/failled-to-deliver",
+            accessKey: "order-failed-to-deliver",
+            values: {
+              vive: "negetive",
+              value: data?.ordersCount[7].failed_to_delivery,
+            },
+          },
+          {
+            title: "Canceled",
+            url: "/admin/ali-express-products/orders/cancelled",
+            accessKey: "order-cancelled",
+
+            values: { vive: "negetive", value: data?.ordersCount[5].cancelled },
           },
         ],
       },
+ 
     ],
   },
   {
@@ -532,6 +632,73 @@ export const getNavData = (data: any, vendorData: any) => [
           {
             title: "Delivery Providers",
             url: "/admin/settings/delivery-providers",
+          },
+          {
+            title: "Site Settings",
+            url: "/admin/settings/site-settings",
+          },
+        ],
+      },
+      {
+        title: "SEO",
+        accessKey: "seo",
+        icon: RiSeoLine,
+        items: [
+          {
+            title: "Home Page",
+            url: "/admin/seo/home-page",
+          },
+          {
+            title: "Category Page",
+            url: "/admin/seo/category-page",
+          },
+          {
+            title: "Product Page",
+            url: "/admin/seo/product-page",
+          },
+          {
+            title: "Vendor Page",
+            url: "/admin/seo/vendor-page",
+          },
+          {
+            title: "Contact Us Page",
+            url: "/admin/seo/contact-us-page",
+          },
+          {
+            title: "CheckOut Page",
+            url: "/admin/seo/checkout-page",
+          },
+          {
+            title: "About Us Page",
+            url: "/admin/seo/about-us-page",
+          },
+          {
+            title: "Private Policy Page",
+            url: "/admin/seo/private-policy-page",
+          },
+          {
+            title: "Terms Condition Page",
+            url: "/admin/seo/terms-condition-page",
+          },
+          {
+            title: "FAQ Page",
+            url: "/admin/seo/faq-page",
+          },
+          {
+            title: "SignUp Page",
+            url: "/admin/seo/signup-page",
+          },
+          {
+            title: "LogIn Page",
+            url: "/admin/seo/login-page",
+          },
+          {
+            title: "Forgot Password Page",
+            url: "/admin/seo/forgot-password-page",
+          },
+          {
+            title: "Moderator LonIn Page",
+            url: "/admin/seo/moderator-login-page",
           },
         ],
       },
