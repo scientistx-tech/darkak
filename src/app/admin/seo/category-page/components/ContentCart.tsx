@@ -1,8 +1,10 @@
 'use client';
-import React, { useState, ChangeEvent } from 'react';
+import JoditEditor from 'jodit-react';
+import React, { useState, ChangeEvent, useRef } from 'react';
 
 export default function ContentCart() {
   const [mainContent, setMainContent] = useState('');
+  const specificationEditor = useRef<any>(null);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setMainContent(e.target.value);
@@ -20,12 +22,23 @@ export default function ContentCart() {
     <div className="mt-6">
       <div className="w-full">
         <label className="block font-medium text-gray-700">Main Content:</label>
-        <textarea
+        <JoditEditor
+          ref={specificationEditor}
+          config={{
+            askBeforePasteHTML: false,
+            defaultActionOnPaste: 'insert_only_text',
+            uploader: {
+              insertImageAsBase64URI: true,
+            },
+            placeholder: 'Start writing specification',
+            height: '450px',
+            toolbar: true,
+          }}
           value={mainContent}
-          onChange={handleChange}
-          rows={4}
-          className="mt-1 w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-        ></textarea>
+          onBlur={(newContent) => {
+            setMainContent(newContent);
+          }}
+        />
 
         <p className="mt-1 flex w-full justify-between text-sm text-gray-500">
           <span>Description should be between 100–300 characters.</span>

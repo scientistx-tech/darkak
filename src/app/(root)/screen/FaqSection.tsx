@@ -20,9 +20,9 @@ const FaqSection = () => {
 
   return (
     <div className="mx-auto max-w-7xl mt-10 backdrop-blur-lg bg-white/60 rounded-xl p-10">
-      <h1 className="text-center text-xl md:text-3xl font-bold text-primaryBlue mb-12">
+      <h2 className="text-center text-xl md:text-3xl font-bold text-primaryBlue mb-12">
         Frequently Asked Questions
-      </h1>
+      </h2>
 
       <div className="space-y-4">
         {faqs.map((faq: any, index: number) => (
