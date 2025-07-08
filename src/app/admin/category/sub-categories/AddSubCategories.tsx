@@ -12,10 +12,13 @@ import {
 } from '@/redux/services/admin/adminCategoryApis';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
+import { isNull } from 'util';
 
 export type FaqType = {
-  question: string;
-  answer: string;
+  faq: {
+    question: string;
+    answer: string;
+  }[];
 };
 
 type AddDataProps = {
@@ -26,11 +29,13 @@ type AddDataProps = {
     icon: string;
     serial: number;
     isActive: true;
-    meta_keywords: string;
+    meta_keywords: {
+      keywords: string;
+    };
     meta_title: string;
     content: string;
     meta_description: string;
-    faq: FaqType[];
+    faq: FaqType;
     meta_alt: string;
     meta_image: string;
     _count:
@@ -43,11 +48,13 @@ type AddDataProps = {
     id: string;
     title: string;
     categoryId: string;
-    meta_keywords: string;
+    meta_keywords: {
+      keywords: string;
+    };
     meta_title: string;
     content: string;
     meta_description: string;
-    faq: FaqType[];
+    faq: FaqType;
     meta_alt: string;
     meta_image: string;
   };
@@ -57,11 +64,13 @@ type AddDataProps = {
       id: string;
       title: string;
       categoryId: string;
-      meta_keywords: string;
+      meta_keywords: {
+        keywords: string;
+      };
       meta_title: string;
       content: string;
       meta_description: string;
-      faq: FaqType[];
+      faq: FaqType;
       meta_alt: string;
       meta_image: string;
     };
@@ -74,6 +83,7 @@ const schema = yup.object().shape({
 });
 
 function AddSubCategories({ refetch, categories, value, setIsEditable }: AddDataProps) {
+  console.log('value', value);
   const [currentLanguage, setCurrentLanguage] = useState('en');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [meta_image, setMetaImage] = useState<File | null>(null);
@@ -85,8 +95,8 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
   const [metaImagePreview, setMetaImagePreview] = useState<string | null>(
     value?.meta_image || null
   );
-  const [faqList, setFaqList] = useState<FaqType[]>(
-    value?.faq || [
+  const [faqList, setFaqList] = useState<any>(
+    value?.faq?.faq || [
       { question: '', answer: '' },
       { question: '', answer: '' },
     ]
@@ -115,10 +125,31 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
         title: value.title || '',
         categoryId: value.categoryId || '',
       });
+      setMetaAlt(value.meta_alt || '');
+      setMetaTitle(value.meta_title || '');
+      setMetaKeywords(
+        Array.isArray(value.meta_keywords?.keywords)
+          ? value.meta_keywords.keywords.join(', ')
+          : value.meta_keywords?.keywords || ''
+      );
+      setMetaDescription(value.meta_description || '');
+      setContent(value.content || '');
+      setMetaImagePreview(value.meta_image || null);
+      setFaqList(
+        Array.isArray(value.faq?.faq)
+          ? value.faq.faq.map((f: any) => ({
+              question: f.ques || '',
+              answer: f.ans || '',
+            }))
+          : [
+              { question: '', answer: '' },
+              { question: '', answer: '' },
+            ]
+      );
     }
   }, [value, reset]);
 
-  const handleFaqChange = (index: number, field: keyof FaqType, val: string) => {
+  const handleFaqChange = (index: number, field: keyof FaqType['faq'][number], val: string) => {
     const updated = [...faqList];
     updated[index][field] = val;
     setFaqList(updated);
@@ -129,9 +160,14 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
   };
 
   const handleRemoveFaq = (index: number) => {
-    setFaqList((prev) => prev.filter((_, i) => i !== index));
+    setFaqList((prev: any) => prev.filter((_: any, i: any) => i !== index));
   };
 
+  async function urlToFile(url: string, filename: string, mimeType: string): Promise<File> {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new File([blob], filename, { type: mimeType });
+  }
   const handleMetaImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -144,16 +180,36 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
   };
 
   const onSubmit = async (data: any) => {
+    const faqPayload = {
+      faq: faqList?.map((f: any) => ({
+        ques: f.question,
+        ans: f.answer,
+      })),
+    };
+
+    const keywordsPayload = {
+      keywords: (typeof meta_keywords === 'string' ? meta_keywords : meta_keywords?.keywords || '')
+        .split(',')
+        .map((k) => k.trim())
+        .filter(Boolean),
+    };
+
+    const metaImage = await urlToFile(
+      metaImagePreview || '',
+      `meta-img-${Date.now()}.png`,
+      'image/png'
+    );
+
     const formData = {
       title: data?.title,
       categoryId: parseInt(data?.categoryId),
-      meta_keywords,
+      meta_keywords: keywordsPayload,
       meta_title,
       content,
       meta_description,
-      faq: faqList,
+      faq: faqPayload,
       meta_alt,
-      meta_image: metaImagePreview || '',
+      meta_image: metaImage || '',
     };
 
     try {
@@ -170,11 +226,11 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
               id: '',
               title: '',
               categoryId: '',
-              meta_keywords: '',
+              meta_keywords: { keywords: '' },
               meta_title: '',
               content: '',
               meta_description: '',
-              faq: [],
+              faq: { faq: [] },
               meta_alt: '',
               meta_image: '',
             },
@@ -183,6 +239,17 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
       } else {
         await uploadFormData(formData).unwrap();
         toast.success('Sub Category created successfully!');
+        setMetaAlt('');
+        setMetaDescription('');
+        setMetaImage(null);
+        setMetaKeywords('');
+        setMetaTitle('');
+        setContent('');
+        setFaqList([
+          { question: '', answer: '' },
+          { question: '', answer: '' },
+        ]);
+        setMetaImagePreview(null);
       }
       refetch();
       reset();
@@ -192,6 +259,7 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
     }
   };
 
+  console.log('lst', faqList);
   return (
     <div className="flex w-full flex-col gap-3">
       <h1 className="mb-6 flex items-center gap-2 text-2xl font-bold">
@@ -254,7 +322,7 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
         />
         <Input
           placeholder="Meta Keywords"
-          value={meta_keywords}
+          value={typeof meta_keywords === 'string' ? meta_keywords : meta_keywords?.keywords || ''}
           onChange={(e) => setMetaKeywords(e.target.value)}
         />
       </div>
@@ -311,6 +379,7 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
                     className="h-full w-full rounded-lg object-contain py-3"
                     width={150}
                     height={150}
+                    unoptimized
                   />
                   <button
                     type="button"
@@ -357,7 +426,7 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {faqList.map((faq, index) => (
+        {faqList.map((faq: any, index: any) => (
           <React.Fragment key={index}>
             {/* FAQ Question Input */}
             <Input
@@ -387,7 +456,7 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
         ))}
 
         {/* Add FAQ Button */}
-        <div className="col-span-2">
+        <div className="col-span-2 flex w-full justify-end">
           <Button type="button" onClick={handleAddFaq} className="bg-blue-500 text-white">
             Add More FAQ
           </Button>
@@ -405,11 +474,11 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
                     id: '',
                     title: '',
                     categoryId: '',
-                    meta_keywords: '',
+                    meta_keywords: { keywords: '' },
                     meta_title: '',
                     content: '',
                     meta_description: '',
-                    faq: [],
+                    faq: { faq: [] },
                     meta_alt: '',
                     meta_image: '',
                   },

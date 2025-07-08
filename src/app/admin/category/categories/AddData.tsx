@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import SelectField from '@/app/(root)/user/profile/components/SelectField';
 import Image from 'next/image';
 import Textarea from '../../components/Textarea';
+
 export type FaqType = {
   question: string;
   answer: string;
@@ -30,13 +31,19 @@ type AddDataProps = {
   };
   setIsEditable?: (arg: {
     status: boolean;
-    value: { id: string; title: string; icon: string; serial: string; meta_keywords: string;
+    value: {
+      id: string;
+      title: string;
+      icon: string;
+      serial: string;
+      meta_keywords: string;
       meta_title: string;
       content: string;
       meta_description: string;
       faq: FaqType[];
       meta_alt: string;
-      meta_image: string;};
+      meta_image: string;
+    };
   }) => void;
 };
 
@@ -105,15 +112,29 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
       return;
     }
 
+    const faqPayload = {
+      faq: faqList.map((f) => ({
+        ques: f.question,
+        ans: f.answer,
+      })),
+    };
+
+    const keywordsPayload = {
+      keywords: meta_keywords
+        .split(',')
+        .map((k) => k.trim())
+        .filter(Boolean),
+    };
+
     const formData = new FormData();
     formData.append('title', title);
     formData.append('serial', selectedCategoryPriority);
     formData.append('meta_title', meta_title);
-    formData.append('meta_keywords', meta_keywords);
+    formData.append('meta_keywords', JSON.stringify(keywordsPayload));
     formData.append('meta_alt', meta_alt);
     formData.append('meta_description', meta_description);
     formData.append('content', content);
-    formData.append('faq', JSON.stringify(faqList));
+    formData.append('faq', JSON.stringify(faqPayload));
 
     const metaImage = await urlToFile(
       metaImagePreview || '',
@@ -132,6 +153,8 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
       return;
     }
     formData.append('icon', image as File);
+
+    console.log('formData', formData);
 
     try {
       if (value && value?.id) {
@@ -385,7 +408,6 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
                 value={faq.question}
                 onChange={(e) => handleFaqChange(index, 'question', e.target.value)}
               />
-
             </div>
 
             {/* Answer Input */}
