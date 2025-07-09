@@ -20,7 +20,9 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <NextTopLoader showSpinner={false} />
 
         <div className="flex min-h-screen">
-          <Sidebar />
+          <div className="w-[350px]">
+            <Sidebar />
+          </div>
 
           <div className="w-full bg-gray-2 dark:bg-[#020d1a]">
             <Header />

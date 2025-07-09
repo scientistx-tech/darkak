@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -8,26 +8,31 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import Image from "next/image";
-import React, { useState } from "react";
-import Button from "../../components/Button";
+} from '@/components/ui/table';
+import Image from 'next/image';
+import React, { useState } from 'react';
+import Button from '../../components/Button';
 // import AddData from "./AddData";
 import {
   useGetCategoriesQuery,
   useGetSubCategoriesQuery,
-} from "@/redux/services/admin/adminCategoryApis";
-import { useDeleteSubCategoryMutation } from "@/redux/services/admin/adminCategoryApis";
-import { toast } from "react-toastify";
-import Link from "next/link";
-import { Switch } from "@/components/FormElements/switch";
-import { MdOutlineEdit } from "react-icons/md";
+} from '@/redux/services/admin/adminCategoryApis';
+import { useDeleteSubCategoryMutation } from '@/redux/services/admin/adminCategoryApis';
+import { toast } from 'react-toastify';
+import Link from 'next/link';
+import { Switch } from '@/components/FormElements/switch';
+import { MdOutlineEdit } from 'react-icons/md';
 
-import { MdDelete } from "react-icons/md";
-import AddData from "../categories/AddData";
-import AddSubCategories from "./AddSubCategories";
-import Pagination from "@/components/shared/Pagination";
-import RequireAccess from "@/components/Layouts/RequireAccess";
+import { MdDelete } from 'react-icons/md';
+import AddData from '../categories/AddData';
+import AddSubCategories from './AddSubCategories';
+import Pagination from '@/components/shared/Pagination';
+import RequireAccess from '@/components/Layouts/RequireAccess';
+
+export type FaqType = {
+  question: string;
+  answer: string;
+};
 
 function CategoryTable() {
   const [isEditable, setIsEditable] = useState<{
@@ -36,8 +41,29 @@ function CategoryTable() {
       id: string;
       title: string;
       categoryId: string;
+      meta_keywords: string;
+      meta_title: string;
+      content: string;
+      meta_description: string;
+      faq: FaqType[];
+      meta_alt: string;
+      meta_image: string;
     };
-  }>({ status: false, value: { id: "", title: "", categoryId: "" } });
+  }>({
+    status: false,
+    value: {
+      id: '',
+      title: '',
+      categoryId: '',
+      meta_keywords: '',
+      meta_title: '',
+      content: '',
+      meta_description: '',
+      faq: [],
+      meta_alt: '',
+      meta_image: '',
+    },
+  });
 
   const [currentPage, setCurrentPage] = useState(1);
   const {
@@ -57,10 +83,10 @@ function CategoryTable() {
   const handleDelete = async (categoryId: number) => {
     try {
       await deleteCategory(categoryId).unwrap();
-      toast.success("Sub Category deleted successfully!");
+      toast.success('Sub Category deleted successfully!');
       refetch();
     } catch (err) {
-      toast.error("Failed to delete sub category.");
+      toast.error('Failed to delete sub category.');
     }
   };
 
@@ -74,9 +100,7 @@ function CategoryTable() {
                 ? categoriesData.data.map((cat: any) => ({
                     ...cat,
                     isActive: true,
-                    _count: Array.isArray(cat._count)
-                      ? cat._count
-                      : [cat._count],
+                    _count: Array.isArray(cat._count) ? cat._count : [cat._count],
                   }))
                 : []
             }
@@ -87,7 +111,7 @@ function CategoryTable() {
         </div>
         <div className="flex justify-between px-6 py-4 sm:px-7 sm:py-5 xl:px-8.5">
           <h2 className="text-xl font-bold text-dark dark:text-white">
-            All Sub Categories{" "}
+            All Sub Categories{' '}
             <button className="rounded-full bg-gray-3 px-4 py-1 text-sm dark:bg-blue-500">
               {subCategoriesData?.data?.length}
             </button>
@@ -136,18 +160,22 @@ function CategoryTable() {
                                 id: String(doc.id),
                                 title: doc.title,
                                 categoryId: String(doc.categoryId),
+                                meta_alt: doc?.meta_alt,
+                                meta_title: doc?.meta_title,
+                                meta_keywords: doc?.meta_keywords,
+                                meta_description: doc?.meta_description,
+                                meta_image: doc?.meta_image,
+                                content: doc?.content,
+                                faq: doc?.faq,
                               },
                             });
-                            window.scroll({ top: 0, behavior: "smooth" });
+                            window.scroll({ top: 0, behavior: 'smooth' });
                           }}
                           // className="bg-blue text-white"
                         >
                           <MdOutlineEdit className="h-8 w-8 cursor-pointer rounded border-2 border-blue-500 p-1 text-blue-500" />
                         </button>
-                        <button
-                          onClick={() => handleDelete(doc.id)}
-                          className=""
-                        >
+                        <button onClick={() => handleDelete(doc.id)} className="">
                           <MdDelete className="h-8 w-8 rounded border-2 border-red-500 p-1 text-red-500" />
                         </button>
                       </div>

@@ -95,6 +95,7 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
     return 'text-green-600';
   };
 
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {

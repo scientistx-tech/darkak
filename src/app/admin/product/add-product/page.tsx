@@ -26,7 +26,7 @@ import { useSelector } from 'react-redux';
 import { useAccess } from '@/hooks/use-access';
 import CustomEditor from '../../components/CustomEditor';
 import RequireAccess from '@/components/Layouts/RequireAccess';
-import JoditEditor from 'jodit-react';
+import JoditEditor, { Jodit } from 'jodit-react';
 
 // --- Type Definitions ---
 type DeliveryInfo = {
@@ -2044,6 +2044,7 @@ export default function ProductForm() {
                     style: {
                       // background: "#E3E3E3",
                     },
+
                     placeholder: 'Start writing warranty details',
                     height: '450px',
                     toolbar: true,
@@ -2051,6 +2052,7 @@ export default function ProductForm() {
                       'bold',
                       'italic',
                       'underline',
+                      'paragraph',
                       'strikethrough',
                       '|',
                       'ul',
