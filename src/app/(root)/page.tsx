@@ -13,6 +13,7 @@ import MotionRevealWrapper from './components/MotionRevealWrapper';
 import MostVisitedProducts from './screen/MostVisitedProducts';
 import FeatureSection from './screen/FeatureSection';
 import getSeoData from './getSeoData';
+import ContentFaqSection from './screen/ContentFaqSection';
 // Fetch metadata for SEO
 export async function generateMetadata() {
   const data = await getSeoData('home');
@@ -84,6 +85,10 @@ async function Page() {
 
         <MotionRevealWrapper>
           <BestDeals />
+        </MotionRevealWrapper>
+
+        <MotionRevealWrapper>
+          <ContentFaqSection />
         </MotionRevealWrapper>
 
         <MotionRevealWrapper>
