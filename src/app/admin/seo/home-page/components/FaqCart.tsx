@@ -17,7 +17,7 @@ import {
   useDeleteFaqMutation,
 } from '@/redux/services/admin/adminFAQApi';
 import { toast } from 'react-toastify';
-import Loading from '@/app/loading';
+import Loader from '@/components/shared/Loader';
 
 interface FaqType {
   id: number;
@@ -125,7 +125,7 @@ const FaqManager = () => {
             ))}
           </TableBody>
         </Table>
-        {isLoading && <Loading />}
+        {isLoading && <Loader />}
       </div>
 
       <Modal

@@ -6,7 +6,7 @@ import React, { useState, ChangeEvent, useRef, useEffect } from 'react';
 import { toast } from 'react-toastify';
 const BASE_URL = 'https://api.darkak.com.bd/api';
 import Cookies from 'js-cookie';
-import Loading from '@/app/loading';
+import Loader from '@/components/shared/Loader';
 
 export default function ContentCart() {
   const [mainContent, setMainContent] = useState('');
@@ -48,7 +48,7 @@ export default function ContentCart() {
       setLoading(false);
     }
   };
-  if (isLoading) return <Loading />;
+  if (isLoading) return <Loader />;
   return (
     <div className="mt-6">
       <div className="w-full">

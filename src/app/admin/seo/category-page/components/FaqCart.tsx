@@ -12,9 +12,9 @@ import {
 import { Form, Input, Modal, Button, Popconfirm, message } from 'antd';
 import { useGetSeoPageDataQuery } from '@/redux/services/admin/adminFAQApi';
 import { toast } from 'react-toastify';
-import Loading from '@/app/loading';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import Loader from '@/components/shared/Loader';
 const BASE_URL = 'https://api.darkak.com.bd/api';
 interface FaqType {
   id: number;
@@ -166,7 +166,7 @@ const FaqCart = () => {
             ))}
           </TableBody>
         </Table>
-        {isLoading && <Loading />}
+        {isLoading && <Loader />}
       </div>
 
       <Modal

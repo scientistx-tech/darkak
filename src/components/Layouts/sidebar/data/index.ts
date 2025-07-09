@@ -636,6 +636,7 @@ export const getNavData = (data: any, vendorData: any) => [
           // },
         ],
       },
+
       {
         title: 'SEO',
         accessKey: 'seo',
@@ -714,85 +715,8 @@ export const getNavData = (data: any, vendorData: any) => [
         ],
       },
       {
-        title: "SEO",
-        accessKey: "seo",
-        icon: RiseOutlined,
-        items: [
-          {
-            title: "Home Page",
-            url: "/admin/seo/home-page",
-            accessKey: "seo",
-          },
-          {
-            title: "Category Page",
-            url: "/admin/seo/category-page",
-            accessKey: "seo",
-          },
-          {
-            title: "Product Page",
-            url: "/admin/seo/product-page",
-            accessKey: "seo",
-          },
-          {
-            title: "Vendor Page",
-            url: "/admin/seo/vendor-page",
-            accessKey: "seo",
-          },
-          {
-            title: "Contact Us Page",
-            url: "/admin/seo/contact-us-page",
-            accessKey: "seo",
-          },
-          {
-            title: "CheckOut Page",
-            url: "/admin/seo/checkout-page",
-            accessKey: "seo",
-          },
-          {
-            title: "About Us Page",
-            url: "/admin/seo/about-us-page",
-            accessKey: "seo",
-          },
-          {
-            title: "Private Policy Page",
-            url: "/admin/seo/private-policy-page",
-            accessKey: "seo",
-          },
-          {
-            title: "Terms Condition Page",
-            url: "/admin/seo/terms-condition-page",
-            accessKey: "seo",
-          },
-          {
-            title: "FAQ Page",
-            url: "/admin/seo/faq-page",
-            accessKey: "seo",
-          },
-          {
-            title: "SignUp Page",
-            url: "/admin/seo/signup-page",
-            accessKey: "seo",
-          },
-          {
-            title: "LogIn Page",
-            url: "/admin/seo/login-page",
-            accessKey: "seo",
-          },
-          {
-            title: "Forgot Password Page",
-            url: "/admin/seo/forgot-password-page",
-            accessKey: "seo",
-          },
-          {
-            title: "Moderator LonIn Page",
-            url: "/admin/seo/moderator-login-page",
-            accessKey: "seo",
-          },
-        ],
-      },
-      {
-        title: "Analytics",
-        accessKey: "analytics",
+        title: 'Analytics',
+        accessKey: 'analytics',
         icon: IoAnalytics,
         url: '/admin/analytics',
       },
