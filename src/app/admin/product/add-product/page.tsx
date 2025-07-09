@@ -748,7 +748,7 @@ export default function ProductForm() {
     }
   }, [JSON.stringify(formData.items)]);
 
-  console.log(formData, 'dataa');
+  //console.log(formData, 'dataa');
 
   return (
     <RequireAccess permission="product-add">

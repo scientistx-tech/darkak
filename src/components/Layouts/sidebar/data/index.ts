@@ -632,10 +632,10 @@ export const getNavData = (data: any, vendorData: any) => [
             title: "Delivery Providers",
             url: "/admin/settings/delivery-providers",
           },
-          {
-            title: "Site Settings",
-            url: "/admin/settings/site-settings",
-          },
+          // {
+          //   title: "Site Settings",
+          //   url: "/admin/settings/site-settings",
+          // },
         ],
       },
       {
