@@ -28,6 +28,9 @@ import { FaTrashAlt } from 'react-icons/fa';
 import AsyncSelect from 'react-select/async';
 import { useSelector } from 'react-redux';
 import JoditEditor from 'jodit-react';
+import { FaqType } from '@/app/admin/category/sub-categories/AddSubCategories';
+import Input from '@/app/admin/components/Input';
+import Button from '@/app/admin/components/Button';
 
 const CustomEditor = dynamic(() => import('@/app/admin/components/CustomEditor'), { ssr: false });
 
@@ -98,6 +101,8 @@ type ProductFormData = {
   keywords: string;
   delivery_info: DeliveryInfo;
   items: AttributeItem[];
+  faq: FaqType;
+  content: string;
 };
 
 const countryCodes = [
@@ -347,6 +352,8 @@ const ProductEdit = () => {
       multiply: '',
     } as DeliveryInfo,
     items: [],
+    content: '',
+    faq: { faq: [] },
   });
   const editor = useRef(null);
   const descriptionEditor = useRef(null);
@@ -386,11 +393,12 @@ const ProductEdit = () => {
   const { data: productData, error, isLoading, refetch } = useGetSingleProductDetailsQuery(id);
   const [uploadImages] = useUploadImagesMutation();
   const [updateProduct, { isLoading: loadingUpadate }] = useUpdateProductMutation();
-
+  const specificationEditors = useRef<any>(null);
   const router = useRouter();
   const token = useSelector((state: any) => state.auth.token);
-
+  //console.log(productData?.product);
   useEffect(() => {
+    refetch();
     if (productData?.product) {
       const p = productData.product;
       setFormData({
@@ -455,6 +463,18 @@ const ProductEdit = () => {
             })),
         })),
         drafted: p.drafted,
+        content: p.content,
+        faq: {
+          faq: Array.isArray(p.faq?.faq)
+            ? p.faq.faq.map((f: any) => ({
+                question: f.question || '',
+                answer: f.answer || '',
+              }))
+            : [
+                { question: '', answer: '' },
+                { question: '', answer: '' },
+              ],
+        },
       });
       setProductSKU(p.code); // Optional
       setMultiplyShipping(p.delivery_info.multiply);
@@ -502,9 +522,17 @@ const ProductEdit = () => {
           : null
       );
     }
-  }, [productData, brandsData, categoriesData, subCategoriesData, subSubCategoriesData]);
+  }, [
+    productData,
+    brandsData,
+    categoriesData,
+    subCategoriesData,
+    subSubCategoriesData,
+    id,
+    refetch,
+  ]);
 
-  console.log('formdata', formData);
+  //console.log('formdata', formData);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -512,7 +540,26 @@ const ProductEdit = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  const handleFaqChange = (index: number, field: keyof FaqType['faq'][number], val: string) => {
+    const updated = [...formData?.faq?.faq];
+    updated[index][field] = val;
+    setFormData((val) => ({ ...val, faq: { faq: updated } }));
+  };
 
+  const handleAddFaq = () => {
+    setFormData((val) => ({
+      ...val,
+      faq: { faq: [...val?.faq?.faq, { question: '', answer: '' }] },
+    }));
+  };
+
+  const handleRemoveFaq = (index: number) => {
+    //setFaqList((prev: any) => prev.filter((_: any, i: any) => i !== index));
+    setFormData((val) => ({
+      ...val,
+      faq: { faq: val?.faq?.faq.filter((_: any, i: any) => i !== index) },
+    }));
+  };
   const handleDeliveryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -723,7 +770,11 @@ const ProductEdit = () => {
           alt: opt.alt || '',
         })),
       })),
+      content: formData.content,
+      faq: formData.faq ,
     };
+    // console.log(payload);
+    // return;
 
     if (formData.subCategoryId) {
       payload.subCategoryId = formData.subCategoryId;
@@ -2127,6 +2178,64 @@ const ProductEdit = () => {
               />
             </div>
           )}
+        </div>
+        <div className="my-4">
+          <label className="font-semibold">Page Content</label>
+          <div className="h-4" />
+          <JoditEditor
+            ref={specificationEditors}
+            config={{
+              askBeforePasteHTML: false,
+              defaultActionOnPaste: 'insert_only_text',
+              uploader: {
+                insertImageAsBase64URI: true,
+              },
+              placeholder: 'Start writing specification',
+              height: '250px',
+              toolbar: true,
+            }}
+            value={formData.content}
+            onBlur={(newContent) => {
+              handleEditorChange('content')(newContent);
+            }}
+          />
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {formData.faq?.faq?.map((faq: any, index: any) => (
+            <React.Fragment key={index}>
+              {/* FAQ Question Input */}
+              <Input
+                className="w-full"
+                placeholder={`FAQ Question ${index + 1}`}
+                value={faq.question}
+                onChange={(e) => handleFaqChange(index, 'question', e.target.value)}
+              />
+
+              {/* FAQ Answer Input + Remove Button */}
+              <div className="flex items-center gap-2">
+                <Input
+                  className="w-full"
+                  placeholder={`FAQ Answer ${index + 1}`}
+                  value={faq.answer}
+                  onChange={(e) => handleFaqChange(index, 'answer', e.target.value)}
+                />
+                <Button
+                  type="button"
+                  onClick={() => handleRemoveFaq(index)}
+                  className="shrink-0 bg-red-500 px-3 py-1 text-white hover:bg-red-600"
+                >
+                  ✕
+                </Button>
+              </div>
+            </React.Fragment>
+          ))}
+
+          {/* Add FAQ Button */}
+          <div className="col-span-2 flex w-full justify-end">
+            <Button type="button" onClick={handleAddFaq} className="bg-blue-500 text-white">
+              Add More FAQ
+            </Button>
+          </div>
         </div>
       </div>
 

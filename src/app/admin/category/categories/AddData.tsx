@@ -121,7 +121,7 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
     }
 
     const faqPayload = {
-      faq: faqList.map((f) => ({
+      faq: faqList?.map((f) => ({
         question: f.question,
         answer: f.answer,
       })),
@@ -436,7 +436,7 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
       </div>
       {/* faq section */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {faqList.map((faq, index) => (
+        {faqList?.map((faq, index) => (
           <div key={index} className="col-span-2 grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
             {/* Question Input */}
             <div className="flex w-full items-center gap-2">

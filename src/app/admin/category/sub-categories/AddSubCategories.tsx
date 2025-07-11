@@ -13,6 +13,8 @@ import {
 import { toast } from 'react-toastify';
 import Image from 'next/image';
 import { isNull } from 'util';
+import { useUploadImagesMutation } from '@/redux/services/admin/adminProductApis';
+import JoditEditor from 'jodit-react';
 
 export type FaqType = {
   faq: {
@@ -83,7 +85,7 @@ const schema = yup.object().shape({
 });
 
 function AddSubCategories({ refetch, categories, value, setIsEditable }: AddDataProps) {
-  console.log('value', value);
+  // console.log('value', value);
   const [currentLanguage, setCurrentLanguage] = useState('en');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [meta_image, setMetaImage] = useState<File | null>(null);
@@ -95,6 +97,8 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
   const [metaImagePreview, setMetaImagePreview] = useState<string | null>(
     value?.meta_image || null
   );
+  const specificationEditor = useRef<any>(null);
+
   const [faqList, setFaqList] = useState<any>(
     value?.faq?.faq || [
       { question: '', answer: '' },
@@ -104,7 +108,7 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
 
   const [uploadFormData, { isLoading }] = useCreateSubCategoryMutation();
   const [updateSubCategory, { isLoading: loadingUpdate }] = useUpdateSubCategoryMutation();
-
+  const [uploadImages] = useUploadImagesMutation();
   const {
     register,
     handleSubmit,
@@ -168,16 +172,6 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
     const blob = await res.blob();
     return new File([blob], filename, { type: mimeType });
   }
-  const handleMetaImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setMetaImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const onSubmit = async (data: any) => {
     const faqPayload = {
@@ -193,12 +187,22 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
         .map((k) => k.trim())
         .filter(Boolean),
     };
-
-    const metaImage = await urlToFile(
-      metaImagePreview || '',
-      `meta-img-${Date.now()}.png`,
-      'image/png'
-    );
+    let metaImageUrl = undefined;
+    if (meta_image) {
+      const metaImage = await urlToFile(
+        metaImagePreview || '',
+        `meta-img-${Date.now()}.png`,
+        'image/png'
+      );
+      if (!metaImage) {
+        toast.error('meta Image needed for Slider');
+        return;
+      }
+      const imgForm = new FormData();
+      imgForm.append('images', metaImage);
+      const imgs = await uploadImages(imgForm).unwrap();
+      metaImageUrl = imgs[0];
+    }
 
     const formData = {
       title: data?.title,
@@ -209,7 +213,7 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
       meta_description,
       faq: faqPayload,
       meta_alt,
-      meta_image: metaImage || '',
+      meta_image: metaImageUrl || metaImagePreview,
     };
 
     try {
@@ -259,7 +263,7 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
     }
   };
 
-  console.log('lst', faqList);
+  // console.log('lst', faqList);
   return (
     <div className="flex w-full flex-col gap-3">
       <h1 className="mb-6 flex items-center gap-2 text-2xl font-bold">
@@ -267,7 +271,7 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
         {value?.id ? 'Edit Sub Category' : 'Sub Category Setup'}
       </h1>
 
-      <div className="my-5 flex items-center gap-x-5">
+      {/* <div className="my-5 flex items-center gap-x-5">
         <div
           className={`${currentLanguage === 'en' ? 'border-b-2 border-blue-500 text-blue-500' : ''} flex cursor-pointer py-2 text-sm font-medium tracking-wider`}
           onClick={() => setCurrentLanguage('en')}
@@ -282,7 +286,7 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
           {' '}
           <button>Bengali (BD)</button>{' '}
         </div>
-      </div>
+      </div> */}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <Input
@@ -333,12 +337,24 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
           value={meta_description}
           onChange={(e) => setMetaDescription(e.target.value)}
         />
-        <Textarea
-          placeholder="Content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
       </div>
+      <JoditEditor
+        ref={specificationEditor}
+        config={{
+          askBeforePasteHTML: false,
+          defaultActionOnPaste: 'insert_only_text',
+          uploader: {
+            insertImageAsBase64URI: true,
+          },
+          placeholder: 'Start writing specification',
+          height: '250px',
+          toolbar: true,
+        }}
+        value={content}
+        onBlur={(newContent) => {
+          setContent(newContent);
+        }}
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* Meta Alt Input */}
@@ -426,7 +442,7 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {faqList.map((faq: any, index: any) => (
+        {faqList?.map((faq: any, index: any) => (
           <React.Fragment key={index}>
             {/* FAQ Question Input */}
             <Input

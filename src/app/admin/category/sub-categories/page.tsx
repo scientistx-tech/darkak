@@ -25,14 +25,9 @@ import { MdOutlineEdit } from 'react-icons/md';
 
 import { MdDelete } from 'react-icons/md';
 import AddData from '../categories/AddData';
-import AddSubCategories from './AddSubCategories';
+import AddSubCategories, { FaqType } from './AddSubCategories';
 import Pagination from '@/components/shared/Pagination';
 import RequireAccess from '@/components/Layouts/RequireAccess';
-
-export type FaqType = {
-  question: string;
-  answer: string;
-};
 
 function CategoryTable() {
   const [isEditable, setIsEditable] = useState<{
@@ -41,11 +36,13 @@ function CategoryTable() {
       id: string;
       title: string;
       categoryId: string;
-      meta_keywords: string;
+      meta_keywords: {
+        keywords: string;
+      };
       meta_title: string;
       content: string;
       meta_description: string;
-      faq: FaqType[];
+      faq: FaqType;
       meta_alt: string;
       meta_image: string;
     };
@@ -55,11 +52,11 @@ function CategoryTable() {
       id: '',
       title: '',
       categoryId: '',
-      meta_keywords: '',
+      meta_keywords: { keywords: '' },
       meta_title: '',
       content: '',
       meta_description: '',
-      faq: [],
+      faq: { faq: [] },
       meta_alt: '',
       meta_image: '',
     },
