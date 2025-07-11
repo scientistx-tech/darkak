@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ContentCart from './components/ContentCart';
 import SeoCart from './components/SeoCart';
-import BannerCart from './components/BannerCart';
-import FaqCart from './components/FaqCart';
+import FaqManager from './components/FaqCart';
+import BannerTable from './components/BannerCart';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<'seo' | 'content' | 'banner' | 'faq'>('seo');
@@ -15,7 +15,7 @@ export default function HomePage() {
       <p className="mb-6 text-gray-700">This is the SEO section for managing Home page metadata.</p>
 
       {/* Toggle Buttons */}
-      <div className="mb-6 flex gap-4 flex-wrap">
+      <div className="mb-6 flex flex-wrap gap-4">
         <button
           onClick={() => setActiveTab('seo')}
           className={`rounded-md px-4 py-2 text-white ${
@@ -48,7 +48,6 @@ export default function HomePage() {
         >
           Banner Section
         </button>
-        
       </div>
 
       {/* Animated Section */}
@@ -86,7 +85,7 @@ export default function HomePage() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
             >
-              <BannerCart />
+              <BannerTable />
             </motion.div>
           )}
 
@@ -98,7 +97,7 @@ export default function HomePage() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
             >
-              <FaqCart />
+              <FaqManager />
             </motion.div>
           )}
         </AnimatePresence>

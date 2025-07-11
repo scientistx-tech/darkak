@@ -27,6 +27,9 @@ import { useAccess } from '@/hooks/use-access';
 import CustomEditor from '../../components/CustomEditor';
 import RequireAccess from '@/components/Layouts/RequireAccess';
 import JoditEditor, { Jodit } from 'jodit-react';
+import { FaqType } from '../../category/sub-categories/AddSubCategories';
+import Input from '../../components/Input';
+import Button from '../../components/Button';
 
 // --- Type Definitions ---
 type DeliveryInfo = {
@@ -95,6 +98,8 @@ type ProductFormData = {
   keywords: string;
   delivery_info: DeliveryInfo;
   items: AttributeItem[];
+  faq: FaqType;
+  content: string;
 };
 
 const countryCodes = [
@@ -342,6 +347,8 @@ export default function ProductForm() {
       multiply: '',
     } as DeliveryInfo,
     items: [],
+    content: '',
+    faq: { faq: [{ question: '', answer: '' }] },
   });
   const editor = useRef(null);
   const descriptionEditor = useRef(null);
@@ -559,7 +566,26 @@ export default function ProductForm() {
       e.target.value = ''; // Reset input
     }
   };
+  const handleFaqChange = (index: number, field: keyof FaqType['faq'][number], val: string) => {
+    const updated = [...formData?.faq?.faq];
+    updated[index][field] = val;
+    setFormData((val) => ({ ...val, faq: { faq: updated } }));
+  };
 
+  const handleAddFaq = () => {
+    setFormData((val) => ({
+      ...val,
+      faq: { faq: [...val?.faq?.faq, { question: '', answer: '' }] },
+    }));
+  };
+
+  const handleRemoveFaq = (index: number) => {
+    //setFaqList((prev: any) => prev.filter((_: any, i: any) => i !== index));
+    setFormData((val) => ({
+      ...val,
+      faq: { faq: val?.faq?.faq.filter((_: any, i: any) => i !== index) },
+    }));
+  };
   const handleAdditionalImagesUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number
@@ -699,6 +725,8 @@ export default function ProductForm() {
           alt: opt.alt || '',
         })),
       })),
+      content: formData.content,
+      faq: formData.faq,
     };
     if (formData.subCategoryId) {
       payload.subCategoryId = formData.subCategoryId;
@@ -748,7 +776,7 @@ export default function ProductForm() {
     }
   }, [JSON.stringify(formData.items)]);
 
-  console.log(formData, 'dataa');
+  //console.log(formData, 'dataa');
 
   return (
     <RequireAccess permission="product-add">
@@ -2088,6 +2116,64 @@ export default function ProductForm() {
                 />
               </div>
             )}
+          </div>
+          <div className="my-4">
+            <label className="font-semibold">Page Content</label>
+            <div className="h-4" />
+            <JoditEditor
+              ref={specificationEditor}
+              config={{
+                askBeforePasteHTML: false,
+                defaultActionOnPaste: 'insert_only_text',
+                uploader: {
+                  insertImageAsBase64URI: true,
+                },
+                placeholder: 'Start writing specification',
+                height: '250px',
+                toolbar: true,
+              }}
+              value={formData.content}
+              onBlur={(newContent) => {
+                handleEditorChange('content')(newContent);
+              }}
+            />
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {formData.faq?.faq?.map((faq: any, index: any) => (
+              <React.Fragment key={index}>
+                {/* FAQ Question Input */}
+                <Input
+                  className="w-full"
+                  placeholder={`FAQ Question ${index + 1}`}
+                  value={faq.question}
+                  onChange={(e) => handleFaqChange(index, 'question', e.target.value)}
+                />
+
+                {/* FAQ Answer Input + Remove Button */}
+                <div className="flex items-center gap-2">
+                  <Input
+                    className="w-full"
+                    placeholder={`FAQ Answer ${index + 1}`}
+                    value={faq.answer}
+                    onChange={(e) => handleFaqChange(index, 'answer', e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => handleRemoveFaq(index)}
+                    className="shrink-0 bg-red-500 px-3 py-1 text-white hover:bg-red-600"
+                  >
+                    ✕
+                  </Button>
+                </div>
+              </React.Fragment>
+            ))}
+
+            {/* Add FAQ Button */}
+            <div className="col-span-2 flex w-full justify-end">
+              <Button type="button" onClick={handleAddFaq} className="bg-blue-500 text-white">
+                Add More FAQ
+              </Button>
+            </div>
           </div>
         </div>
 

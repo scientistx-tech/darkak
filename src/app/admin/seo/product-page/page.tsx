@@ -25,22 +25,22 @@ export default function ProductPage() {
         >
           Meta Section
         </button>
-        <button
+        {/* <button
           onClick={() => setActiveTab('content')}
           className={`rounded-md px-4 py-2 text-white ${
             activeTab === 'content' ? 'bg-blue-600' : 'bg-gray-400 hover:bg-gray-500'
           }`}
         >
           Content Section
-        </button>
-        <button
+        </button> */}
+        {/* <button
           onClick={() => setActiveTab('faq')}
           className={`rounded-md px-4 py-2 text-white ${
             activeTab === 'faq' ? 'bg-blue-600' : 'bg-gray-400 hover:bg-gray-500'
           }`}
         >
           FAQ Section
-        </button>
+        </button> */}
       </div>
 
       {/* Animated Section */}

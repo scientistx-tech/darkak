@@ -9,6 +9,9 @@ import { toast } from 'react-toastify';
 import SelectField from '@/app/(root)/user/profile/components/SelectField';
 import Image from 'next/image';
 import Textarea from '../../components/Textarea';
+import JoditEditor from 'jodit-react';
+import { useUploadImagesMutation } from '@/redux/services/admin/adminProductApis';
+import { values } from '@remirror/core';
 
 export type FaqType = {
   question: string;
@@ -61,25 +64,29 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
   const [meta_description, setMetaDescription] = useState(value?.meta_description || '');
   const [meta_image, setMetaImage] = useState<File | null>(null);
   const [metaImagePreview, setMetaImagePreview] = useState<string | null>(null);
-  const [faqList, setFaqList] = useState<FaqType[]>(
-    value?.faq || [
-      { question: '', answer: '' },
-      { question: '', answer: '' },
-    ]
-  );
+  const [faqList, setFaqList] = useState<FaqType[]>(value?.faq || [{ question: '', answer: '' }]);
   const [content, setContent] = useState(value?.content || '');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const specificationEditor = useRef<any>(null);
 
   const [uploadFormData, { isLoading }] = useUploadFormDataMutation();
   const [updateCategory, { isLoading: loadingUpdate }] = useUpdateCategoryMutation();
+  const [uploadImages] = useUploadImagesMutation();
 
   React.useEffect(() => {
     if (value?.title !== undefined && value?.serial !== undefined) {
       setTitle(value?.title);
       setSelectedCategoryPriority(value.serial);
       setPreviewImage(value?.icon);
+      setFaqList(value?.faq);
+      setMetaImagePreview(value?.meta_image);
+      setMetaAlt(value?.meta_alt);
+      setMetaDescription(value?.meta_description);
+      setMeta_title(value?.meta_title);
+      setMeta_keywords(value?.meta_keywords);
+      setContent(value?.content);
     }
-  }, [value?.title]);
+  }, [value]);
 
   const getValidationClass = (value: string, min: number, max: number) => {
     if (value.length < min || value.length > max) {
@@ -87,6 +94,7 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
     }
     return 'text-green-600';
   };
+
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -113,9 +121,9 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
     }
 
     const faqPayload = {
-      faq: faqList.map((f) => ({
-        ques: f.question,
-        ans: f.answer,
+      faq: faqList?.map((f) => ({
+        question: f.question,
+        answer: f.answer,
       })),
     };
 
@@ -136,25 +144,32 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
     formData.append('content', content);
     formData.append('faq', JSON.stringify(faqPayload));
 
-    const metaImage = await urlToFile(
-      metaImagePreview || '',
-      `meta-img-${Date.now()}.png`,
-      'image/png'
-    );
-    if (!metaImage) {
-      toast.error('meta Image needed for Slider');
-      return;
+    if (meta_image) {
+      const metaImage = await urlToFile(
+        metaImagePreview || '',
+        `meta-img-${Date.now()}.png`,
+        'image/png'
+      );
+      if (!metaImage) {
+        toast.error('meta Image needed for Slider');
+        return;
+      }
+      const imgForm = new FormData();
+      imgForm.append('images', metaImage);
+      const imgs = await uploadImages(imgForm).unwrap();
+      formData.append('meta_image', imgs[0]);
     }
-    formData.append('meta_image', metaImage);
 
-    const image = await urlToFile(previewImage || '', `image-${Date.now()}.png`, 'image/png');
-    if (!image) {
-      toast.error('Image needed for Slider');
-      return;
+    if (imageFile) {
+      const image = await urlToFile(previewImage || '', `image-${Date.now()}.png`, 'image/png');
+      if (!image) {
+        toast.error('Image needed for Slider');
+        return;
+      }
+      formData.append('icon', image as File);
     }
-    formData.append('icon', image as File);
 
-    console.log('formData', formData);
+    //console.log('formData', formData);
 
     try {
       if (value && value?.id) {
@@ -184,6 +199,18 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
       } else {
         await uploadFormData(formData).unwrap();
         toast.success('Category created successfully!');
+        setTitle('');
+        setSelectedCategoryPriority('');
+        setImageFile(null);
+        setPreviewImage(null);
+        setMetaImage(null);
+        setMetaImagePreview(null);
+        setMetaAlt('');
+        setMetaDescription('');
+        setMeta_title('');
+        setMeta_keywords('');
+        setContent('');
+        setFaqList([{ question: '', answer: '' }]);
       }
       refetch();
       setTitle('');
@@ -225,7 +252,7 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
       </h1>
 
       {/* language tabs */}
-      <div className="my-5 flex items-center gap-x-5">
+      {/* <div className="my-5 flex items-center gap-x-5">
         <div
           className={`${currentLanguage === 'en' ? 'border-b-2 border-blue-500 text-blue-500' : ''} flex cursor-pointer py-2 text-sm font-medium tracking-wider`}
           onClick={() => setCurrentLanguage('en')}
@@ -238,7 +265,7 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
         >
           <button>Bengali (BD)</button>
         </div>
-      </div>
+      </div> */}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input
@@ -372,21 +399,32 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
             </span>
           </div>
         </div>
-        <div>
-          <Textarea
-            placeholder="Content"
+        <div className="col-span-2">
+          <JoditEditor
+            ref={specificationEditor}
+            config={{
+              askBeforePasteHTML: false,
+              defaultActionOnPaste: 'insert_only_text',
+              uploader: {
+                insertImageAsBase64URI: true,
+              },
+              placeholder: 'Start writing specification',
+              height: '250px',
+              toolbar: true,
+            }}
             value={content}
-            onChange={(e) => setContent(e.target.value)}
-            maxLength={250}
+            onBlur={(newContent) => {
+              setContent(newContent);
+            }}
           />
-          <div className="mt-1 flex items-center justify-between">
+          {/* <div className="mt-1 flex items-center justify-between">
             <span className="text-xs text-gray-500">
               Content should be between 200-250 characters.
             </span>
             <span className={`text-xs font-semibold ${getValidationClass(content, 200, 250)}`}>
               {content.length} chars
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -398,7 +436,7 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
       </div>
       {/* faq section */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {faqList.map((faq, index) => (
+        {faqList?.map((faq, index) => (
           <div key={index} className="col-span-2 grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
             {/* Question Input */}
             <div className="flex w-full items-center gap-2">
