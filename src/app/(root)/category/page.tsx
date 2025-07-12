@@ -32,7 +32,7 @@ export default async function page() {
       <div className="h-[65px] md:h-[109px] w-full" />
       <CategoryPageServer />
 
-      <div className='w-[90%] ml-[5%] mt-10'>
+      <div className='px-3 md:px-5 lg:px-11 mt-10'>
         <ContentFaqCard content={data?.data?.content} faqs={data?.data?.faq?.faq || []} />
       </div>
     </div>

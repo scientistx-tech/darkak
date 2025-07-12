@@ -121,7 +121,7 @@ const ProductsSection = ({
     });
   };
 
-  console.log(sidebarFilters, 'sidebar filter in psection');
+  //console.log(sidebarFilters, 'sidebar filter in psection');
 
   return (
     <>

@@ -4,6 +4,9 @@ import React, { useEffect, useState } from 'react';
 import CategoryPage from '@/components/category/CategoryPage';
 import { useParams, useSearchParams } from 'next/navigation';
 import { toast } from 'react-toastify';
+import Link from 'next/link';
+import { ArrowRightIcon } from 'lucide-react';
+import ContentFaqCard from '@/components/shared/ContentFaqCard';
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -24,7 +27,7 @@ export default function Page() {
     });
     setQueryObject(queryObj);
   }, [searchParams]);
-
+  //console.log(sidebarFilters);
   // Add currentPage to sidebarFilters before calling useGetAllProductsQuery
   const filtersWithPageAndLimit = {
     categoryId: decodeURIComponent(String(category)).replace(/-/g, ' '),
@@ -54,11 +57,23 @@ export default function Page() {
     fetchAllProducts();
   }, [sidebarFilters, visibleCount]);
 
-  console.log('setSidebarFilters type:', typeof setSidebarFilters);
-
+  //console.log('setSidebarFilters type:', typeof setSidebarFilters);
+  //console.log('data', data);
   return (
     <div className="w-full">
       <div className="h-[65px] w-full md:h-[109px]" />
+      <div className="h-[10px] w-full md:h-[20px]" />
+      <div className="flex items-center gap-1 px-3 text-sm font-semibold md:px-5 lg:px-11">
+        <Link className="text-primary underline" href={'/'}>
+          Home
+        </Link>
+        <ArrowRightIcon />
+        <Link className="text-primary underline" href={'/category'}>
+          Category
+        </Link>
+        <ArrowRightIcon />
+        {category}
+      </div>
       <CategoryPage
         data={data}
         sidebarFilters={sidebarFilters}
@@ -70,6 +85,9 @@ export default function Page() {
         isFetching={isFetching}
         setIsFetching={setIsFetching}
       />
+      <div className="mt-10 px-3 md:px-5 lg:px-11">
+        <ContentFaqCard content={data?.category?.content} faqs={data?.category?.faq?.faq || []} />
+      </div>
     </div>
   );
 }

@@ -4,11 +4,13 @@ import React, { useEffect, useState } from 'react';
 import CategoryPage from '@/components/category/CategoryPage';
 import { useParams, useSearchParams } from 'next/navigation';
 import { toast } from 'react-toastify';
+import Link from 'next/link';
+import { ArrowRightIcon } from 'lucide-react';
 
 type SidebarFilters = { [key: string]: any };
 
 export default function CategoryPageServer() {
-     // const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
   // // Convert searchParams to a plain object
   // const query: Record<string, string> = {};
   // searchParams.forEach((value, key) => {
@@ -23,6 +25,7 @@ export default function CategoryPageServer() {
 
   // Add currentPage to sidebarFilters before calling useGetAllProductsQuery
   const filtersWithPageAndLimit = {
+    ...sidebarFilters,
     page: String(visibleCount),
     limit: '20',
   };
@@ -47,10 +50,17 @@ export default function CategoryPageServer() {
     fetchAllProducts();
   }, [sidebarFilters, visibleCount]);
 
-  console.log('setSidebarFilters type:', typeof setSidebarFilters);
+  //console.log('setSidebarFilters type:', typeof setSidebarFilters);
   return (
     <div className="w-full">
-      <div className="h-[65px] w-full md:h-[109px]" />
+      <div className="h-[10px] w-full md:h-[20px]" />
+      <div className="px-3 md:px-5 lg:px-11 flex items-center gap-1 text-sm font-semibold">
+        <Link className="text-primary underline" href={'/'}>
+          Home
+        </Link>
+        <ArrowRightIcon />
+        Category
+      </div>
       <CategoryPage
         data={data}
         sidebarFilters={sidebarFilters}
@@ -62,7 +72,6 @@ export default function CategoryPageServer() {
         isFetching={isFetching}
         setIsFetching={setIsFetching}
       />
-      
     </div>
-  )
+  );
 }
