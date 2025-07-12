@@ -7,7 +7,7 @@ import FilterRadioSearch from '@/components/category/leftSidebar/FilterRadioSear
 import { IoIosArrowDown } from 'react-icons/io';
 import { useGetProductCategoriesQuery } from '@/redux/services/client/categories';
 import { useGetBrandsPublicQuery } from '@/redux/services/client/brands';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
 const availabilityOptions = [
   { value: 'in-stock', label: 'In stock' },
@@ -73,10 +73,12 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
   // --- Brand Filter Section ---
   const [brandSearch, setBrandSearch] = useState('');
   const [showAllBrands, setShowAllBrands] = useState(false);
+  const params = useParams();
+  const { brandId } = params;
   // Only one brand can be selected
   const [selectedBrand, setSelectedBrand] = useState<string>('');
   // Store the selected brand title
-  const [selectedBrandTitle, setSelectedBrandTitle] = useState<string>('');
+  const [selectedBrandTitle, setSelectedBrandTitle] = useState<string>((brandId as string) || '');
 
   // --- Price filter state ---
   const [lowPrice, setLowPrice] = useState('');
@@ -434,7 +436,7 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
               type="radio"
               name="brand-filter"
               checked={selectedBrand === ''}
-              onChange={() => {
+              onClick={() => {
                 setSelectedBrand('');
                 setSelectedBrandTitle('');
                 // Remove brandId from query
@@ -458,7 +460,7 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
               <input
                 type="radio"
                 name="brand-filter"
-                checked={selectedBrand === brand.id}
+                checked={decodeURIComponent(String(brandId)).replace(/-/g, ' ') === brand.title}
                 onChange={() => handleBrandCheck(brand.id, brand.title)}
                 className="accent-blue-600"
               />
