@@ -29,7 +29,8 @@ const RecommendedProducts: React.FC = () => {
 
   if (isLoading || error) return null; // optional loading/error handling
 
-  const mostVisitedBanner = banner?.banners?.find((banner: any) => banner.type === 'feature');
+  const mostVisitedBanner = banner?.banners?.find((banner: any) => banner.type === 'featured');
+  //console.log(mostVisitedBanner);
   return (
     <motion.section
       className="container mx-auto mt-15 px-2"
@@ -51,7 +52,7 @@ const RecommendedProducts: React.FC = () => {
         {/* LEFT SIDE BANNER */}
         <div className="relative hidden w-[236px] md:block">
           {mostVisitedBanner ? (
-            <Link href="#">
+            <Link href={`/product/${mostVisitedBanner?.product?.slug}`}>
               <motion.div
                 className="absolute bottom-0 right-0 z-10 hidden w-[236px] flex-col justify-between overflow-hidden rounded-xl bg-[#4C84FF] p-6 text-white md:flex"
                 initial={{ height: 0, opacity: 0 }}
