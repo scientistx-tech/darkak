@@ -10,6 +10,7 @@ import { IoAnalytics } from 'react-icons/io5';
 import { MdOutlineSettings } from 'react-icons/md';
 import { BiSolidOffer } from 'react-icons/bi';
 import { MdAddModerator } from 'react-icons/md';
+import { AiFillMessage } from "react-icons/ai";
 import * as Icons from '../icons';
 import { BsTornado } from 'react-icons/bs';
 import { FaListAlt } from 'react-icons/fa';
@@ -202,7 +203,7 @@ export const getNavData = (data: any, vendorData: any) => [
         title: 'POS',
         icon: GiPostOffice,
         accessKey: 'pos',
-        url: '/admin/POS',
+        url: '/admin/pos',
         items: [],
       },
     ],
@@ -604,6 +605,12 @@ export const getNavData = (data: any, vendorData: any) => [
         icon: MdAddModerator,
         accessKey: 'moderator',
         url: '/admin/moderator',
+      },
+      {
+        title: 'Live Chat',
+        icon: AiFillMessage,
+        accessKey: 'chat',
+        url: '/admin/chat',
       },
     ],
   },
