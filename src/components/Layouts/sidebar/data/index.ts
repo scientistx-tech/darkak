@@ -203,7 +203,7 @@ export const getNavData = (data: any, vendorData: any) => [
         title: 'POS',
         icon: GiPostOffice,
         accessKey: 'pos',
-        url: '/admin/POS',
+        url: '/admin/pos',
         items: [],
       },
     ],
