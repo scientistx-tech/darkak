@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 type FAQ = {
   question: string;
@@ -22,15 +22,16 @@ export default function ContentFaqCard({ content, faqs }: Props) {
   };
 
   return (
-    <div className="w-full  p-6 bg-white rounded-2xl shadow space-y-8">
+    <div className="w-full space-y-8 rounded-2xl bg-white p-6 shadow">
       {/* Content */}
-      <div className="text-gray-700 text-base md:text-xl leading-relaxed tracking-wide font-light text-justify">
-        {content}
-      </div>
+      <div
+        className="text-justify text-base font-light leading-relaxed tracking-wide text-gray-700 md:text-xl"
+        dangerouslySetInnerHTML={{ __html: content }}
+      ></div>
 
       {/* FAQ Section */}
       <div>
-        <h2 className="text-xl md:text-3xl font-bold text-primaryBlue mb-6 border-b pb-4">
+        <h2 className="mb-6 border-b pb-4 text-xl font-bold text-primaryBlue md:text-3xl">
           Frequently Asked Questions
         </h2>
 
@@ -40,17 +41,17 @@ export default function ContentFaqCard({ content, faqs }: Props) {
             return (
               <div
                 key={index}
-                className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden transition-all duration-300"
+                className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-md transition-all duration-300"
               >
                 <button
-                  className="flex w-full justify-between items-center px-6 py-5 text-left text-lg font-medium text-gray-800 hover:bg-gray-50 transition"
+                  className="flex w-full items-center justify-between px-6 py-5 text-left text-lg font-medium text-gray-800 transition hover:bg-gray-50"
                   onClick={() => toggleFAQ(index)}
                 >
                   {faq.question}
                   {isOpen ? (
-                    <ChevronUp className="w-5 h-5 text-gray-500" />
+                    <ChevronUp className="h-5 w-5 text-gray-500" />
                   ) : (
-                    <ChevronDown className="w-5 h-5 text-gray-500" />
+                    <ChevronDown className="h-5 w-5 text-gray-500" />
                   )}
                 </button>
 
@@ -59,11 +60,11 @@ export default function ContentFaqCard({ content, faqs }: Props) {
                     <motion.div
                       key="content"
                       initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
+                      animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      transition={{ duration: 0.3, ease: 'easeInOut' }}
                     >
-                      <div className="px-6 pb-6 pt-0 text-gray-600 text-base leading-relaxed">
+                      <div className="px-6 pb-6 pt-0 text-base leading-relaxed text-gray-600">
                         {faq.answer}
                       </div>
                     </motion.div>
