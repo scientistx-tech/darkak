@@ -62,6 +62,7 @@ export default function CategoryPageServer() {
         isFetching={isFetching}
         setIsFetching={setIsFetching}
       />
+      
     </div>
   )
 }
