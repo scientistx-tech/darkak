@@ -49,7 +49,6 @@ const RecommendedProducts: React.FC = () => {
 
       <div className="relative grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:gap-8">
         {/* LEFT SIDE BANNER */}
-        {/* LEFT SIDE BANNER */}
         <div className="relative hidden w-[236px] md:block">
           {mostVisitedBanner ? (
             <Link href={`/product/${mostVisitedBanner?.product?.slug}`}>

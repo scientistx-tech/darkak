@@ -2,6 +2,7 @@ import React from 'react'
 import CategoryPageServer from './CategoryPageServer'
 
 import getSeoData from '../getSeoData';
+import ContentFaqCard from '@/components/shared/ContentFaqCard';
 export async function generateMetadata() {
   const data = await getSeoData('category');
 
@@ -24,11 +25,16 @@ export async function generateMetadata() {
   };
 }
 
-export default function page() {
+export default async function page() {
+  const data = await getSeoData('category');
   return (
     <div>
       <div className="h-[65px] md:h-[109px] w-full" />
       <CategoryPageServer />
+
+      <div className='w-[90%] ml-[5%] mt-10'>
+        <ContentFaqCard content={data?.data?.content} faqs={data?.data?.faq?.faq || []} />
+      </div>
     </div>
   )
 }

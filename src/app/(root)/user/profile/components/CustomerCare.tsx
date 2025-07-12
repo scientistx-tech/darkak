@@ -114,15 +114,15 @@ export default function CustomerCare() {
       ) : (
         <div>
           {/* Live Chat Header */}
-          <div className="mb-5 flex w-full items-center justify-between rounded-lg border border-slate-400 p-3">
+          <div className="mb-5 flex w-full items-center justify-between rounded-lg bg-primary text-white p-3">
             <button
               onClick={() => setShowLiveChatBox(false)}
-              className="flex items-center gap-2 text-lg text-primaryBlue"
+              className="flex items-center gap-2 text-lg"
             >
               <FaChevronLeft />
-              Back to Options
+              Back
             </button>
-            <p className="text-xl font-semibold text-primaryBlue">Live Chat with Agent</p>
+            <p className="text-xl font-semibold">Live Support Chat</p>
             <div className="w-6" /> {/* Spacer */}
           </div>
 
