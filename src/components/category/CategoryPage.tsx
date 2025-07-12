@@ -37,9 +37,8 @@ export default function CategoryPage({
 
   const categoryTitle = initialQuery?.categoryId || 'All Products';
 
-  console.log('lll', currentPage, totalPages);
-
-  console.log('setSidebarFilters type:', typeof setSidebarFilters);
+  
+  //console.log('setSidebarFilters type:', typeof setSidebarFilters);
 
   return (
     <div>
