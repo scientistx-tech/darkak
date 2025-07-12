@@ -1,52 +1,52 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { PlusOutlined, MinusOutlined, CheckOutlined } from "@ant-design/icons";
-import { Input, Button, notification, Checkbox, Modal } from "antd";
-import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
-import product1 from "@/Data/Demo/product-2-1.png";
-import product2 from "@/Data/Demo/product-2-3.png";
-import product3 from "@/Data/Demo/product-2-4.png";
-import SendButton from "@/components/Button/SendButton";
+import React, { useEffect, useState } from 'react';
+import { PlusOutlined, MinusOutlined, CheckOutlined } from '@ant-design/icons';
+import { Input, Button, notification, Checkbox, Modal } from 'antd';
+import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
+import product1 from '@/Data/Demo/product-2-1.png';
+import product2 from '@/Data/Demo/product-2-3.png';
+import product3 from '@/Data/Demo/product-2-4.png';
+import SendButton from '@/components/Button/SendButton';
 import {
   useDeleteCartMutation,
   useGetMyCartQuery,
   useUpdateCartMutation,
-} from "@/redux/services/client/myCart";
-import { RootState } from "@/redux/store";
-import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+} from '@/redux/services/client/myCart';
+import { RootState } from '@/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import {
   useOrderCartProductsMutation,
   useOrderSingleProductMutation,
-} from "@/redux/services/client/checkout";
-import { setCart } from "@/redux/slices/authSlice";
-import { BD_Division, BD_District } from "@/Data/addressData";
-import { useCheckCouponCodeMutation } from "@/redux/services/client/applyCoupon";
+} from '@/redux/services/client/checkout';
+import { setCart } from '@/redux/slices/authSlice';
+import { BD_Division, BD_District } from '@/Data/addressData';
+import { useCheckCouponCodeMutation } from '@/redux/services/client/applyCoupon';
 
 const initialProducts = [
   {
     id: 1,
-    name: "iPhone 16 Pro",
-    variant: "128GB, AUS, Black Titanium",
+    name: 'iPhone 16 Pro',
+    variant: '128GB, AUS, Black Titanium',
     price: 132500,
     image: product1,
     quantity: 1,
   },
   {
     id: 2,
-    name: "Galaxy A56 5G",
-    variant: "Graphite, 8/128GB",
+    name: 'Galaxy A56 5G',
+    variant: 'Graphite, 8/128GB',
     price: 43000,
     image: product2,
     quantity: 1,
   },
   {
     id: 3,
-    name: "Xiaomi Pad 7",
-    variant: "Black, 8/256GB, Without Book Cover",
+    name: 'Xiaomi Pad 7',
+    variant: 'Black, 8/256GB, Without Book Cover',
     price: 45500,
     image: product3,
     quantity: 1,
@@ -54,18 +54,18 @@ const initialProducts = [
 ];
 
 const CartCheckout: React.FC = () => {
-  const [paymentMethod, setPaymentMethod] = useState<"cash" | "online">("cash");
-  const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [division, setDivision] = useState("");
-  const [address, setAddress] = useState("");
-  const [district, setDistrict] = useState("");
-  const [subDistrict, setSubDistrict] = useState("");
-  const [area, setArea] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'online'>('cash');
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [division, setDivision] = useState('');
+  const [address, setAddress] = useState('');
+  const [district, setDistrict] = useState('');
+  const [subDistrict, setSubDistrict] = useState('');
+  const [area, setArea] = useState('');
   const [agree, setAgree] = useState(true);
   const [checkoutItems, setCheckoutItems] = useState<any>([]);
-  const [couponCode, setCouponCode] = useState<string>("");
+  const [couponCode, setCouponCode] = useState<string>('');
   const [couponDiscount, setCouponDiscount] = useState<any>({});
 
   const [deleteCart] = useDeleteCartMutation();
@@ -83,31 +83,31 @@ const CartCheckout: React.FC = () => {
 
   // ✅ Load checkout_items from localStorage when component mounts
   useEffect(() => {
-    const storedItems = localStorage.getItem("checkout_items");
-    console.log("stored items", storedItems);
+    const storedItems = localStorage.getItem('checkout_items');
+    console.log('stored items', storedItems);
 
     if (storedItems) {
       setCheckoutItems(JSON.parse(storedItems));
     } else {
-      router.push("/cart"); // redirect if nothing in storage
+      router.push('/cart'); // redirect if nothing in storage
     }
 
     // ✅ Clear on browser unload
     const handleBeforeUnload = () => {
-      localStorage.removeItem("checkout_items");
+      localStorage.removeItem('checkout_items');
     };
-    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [router]);
 
   // ✅ Clear on route change (SPA navigation)
   useEffect(() => {
     // When pathname changes, check and clear localStorage if needed
-    if (!pathname.includes("checkout")) {
-      localStorage.removeItem("checkout_items");
+    if (!pathname.includes('checkout')) {
+      localStorage.removeItem('checkout_items');
     }
   }, [pathname]);
 
@@ -131,11 +131,11 @@ const CartCheckout: React.FC = () => {
   };
   // For right side
 
-  const updateQuantity = (id: number, type: "inc" | "dec") => {
-    console.log("id", id, "type", type);
+  const updateQuantity = (id: number, type: 'inc' | 'dec') => {
+    console.log('id', id, 'type', type);
     const updated = checkoutItems.map((item: any) => {
       if (item.id === id) {
-        let newQty = type === "inc" ? item.quantity + 1 : item.quantity - 1;
+        let newQty = type === 'inc' ? item.quantity + 1 : item.quantity - 1;
         handleUpdate(id, newQty);
         return { ...item, quantity: newQty < 1 ? 1 : newQty };
       }
@@ -147,27 +147,27 @@ const CartCheckout: React.FC = () => {
     try {
       await cartUpdate({ id, quantity }).unwrap(); // call API with ID
     } catch (error) {
-      console.error("Delete failed:", error);
+      console.error('Delete failed:', error);
       // Optional: show toast or notification
-      toast.error("Failed to update!");
+      toast.error('Failed to update!');
     }
   };
   const subtotal = checkoutItems.reduce((acc: number, item: any) => {
     const price = item.product?.price ?? 0;
     const discount = item.product?.discount ?? 0;
-    const discountType = item.product?.discount_type ?? "flat";
+    const discountType = item.product?.discount_type ?? 'flat';
 
     let finalPrice = price;
 
-    if (discountType === "percentage") {
+    if (discountType === 'percentage') {
       finalPrice = price - (price * discount) / 100;
-    } else if (discountType === "flat") {
+    } else if (discountType === 'flat') {
       finalPrice = price - discount;
     }
 
     return acc + finalPrice * item.quantity;
   }, 0);
-  console.log("cartitem", checkoutItems);
+  console.log('cartitem', checkoutItems);
 
   const handleCheckout = async () => {
     const productIds = checkoutItems.map((item: any) => item.id);
@@ -180,18 +180,16 @@ const CartCheckout: React.FC = () => {
       district,
       sub_district: subDistrict,
       area,
-      paymentType: "cod",
+      paymentType: 'cod',
       cartIds: productIds,
-      deliveryFee: district === "Dhaka" ? 60 : 120,
-      order_type: !checkoutItems[0].product?.user?.isSeller
-        ? "in-house"
-        : "vendor",
+      deliveryFee: district === 'Dhaka' ? 60 : 120,
+      order_type: !checkoutItems[0].product?.user?.isSeller ? 'in-house' : 'vendor',
     };
     try {
       const res = await createOrder(payload).unwrap();
 
       dispatch(setCart(Math.random()));
-      toast.success(res?.message || "Order placed successfully!");
+      toast.success(res?.message || 'Order placed successfully!');
       router.push(`/order-placed/${res?.order?.orderId}`);
     } catch (error: any) {
       toast.error(error?.data?.message);
@@ -203,14 +201,12 @@ const CartCheckout: React.FC = () => {
   const divisionOptions = BD_Division.divisions;
   const districtOptions = division
     ? BD_District.districts.filter(
-        (d) =>
-          d.division_id ===
-          divisionOptions.find((div) => div.name === division)?.id,
+        (d) => d.division_id === divisionOptions.find((div) => div.name === division)?.id
       )
     : [];
 
   const handleApplyCoupon = async () => {
-    const visitorId = localStorage.getItem("visitorId");
+    const visitorId = localStorage.getItem('visitorId');
     const productIds = checkoutItems.map((item: any) => item.productId);
 
     const payload: {
@@ -221,28 +217,28 @@ const CartCheckout: React.FC = () => {
     } = {
       total: subtotal,
       productIds: productIds,
-      visitorId: visitorId || "saa-adas-as",
+      visitorId: visitorId || 'saa-adas-as',
     };
 
     if (user && user?.id) {
       payload.userId = Number(user?.id);
     }
 
-    console.log("payload ofr coupon", payload);
+    console.log('payload ofr coupon', payload);
 
     try {
       const res = await applyCoupon({
         code: couponCode,
         data: payload,
       }).unwrap();
-      toast.success(res?.message || "Coupon Applied");
+      toast.success(res?.message || 'Coupon Applied');
       setCouponDiscount(res?.coupon);
     } catch (error: any) {
       toast.error(error?.data?.message);
     }
   };
 
-  console.log("coupon", couponDiscount);
+  console.log('coupon', couponDiscount);
 
   return (
     <div className="px-2 py-6 md:container md:mx-auto md:px-4 xl:px-6">
@@ -256,15 +252,14 @@ const CartCheckout: React.FC = () => {
           transition={{ duration: 0.4 }}
           className="mb-6 rounded border border-primaryBlue bg-[#E6EFFF] px-2 py-1.5 text-center text-primaryBlue md:px-4 md:py-3"
         >
-          {paymentMethod === "cash" ? (
+          {paymentMethod === 'cash' ? (
             <>
-              অর্ডার সংক্রান্ত যেকোনো প্রয়োজনে কথা বলুন আমাদের কাস্টমার সার্ভিস
-              প্রতিনিধির সাথে - <strong> 01915665089</strong>
+              অর্ডার সংক্রান্ত যেকোনো প্রয়োজনে কথা বলুন আমাদের কাস্টমার সার্ভিস প্রতিনিধির সাথে -{' '}
+              <strong> 01915665089</strong>
             </>
           ) : (
             <>
-              অনলাইন পেমেন্ট সংক্রান্ত সহায়তার জন্য হেল্পলাইন -{" "}
-              <strong> 01915665089</strong>
+              অনলাইন পেমেন্ট সংক্রান্ত সহায়তার জন্য হেল্পলাইন - <strong> 01915665089</strong>
             </>
           )}
         </motion.div>
@@ -280,29 +275,25 @@ const CartCheckout: React.FC = () => {
           <div className="mt-5 flex w-full justify-evenly rounded border border-primaryBlue bg-[#E6EFFF] px-2 py-1 transition-all duration-500 md:w-[90%] md:px-3 md:py-2">
             <button
               className={`flex items-center gap-2 rounded px-3 py-1 font-medium transition-all duration-300 md:px-3 md:py-1.5 ${
-                paymentMethod === "cash"
-                  ? "bg-primaryBlue text-white"
-                  : "text-black hover:bg-slate-50 hover:text-primaryBlue"
+                paymentMethod === 'cash'
+                  ? 'bg-primaryBlue text-white'
+                  : 'text-black hover:bg-slate-50 hover:text-primaryBlue'
               }`}
-              onClick={() => setPaymentMethod("cash")}
+              onClick={() => setPaymentMethod('cash')}
             >
-              {paymentMethod === "cash" && (
-                <CheckOutlined className="text-xl" />
-              )}
+              {paymentMethod === 'cash' && <CheckOutlined className="text-xl" />}
               Cash on Delivery
             </button>
 
             <button
               className={`flex items-center gap-2 rounded px-3 py-1.5 font-medium transition-all duration-300 ${
-                paymentMethod === "online"
-                  ? "bg-primaryBlue text-white"
-                  : "text-black hover:bg-slate-50 hover:text-primaryBlue"
+                paymentMethod === 'online'
+                  ? 'bg-primaryBlue text-white'
+                  : 'text-black hover:bg-slate-50 hover:text-primaryBlue'
               }`}
               // onClick={() => setPaymentMethod("online")}
             >
-              {paymentMethod === "online" && (
-                <CheckOutlined className="text-xl" />
-              )}
+              {paymentMethod === 'online' && <CheckOutlined className="text-xl" />}
               Online Payment
             </button>
           </div>
@@ -368,7 +359,7 @@ const CartCheckout: React.FC = () => {
                     value={division}
                     onChange={(e) => {
                       setDivision(e.target.value);
-                      setDistrict(""); // reset district when division changes
+                      setDistrict(''); // reset district when division changes
                     }}
                     required
                   >
@@ -394,7 +385,7 @@ const CartCheckout: React.FC = () => {
                     disabled={!division}
                   >
                     <option value="">
-                      {division ? "Select District" : "Select Division First"}
+                      {division ? 'Select District' : 'Select Division First'}
                     </option>
                     {districtOptions.map((dist) => (
                       <option key={dist.id} value={dist.name}>
@@ -409,8 +400,7 @@ const CartCheckout: React.FC = () => {
                 {/* Sub-district */}
                 <div>
                   <label className="mb-1 block text-sm font-medium">
-                    Sub-district / Upazila{" "}
-                    <span className="text-primaryBlue">*</span>
+                    Sub-district / Upazila <span className="text-primaryBlue">*</span>
                   </label>
                   <Input
                     placeholder="e.g., Dhanmondi"
@@ -424,8 +414,7 @@ const CartCheckout: React.FC = () => {
                 {/* Delivery Area */}
                 <div>
                   <label className="mb-1 block text-sm font-medium">
-                    Delivery Area / Address{" "}
-                    <span className="text-primaryBlue">*</span>
+                    Delivery Area / Address <span className="text-primaryBlue">*</span>
                   </label>
                   <Input
                     placeholder="e.g., House #12, Road #5"
@@ -440,8 +429,7 @@ const CartCheckout: React.FC = () => {
               {/* Full Address */}
               <div>
                 <label className="mb-1 block text-sm font-medium">
-                  Additional Address Notes{" "}
-                  <span className="text-primaryBlue">*</span>
+                  Additional Address Notes <span className="text-primaryBlue">*</span>
                 </label>
                 <Input.TextArea
                   placeholder="Additional address details"
@@ -453,23 +441,19 @@ const CartCheckout: React.FC = () => {
               </div>
 
               {/* Agreement Checkbox */}
-              <Checkbox
-                checked={agree}
-                onChange={(e) => setAgree(e.target.checked)}
-                required
-              >
-                I have read and agree to the{" "}
+              <Checkbox checked={agree} onChange={(e) => setAgree(e.target.checked)} required>
+                I have read and agree to the{' '}
                 <button onClick={showModal} className="text-primaryBlue">
                   Terms and Conditions
-                </button>{" "}
-                and{" "}
+                </button>{' '}
+                and{' '}
                 <button onClick={showModal2} className="text-primaryBlue">
                   Privacy Policy
                 </button>
               </Checkbox>
             </form>
 
-            <div className="mt-5">
+            <div className="mt-5 hidden md:block">
               <button
                 className="rounded-full bg-blue-950 px-6 py-2 text-white"
                 onClick={handleCheckout}
@@ -482,9 +466,7 @@ const CartCheckout: React.FC = () => {
 
         {/* right side */}
         <div className="w-full md:w-1/2 md:pl-[10%]">
-          <h2 className="mb-0 mt-5 text-lg font-semibold md:mb-3">
-            Your Order
-          </h2>
+          <h2 className="mb-0 mt-5 text-lg font-semibold md:mb-3">Your Order</h2>
 
           {checkoutItems?.map((item: any) => (
             <div
@@ -499,9 +481,7 @@ const CartCheckout: React.FC = () => {
                 className="rounded"
               />
               <div className="flex-1">
-                <div className="text-sm font-semibold">
-                  {item?.product?.title}
-                </div>
+                <div className="text-sm font-semibold">{item?.product?.title}</div>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   {item?.cart_items &&
                     item?.cart_items.map((cart_item: any, i: number) => (
@@ -517,12 +497,12 @@ const CartCheckout: React.FC = () => {
                   {(() => {
                     const price = item?.product?.price ?? 0;
                     const discount = item?.product?.discount ?? 0;
-                    const discountType = item?.product?.discount_type ?? "flat";
+                    const discountType = item?.product?.discount_type ?? 'flat';
                     let finalPrice = price;
 
-                    if (discountType === "percentage") {
+                    if (discountType === 'percentage') {
                       finalPrice = price - (price * discount) / 100;
-                    } else if (discountType === "flat") {
+                    } else if (discountType === 'flat') {
                       finalPrice = price - discount;
                     }
 
@@ -532,7 +512,7 @@ const CartCheckout: React.FC = () => {
 
                 <div className="flex">
                   <button
-                    onClick={() => updateQuantity(item.id, "dec")}
+                    onClick={() => updateQuantity(item.id, 'dec')}
                     className="bg-primaryBlue px-1.5 py-1 text-white opacity-80 transition-all duration-300 hover:opacity-100"
                   >
                     <MinusOutlined />
@@ -541,7 +521,7 @@ const CartCheckout: React.FC = () => {
                     {item.quantity}
                   </p>
                   <button
-                    onClick={() => updateQuantity(item.id, "inc")}
+                    onClick={() => updateQuantity(item.id, 'inc')}
                     className="bg-primaryBlue px-1.5 py-1 text-white opacity-80 transition-all duration-300 hover:opacity-100"
                   >
                     <PlusOutlined />
@@ -552,9 +532,7 @@ const CartCheckout: React.FC = () => {
           ))}
 
           {couponDiscount?.id ? (
-            <p className="animate-bounce py-3 text-right font-bold text-teal-400">
-              Coupon Applied
-            </p>
+            <p className="animate-bounce py-3 text-right font-bold text-teal-400">Coupon Applied</p>
           ) : (
             <div className="mt-3 flex items-center gap-2">
               <Input
@@ -580,45 +558,84 @@ const CartCheckout: React.FC = () => {
             {couponDiscount?.id && (
               <div className="flex justify-between text-primaryBlue">
                 <span>Coupon Discount</span>
-                <span>{`-${couponDiscount?.discount_type === "flat" ? "Tk" : ""} ${couponDiscount?.discount_amount}${couponDiscount?.discount_type === "percentage" ? "%" : ""} `}</span>
+                <span>{`-${couponDiscount?.discount_type === 'flat' ? 'Tk' : ''} ${couponDiscount?.discount_amount}${couponDiscount?.discount_type === 'percentage' ? '%' : ''} `}</span>
               </div>
             )}
             <div className="flex justify-between text-lg font-semibold text-black">
               <span>Total</span>
               <span>
-                BDT{" "}
+                BDT{' '}
                 {couponDiscount?.id
-                  ? couponDiscount?.discount_type === "flat"
+                  ? couponDiscount?.discount_type === 'flat'
                     ? subtotal - couponDiscount?.discount_amount
-                    : subtotal -
-                      subtotal * (couponDiscount?.discount_amount / 100)
+                    : subtotal - subtotal * (couponDiscount?.discount_amount / 100)
                   : subtotal}
               </span>
             </div>
           </div>
         </div>
+
+        <div className="mt-5 block md:hidden">
+          <button
+            className="w-full rounded-full bg-blue-950 px-6 py-2 text-white"
+            onClick={handleCheckout}
+          >
+            Order
+          </button>
+        </div>
       </div>
 
       <Modal
-        title="Terms and Conditions"
+        title="Terms and Conditions - Darkak"
         open={isModalOpen}
         onCancel={handleCancel}
         footer={false}
       >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+        <p>
+          By placing an order on <strong>Darkak</strong>, you agree to our terms and conditions.
+          Please review the following before completing your purchase.
+        </p>
+        <p>
+          All orders are subject to availability and confirmation of the order price. We reserve the
+          right to refuse or cancel any order at our discretion.
+        </p>
+        <p>
+          Once your order is placed, you will receive an order confirmation. Shipping times may vary
+          based on your location and selected delivery method.
+        </p>
+        <p>
+          Please ensure your shipping information is accurate. Darkak is not responsible for orders
+          delivered to incorrect addresses provided by the customer.
+        </p>
+        <p>
+          For any return, refund, or cancellation, please review our dedicated policies listed on
+          our website or contact customer support.
+        </p>
       </Modal>
 
       <Modal
-        title="Privacy Policy"
+        title="Privacy Policy - Darkak"
         open={isModalOpen2}
         onCancel={handleCancel2}
         footer={false}
       >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+        <p>
+          <strong>Darkak</strong> values your privacy. We collect your personal data during checkout
+          to process your order and provide support.
+        </p>
+        <p>
+          The data collected includes your name, shipping address, contact details, and payment
+          method. This information is securely stored and never shared with third parties without
+          your consent.
+        </p>
+        <p>
+          We may use your contact details to send order updates or promotional offers. You can opt
+          out at any time.
+        </p>
+        <p>
+          By continuing with your order, you consent to our privacy practices. For more details,
+          please refer to the full Privacy Policy page.
+        </p>
       </Modal>
     </div>
   );
