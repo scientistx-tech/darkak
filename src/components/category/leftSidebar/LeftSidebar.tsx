@@ -301,6 +301,10 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
   const visibleBrands = showAllBrands ? filteredBrands : filteredBrands.slice(0, 10);
 
   const handleBrandCheck = (id: string, title: string) => {
+    setSelectedBrand(id);
+    setSelectedBrandTitle(title);
+    router.push(`/brand/${title.trim().replace(/\s+/g, '-')}`);
+    return;
     if (selectedBrand === id) {
       setSelectedBrand('');
       setSelectedBrandTitle('');
@@ -434,9 +438,9 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
                 setSelectedBrand('');
                 setSelectedBrandTitle('');
                 // Remove brandId from query
-                const params = new URLSearchParams(searchParams.toString());
-                params.delete('brandId');
-                router.push(`?${params.toString()}`);
+                // const params = new URLSearchParams(searchParams.toString());
+                //params.delete('brandId');
+                router.push(`/category`);
               }}
               className="accent-blue-600"
             />

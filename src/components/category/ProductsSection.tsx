@@ -66,7 +66,7 @@ const ProductsSection = ({
     });
   }, [initialQuery, sortBy]); // Add sortBy to the dependency array
 
-  console.log('visibleCount', visibleCount);
+  //console.log('visibleCount', visibleCount);
 
   useEffect(() => {
     if (data?.data) {
