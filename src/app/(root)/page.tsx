@@ -71,9 +71,9 @@ async function Page() {
           <BestSelling />
         </MotionRevealWrapper>
 
-        {/* <MotionRevealWrapper>
+        <MotionRevealWrapper>
           <ThardBanner />
-        </MotionRevealWrapper> */}
+        </MotionRevealWrapper>
 
         <MotionRevealWrapper>
           <NewArrival />
