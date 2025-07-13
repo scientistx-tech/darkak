@@ -4,10 +4,27 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { MdPhoneInTalk, MdMailOutline } from 'react-icons/md';
 import { FaWhatsapp, FaChevronLeft } from 'react-icons/fa';
 import LiveChat from './LiveChat';
+import { useLazyCreateConversationQuery } from '@/redux/services/client/homeContentApi';
+import { toast } from 'react-toastify';
+import Button from '@/app/admin/components/Button';
 
 export default function CustomerCare() {
   const [activeTab, setActiveTab] = useState('helpline');
   const [showLiveChatBox, setShowLiveChatBox] = useState(false);
+  const [trigger, { data, isLoading }] = useLazyCreateConversationQuery();
+  const [conversationId, setConversationId] = useState<number | null>(null);
+
+  const createConversations = async () => {
+    try {
+      const res = await trigger('1').unwrap(); // '1' = receiverId or whatever param you need
+      //console.log('Conversation created:', res);
+      setConversationId(res.id);
+      setActiveTab('livechat');
+    } catch (err: any) {
+      console.error('Failed to create conversation', err);
+      toast.error(err?.data?.message);
+    }
+  };
 
   return (
     <div className="mx-auto w-full max-w-3xl rounded-3xl bg-white/30 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-xl sm:p-10">
@@ -32,8 +49,9 @@ export default function CustomerCare() {
               <p className="text-xs font-normal">24/7 Days</p>
             </button>
 
-            <button
-              onClick={() => setActiveTab('livechat')}
+            <Button
+              loading={isLoading}
+              onClick={() => createConversations()}
               className={`rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 ${
                 activeTab === 'livechat'
                   ? 'bg-primaryBlue text-white shadow-md'
@@ -42,7 +60,7 @@ export default function CustomerCare() {
             >
               Live Chat with Agent
               <p className="text-xs font-normal">9 AM - 6 PM [Everyday]</p>
-            </button>
+            </Button>
           </div>
 
           {/* Content Section with Animation */}
@@ -114,7 +132,7 @@ export default function CustomerCare() {
       ) : (
         <div>
           {/* Live Chat Header */}
-          <div className="mb-5 flex w-full items-center justify-between rounded-lg bg-primary text-white p-3">
+          <div className="mb-5 flex w-full items-center justify-between rounded-lg bg-primary p-3 text-white">
             <button
               onClick={() => setShowLiveChatBox(false)}
               className="flex items-center gap-2 text-lg"
@@ -127,7 +145,7 @@ export default function CustomerCare() {
           </div>
 
           {/* Live Chat Component */}
-          <LiveChat />
+         {conversationId&&( <LiveChat id={conversationId} />)}
         </div>
       )}
     </div>
