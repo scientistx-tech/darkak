@@ -134,7 +134,7 @@ function CategoryTable() {
                       <div className="flex items-center justify-center gap-x-2">
                         <button
                           onClick={() => {
-                            console.log(doc)
+                            console.log(doc);
                             setIsEditable({
                               status: true,
                               value: {
@@ -143,7 +143,7 @@ function CategoryTable() {
                                 icon: doc.icon,
                                 serial: String(doc.serial),
                                 content: doc?.content,
-                                faq: doc?.faq?.faq,
+                                faq: doc?.faq?.faq || [],
                                 meta_alt: doc?.meta_alt,
                                 meta_description: doc.meta_description,
                                 meta_image: doc.meta_image,

@@ -186,7 +186,7 @@ export const adminApi = baseApi.injectEndpoints({
 
     uploadImages: builder.mutation<any, FormData>({
       query: (data) => ({
-        url: "/admin/product/upload-multiple-images",
+        url: "/user/upload-multiple-images",
         method: "POST",
         body: data,
       }),

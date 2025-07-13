@@ -72,7 +72,7 @@ export default function Page() {
           Category
         </Link>
         <ArrowRightIcon />
-        {category}
+        {decodeURIComponent((category as string) || '').replace(/-/g, ' ')}
       </div>
       <CategoryPage
         data={data}
