@@ -1,17 +1,25 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Input, Select, Button, Modal } from 'antd';
+import { Input, Select, Button, Modal, Form, message } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
 export default function BillingSection() {
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'wallet'>('cash');
-  const [open, setOpen] = useState(false);
-  const [open2, setOpen2] = useState(false);
-
+  const [openHoldModal, setOpenHoldModal] = useState(false);
+  const [openAddCustomerModal, setOpenAddCustomerModal] = useState(false);
+  const [openExtraDiscount, setOpenExtraDiscount] = useState(false);
+  const [openCouponDiscount, setOpenCouponDiscount] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<string | undefined>();
+  const [extraDiscount, setExtraDiscount] = useState<number>(0);
+  const [couponDiscount, setCouponDiscount] = useState<number>(0);
+
+  const [products, setProducts] = useState([
+    { id: 1, name: 'Storage Large...', qty: 8, price: 480 },
+    { id: 2, name: 'Bronze floral...', qty: 1, price: 19 },
+  ]);
 
   const customer = [
     { value: '', label: 'Walking Customer' },
@@ -20,21 +28,47 @@ export default function BillingSection() {
   ];
 
   const filterOption = (input: string, option?: { children: React.ReactNode }) =>
-      String(option?.children).toLowerCase().includes(input.toLowerCase());
+    String(option?.children).toLowerCase().includes(input.toLowerCase());
+
+  const handleQtyChange = (index: number, qty: number) => {
+    const updated = [...products];
+    updated[index].qty = qty;
+    setProducts(updated);
+  };
+
+  const handleDeleteProduct = (id: number) => {
+    setProducts(products.filter((p) => p.id !== id));
+  };
+
+  const getSubtotal = () => products.reduce((total, p) => total + p.qty * p.price, 0);
+
+  const handlePlaceOrder = () => {
+    message.success('Order placed successfully!');
+  };
+
+  const handleCancelOrder = () => {
+    setProducts([]);
+    message.warning('Order has been canceled.');
+  };
+
+  const handleClearCart = () => {
+    setProducts([]);
+    message.info('Cart cleared.');
+  };
 
   return (
     <>
       <div className="mt-5 rounded-lg bg-white p-4 shadow-sm">
         <div className="mb-4 flex w-full justify-end">
           <Button
-            onClick={() => setOpen(true)}
+            onClick={() => setOpenHoldModal(true)}
             type="default"
             className="border-blue-600 text-blue-600"
           >
             View All Hold Orders <span className="ml-2 text-red-500">0</span>
           </Button>
         </div>
-        {/* Top Customer Row */}
+
         <div className="mb-4 flex w-full flex-1 items-center justify-between gap-8">
           <Select
             showSearch
@@ -53,7 +87,7 @@ export default function BillingSection() {
           </Select>
 
           <Button
-            onClick={() => setOpen2(true)}
+            onClick={() => setOpenAddCustomerModal(true)}
             type="primary"
             className="bg-green-600 hover:bg-green-700"
           >
@@ -61,21 +95,15 @@ export default function BillingSection() {
           </Button>
         </div>
 
-        {/* Cart Action Row */}
         <div className="mb-4 flex w-full flex-1 items-end justify-between">
           <div className="w-1/2">
             <p className="font-medium text-black">Customer Information</p>
-            <p>
-              <span className="mr-5 text-black">Name:</span>Mr. XYZ
-            </p>
-            <p>
-              <span className="mr-4 text-black">Phone:</span>0123456789
-            </p>
+            <p><span className="mr-5 text-black">Name:</span>Mr. XYZ</p>
+            <p><span className="mr-4 text-black">Phone:</span>0123456789</p>
           </div>
-          <Button danger>Clear Cart</Button>
+          <Button danger onClick={handleClearCart}>Clear Cart</Button>
         </div>
 
-        {/* Table Header */}
         <div className="grid grid-cols-4 border-b py-2 font-semibold text-gray-700">
           <div>Item</div>
           <div>Qty</div>
@@ -83,28 +111,29 @@ export default function BillingSection() {
           <div>Delete</div>
         </div>
 
-        {/* Product Items */}
-        {[
-          { name: 'Storage Large...', qty: 8, price: 480 },
-          { name: 'Bronze floral...', qty: 1, price: 19 },
-        ].map((item, idx) => (
-          <div key={idx} className="grid grid-cols-4 items-center border-b py-2">
+        {products.map((item, idx) => (
+          <div key={item.id} className="grid grid-cols-4 items-center border-b py-2">
             <div className="truncate">{item.name}</div>
             <div>
-              <Input type="number" defaultValue={item.qty} className="w-20" />
+              <Input
+                type="number"
+                min={1}
+                value={item.qty}
+                onChange={(e) => handleQtyChange(idx, parseInt(e.target.value))}
+                className="w-20"
+              />
             </div>
-            <div className="font-medium text-gray-700">${item.price.toFixed(2)}</div>
+            <div className="font-medium text-gray-700">${(item.qty * item.price).toFixed(2)}</div>
             <div>
-              <Button danger shape="circle" icon={<DeleteOutlined />} />
+              <Button danger shape="circle" icon={<DeleteOutlined />} onClick={() => handleDeleteProduct(item.id)} />
             </div>
           </div>
         ))}
 
-        {/* Summary Section */}
         <div className="mt-4 space-y-2 text-sm text-gray-700">
           <div className="flex justify-between">
             <span>Sub Total :</span>
-            <span>$499.00</span>
+            <span>${getSubtotal().toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
             <span>Product Discount :</span>
@@ -113,17 +142,17 @@ export default function BillingSection() {
           <div className="flex justify-between">
             <span>Extra Discount :</span>
             <span className="flex items-center gap-1">
-              $0.00{' '}
-              <button>
+              ${extraDiscount.toFixed(2)}{' '}
+              <button onClick={() => setOpenExtraDiscount(true)}>
                 <EditOutlined className="text-blue-500" />
               </button>
             </span>
           </div>
           <div className="flex justify-between">
             <span>Coupon Discount :</span>
-            <span>
-              $0.00{' '}
-              <button>
+            <span className="flex items-center gap-1">
+              ${couponDiscount.toFixed(2)}{' '}
+              <button onClick={() => setOpenCouponDiscount(true)}>
                 <EditOutlined className="text-blue-500" />
               </button>
             </span>
@@ -134,11 +163,10 @@ export default function BillingSection() {
           </div>
           <div className="flex justify-between font-semibold text-black">
             <span>Total :</span>
-            <span>$499.00</span>
+            <span>${(getSubtotal() - extraDiscount - couponDiscount).toFixed(2)}</span>
           </div>
         </div>
 
-        {/* Paid By */}
         <div className="mt-4">
           <p className="mb-2 text-sm font-medium text-gray-700">Paid By:</p>
           <div className="flex gap-3">
@@ -158,12 +186,11 @@ export default function BillingSection() {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="mt-6 flex items-center justify-between gap-4">
-          <Button danger className="w-1/2 py-2">
+          <Button danger className="w-1/2 py-2" onClick={handleCancelOrder}>
             Cancel Order
           </Button>
-          <Button type="primary" className="w-1/2 py-2">
+          <Button type="primary" className="w-1/2 py-2" onClick={handlePlaceOrder}>
             Place Order
           </Button>
         </div>
@@ -172,27 +199,43 @@ export default function BillingSection() {
       {/* View All Hold Orders */}
       <Modal
         title="View All Hold Orders"
-        closable={{ 'aria-label': 'Custom Close Button' }}
-        open={open}
-        onCancel={() => setOpen(false)}
+        open={openHoldModal}
+        onCancel={() => setOpenHoldModal(false)}
         footer={null}
       >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+        <p>Hold orders list will be displayed here...</p>
       </Modal>
 
       {/* Add New Customer */}
       <Modal
         title="Add New Customer"
-        closable={{ 'aria-label': 'Custom Close Button' }}
-        open={open2}
-        onCancel={() => setOpen2(false)}
+        open={openAddCustomerModal}
+        onCancel={() => setOpenAddCustomerModal(false)}
         footer={null}
       >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+        <Form layout="vertical">
+          <Form.Item label="Customer Name" name="name">
+            <Input placeholder="Enter customer name" />
+          </Form.Item>
+          <Form.Item label="Phone Number" name="phone">
+            <Input placeholder="Enter phone number" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" block onClick={() => message.success('Customer added!')}>
+              Save Customer
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+       {/* Extra Discount */}
+      <Modal
+        title="Update discount"
+        open={openExtraDiscount}
+        onCancel={() => setOpenExtraDiscount(false)}
+        footer={null}
+      >
+        <p>Extra Discount</p>
       </Modal>
     </>
   );
