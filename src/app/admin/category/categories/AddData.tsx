@@ -78,7 +78,7 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
       setTitle(value?.title);
       setSelectedCategoryPriority(value.serial);
       setPreviewImage(value?.icon);
-      setFaqList(value?.faq);
+      setFaqList(value?.faq||[]);
       setMetaImagePreview(value?.meta_image);
       setMetaAlt(value?.meta_alt);
       setMetaDescription(value?.meta_description);
