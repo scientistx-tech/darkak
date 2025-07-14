@@ -9,7 +9,7 @@ import { ArrowRightIcon } from 'lucide-react';
 
 type SidebarFilters = { [key: string]: any };
 
-export default function CategoryPageServer() {
+export default function CategoryPageServer({ searchPage }: { searchPage?: boolean }) {
   // const searchParams = useSearchParams();
   // // Convert searchParams to a plain object
   // const query: Record<string, string> = {};
@@ -22,10 +22,13 @@ export default function CategoryPageServer() {
   const [visibleCount, setVisibleCount] = useState(1);
   const [isFetching, setIsFetching] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const search = searchParams.get('search');
 
   // Add currentPage to sidebarFilters before calling useGetAllProductsQuery
   const filtersWithPageAndLimit = {
     ...sidebarFilters,
+    search: search || '',
     page: String(visibleCount),
     limit: '20',
   };
@@ -48,20 +51,24 @@ export default function CategoryPageServer() {
 
   useEffect(() => {
     fetchAllProducts();
-  }, [sidebarFilters, visibleCount]);
+  }, [sidebarFilters, visibleCount,search]);
 
   //console.log('setSidebarFilters type:', typeof setSidebarFilters);
   return (
     <div className="w-full">
       <div className="h-[10px] w-full md:h-[20px]" />
-      <div className="px-3 md:px-5 lg:px-11 flex items-center gap-1 text-sm font-semibold">
-        <Link className="text-primary underline" href={'/'}>
-          Home
-        </Link>
-        <ArrowRightIcon />
-        Category
-      </div>
+      {!searchPage && (
+        <div className="flex items-center gap-1 px-3 text-sm font-semibold md:px-5 lg:px-11">
+          <Link className="text-primary underline" href={'/'}>
+            Home
+          </Link>
+          <ArrowRightIcon />
+          Category
+        </div>
+      )}
+
       <CategoryPage
+        searchPage={searchPage}
         data={data}
         sidebarFilters={sidebarFilters}
         setSidebarFilters={setSidebarFilters}
