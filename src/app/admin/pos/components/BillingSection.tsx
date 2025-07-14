@@ -214,7 +214,7 @@ export default function BillingSection() {
         onCancel={() => setOpenHoldModal(false)}
         footer={null}
       >
-        <p>Hold orders list will be displayed here...</p>
+        <p>Hold orders list will be displayed here.</p>
       </Modal>
 
       {/* Add New Customer */}
