@@ -42,7 +42,7 @@ export default function LiveChat({ id }: { id: number }) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showOrders, setShowOrders] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const { data, isLoading } = useGetConversationMessagesQuery(id);
+  const { data, isLoading, refetch } = useGetConversationMessagesQuery(id);
   const user = useSelector((state: RootState) => state.auth.user);
   const [uploadImages, { isLoading: uploading }] = useUploadImagesMutation();
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -52,6 +52,11 @@ export default function LiveChat({ id }: { id: number }) {
       setMessages(data);
     }
   }, [data]);
+  useEffect(() => {
+    socket.on('receive_message', (newMessage: Message) => {
+      refetch();
+    });
+  }, []);
 
   useEffect(() => {
     const container = bottomRef.current;
