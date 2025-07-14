@@ -11,7 +11,7 @@ const dummyChats = [
 ];
 
 export default function Page() {
-  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(dummyChats[0].id);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(null);
 
   return (
     <div className="flex overflow-hidden">
@@ -20,7 +20,7 @@ export default function Page() {
         selectedId={selectedCustomerId}
         onSelect={setSelectedCustomerId}
       />
-      <ChatConversation selectedCustomer={selectedCustomerId} />
+      {selectedCustomerId&&(<ChatConversation selectedCustomer={selectedCustomerId} />)}
     </div>
   );
 }
