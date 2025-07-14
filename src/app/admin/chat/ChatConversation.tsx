@@ -29,7 +29,7 @@ interface MessageFile {
 interface Message {
   id: number;
   message: string;
-  senderId: number;
+  senderId: number | string;
   isReadBy: number | null;
   conversationId: number;
   createdAt: string;
@@ -37,6 +37,7 @@ interface Message {
   message_files: MessageFile[];
   isBot?: boolean;
   notSend?: boolean;
+  status: MessageStatus;
 }
 
 type Props = {
@@ -68,7 +69,7 @@ export default function ChatConversation({ selectedCustomer }: Props) {
 
   useEffect(() => {
     if (data) {
-      setMessages(data);
+      setMessages(data as Message[]);
     }
   }, [data]);
 
@@ -83,6 +84,7 @@ export default function ChatConversation({ selectedCustomer }: Props) {
       createdAt: new Date().toISOString(),
       read: false,
       message_files: [],
+      status: 'sending',
     };
     setMessages((prev) => [...prev, newMessage]);
     socket.emit('send_message', {
@@ -92,6 +94,11 @@ export default function ChatConversation({ selectedCustomer }: Props) {
       files: [],
     });
     setInput('');
+    setTimeout(() => {
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === newMessage.id ? { ...msg, status: 'seen' } : msg))
+      );
+    }, 500);
   };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,6 +120,7 @@ export default function ChatConversation({ selectedCustomer }: Props) {
         conversationId: selectedCustomer,
         createdAt: new Date().toISOString(),
         read: false,
+        status: 'sending',
         message_files: [
           {
             id: Date.now(),
@@ -131,6 +139,11 @@ export default function ChatConversation({ selectedCustomer }: Props) {
         files: imageUrl ? [imageUrl] : [],
       });
       setImagePreview(null);
+      setTimeout(() => {
+        setMessages((prev) =>
+          prev.map((msg) => (msg.id === newMessage.id ? { ...msg, status: 'seen' } : msg))
+        );
+      }, 500);
     } catch (error) {
       console.error('Upload failed:', error);
     }
@@ -147,7 +160,7 @@ export default function ChatConversation({ selectedCustomer }: Props) {
       case 'failed':
         return <AlertCircle className="h-4 w-4 text-red-500" />;
       default:
-        return null;
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
     }
   };
 
@@ -169,7 +182,7 @@ export default function ChatConversation({ selectedCustomer }: Props) {
           messages.map((msg, i) => (
             <div
               key={i}
-              className={`flex ${msg.senderId === user?.id ? 'justify-end' : 'justify-start'}`}
+              className={`flex items-end gap-1 ${msg.senderId === user?.id ? 'justify-end' : 'justify-start'}`}
             >
               <div className="flex items-end gap-1">
                 <div
@@ -191,6 +204,7 @@ export default function ChatConversation({ selectedCustomer }: Props) {
                     : msg.message}
                 </div>
               </div>
+              {getStatusIcon(msg.status)}
             </div>
           ))
         )}

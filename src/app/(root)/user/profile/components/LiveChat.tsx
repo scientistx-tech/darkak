@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { useUploadImagesMutation } from '@/redux/services/admin/adminProductApis';
 import { socket } from '@/socket';
+import { useGetMyOrdersQuery } from '@/redux/services/client/order';
 
 interface MessageFile {
   id: number;
@@ -20,7 +21,7 @@ interface MessageFile {
 interface Message {
   id: number;
   message: string;
-  senderId: number;
+  senderId: number | string;
   isReadBy: number | null;
   conversationId: number;
   createdAt: string;
@@ -46,6 +47,10 @@ export default function LiveChat({ id }: { id: number }) {
   const user = useSelector((state: RootState) => state.auth.user);
   const [uploadImages, { isLoading: uploading }] = useUploadImagesMutation();
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const { data: orders, isLoading: orderLoading } = useGetMyOrdersQuery({
+    page: 1,
+    limit: 1000000,
+  });
 
   useEffect(() => {
     if (data) {
@@ -104,7 +109,26 @@ export default function LiveChat({ id }: { id: number }) {
     }); // ✅ emit image message
     setInput('');
   };
-
+  const sendOrder = (order: any) => {
+    const newMessage: Message = {
+      id: Date.now(),
+      message: `Order Item: ${order.product.title} - Order ID: ${order.order.orderId}`,
+      senderId: user?.id || 1,
+      isReadBy: null,
+      conversationId: id,
+      createdAt: new Date().toISOString(),
+      read: false,
+      message_files: [],
+    };
+    setMessages((prev) => [...prev, newMessage]);
+    socket.emit('send_message', {
+      conversationId: id,
+      userId: user?.id,
+      message: `Order Item: ${order.product.title} - Order ID: ${order.order.orderId}`,
+      files: [],
+    });
+    setShowOrders(false);
+  };
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -149,7 +173,7 @@ export default function LiveChat({ id }: { id: number }) {
   };
 
   return (
-    <div className="relative mx-auto w-full max-w-xl rounded border bg-white p-4 shadow">
+    <div className="relative mx-auto w-full rounded border p-4">
       <div className="mb-2 flex items-center justify-between">
         <h2 className="text-lg font-semibold">Live Chat</h2>
         <button
@@ -161,19 +185,24 @@ export default function LiveChat({ id }: { id: number }) {
       </div>
 
       {showOrders && (
-        <div className="mb-4 border-t pt-2">
+        <div className="absolute left-0 z-50 mb-4 w-full h-[calc(100%-50px)] overflow-y-auto border-t bg-white p-4 pt-2 shadow-1 dark:bg-dark">
           <h3 className="mb-2 font-medium">Orders</h3>
           <div className="space-y-2">
-            {dummyOrders.map((order) => (
-              <div key={order.id} className="flex items-center gap-3">
+            {orderLoading && <Loader />}
+            {orders?.data?.map((order) => (
+              <div
+                onClick={() => sendOrder(order)}
+                key={order.id}
+                className="flex cursor-pointer items-center gap-3 border-b"
+              >
                 <img
-                  src={order.productImage}
-                  alt={order.productName}
+                  src={order.product.thumbnail}
+                  alt={order.product.title}
                   className="h-12 w-12 rounded object-cover"
                 />
                 <div>
-                  <p className="text-sm font-semibold">{order.productName}</p>
-                  <p className="text-xs text-gray-500">{order.id}</p>
+                  <p className="text-sm font-semibold">{order.product.title}</p>
+                  <p className="text-xs text-gray-500">{order.order.orderId}</p>
                 </div>
               </div>
             ))}
@@ -214,7 +243,7 @@ export default function LiveChat({ id }: { id: number }) {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="flex-1 rounded border px-3 py-1 text-sm outline-none"
+          className="flex-1 rounded-full border px-3 py-3 text-sm outline-none"
           placeholder="Type a message..."
           disabled={uploading}
         />
@@ -223,7 +252,7 @@ export default function LiveChat({ id }: { id: number }) {
           disabled={uploading}
           className="disabled:opacity-50"
         >
-          <ImageIcon className="h-5 w-5 text-gray-500" />
+          <ImageIcon className="h-8 w-8 text-gray-500" />
         </button>
         <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" />
         <button
@@ -231,7 +260,7 @@ export default function LiveChat({ id }: { id: number }) {
           disabled={uploading || input.trim() === ''}
           className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600 disabled:bg-blue-300"
         >
-          <SendHorizonal className="h-4 w-4" />
+          <SendHorizonal className="h-8 w-8" />
         </button>
       </div>
 

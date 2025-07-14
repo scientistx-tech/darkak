@@ -17,6 +17,7 @@ export default function CategoryPage({
   setIsLoading,
   isFetching,
   setIsFetching,
+  searchPage
 }: {
   initialQuery?: Record<string, string>;
   data: any;
@@ -28,6 +29,7 @@ export default function CategoryPage({
   setIsLoading: (value: boolean) => void;
   isFetching: boolean;
   setIsFetching: (value: boolean) => void;
+  searchPage?:boolean
 }) {
   const [searchValue, setSearchValue] = useState<string>('');
 
