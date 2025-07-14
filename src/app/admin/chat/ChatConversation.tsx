@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   SendHorizonal,
   ImageIcon,
@@ -9,19 +9,38 @@ import {
   Loader2,
   PauseCircle,
   AlertCircle,
+  Loader2Icon,
 } from 'lucide-react';
+import { useGetConversationMessagesQuery } from '@/redux/services/client/homeContentApi';
+import { RootState } from '@/redux/store';
+import { useSelector } from 'react-redux';
+import { useUploadImagesMutation } from '@/redux/services/admin/adminProductApis';
+import { socket } from '@/socket';
 
 type MessageStatus = 'sending' | 'sent' | 'seen' | 'failed';
 
-type Message = {
-  from: 'admin' | 'customer';
-  text?: string;
-  imageUrl?: string;
-  status?: MessageStatus;
-};
+interface MessageFile {
+  id: number;
+  url: string;
+  createAt: string;
+  messageId: number;
+}
+
+interface Message {
+  id: number;
+  message: string;
+  senderId: number;
+  isReadBy: number | null;
+  conversationId: number;
+  createdAt: string;
+  read: boolean;
+  message_files: MessageFile[];
+  isBot?: boolean;
+  notSend?: boolean;
+}
 
 type Props = {
-  selectedCustomer: string | null;
+  selectedCustomer: number;
 };
 
 export default function ChatConversation({ selectedCustomer }: Props) {
@@ -29,45 +48,91 @@ export default function ChatConversation({ selectedCustomer }: Props) {
   const [input, setInput] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const { data, isLoading, refetch } = useGetConversationMessagesQuery(selectedCustomer);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const [uploadImages, { isLoading: uploading }] = useUploadImagesMutation();
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const handleSend = () => {
-    if (!input.trim() && !imagePreview) return;
+  useEffect(() => {
+    const container = bottomRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [messages]);
 
+  useEffect(() => {
+    socket.on('receive_message', (newMessage: Message) => {
+      refetch();
+    });
+  }, []);
+
+  useEffect(() => {
+    if (data) {
+      setMessages(data);
+    }
+  }, [data]);
+
+  const handleSendMessage = () => {
+    if (input.trim() === '') return;
     const newMessage: Message = {
-      from: 'admin',
-      text: input.trim() || undefined,
-      imageUrl: imagePreview || undefined,
-      status: 'sending',
+      id: Date.now(),
+      message: input,
+      senderId: user?.id || 1,
+      isReadBy: null,
+      conversationId: selectedCustomer,
+      createdAt: new Date().toISOString(),
+      read: false,
+      message_files: [],
     };
-
     setMessages((prev) => [...prev, newMessage]);
+    socket.emit('send_message', {
+      conversationId: selectedCustomer,
+      userId: user?.id,
+      message: input.trim(),
+      files: [],
+    });
     setInput('');
-    setImagePreview(null);
-
-    // Simulate message status update
-    setTimeout(() => {
-      const randomStatus: MessageStatus = Math.random() < 0.9 ? 'sent' : 'failed'; // 90% chance sent
-
-      setMessages((prev) =>
-        prev.map((msg, i) => (i === prev.length - 1 ? { ...msg, status: randomStatus } : msg))
-      );
-
-      // Optional: simulate seen
-      if (randomStatus === 'sent') {
-        setTimeout(() => {
-          setMessages((prev) =>
-            prev.map((msg, i) => (i === prev.length - 1 ? { ...msg, status: 'seen' } : msg))
-          );
-        }, 2000);
-      }
-    }, 1200);
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setImagePreview(url);
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('images', file);
+
+    try {
+      const response = await uploadImages(formData).unwrap();
+      const imageUrl = response[0];
+
+      const newMessage: Message = {
+        id: Date.now(),
+        message: ' ',
+        senderId: user?.id || 1,
+        isReadBy: null,
+        conversationId: selectedCustomer,
+        createdAt: new Date().toISOString(),
+        read: false,
+        message_files: [
+          {
+            id: Date.now(),
+            url: imageUrl,
+            createAt: new Date().toISOString(),
+            messageId: 0,
+          },
+        ],
+      };
+
+      setMessages((prev) => [...prev, newMessage]);
+      socket.emit('send_message', {
+        conversationId: selectedCustomer,
+        userId: user?.id,
+        message: ' ',
+        files: imageUrl ? [imageUrl] : [],
+      });
+      setImagePreview(null);
+    } catch (error) {
+      console.error('Upload failed:', error);
     }
   };
 
@@ -89,43 +154,48 @@ export default function ChatConversation({ selectedCustomer }: Props) {
   return (
     <div className="flex h-[80vh] w-2/3 flex-col overflow-hidden rounded-r-xl border-l bg-white shadow-md">
       {/* Messages */}
-      <div className="flex-grow space-y-3 overflow-y-auto bg-gray-50 px-6 py-4">
+      <div ref={bottomRef} className="flex-grow space-y-3 overflow-y-auto bg-gray-50 px-6 py-4">
         {!selectedCustomer ? (
           <p className="mt-20 text-center text-gray-400">Select a customer to start chatting</p>
+        ) : isLoading ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className={`flex ${i % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
+              <div className="h-10 w-36 animate-pulse rounded-lg bg-gray-200" />
+            </div>
+          ))
         ) : messages.length === 0 ? (
           <p className="mt-20 text-center text-gray-500">No messages yet</p>
         ) : (
           messages.map((msg, i) => (
             <div
               key={i}
-              className={`flex ${msg.from === 'admin' ? 'justify-end' : 'justify-start'}`}
+              className={`flex ${msg.senderId === user?.id ? 'justify-end' : 'justify-start'}`}
             >
               <div className="flex items-end gap-1">
                 <div
                   className={`max-w-xs rounded-xl px-4 py-2 text-sm shadow ${
-                    msg.from === 'admin' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'
+                    msg.senderId === user?.id
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-200 text-gray-800'
                   }`}
                 >
-                  {msg.imageUrl ? (
-                    <img
-                      src={msg.imageUrl}
-                      alt="uploaded"
-                      className="max-w-[200px] rounded-md border"
-                    />
-                  ) : (
-                    msg.text
-                  )}
+                  {msg.message_files?.length > 0
+                    ? msg.message_files.map((file) => (
+                        <img
+                          key={file.url}
+                          src={file.url}
+                          alt="uploaded"
+                          className="max-w-[200px] rounded-md border"
+                        />
+                      ))
+                    : msg.message}
                 </div>
-
-                {/* Status icon (only for admin messages) */}
-                {msg.from === 'admin' && getStatusIcon(msg.status)}
               </div>
             </div>
           ))
         )}
       </div>
 
-      {/* Image preview (before sending) */}
       {imagePreview && (
         <div className="relative mx-3 mt-1 max-w-[160px] rounded-md border bg-white p-1 shadow">
           <img src={imagePreview} alt="Preview" className="rounded" />
@@ -137,6 +207,11 @@ export default function ChatConversation({ selectedCustomer }: Props) {
           </button>
         </div>
       )}
+      {uploading && (
+        <div className="bottom-0 my-2 flex items-center gap-1 text-sm text-blue-500">
+          <Loader2Icon className="animate-spin" /> Uploading image...
+        </div>
+      )}
 
       {/* Input section */}
       <div className="flex items-center gap-2 border-t bg-white p-4">
@@ -146,11 +221,10 @@ export default function ChatConversation({ selectedCustomer }: Props) {
           placeholder="Type a message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+          onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
           disabled={!selectedCustomer}
         />
 
-        {/* Image upload */}
         <button
           onClick={() => fileInputRef.current?.click()}
           className="rounded-full bg-gray-200 p-2 text-gray-600 hover:bg-gray-300"
@@ -166,9 +240,8 @@ export default function ChatConversation({ selectedCustomer }: Props) {
           className="hidden"
         />
 
-        {/* Send */}
         <button
-          onClick={handleSend}
+          onClick={handleSendMessage}
           disabled={!selectedCustomer}
           className="rounded-full bg-blue-600 p-2 text-white hover:bg-blue-700 disabled:opacity-50"
         >
