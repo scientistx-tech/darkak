@@ -8,6 +8,9 @@ import { useGetBestDealProductsQuery } from '@/redux/services/client/products';
 import { useGetHomeContentQuery } from '@/redux/services/client/homeContentApi';
 import Link from 'next/link';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+
 const containerVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
@@ -31,6 +34,8 @@ const itemVariants = {
 };
 
 const BestDeals: React.FC = () => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const { data, error, isLoading } = useGetBestDealProductsQuery('');
   const { data: banner } = useGetHomeContentQuery();
 
@@ -47,7 +52,8 @@ const BestDeals: React.FC = () => {
     >
       <div className="mb-1 flex items-center justify-between">
         <h2 className="text-2xl font-semibold text-primaryDarkBlue md:ml-[33%] lg:ml-[25%] xl:ml-[20%]">
-        TODAYS DEAL
+        {lang === 'bn' ? 'আজকের ডিল' : 'TODAY\'S DEAL'}
+
         </h2>
         <Link href="/more/todays-deal" className="">
           <span className="cursor-pointer text-2xl">→</span>

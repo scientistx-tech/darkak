@@ -4,6 +4,9 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+
 type FAQ = {
   question: string;
   answer: string;
@@ -15,6 +18,8 @@ type Props = {
 };
 
 export default function ContentFaqCard({ content, faqs }: Props) {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleFAQ = (index: number) => {
@@ -32,7 +37,7 @@ export default function ContentFaqCard({ content, faqs }: Props) {
       {/* FAQ Section */}
       <div>
         <h2 className="mb-6 border-b pb-4 text-xl font-bold text-primaryBlue md:text-3xl">
-          Frequently Asked Questions
+          {lang === 'bn' ? 'প্রায়ই জিজ্ঞাসিত প্রশ্নাবলী' : 'Frequently Asked Questions'}
         </h2>
 
         <div className="space-y-5">

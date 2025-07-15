@@ -8,6 +8,10 @@ import { motion } from 'framer-motion';
 import { useGetMostVisitedProductsQuery } from '@/redux/services/client/products';
 import Link from 'next/link';
 import { useGetHomeContentQuery } from '@/redux/services/client/homeContentApi';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
@@ -17,6 +21,8 @@ interface MostVisitedProductsProps {
 }
 
 const MostVisitedProducts: React.FC<MostVisitedProductsProps> = ({ visitorId }) => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const { data, error, isLoading, refetch } = useGetMostVisitedProductsQuery('visitorId=sff');
   const [screen, setScreen] = useState('md');
 
@@ -48,11 +54,13 @@ const MostVisitedProducts: React.FC<MostVisitedProductsProps> = ({ visitorId }) 
 
   const mostVisitedBanner = banner?.banners?.find((banner: any) => banner.type === 'most_visited');
   return (
-    <main className="mt-0">
+    <main className="mt-5">
       <div>
         <div className="h-[50px]">
           <div className="flex items-center justify-between gap-6 md:justify-start">
-            <h2 className="text-2xl font-semibold text-primaryDarkBlue">MOST VISITED</h2>
+            <h2 className="text-2xl font-semibold text-primaryDarkBlue">
+              {lang === 'bn' ? 'সর্বাধিক ভিজিটকৃত' : 'MOST VISITED'}
+            </h2>
             <Link href="/more/most-visited" className="">
               <span className="cursor-pointer text-2xl">→</span>
             </Link>
