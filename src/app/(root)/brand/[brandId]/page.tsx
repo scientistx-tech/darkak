@@ -1,93 +1,37 @@
-'use client';
+import React from 'react';
+import Page from './Component';
+import getSeoData from '../../getSeoData';
 
-import React, { useEffect, useState } from 'react';
-import CategoryPage from '@/components/category/CategoryPage';
-import { useParams, useSearchParams } from 'next/navigation';
-import { toast } from 'react-toastify';
-import Link from 'next/link';
-import { ArrowRightIcon } from 'lucide-react';
-import ContentFaqCard from '@/components/shared/ContentFaqCard';
+export async function generateStaticParams() {
+  const response = await fetch(`https://api.darkak.com.bd/api/public/brands`);
+  const data = await response.json();
 
-export default function Page() {
-  const searchParams = useSearchParams();
-  const params = useParams();
-  const { brandId } = params;
+  return data.data.map((brand:  { title: string  }) => ({
+    brandId: brand.title,
+  }));
+}
 
-  const [sidebarFilters, setSidebarFilters] = useState<{ [key: string]: any }>({});
-  const [data, setData] = useState<any>({});
-  const [visibleCount, setVisibleCount] = useState(1);
-  const [isFetching, setIsFetching] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [queryObject, setQueryObject] = useState<{ [key: string]: string }>({});
+// Fetch metadata for SEO
+export async function generateMetadata({ params }: { params: Promise<{ brandId: string }> }) {
+  const id = (await params).brandId;
+  const response = await fetch(`https://api.darkak.com.bd/api/public/filter?brandId=${id}`);
+  const data = await response.json();
 
-  useEffect(() => {
-    const queryObj: { [key: string]: string } = {};
-    searchParams.forEach((value, key) => {
-      queryObj[key] = value;
-    });
-    setQueryObject(queryObj);
-  }, [searchParams]);
-  //console.log(sidebarFilters);
-  // Add currentPage to sidebarFilters before calling useGetAllProductsQuery
-  const filtersWithPageAndLimit = {
-    brandId: decodeURIComponent(String(brandId)).replace(/-/g, ' '),
-    page: String(visibleCount),
-    limit: '20',
-    ...queryObject,
-    ...sidebarFilters,
+  return {
+    title: data?.brand?.title || '',
+    openGraph: {
+      title: data?.brand?.title || '',
+      images: [
+        {
+          url: data?.data?.icon, // Update with your image URL
+          width: 1200,
+          height: 630,
+          alt: data?.data?.title,
+        },
+      ],
+    },
   };
-
-  const fetchAllProducts = async () => {
-    const queryString = filtersWithPageAndLimit
-      ? `?${new URLSearchParams(filtersWithPageAndLimit).toString()}`
-      : '';
-    try {
-      setIsLoading(true), setIsFetching(true);
-      const response = await fetch(`https://api.darkak.com.bd/api/public/filter${queryString}`);
-      const data = await response.json();
-      setData(data);
-    } catch (error: any) {
-      toast.error(error?.data?.message);
-    } finally {
-      setIsLoading(false), setIsFetching(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllProducts();
-  }, [sidebarFilters, visibleCount]);
-
-  //console.log('setSidebarFilters type:', typeof setSidebarFilters);
-  //console.log('data', data);
-  return (
-    <div className="w-full">
-      <div className="h-[65px] w-full md:h-[109px]" />
-      <div className="h-[10px] w-full md:h-[20px]" />
-      <div className="flex items-center gap-1 px-3 text-sm font-semibold md:px-5 lg:px-11">
-        <Link className="text-primary underline" href={'/'}>
-          Home
-        </Link>
-        <ArrowRightIcon />
-        <Link className="text-primary underline" href={'/category'}>
-          Brand
-        </Link>
-        <ArrowRightIcon />
-        {brandId}
-      </div>
-      <CategoryPage
-        data={data}
-        sidebarFilters={sidebarFilters}
-        setSidebarFilters={setSidebarFilters}
-        visibleCount={visibleCount}
-        setVisibleCount={setVisibleCount}
-        isLoading={isLoading}
-        setIsLoading={setIsLoading}
-        isFetching={isFetching}
-        setIsFetching={setIsFetching}
-      />
-      {/* <div className="mt-10 px-3 md:px-5 lg:px-11">
-        <ContentFaqCard content={data?.brand?.content} faqs={data?.brand?.faq?.faq || []} />
-      </div> */}
-    </div>
-  );
+}
+export default function page() {
+  return <Page />;
 }
