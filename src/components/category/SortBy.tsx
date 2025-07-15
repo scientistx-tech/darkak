@@ -5,31 +5,40 @@ import { IoIosArrowDown } from "react-icons/io";
 import TypingPlaceholderInput from "../shared/TypingPlaceholderInput";
 import { useRouter } from "next/navigation";
 
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+
 export interface SortItem {
   value: string;
-  name: string;
+  name_en: string;
+  name_bn: string;
 }
 
 export const sortingItems: SortItem[] = [
   {
     value: "newer",
-    name: "Newer",
+    name_en: "Newer",
+    name_bn: "নতুন",
   },
   {
     value: "popular",
-    name: "Popular",
+    name_en: "Popular",
+    name_bn: "জনপ্রিয়",
   },
   {
     value: "older",
-    name: "Older",
+    name_en: "Older",
+    name_bn: "পুরাতন",
   },
   {
     value: "low-to-high",
-    name: "Low to High Price",
+    name_en: "Low to High Price",
+    name_bn: "দাম কম থেকে বেশি",
   },
   {
     value: "high-to-low",
-    name: "High to Low Price",
+    name_en: "High to Low Price",
+    name_bn: "দাম বেশি থেকে কম",
   },
 ];
 
@@ -44,10 +53,12 @@ const SortBy = ({
   searchValue: string;
   setSearchValue: (value: string) => void;
 }) => {
+  const lang = useSelector((state: RootState) => state.language.language);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [sortingItem, setSortingItem] = useState<string>("Newer");
+  const [sortingItem, setSortingItem] = useState<string>(
+    lang === "bn" ? "নতুন" : "Newer"
+  );
   const dropdownRef = useRef<HTMLDivElement>(null);
-
   const router = useRouter();
 
   const toggleDropdown = () => {
@@ -83,24 +94,21 @@ const SortBy = ({
           <p className="mb-1 text-base font-semibold text-[#003084] md:mb-0">
             {categoryTitle}
           </p>
-          {categoryTitle !== "All Products" && (
+          {categoryTitle !== (lang === "bn" ? "সব প্রোডাক্ট" : "All Products") && (
             <button
               onClick={() => router.push("/category")}
               className="cursor-pointer text-sm text-blue-600 hover:underline"
             >
-              Show All Products
+              {lang === "bn" ? "সব প্রোডাক্ট" : "Show All Products"}
             </button>
           )}
         </div>
         <div className="order-3 w-full flex-1 md:order-none">
-          <TypingPlaceholderInput
-            value={searchValue}
-            onChange={setSearchValue}
-          />
+          <TypingPlaceholderInput value={searchValue} onChange={setSearchValue} />
         </div>
         <div className="order-2 flex w-full flex-row items-center justify-between gap-x-2 md:order-none md:w-auto md:justify-start md:gap-x-4 lg:gap-x-6">
           <p className="whitespace-nowrap text-sm font-semibold text-[#003084] md:text-xl lg:text-3xl">
-            Sort By
+            {lang === "bn" ? "সাজানোর ধরণ" : "Sort By"}
           </p>
           <div
             className="relative inline-block w-36 text-left md:w-auto"
@@ -132,11 +140,12 @@ const SortBy = ({
                       key={item.value}
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleSort(item.name, item.value);
+                        const name = lang === "bn" ? item.name_bn : item.name_en;
+                        handleSort(name, item.value);
                       }}
                       className="block cursor-pointer rounded px-4 py-2 transition-colors hover:bg-blue-50"
                     >
-                      {item.name}
+                      {lang === "bn" ? item.name_bn : item.name_en}
                     </li>
                   ))}
                 </ul>

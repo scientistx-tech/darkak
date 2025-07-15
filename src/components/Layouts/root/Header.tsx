@@ -229,7 +229,7 @@ const Header: React.FC = () => {
                   height={20}
                 />
                 <p className="text-sm font-medium uppercase text-primaryWhite">
-                  {lang === 'bn' ? 'Bangla' : 'English'}
+                  {lang === 'bn' ? 'বাংলা' : 'English'}
                 </p>
 
                 <p className="text-sm">{isDropdownOpen ? <UpOutlined /> : <DownOutlined />}</p>
@@ -253,7 +253,7 @@ const Header: React.FC = () => {
                         className="cursor-pointer px-4 py-2 text-sm uppercase text-primaryWhite hover:bg-primaryDarkBlue"
                         onClick={() => handleLanguageChange('bn')}
                       >
-                        Bangla
+                        বাংলা
                       </p>
                     </motion.div>
                   )}
@@ -296,19 +296,19 @@ const Header: React.FC = () => {
           <div className="hidden grid-flow-col items-center gap-8 lg:grid">
             {/* Home Link */}
             <NavLink href="/" className="font-serif text-lg hover:text-primary">
-              Home
+              {lang === 'bn' ? 'হোম' : 'Home'}
             </NavLink>
             <div className="relative font-serif text-lg">
               <HeaderDropdown />
             </div>
 
             <NavLink href="/vendors" className="font-serif text-lg hover:text-primary">
-              Vendors
+              {lang === 'bn' ? 'ভেন্ডরস' : 'Vendors'}
             </NavLink>
 
             {/* Contact Us Link */}
             <NavLink href="/contact-us" className="font-serif text-lg hover:text-primary">
-              Contact Us
+              {lang === 'bn' ? 'যোগাযোগ করুন' : 'Contact Us'}
             </NavLink>
           </div>
 
@@ -317,7 +317,7 @@ const Header: React.FC = () => {
               <div className="relative w-[75%]">
                 <input
                   className="ignore-click-outside w-full rounded-bl-full rounded-tl-full p-1.5 pl-4 pr-8 text-black outline-none"
-                  placeholder="Search.."
+                  placeholder={lang === 'bn' ? 'অনুসন্ধান করুন...' : 'Search...'}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onFocus={() => {
@@ -446,7 +446,7 @@ const Header: React.FC = () => {
               <div className="mb-7 flex items-center overflow-hidden rounded border border-primaryBlue bg-white pl-3 shadow-md">
                 <SearchOutlined className="mr-2 text-gray-500" />
                 <input
-                  placeholder="Search products..."
+                  placeholder={lang === 'bn' ? 'পণ্য অনুসন্ধান করুন...' : 'Search products...'}
                   className="w-3/4 border-none bg-transparent py-2 text-sm outline-none"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -463,7 +463,7 @@ const Header: React.FC = () => {
                   }}
                   className="w-1/4 bg-primaryBlue py-2 text-white transition-all duration-300 hover:bg-primaryDarkBlue"
                 >
-                  Search
+                  {lang === 'bn' ? 'অনুসন্ধান' : 'Search'}
                 </button>
               </div>
             </div>
@@ -476,7 +476,7 @@ const Header: React.FC = () => {
                 className="flex items-center gap-3 hover:text-primary"
               >
                 <HomeOutlined />
-                Home
+                {lang === 'bn' ? 'হোম' : 'Home'}
               </Link>
 
               {/* <Link
@@ -497,7 +497,7 @@ const Header: React.FC = () => {
                 >
                   <AppstoreOutlined />
                   <div className="flex w-full items-center justify-between">
-                    <span>Category</span>
+                    <span>{lang === 'bn' ? 'ক্যাটাগরি' : 'Category'}</span>
                   </div>
                 </Link>
 
@@ -532,7 +532,7 @@ const Header: React.FC = () => {
                 className="flex items-center gap-3 hover:text-primary"
               >
                 <ShoppingOutlined />
-                Vendors
+                {lang === 'bn' ? 'ভেন্ডরস' : 'Vendors'}
               </Link>
 
               <Link
@@ -541,7 +541,7 @@ const Header: React.FC = () => {
                 className="flex items-center gap-3 hover:text-primary"
               >
                 <PhoneOutlined />
-                Contact Us
+                {lang === 'bn' ? 'যোগাযোগ করুন' : 'Contact Us'}
               </Link>
 
               <Link
@@ -550,25 +550,20 @@ const Header: React.FC = () => {
                 className="flex items-center gap-3 hover:text-primary"
               >
                 <InfoCircleOutlined />
-                About Us
+                {lang === 'bn' ? 'আমাদের সম্পর্কে' : 'About Us'}
               </Link>
             </nav>
 
             {/* Language Switcher */}
             <div className="mt-6 flex items-center gap-2">
-              <Image
-                src={selectedLang === 'Bangla' ? Bangla : English}
-                alt="lang"
-                width={22}
-                height={22}
-              />
+              <Image alt="Language" src={lang === 'bn' ? Bangla : English} width={20} height={20} />
               <select
                 value={lang}
                 onChange={(e) => handleLanguageChange(e.target.value as 'en' | 'bn')}
                 className="rounded-md border border-gray-300 px-2 py-1 text-sm outline-none"
               >
                 <option value="en">English</option>
-                <option value="bn">Bangla</option>
+                <option value="bn">বাংলা</option>
               </select>
               {user ? (
                 <button
@@ -600,7 +595,7 @@ const Header: React.FC = () => {
               <Link href="/user/profile" onClick={onClose}>
                 <div className="flex flex-col items-center justify-center hover:text-primary">
                   <UserOutlined className="text-xl" />
-                  <span className="mt-1">Profile</span>
+                  <span className="mt-1">{lang === 'bn' ? 'প্রোফাইল' : 'Profile'}</span>
                 </div>
               </Link>
               <Link href="/user/wishlist" onClick={onClose}>
@@ -609,7 +604,7 @@ const Header: React.FC = () => {
                   <span className="absolute -top-1 right-7 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primaryBlue text-[10px] text-white">
                     {wishlist ? wishlist.data.length : '0'}
                   </span>
-                  <span className="mt-1">Wishlist</span>
+                  <span className="mt-1">{lang === 'bn' ? 'ইচ্ছেতালিকা' : 'Wishlist'}</span>
                 </div>
               </Link>
               <Link href="/user/cart" onClick={onClose}>
@@ -618,7 +613,7 @@ const Header: React.FC = () => {
                   <span className="absolute -top-1 right-7 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primaryBlue text-[10px] text-white">
                     {cart ? cart.cart.length : '0'}
                   </span>
-                  <span className="mt-1">Cart</span>
+                  <span className="mt-1">{lang === 'bn' ? 'কার্ট' : 'Cart'}</span>
                 </div>
               </Link>
             </div>
