@@ -1,107 +1,110 @@
-'use client';
+import React from 'react';
+import Page from './Pages';
 
-import React, { useEffect, useState } from 'react';
-import CategoryPage from '@/components/category/CategoryPage';
-import { useParams, useSearchParams } from 'next/navigation';
-import { toast } from 'react-toastify';
-import Link from 'next/link';
-import { ArrowRightIcon } from 'lucide-react';
-import ContentFaqCard from '@/components/shared/ContentFaqCard';
+interface Category {
+  id: number;
+  title: string;
+  icon: string;
+  serial: number;
+  isActive: boolean;
+  meta_title: string;
+  meta_description: string;
+  meta_image: string | null;
+  meta_alt: string | null;
+  meta_keywords: MetaKeywords | null;
+  faq: Record<string, unknown> | null;
+  content: string | null;
+  sub_category: SubCategory[];
+  sub_sub_category: SubSubCategory[];
+}
 
-export default function Page() {
-  const searchParams = useSearchParams();
-  const params = useParams();
-  const { subSubCategory, category, subCategory } = params;
+interface SubCategory {
+  id: number;
+  title: string;
+  categoryId: number;
+  meta_title: string;
+  meta_description: string;
+  meta_image: string | null;
+  meta_alt: string | null;
+  meta_keywords: MetaKeywords | null;
+  faq: Record<string, unknown> | null;
+  content: string | null;
+  sub_sub_category: SubSubCategory[];
+}
 
-  //console.log('subC', subSubCategory);
+interface SubSubCategory {
+  id: number;
+  title: string;
+  subCategoryId: number;
+  categoryId: number;
+  meta_title: string;
+  meta_description: string;
+  meta_image: string | null;
+  meta_alt: string | null;
+  meta_keywords: MetaKeywords | null;
+  faq: Record<string, unknown> | null;
+  content: string | null;
+}
 
-  const [sidebarFilters, setSidebarFilters] = useState<{ [key: string]: any }>({});
-  const [data, setData] = useState<any>({});
-  const [visibleCount, setVisibleCount] = useState(1);
-  const [isFetching, setIsFetching] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+interface MetaKeywords {
+  keywords: string[];
+}
 
-  const [queryObject, setQueryObject] = useState<{ [key: string]: string }>({});
+export async function generateStaticParams() {
+  const response = await fetch(`https://api.darkak.com.bd/api/public/category`);
+  const data = (await response.json()) as Category[];
 
-  useEffect(() => {
-    const queryObj: { [key: string]: string } = {};
-    searchParams.forEach((value, key) => {
-      queryObj[key] = value;
-    });
-    setQueryObject(queryObj);
-  }, [searchParams]);
+  return data
+    .flatMap((d, i) => d.sub_sub_category)
+    .map((category) => ({ subSubCategory: category.title }));
+}
 
-  // Add currentPage to sidebarFilters before calling useGetAllProductsQuery
-  const filtersWithPageAndLimit = {
-    subSubCategoryId: decodeURIComponent(String(subSubCategory)).replace(/-/g, ' '),
-    page: String(visibleCount),
-    limit: '20',
-    ...queryObject,
-    ...sidebarFilters,
-  };
-
-  const fetchAllProducts = async () => {
-    const queryString = filtersWithPageAndLimit
-      ? `?${new URLSearchParams(filtersWithPageAndLimit).toString()}`
-      : '';
-    try {
-      setIsLoading(true), setIsFetching(true);
-      const response = await fetch(`https://api.darkak.com.bd/api/public/filter${queryString}`);
-      const data = await response.json();
-      setData(data);
-    } catch (error: any) {
-      toast.error(error?.data?.message);
-    } finally {
-      setIsLoading(false), setIsFetching(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllProducts();
-  }, [sidebarFilters, visibleCount]);
-
-  // console.log('setSidebarFilters type:', typeof setSidebarFilters);
-
-  return (
-    <div className="w-full">
-      <div className="h-[65px] w-full md:h-[109px]" />
-      <div className="h-[10px] w-full md:h-[20px]" />
-      <div className="flex items-center gap-1 px-3 text-sm font-semibold md:px-5 lg:px-11">
-        <Link className="text-primary underline" href={'/'}>
-          Home
-        </Link>
-        <ArrowRightIcon />
-        <Link className="text-primary underline" href={'/category'}>
-          Category
-        </Link>
-        <ArrowRightIcon />
-        <Link className="text-primary underline" href={`/category/${category}`}>
-          {decodeURIComponent((category as string) || '').replace(/-/g, ' ')}
-        </Link>
-        <ArrowRightIcon />
-        <Link className="text-primary underline" href={`/category/${category}/${subCategory}`}>
-          {decodeURIComponent((subCategory as string) || '').replace(/-/g, ' ')}
-        </Link>
-        <ArrowRightIcon />
-        {decodeURIComponent((subSubCategory as string) || '').replace(/-/g, ' ')}
-      </div>
-      <CategoryPage
-        data={data}
-        sidebarFilters={sidebarFilters}
-        setSidebarFilters={setSidebarFilters}
-        visibleCount={visibleCount}
-        setVisibleCount={setVisibleCount}
-        isLoading={isLoading}
-        setIsLoading={setIsLoading}
-        isFetching={isFetching}
-        setIsFetching={setIsFetching}
-      />
-      <div className="mt-10 px-3 md:px-5 lg:px-11">
-        <ContentFaqCard
-          content={data?.subSubCategory?.content}
-          faqs={data?.subSubCategory?.faq?.faq || []}
-        />
-      </div>
-    </div>
+// Fetch metadata for SEO
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ subSubCategory: string; subCategory: string; category: string }>;
+}) {
+  const id = (await params).subSubCategory;
+  const subCategory = (await params).subCategory;
+  const category = (await params).category;
+  const response = await fetch(
+    `https://api.darkak.com.bd/api/public/filter?subSubCategoryId=${id}`
   );
+  const data = await response.json();
+
+  const meta = data?.subSubCategory || {};
+
+  return {
+    title: meta.meta_title || meta.title || '',
+    description: meta.meta_description || '',
+    keywords: meta.meta_keywords || '',
+    openGraph: {
+      title: meta.meta_title || meta.title || '',
+      description: meta.meta_description || '',
+      images: meta.meta_image
+        ? [
+            {
+              url: meta.meta_image,
+              width: 1200,
+              height: 630,
+              alt: meta.meta_alt || meta.title,
+            },
+          ]
+        : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: meta.meta_title || meta.title || '',
+      description: meta.meta_description || '',
+      images: meta.meta_image ? [meta.meta_image] : [],
+    },
+    alternates: {
+      canonical: `https://darkak.com.bd/category/${category}/${subCategory}/${id}`,
+    },
+  };
+}
+
+export default function page() {
+  return <Page />;
 }

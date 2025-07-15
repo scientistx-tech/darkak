@@ -34,6 +34,7 @@ export interface Notification {
   date: string;
   image: string | null;
   order: Order;
+  conversationId:number
 }
 
 export interface NotificationResponse {
