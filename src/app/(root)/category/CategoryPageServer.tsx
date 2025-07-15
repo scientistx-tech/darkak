@@ -7,9 +7,15 @@ import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { ArrowRightIcon } from 'lucide-react';
 
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+
 type SidebarFilters = { [key: string]: any };
 
 export default function CategoryPageServer({ searchPage }: { searchPage?: boolean }) {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   // const searchParams = useSearchParams();
   // // Convert searchParams to a plain object
   // const query: Record<string, string> = {};
@@ -60,10 +66,10 @@ export default function CategoryPageServer({ searchPage }: { searchPage?: boolea
       {!searchPage && (
         <div className="flex items-center gap-1 px-3 text-sm font-semibold md:px-5 lg:px-11">
           <Link className="text-primary underline" href={'/'}>
-            Home
+            {lang === 'bn' ? 'হোম' : 'Home'}
           </Link>
           <ArrowRightIcon />
-          Category
+          {lang === 'bn' ? 'ক্যাটাগরি' : 'Category'}
         </div>
       )}
 
