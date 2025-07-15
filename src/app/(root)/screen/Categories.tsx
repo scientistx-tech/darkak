@@ -5,6 +5,9 @@ import Link from "next/link";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import { useGetProductCategoriesQuery } from "@/redux/services/client/categories";
 
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+
 export default function Categories() {
   const {
     data: categories,
@@ -30,10 +33,12 @@ export default function Categories() {
       <p className="text-center text-red-500">Failed to load categories.</p>
     );
 
+    const lang = useSelector((state: RootState) => state.language.language);
+
   return (
     <div className="mt-16 px-8 md:px-12">
       <h2 className="mb-10 text-center text-3xl font-medium text-primaryDarkBlue">
-        Shop by Categories
+         {lang==="bn"?"ক্যাটাগরি অনুযায়ী পণ্য দেখুন":"Shop by Categories"}
       </h2>
 
       <div className="relative w-full">
