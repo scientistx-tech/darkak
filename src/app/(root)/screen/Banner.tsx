@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import BannerCart from "@/components/shared/BannerCart";
-import { useGetPublicSlidersQuery } from "@/redux/services/client/sliderApis";
+import React, { useEffect } from 'react';
+import BannerCart from '@/components/shared/BannerCart';
+import { useGetPublicSlidersQuery } from '@/redux/services/client/sliderApis';
 
 const Banner: React.FC = () => {
   const {
@@ -10,20 +10,13 @@ const Banner: React.FC = () => {
     error,
     isLoading,
     refetch,
-  } = useGetPublicSlidersQuery({ type: "banner" });
+  } = useGetPublicSlidersQuery({ type: 'banner' });
 
   function sortByIndex(sliders: any[]) {
     return [...sliders].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
   }
   const sortedSliderData = sliderData ? sortByIndex(sliderData) : [];
-  const bgColors = [
-    "#00153B",
-    "#323232",
-    "#5694FF",
-    "#07d38b",
-    "#ff6b6b",
-    "#ffa502",
-  ];
+  const bgColors = ['#00153B', '#323232', '#5694FF', '#07d38b', '#ff6b6b', '#ffa502'];
   // console.log("sorted banner", sortedSliderData);
   // ✅ Else: Show dynamic sliders without banners
   return (
@@ -31,22 +24,17 @@ const Banner: React.FC = () => {
       {sortedSliderData.slice(0, 2).map((slide: any, idx: number) => {
         const bgColour = bgColors[idx % bgColors.length];
         return (
-          <div
-            key={idx}
-            className="flex h-full w-full flex-col gap-0 md:flex-row md:gap-10"
-          >
+          <div key={idx} className="flex h-full w-full flex-col gap-0 md:flex-row md:gap-10">
             <BannerCart
               bgColour={bgColour}
               image={
-                slide?.banner
-                  ? slide.banner
-                  : slide.product.thumbnail || "/images/fallback.jpg"
+                slide?.banner ? slide.banner : slide.product.thumbnail || '/images/fallback.jpg'
               }
-              position={idx % 2 === 0 ? "left" : "right"}
-              title={slide.title || "Deal"}
+              position={idx % 2 === 0 ? 'left' : 'right'}
+              title={slide.title || 'Deal'}
               description={slide.offer_name || "Don't miss out!"}
-              text={slide.details || "Shop the best products now!"}
-              link={`/product/${slide?.product?.slug || ""}`}
+              text={slide.details || 'Shop the best products now!'}
+              link={`/product/${slide?.product?.slug || ''}`}
             />
           </div>
         );

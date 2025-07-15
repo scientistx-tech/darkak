@@ -5,6 +5,10 @@ import ProductCard from '@/components/shared/ProductCard';
 import { useGetFeaturedQuery } from '@/redux/services/client/products';
 import Link from 'next/link';
 import { useGetHomeContentQuery } from '@/redux/services/client/homeContentApi';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+
 // Framer motion variants
 const containerVariants = {
   hidden: {},
@@ -21,6 +25,8 @@ const itemVariants = {
 };
 
 const RecommendedProducts: React.FC = () => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const { data, error, isLoading, refetch } = useGetFeaturedQuery('');
   const { data: banner } = useGetHomeContentQuery();
   if (data?.data?.length === 0) {
@@ -40,7 +46,7 @@ const RecommendedProducts: React.FC = () => {
     >
       <div className="mb-1 flex items-center justify-between">
         <h2 className="text-2xl font-semibold text-primaryDarkBlue md:ml-[33%] lg:ml-[25%] xl:ml-[20%]">
-          FEATURE PRODUCTS
+          {lang === 'bn' ? 'ফিচার্ড পণ্যসমূহ' : 'FEATURE PRODUCTS'}
         </h2>
         <Link href="/more/feature" className="">
           <span className="cursor-pointer text-2xl">→</span>

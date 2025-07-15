@@ -6,6 +6,11 @@ import Link from "next/link";
 import clsx from "clsx";
 import ShopNowButton from "@/components/Button/ShopNowButton";
 
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+
+
 interface BannerCardProps {
   bgColour: string;
   image: string | StaticImageData; // ✅ Accept both string and static image import
@@ -25,6 +30,7 @@ const BannerCart: React.FC<BannerCardProps> = ({
   text,
   link,
 }) => {
+   const lang = useSelector((state: RootState) => state.language.language);
   return (
     <div
       className={clsx(
@@ -51,7 +57,7 @@ const BannerCart: React.FC<BannerCardProps> = ({
 
         <div className="h-[10px] w-full"></div>
 
-        <ShopNowButton link={link} text="Shop Now" />
+        <ShopNowButton link={link} text={lang === 'bn' ? 'এখনই কিনুন' : 'Shop Now'} />
       </div>
 
       <div>

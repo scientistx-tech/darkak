@@ -1,13 +1,17 @@
-"use client";
+'use client';
 
-import React from "react";
-import { motion } from "framer-motion";
-import Image from "next/image";
-import ProductCard from "@/components/shared/ProductCard";
-import laptop from "@/Data/Demo/Rectangle 130 (1).png";
-import { useGetBestSellingProductsQuery } from "@/redux/services/client/products";
-import Link from "next/link";
-import { useGetHomeContentQuery } from "@/redux/services/client/homeContentApi";
+import React from 'react';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import ProductCard from '@/components/shared/ProductCard';
+import laptop from '@/Data/Demo/Rectangle 130 (1).png';
+import { useGetBestSellingProductsQuery } from '@/redux/services/client/products';
+import Link from 'next/link';
+import { useGetHomeContentQuery } from '@/redux/services/client/homeContentApi';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+
 const containerVariants = {
   hidden: {},
   visible: {
@@ -23,12 +27,14 @@ const itemVariants = {
 };
 
 const BestSelling: React.FC = () => {
-  const { data, error, isLoading, refetch } = useGetBestSellingProductsQuery("");
-    const { data:banner } = useGetHomeContentQuery();
-  
-    if (isLoading || error) return null; // optional loading/error handling
-  
-    const mostVisitedBanner = banner?.banners?.find((banner: any) => banner.type === 'best_selling');
+  const lang = useSelector((state: RootState) => state.language.language);
+
+  const { data, error, isLoading, refetch } = useGetBestSellingProductsQuery('');
+  const { data: banner } = useGetHomeContentQuery();
+
+  if (isLoading || error) return null; // optional loading/error handling
+
+  const mostVisitedBanner = banner?.banners?.find((banner: any) => banner.type === 'best_selling');
 
   return (
     <motion.section
@@ -39,7 +45,7 @@ const BestSelling: React.FC = () => {
     >
       <div className="mb-1 flex items-center justify-between">
         <h2 className="text-2xl font-semibold text-primaryDarkBlue md:ml-[33%] lg:ml-[25%] xl:ml-[20%]">
-          BEST SELLING PRODUCTS
+          {lang === 'bn' ? 'সেরা বিক্রিত পণ্যসমূহ' : 'BEST SELLING PRODUCTS'}
         </h2>
         <Link href="/more/best-selling" className="">
           <span className="cursor-pointer text-2xl">→</span>
