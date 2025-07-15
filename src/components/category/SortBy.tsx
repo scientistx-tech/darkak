@@ -81,7 +81,7 @@ const SortBy = ({
       <div className="mt-4 flex flex-col gap-3 md:mt-6 md:flex-row md:items-center md:gap-x-7 md:gap-y-0">
         <div className="w-full md:w-auto">
           <p className="mb-1 text-base font-semibold text-[#003084] md:mb-0">
-            {categoryTitle} Category
+            {categoryTitle}
           </p>
           {categoryTitle !== "All Products" && (
             <button

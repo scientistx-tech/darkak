@@ -8,6 +8,8 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
 import New from "../../../Data/Icon/sign.png";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 type SlideType = {
   banner: string;
@@ -25,6 +27,7 @@ const Slider: React.FC = () => {
   });
 
   const finalSlides: SlideType[] = sliderData?.length > 0 ? sliderData : [];
+  const lang = useSelector((state: RootState) => state.language.language);
 
   const [index, setIndex] = useState(0);
 
@@ -151,7 +154,7 @@ const Slider: React.FC = () => {
               >
                 <span className="absolute bottom-0 left-0 mb-9 ml-9 h-48 w-48 -translate-x-full translate-y-full rotate-[-40deg] rounded bg-primary transition-all duration-500 ease-out group-hover:mb-32 group-hover:ml-0 group-hover:translate-x-0"></span>
                 <span className="relative w-full text-left text-black transition-colors duration-300 ease-in-out group-hover:text-white">
-                  Explore More
+                 {lang==="bn"?"আরও দেখুন":" Explore More"}
                 </span>
               </Link>
             </motion.div>

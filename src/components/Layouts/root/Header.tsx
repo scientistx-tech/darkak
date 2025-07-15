@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState, useRef, useEffect } from "react";
-import Image from "next/image";
-import { Drawer, Menu } from "antd";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import NavLink from "@/components/shared/NavLink";
+import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
+import { Drawer, Menu } from 'antd';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import NavLink from '@/components/shared/NavLink';
 import {
   MenuOutlined,
   CloseOutlined,
@@ -23,29 +23,30 @@ import {
   ShoppingOutlined,
   MinusOutlined,
   PlusOutlined,
-} from "@ant-design/icons";
+} from '@ant-design/icons';
 
-import { AnimatePresence, motion } from "framer-motion";
-import Bangla from "@/Data/Img/BanglaLag.svg";
-import English from "@/Data/Img/EnglishLag.svg";
-import HeadLineText from "./HeadLineText";
-import { AppDispatch, RootState } from "@/redux/store";
-import { useDispatch, useSelector } from "react-redux";
-import { clearUser } from "@/redux/slices/authSlice";
-import HeaderDropdown from "./HeaderDropdown";
-import logo from "@/Data/Icon/PNG.png";
-import { auth } from "@/utils/firebase";
-import { useGetMyCartQuery } from "@/redux/services/client/myCart";
-import { useGetMyWishListQuery } from "@/redux/services/client/myWishList";
-import { useDebounce } from "@/hooks/useDebounce";
-import { useGetProductCategoriesQuery } from "@/redux/services/client/categories";
-import { FaSpinner } from "react-icons/fa";
-import { BiSolidDownArrow } from "react-icons/bi";
-import ProductCard from "@/components/shared/ProductCard";
-import { useRouter } from "next/navigation";
-import { useGetSearchPublicQuery } from "@/redux/services/client/searchedProducts";
-import MobileDropdown from "./MobileDropdown";
-import { useGetHomeContentQuery } from "@/redux/services/client/homeContentApi";
+import { AnimatePresence, motion } from 'framer-motion';
+import Bangla from '@/Data/Img/BanglaLag.svg';
+import English from '@/Data/Img/EnglishLag.svg';
+import HeadLineText from './HeadLineText';
+import { AppDispatch, RootState } from '@/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearUser } from '@/redux/slices/authSlice';
+import HeaderDropdown from './HeaderDropdown';
+import logo from '@/Data/Icon/PNG.png';
+import { auth } from '@/utils/firebase';
+import { useGetMyCartQuery } from '@/redux/services/client/myCart';
+import { useGetMyWishListQuery } from '@/redux/services/client/myWishList';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useGetProductCategoriesQuery } from '@/redux/services/client/categories';
+import { FaSpinner } from 'react-icons/fa';
+import { BiSolidDownArrow } from 'react-icons/bi';
+import ProductCard from '@/components/shared/ProductCard';
+import { useRouter } from 'next/navigation';
+import { useGetSearchPublicQuery } from '@/redux/services/client/searchedProducts';
+import MobileDropdown from './MobileDropdown';
+import { useGetHomeContentQuery } from '@/redux/services/client/homeContentApi';
+import { setLanguage } from '@/redux/slices/languageSlice';
 
 const Header: React.FC = () => {
   const { data: home } = useGetHomeContentQuery();
@@ -60,12 +61,13 @@ const Header: React.FC = () => {
   const wishs = useSelector((state: RootState) => state.auth.wish);
 
   const pathname = usePathname();
-  const [selectedLang, setSelectedLang] = useState("English");
+  const [selectedLang, setSelectedLang] = useState('English');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearch = useDebounce(searchTerm, 500);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const lang = useSelector((state: RootState) => state.language.language);
 
   const handleSearch = () => {
     const trimmed = searchTerm.trim();
@@ -78,25 +80,23 @@ const Header: React.FC = () => {
     router.push(`/search?${params.toString()}`);
   };
 
-  const handleLanguageChange = (lang: string) => {
+  const handleLanguageChange = (lang: 'en' | 'bn') => {
     setSelectedLang(lang);
     setIsDropdownOpen(false);
+    dispatch(setLanguage(lang));
   };
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const [show, setShow] = useState(true);
@@ -113,9 +113,9 @@ const Header: React.FC = () => {
       setLastScrollY(currentScrollY);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, [lastScrollY]);
 
@@ -143,7 +143,7 @@ const Header: React.FC = () => {
   };
 
   // Search functionality
-  const { data: categories, error } = useGetProductCategoriesQuery("");
+  const { data: categories, error } = useGetProductCategoriesQuery('');
 
   const { data, isFetching, isLoading } = useGetSearchPublicQuery({
     search: `${debouncedSearch}`,
@@ -159,7 +159,7 @@ const Header: React.FC = () => {
 
       // Traverse up the DOM tree to check for the ignore class
       while (targetElement) {
-        if (targetElement.classList?.contains("ignore-click-outside")) {
+        if (targetElement.classList?.contains('ignore-click-outside')) {
           shouldIgnore = true;
           break;
         }
@@ -176,11 +176,11 @@ const Header: React.FC = () => {
     }
 
     if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen, setIsOpen]);
 
@@ -224,11 +224,13 @@ const Header: React.FC = () => {
               >
                 <Image
                   alt="Language"
-                  src={selectedLang === 'Bangla' ? Bangla : English}
+                  src={lang === 'bn' ? Bangla : English}
                   width={20}
                   height={20}
                 />
-                <p className="text-sm font-medium uppercase text-primaryWhite">{selectedLang}</p>
+                <p className="text-sm font-medium uppercase text-primaryWhite">
+                  {lang === 'bn' ? 'Bangla' : 'English'}
+                </p>
 
                 <p className="text-sm">{isDropdownOpen ? <UpOutlined /> : <DownOutlined />}</p>
 
@@ -243,13 +245,13 @@ const Header: React.FC = () => {
                     >
                       <p
                         className="cursor-pointer px-4 py-2 text-sm uppercase text-primaryWhite hover:bg-primaryDarkBlue"
-                        onClick={() => handleLanguageChange('English')}
+                        onClick={() => handleLanguageChange('en')}
                       >
                         English
                       </p>
                       <p
                         className="cursor-pointer px-4 py-2 text-sm uppercase text-primaryWhite hover:bg-primaryDarkBlue"
-                        onClick={() => handleLanguageChange('Bangla')}
+                        onClick={() => handleLanguageChange('bn')}
                       >
                         Bangla
                       </p>
@@ -448,13 +450,19 @@ const Header: React.FC = () => {
                   className="w-3/4 border-none bg-transparent py-2 text-sm outline-none"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  onFocus={() => {
-                    if (searchTerm.trim() !== '') {
-                      setIsOpen(true);
-                    }
-                  }}
+                  // onFocus={() => {
+                  //   if (searchTerm.trim() !== '') {
+                  //     setIsOpen(true);
+                  //   }
+                  // }}
                 />
-                <button className="w-1/4 bg-primaryBlue py-2 text-white transition-all duration-300 hover:bg-primaryDarkBlue">
+                <button
+                  onClick={() => {
+                    onClose();
+                    router.push(`/search?search=${searchTerm.trim()}`);
+                  }}
+                  className="w-1/4 bg-primaryBlue py-2 text-white transition-all duration-300 hover:bg-primaryDarkBlue"
+                >
                   Search
                 </button>
               </div>
@@ -555,12 +563,12 @@ const Header: React.FC = () => {
                 height={22}
               />
               <select
-                value={selectedLang}
-                onChange={(e) => handleLanguageChange(e.target.value)}
+                value={lang}
+                onChange={(e) => handleLanguageChange(e.target.value as 'en' | 'bn')}
                 className="rounded-md border border-gray-300 px-2 py-1 text-sm outline-none"
               >
-                <option value="English">English</option>
-                <option value="Bangla">Bangla</option>
+                <option value="en">English</option>
+                <option value="bn">Bangla</option>
               </select>
               {user ? (
                 <button
