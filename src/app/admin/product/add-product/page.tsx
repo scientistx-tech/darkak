@@ -851,6 +851,7 @@ export default function ProductForm() {
                   },
                   style: {
                     // background: "#E3E3E3",
+                    
                   },
                   placeholder: 'Start writing',
                   height: '450px',

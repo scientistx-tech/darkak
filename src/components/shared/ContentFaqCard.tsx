@@ -25,7 +25,7 @@ export default function ContentFaqCard({ content, faqs }: Props) {
     <div className="w-full space-y-8 rounded-2xl bg-white p-6 shadow">
       {/* Content */}
       <div
-        className="text-justify text-base font-light leading-relaxed tracking-wide text-gray-700 md:text-xl"
+        className="rendered-html text-justify text-base font-light leading-relaxed tracking-wide text-gray-700 md:text-xl"
         dangerouslySetInnerHTML={{ __html: content }}
       ></div>
 

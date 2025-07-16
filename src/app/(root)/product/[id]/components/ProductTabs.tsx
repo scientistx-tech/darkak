@@ -67,7 +67,7 @@ export const ProductTabs = ({
           viewport={{ once: true }}
         >
           <h3 className="mb-2 font-semibold">Specification</h3>
-          <div dangerouslySetInnerHTML={{ __html: data?.specification }} />
+          <div className="rendered-html" dangerouslySetInnerHTML={{ __html: data?.specification }} />
         </motion.div>
 
         <motion.div
@@ -80,7 +80,7 @@ export const ProductTabs = ({
           viewport={{ once: true }}
         >
           <h3 className="mb-2 font-semibold">Description</h3>
-          <div dangerouslySetInnerHTML={{ __html: data?.description }} />
+          <div className="rendered-html" dangerouslySetInnerHTML={{ __html: data?.description }} />
         </motion.div>
 
         <motion.div
@@ -93,7 +93,7 @@ export const ProductTabs = ({
           viewport={{ once: true }}
         >
           <h3 className="mb-2 font-semibold">Warranty</h3>
-          <div dangerouslySetInnerHTML={{ __html: data?.warranty_details }} />
+          <div className="rendered-html" dangerouslySetInnerHTML={{ __html: data?.warranty_details }} />
         </motion.div>
       </div>
     </div>
