@@ -54,9 +54,17 @@ export async function generateStaticParams() {
   const response = await fetch(`https://api.darkak.com.bd/api/public/category`);
   const data = (await response.json()) as Category[];
 
-  return data
-    .flatMap((d, i) => d.sub_sub_category)
-    .map((category) => ({ subSubCategory: category.title }));
+  const params = data.flatMap((category) =>
+    category.sub_category.flatMap((subCategory) =>
+      subCategory.sub_sub_category.map((subSubCategory) => ({
+        category: category.title?.split(' ').join('-'),
+        subCategory: subCategory.title?.split(' ').join('-'),
+        subSubCategory: subSubCategory.title?.split(' ').join('-'),
+      }))
+    )
+  );
+
+  return params;
 }
 
 // Fetch metadata for SEO
