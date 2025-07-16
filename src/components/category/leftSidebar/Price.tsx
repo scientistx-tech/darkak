@@ -1,17 +1,21 @@
-"use client";
+'use client';
 
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { useState } from "react";
-import { IoIosArrowDown } from "react-icons/io";
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useState } from 'react';
+import { IoIosArrowDown } from 'react-icons/io';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 const Price = ({
   onPriceChange,
 }: {
   onPriceChange?: (range: { lowPrice: string; highPrice: string }) => void;
 }) => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const [open, setOpen] = useState<boolean>(true);
-  const [lowPrice, setLowPrice] = useState("");
-  const [highPrice, setHighPrice] = useState("");
+  const [lowPrice, setLowPrice] = useState('');
+  const [highPrice, setHighPrice] = useState('');
   const router = useRouter();
 
   const handleOpenClose = () => {
@@ -20,33 +24,29 @@ const Price = ({
 
   // Notify parent on price change
   React.useEffect(() => {
-    if (typeof onPriceChange === "function") {
+    if (typeof onPriceChange === 'function') {
       onPriceChange({ lowPrice, highPrice });
     }
   }, [lowPrice, highPrice, onPriceChange]);
 
   return (
-    <div
-      className={`rounded-md bg-blue-100 px-4 ${open ? "pb-8" : "pb-2"} pt-4 shadow-md`}
-    >
+    <div className={`rounded-md bg-blue-100 px-4 ${open ? 'pb-8' : 'pb-2'} pt-4 shadow-md`}>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-[#003084]">Price Range</h2>
+        <h2 className="text-lg font-semibold text-[#003084]">
+          {lang === 'bn' ? 'দামের পরিসর' : 'Price Range'}
+        </h2>
         <button
           onClick={handleOpenClose}
           className="flex size-[30px] items-center justify-center rounded-full bg-[#003084]"
         >
-          <IoIosArrowDown
-            size={20}
-            color="white"
-            className={`${open ? "rotate-180" : ""}`}
-          />
+          <IoIosArrowDown size={20} color="white" className={`${open ? 'rotate-180' : ''}`} />
         </button>
       </div>
       {open && (
         <div className={`space-y-2`}>
           <div className="flex items-center justify-between">
             <label className="mb-1 text-sm font-semibold text-[#003084]">
-              From
+              {lang === 'bn' ? 'শুরু' : 'From'}
             </label>
             <input
               type="number"
@@ -63,7 +63,7 @@ const Price = ({
           </div>
           <div className="flex items-center justify-between">
             <label className="mb-1 text-sm font-semibold text-[#003084]">
-              To
+              {lang === 'bn' ? 'পর্যন্ত' : 'To'}
             </label>
             <input
               type="number"
