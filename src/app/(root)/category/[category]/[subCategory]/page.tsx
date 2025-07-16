@@ -1,4 +1,5 @@
 import React from 'react';
+import Page from './Component';
 interface Category {
   id: number;
   title: string;
@@ -51,9 +52,14 @@ export async function generateStaticParams() {
   const response = await fetch(`https://api.darkak.com.bd/api/public/category`);
   const data = (await response.json()) as Category[];
 
-  return data
-    .flatMap((d, i) => d.sub_category)
-    .map((category) => ({ subCategory: category.title }));
+  const params = data.flatMap((category) =>
+    category.sub_category.flatMap((subCategory) => ({
+      category: category.title?.split(' ').join('-'),
+      subCategory: subCategory.title?.split(' ').join('-'),
+    }))
+  );
+
+  return params;
 }
 
 // Fetch metadata for SEO
@@ -65,9 +71,7 @@ export async function generateMetadata({
   const id = (await params).subSubCategory;
   const subCategory = (await params).subCategory;
   const category = (await params).category;
-  const response = await fetch(
-    `https://api.darkak.com.bd/api/public/filter?subCategoryId=${id}`
-  );
+  const response = await fetch(`https://api.darkak.com.bd/api/public/filter?subCategoryId=${id}`);
   const data = await response.json();
 
   const meta = data?.subCategory || {};
@@ -103,5 +107,9 @@ export async function generateMetadata({
 }
 
 export default function page() {
-  return <div>page</div>;
+  return (
+    <div>
+      <Page />
+    </div>
+  );
 }

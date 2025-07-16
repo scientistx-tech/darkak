@@ -7,7 +7,7 @@ export async function generateStaticParams() {
   const data = await response.json();
 
   return data.data.map((brand:  { title: string  }) => ({
-    brandId: brand.title,
+    brandId: brand.title?.split(" ").join("-"),
   }));
 }
 
