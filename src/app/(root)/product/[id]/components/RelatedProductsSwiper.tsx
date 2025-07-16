@@ -1,11 +1,14 @@
-"use client";
+'use client';
 
-import "keen-slider/keen-slider.min.css";
-import { useKeenSlider } from "keen-slider/react";
-import { motion } from "framer-motion";
-import { useEffect } from "react";
-import ProductCard from "@/components/shared/ProductCard";
-import { Product } from "@/app/(root)/types/ProductType";
+import 'keen-slider/keen-slider.min.css';
+import { useKeenSlider } from 'keen-slider/react';
+import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import ProductCard from '@/components/shared/ProductCard';
+import { Product } from '@/app/(root)/types/ProductType';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 // const dummyProducts: Product[] = new Array(7).fill(null).map((_, i) => ({
 //   id: `prod-${i}`,
@@ -24,23 +27,25 @@ import { Product } from "@/app/(root)/types/ProductType";
 // }));
 
 export default function RelatedProductsSwiper({ data }: { data: [] }) {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const [sliderRef, slider] = useKeenSlider<HTMLDivElement>({
     loop: false,
-    mode: "free-snap",
-    renderMode: "performance",
+    mode: 'free-snap',
+    renderMode: 'performance',
     rubberband: false,
     slides: {
       perView: 2,
       spacing: 16,
     },
     breakpoints: {
-      "(min-width: 640px)": {
+      '(min-width: 640px)': {
         slides: { perView: 3, spacing: 16 },
       },
-      "(min-width: 1024px)": {
+      '(min-width: 1024px)': {
         slides: { perView: 4, spacing: 16 },
       },
-      "(min-width: 1280px)": {
+      '(min-width: 1280px)': {
         slides: { perView: 5, spacing: 16 },
       },
     },
@@ -53,7 +58,7 @@ export default function RelatedProductsSwiper({ data }: { data: [] }) {
   return (
     <div className="container mx-auto px-2 py-8 md:px-4">
       <h2 className="text-center text-2xl font-bold text-primaryDarkBlue">
-        Related Products
+        {lang === 'bn' ? 'সম্পর্কিত পণ্যসমূহ' : 'Related Products'}
       </h2>
 
       <motion.div

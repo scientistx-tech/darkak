@@ -1,4 +1,8 @@
-import { FaShippingFast, FaUndo, FaShieldAlt } from "react-icons/fa";
+import { FaShippingFast, FaUndo, FaShieldAlt } from 'react-icons/fa';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+
 const DeliveryDetails = ({
   deliveryInfo,
 }: {
@@ -10,51 +14,62 @@ const DeliveryDetails = ({
     delivery_charge_outside: number;
   };
 }) => {
+  const lang = useSelector((state: RootState) => state.language.language);
   return (
     <section
       style={{
-        boxShadow: "rgba(0, 0, 0, 0.15) 1.95px 0 2.6px",
+        boxShadow: 'rgba(0, 0, 0, 0.15) 1.95px 0 2.6px',
       }}
       className="flex h-full w-full flex-col items-center justify-center rounded-md bg-[#F3F4F6] p-4 md:items-start md:justify-start"
     >
       <h2 className="mb-4 text-xl font-semibold text-primaryDarkBlue">
-        Delivery Details
+        {lang === 'bn' ? 'ডেলিভারি বিবরণ' : 'Delivery Details'}
       </h2>
 
       <div className="flex w-full flex-col items-start justify-center gap-5 text-sm text-primaryDarkBlue">
         <div className="flex items-start gap-3">
           <FaShippingFast className="mt-1 text-lg text-primaryBlue" />
           <div>
-            <p className="font-medium">Estimated Delivery in Dhaka</p>
+            <p className="font-medium">
+              {lang === 'bn' ? 'ঢাকায় আনুমানিক ডেলিভারি' : 'Estimated Delivery in Dhaka'}
+            </p>
             <p className="text-secondaryBlue">
-              Arrives in {deliveryInfo?.delivery_time} business days
+              {lang === 'bn' ? 'পৌঁছাবে' : 'Arrives in'} {deliveryInfo?.delivery_time}{' '}
+              {lang === 'bn' ? 'কর্মদিবসের মধ্যে' : 'business days'}
             </p>
           </div>
         </div>
         <div className="flex items-start gap-3">
           <FaShippingFast className="mt-1 text-lg text-primaryBlue" />
           <div>
-            <p className="font-medium">Delivery charge in dhaka</p>
+            <p className="font-medium">
+              {lang === 'bn' ? 'ঢাকায় ডেলিভারি চার্জ' : 'Delivery charge in Dhaka'}
+            </p>
             <p className="text-secondaryBlue">
-              In dhaka {deliveryInfo?.delivery_charge}
+              {lang === 'bn' ? 'ঢাকার মধ্যে' : 'In Dhaka'} {deliveryInfo?.delivery_charge}
             </p>
           </div>
         </div>
         <div className="flex items-start gap-3">
           <FaShippingFast className="mt-1 text-lg text-primaryBlue" />
           <div>
-            <p className="font-medium">Estimated Delivery Outside Dhaka</p>
+            <p className="font-medium">
+              {lang === 'bn' ? 'ঢাকার বাইরে আনুমানিক ডেলিভারি' : 'Estimated Delivery Outside Dhaka'}
+            </p>
             <p className="text-secondaryBlue">
-              Arrives in {deliveryInfo?.delivery_time_outside} business days
+              {lang === 'bn' ? 'পৌঁছাবে' : 'Arrives in'} {deliveryInfo?.delivery_time_outside}{' '}
+              {lang === 'bn' ? 'কর্মদিবসের মধ্যে' : 'business days'}
             </p>
           </div>
         </div>
         <div className="flex items-start gap-3">
           <FaShippingFast className="mt-1 text-lg text-primaryBlue" />
           <div>
-            <p className="font-medium">Delivery charge Outside dhaka</p>
+            <p className="font-medium">
+              {lang === 'bn' ? 'ঢাকার বাইরে ডেলিভারি চার্জ' : 'Delivery charge Outside Dhaka'}
+            </p>
             <p className="text-secondaryBlue">
-              In dhaka {deliveryInfo?.delivery_charge_outside}
+              {lang === 'bn' ? 'ঢাকার মধ্যে' : 'In Dhaka'} {deliveryInfo?.delivery_charge_outside}
             </p>
           </div>
         </div>
@@ -62,9 +77,10 @@ const DeliveryDetails = ({
         <div className="flex items-start gap-3">
           <FaUndo className="mt-1 text-lg text-primaryBlue" />
           <div>
-            <p className="font-medium">Return Policy</p>
+            <p className="font-medium">{lang === 'bn' ? 'রিটার্ন নীতি' : 'Return Policy'}</p>
             <p className="text-secondaryBlue">
-              Free returns within {deliveryInfo?.return_days} days
+              {lang === 'bn' ? 'ফ্রি রিটার্নের সময়সীমা:' : 'Free returns within'}
+              {deliveryInfo?.return_days} {lang === 'bn' ? 'দিনের মধ্যে' : 'days'}
             </p>
           </div>
         </div>
@@ -72,8 +88,10 @@ const DeliveryDetails = ({
         <div className="flex items-start gap-3">
           <FaShieldAlt className="mt-1 text-lg text-primaryBlue" />
           <div>
-            <p className="font-medium">Secure Delivery</p>
-            <p className="text-secondaryBlue">Handled by trusted courier</p>
+            <p className="font-medium">{lang === 'bn' ? 'নিরাপদ ডেলিভারি' : 'Secure Delivery'}</p>
+            <p className="text-secondaryBlue">
+              {lang === 'bn' ? 'বিশ্বস্ত কুরিয়ার দ্বারা পরিচালিত' : 'Handled by trusted courier'}
+            </p>
           </div>
         </div>
       </div>

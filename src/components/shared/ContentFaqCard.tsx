@@ -21,6 +21,7 @@ export default function ContentFaqCard({ content, faqs }: Props) {
   const lang = useSelector((state: RootState) => state.language.language);
 
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [showMore, setShowMore] = useState(false)
 
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -29,10 +30,25 @@ export default function ContentFaqCard({ content, faqs }: Props) {
   return (
     <div className="w-full space-y-8 rounded-2xl bg-white p-6 shadow">
       {/* Content */}
-      <div
-        className="text-justify text-base font-light leading-relaxed tracking-wide text-gray-700 md:text-xl"
-        dangerouslySetInnerHTML={{ __html: content }}
-      ></div>
+      <div>
+        <div
+          className={`text-justify text-base font-light leading-relaxed tracking-wide text-gray-700 md:text-xl transition-all duration-300 overflow-hidden ${
+            showMore ? 'line-clamp-none' : 'line-clamp-[10]'
+          }`}
+          dangerouslySetInnerHTML={{ __html: content }}
+        ></div>
+
+        <div className='flex w-full justify-end'>
+          <button
+          onClick={() => setShowMore((prev) => !prev)}
+          className="mt-3 text-sm font-medium text-blue-600 hover:underline"
+        >
+          {showMore
+            ? lang === 'bn' ? 'কম দেখান' : 'See Less'
+            : lang === 'bn' ? 'আরও দেখুন' : 'See More'}
+        </button>
+        </div>
+      </div>
 
       {/* FAQ Section */}
       <div>

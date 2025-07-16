@@ -7,7 +7,12 @@ import { useState } from "react";
 import { BiGitCompare } from "react-icons/bi";
 import { CiShare2 } from "react-icons/ci";
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+
 const ProductBreadcrumb = ({ title, url }: { title: string; url: string }) => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
 
@@ -55,7 +60,9 @@ const ProductBreadcrumb = ({ title, url }: { title: string; url: string }) => {
         <div className="flex flex-row items-center gap-3 sm:flex-row sm:gap-4">
           <div className="flex items-center gap-2">
             <CiShare2 className="h-4 w-4 text-primaryDarkBlue" />
-            <p className="hidden text-sm md:block">Share:</p>
+            <p className="hidden text-sm md:block">
+               {lang === 'bn' ? 'শেয়ার করুন:' : 'Share:'}
+            </p>
           </div>
           <SocialShare url={`${baseUrl}${url}`} title={title} />
         </div>
