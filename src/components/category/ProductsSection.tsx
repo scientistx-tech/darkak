@@ -7,6 +7,9 @@ import { useGetAllProductsQuery } from '@/redux/services/client/products';
 import Pagination from '../shared/Pagination';
 import { toast } from 'react-toastify';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+
 const ProductsSection = ({
   data,
   currentPage,
@@ -38,6 +41,8 @@ const ProductsSection = ({
   isFetching: boolean;
   setIsFetching: (value: boolean) => void;
 }) => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
 
@@ -238,7 +243,13 @@ const ProductsSection = ({
             className="rounded bg-blue-600 px-6 py-2 text-white transition duration-300 hover:bg-blue-700"
             disabled={isFetching}
           >
-            {isFetching ? 'Loading...' : 'See More'}
+            {isFetching
+              ? lang === 'bn'
+                ? 'লোড হচ্ছে...'
+                : 'Loading...'
+              : lang === 'bn'
+                ? 'আরও দেখুন'
+                : 'See More'}
           </button>
         </div>
       )}
