@@ -16,6 +16,7 @@ import { BsTornado } from 'react-icons/bs';
 import { FaListAlt } from 'react-icons/fa';
 import { IoMdAddCircle } from 'react-icons/io';
 import { FaRegListAlt } from 'react-icons/fa';
+import { FaHeadphones } from "react-icons/fa6";
 export const getSellerNavData = (data: any) => [
   {
     label: 'Seller Dashboard',
@@ -607,7 +608,13 @@ export const getNavData = (data: any, vendorData: any) => [
         url: '/admin/moderator',
       },
       {
-        title: 'Live Chat',
+        title: 'Contact',
+        icon: FaHeadphones,
+        accessKey: 'contact',
+        url: '/admin/contact',
+      },
+      {
+        title: 'Message',
         icon: AiFillMessage,
         accessKey: 'chat',
         url: '/admin/chat',

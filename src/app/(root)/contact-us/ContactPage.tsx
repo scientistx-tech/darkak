@@ -1,22 +1,27 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { notification } from "antd";
+import React, { useState } from 'react';
+import { notification } from 'antd';
 
-import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
-import SendButton from "@/components/Button/SendButton";
+import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from 'react-icons/fa';
+import SendButton from '@/components/Button/SendButton';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 const ContactPage: React.FC = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [message, setMessage] = useState("");
+  const lang = useSelector((state: RootState) => state.language.language);
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [message, setMessage] = useState('');
 
   const [api, contextHolder] = notification.useNotification();
   const openNotification = (
-    type: "success" | "error" | "warning",
+    type: 'success' | 'error' | 'warning',
     message: string,
-    description: string,
+    description: string
   ) => {
     api[type]({
       message,
@@ -30,35 +35,23 @@ const ContactPage: React.FC = () => {
 
   const handleSignup = () => {
     if (!name || !email || !phone || !message) {
-      openNotification(
-        "warning",
-        "Incomplete Form",
-        "Please fill out all required fields.",
-      );
+      openNotification('warning', 'Incomplete Form', 'Please fill out all required fields.');
       return;
     }
 
     if (!validateEmail(email)) {
-      openNotification(
-        "error",
-        "Invalid Email",
-        "Please enter a valid email address.",
-      );
+      openNotification('error', 'Invalid Email', 'Please enter a valid email address.');
       return;
     }
 
-    openNotification(
-      "success",
-      "Signup Successful",
-      "You have successfully signed up!",
-    );
+    openNotification('success', 'Signup Successful', 'You have successfully signed up!');
 
     // console.log({ name, email, phone, message });
 
-    setName("");
-    setEmail("");
-    setPhone("");
-    setMessage("");
+    setName('');
+    setEmail('');
+    setPhone('');
+    setMessage('');
   };
 
   return (
@@ -69,7 +62,8 @@ const ContactPage: React.FC = () => {
         {/* Left Section */}
         <div className="flex w-full flex-col items-start justify-center pl-[5%] md:w-[50%] md:pl-[10%]">
           <p className="mb-4 text-xl font-medium text-secondary md:text-2xl">
-            <span className="text-primaryBlue">Contact</span> Info.
+            <span className="text-primaryBlue"> {lang === 'bn' ? 'যোগাযোগ' : 'Contact'}</span>{' '}
+            {lang === 'bn' ? 'তথ্য' : 'Info.'}
           </p>
 
           <div className="mt-3 flex items-center justify-center gap-3 md:mt-5">
@@ -93,16 +87,17 @@ const ContactPage: React.FC = () => {
               <FaMapMarkerAlt className="text-white md:text-xl" />
             </div>
 
-            <p className="text-secondary md:text-xl">
-              Upashahar , Bogura -5800
-            </p>
+            <p className="text-secondary md:text-xl">Upashahar , Bogura -5800</p>
           </div>
         </div>
 
         {/* Right Section - Form */}
         <div className="mt-10 flex w-full flex-col items-center rounded-md bg-white p-6 md:mt-0 md:w-[50%]">
           <p className="mb-4 text-xl font-medium text-secondary md:text-2xl">
-            <span className="text-primaryBlue">Drop</span> Us a Line
+            <>
+              <span className="text-primaryBlue">{lang === 'bn' ? 'যোগাযোগ করুন' : 'Drop'}</span>{' '}
+              {lang === 'bn' ? '' : 'Us a Line'}
+            </>
           </p>
 
           {/* Name Input */}
@@ -117,9 +112,9 @@ const ContactPage: React.FC = () => {
             />
             <label
               htmlFor="name"
-              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${name ? "top-[-2px] bg-white px-1 text-sm text-primaryBlue" : ""}`}
+              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${name ? 'top-[-2px] bg-white px-1 text-sm text-primaryBlue' : ''}`}
             >
-              Name
+              {lang === 'bn' ? 'নাম' : 'Name'}
             </label>
           </div>
 
@@ -135,9 +130,9 @@ const ContactPage: React.FC = () => {
             />
             <label
               htmlFor="email"
-              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${email ? "top-[-2px] bg-white px-1 text-sm text-primaryBlue" : ""}`}
+              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${email ? 'top-[-2px] bg-white px-1 text-sm text-primaryBlue' : ''}`}
             >
-              Email
+              {lang === 'bn' ? 'ইমেইল' : 'Email'}
             </label>
           </div>
 
@@ -153,9 +148,9 @@ const ContactPage: React.FC = () => {
             />
             <label
               htmlFor="phone"
-              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${phone ? "top-[-2px] bg-white px-1 text-sm text-primaryBlue" : ""}`}
+              className={`absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:translate-y-1/2 peer-placeholder-shown:text-gray-400 ${phone ? 'top-[-2px] bg-white px-1 text-sm text-primaryBlue' : ''}`}
             >
-              Phone
+              {lang === 'bn' ? 'ফোন' : 'Phone'}
             </label>
           </div>
 
@@ -170,9 +165,9 @@ const ContactPage: React.FC = () => {
             />
             <label
               htmlFor="message"
-              className={`absolute left-3 top-3 text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 ${message ? "top-[-10px] bg-white px-1 text-sm text-primaryBlue" : ""}`}
+              className={`absolute left-3 top-3 text-gray-600 transition-all duration-200 ease-out peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 ${message ? 'top-[-10px] bg-white px-1 text-sm text-primaryBlue' : ''}`}
             >
-              Message
+              {lang === 'bn' ? 'বার্তা' : 'Message'}
             </label>
           </div>
 
@@ -185,7 +180,7 @@ const ContactPage: React.FC = () => {
           </button> */}
 
           <div className="mt-5">
-            <SendButton link={handleSignup} text="Send" />
+            <SendButton link={handleSignup} text={lang === 'bn' ? 'পাঠান' : 'Send'} />
           </div>
         </div>
       </div>
@@ -193,7 +188,8 @@ const ContactPage: React.FC = () => {
       {/* Map Fields */}
       <div className="tablet:mb-16 mb-8 h-auto w-full">
         <p className="mb-4 ml-10 text-xl font-medium text-secondary md:text-2xl">
-          <span className="text-primaryBlue">Visit</span> Us
+          <span className="text-primaryBlue">{lang === 'bn' ? '' : 'Visit'}</span>{' '}
+          {lang === 'bn' ? 'আমাদের দেখুন' : 'Us'}
         </p>
 
         <iframe

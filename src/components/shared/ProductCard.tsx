@@ -7,12 +7,17 @@ import PriceInfo from './PriceInfo';
 import RightIcons from './RightIcons';
 import { useRouter } from 'next/navigation';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+
 interface ProductCardProps {
   product: Product;
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const [hovered, setHovered] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const router = useRouter();
@@ -49,7 +54,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
         <div className="absolute left-0 top-5 z-20 rounded-r-full bg-secondaryBlue px-4 py-1 text-center text-xs font-semibold text-secondaryWhite">
           {Math.round(product.discount)}%
           <br />
-          OFF
+          {lang === 'bn' ? 'ছাড়' : 'OFF'}
         </div>
       )}
 

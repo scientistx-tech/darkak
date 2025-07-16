@@ -17,6 +17,8 @@ const PriceInfo = ({
   product: Product;
   setIsOpen?: (open: boolean) => void;
 }) => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const router = useRouter();
   const [addToCart, { isLoading }] = useAddToCartMutation();
   const hasDiscount = !!product?.discount && Number(product.discount) > 0;
@@ -123,7 +125,8 @@ const PriceInfo = ({
 
           {hasDiscount && (
             <span className="ml-2 text-sm font-semibold text-primaryBlue">
-              Price {Math.round(discountPrice)} BDT
+              {lang === 'bn' ? 'মূল্য ' : 'Price '}
+              {Math.round(discountPrice)} BDT
             </span>
           )}
         </div>
@@ -155,7 +158,7 @@ const PriceInfo = ({
           <div className="flex items-center justify-evenly">
             <div>
               <p className="text-primbg-primaryWhite scale-90 cursor-pointer rounded-full bg-primaryBlue px-4 py-1 text-sm font-normal text-secondaryWhite transition-all duration-300 hover:bg-primaryDarkBlue hover:text-white md:scale-100 md:px-4 md:font-semibold lg:text-sm">
-                Pre Order
+                {lang === 'bn' ? 'পূর্ব অর্ডার' : 'Pre Order'}
               </p>
             </div>
           </div>
@@ -163,7 +166,7 @@ const PriceInfo = ({
           <div className="flex items-center justify-evenly">
             <div onClick={(e) => handleBuyNow(e)}>
               <p className="text-primbg-primaryWhite scale-90 cursor-pointer rounded-full bg-primaryBlue px-4 py-1 text-sm font-normal text-secondaryWhite transition-all duration-300 hover:bg-primaryDarkBlue hover:text-white md:scale-100 md:px-4 md:font-semibold lg:text-sm">
-                BUY NOW
+                {lang === 'bn' ? 'এখনই কিনুন' : 'BUY NOW'}
               </p>
             </div>
 
