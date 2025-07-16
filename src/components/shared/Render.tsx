@@ -1,6 +1,4 @@
-import "./content.css";
-
-
+import './content.css';
 
 type EditorJsBlock = {
   id?: string;
@@ -28,39 +26,39 @@ const EditorJsRenderer: React.FC<EditorJsRendererProps> = ({ data }) => {
 
   const renderBlock = (block: EditorJsBlock, index: number) => {
     const { type, data } = block;
-    console.log(block)
+    console.log(block);
 
     switch (type) {
-      case "header":
-        const Tag = `h${data.level}` as "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+      case 'header':
+        const Tag = `h${data.level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
         return (
           <Tag key={index} className="my-2 font-bold text-gray-800">
             {data.text}
           </Tag>
         );
 
-      case "paragraph":
+      case 'paragraph':
         return (
-          <p key={index} dangerouslySetInnerHTML={{ __html: data.text }} className="mb-2 text-gray-700">
-            
-          </p>
+          <p
+            key={index}
+            dangerouslySetInnerHTML={{ __html: data.text }}
+            className="rendered-html mb-2 text-gray-700"
+          ></p>
         );
 
-      case "image":
+      case 'image':
         return (
           <div key={index} className="my-4 text-center">
             <img
               src={data.file?.url}
-              alt={data.caption || "Image"}
+              alt={data.caption || 'Image'}
               className="mx-auto w-full rounded"
             />
-            {data.caption && (
-              <p className="text-sm text-gray-500">{data.caption}</p>
-            )}
+            {data.caption && <p className="text-sm text-gray-500">{data.caption}</p>}
           </div>
         );
 
-      case "linkTool":
+      case 'linkTool':
         return (
           <a
             key={index}
@@ -73,34 +71,32 @@ const EditorJsRenderer: React.FC<EditorJsRendererProps> = ({ data }) => {
           </a>
         );
 
-      case "raw":
+      case 'raw':
         return (
           <div
             key={index}
-            className="prose prose-sm md:prose-base my-4 max-w-none"
+            className="prose prose rendered-html-sm md:prose-base my-4 max-w-none"
             dangerouslySetInnerHTML={{ __html: data.html }}
           />
         );
 
-      case "embed":
+      case 'embed':
         return (
           <div key={index} className="my-4">
             <iframe
               src={data.embed}
-              width={data.width || "100%"}
-              height={data.height || "320"}
+              width={data.width || '100%'}
+              height={data.height || '320'}
               title="Embedded content"
               frameBorder="0"
               allowFullScreen
               className="w-full max-w-full rounded"
             ></iframe>
-            {data.caption && (
-              <p className="text-sm text-gray-500">{data.caption}</p>
-            )}
+            {data.caption && <p className="text-sm text-gray-500">{data.caption}</p>}
           </div>
         );
 
-      case "table":
+      case 'table':
         return (
           <div key={index} className="my-4 overflow-x-auto">
             <table className="min-w-full border border-gray-300">
@@ -108,10 +104,7 @@ const EditorJsRenderer: React.FC<EditorJsRendererProps> = ({ data }) => {
                 {data.content.map((row: string[], rowIndex: number) => (
                   <tr key={rowIndex}>
                     {row.map((cell: string, cellIndex: number) => (
-                      <td
-                        key={cellIndex}
-                        className="border px-4 py-2 text-sm text-gray-700"
-                      >
+                      <td key={cellIndex} className="border px-4 py-2 text-sm text-gray-700">
                         {cell}
                       </td>
                     ))}
@@ -122,18 +115,15 @@ const EditorJsRenderer: React.FC<EditorJsRendererProps> = ({ data }) => {
           </div>
         );
 
-      case "list":
-        return data.style === "unordered" ? (
+      case 'list':
+        return data.style === 'unordered' ? (
           <ul key={index} className="my-2 list-inside list-disc text-gray-700">
             {data.items.map((item: { content: string }, i: number) => (
               <li key={i}>{item.content}</li>
             ))}
           </ul>
         ) : (
-          <ol
-            key={index}
-            className="my-2 list-inside list-decimal text-gray-700"
-          >
+          <ol key={index} className="my-2 list-inside list-decimal text-gray-700">
             {data.items.map((item: { content: string }, i: number) => (
               <li key={i}>{item.content}</li>
             ))}
@@ -149,9 +139,7 @@ const EditorJsRenderer: React.FC<EditorJsRendererProps> = ({ data }) => {
     }
   };
 
-  return (
-    <div className="editorjs-renderer">{data?.blocks?.map(renderBlock)}</div>
-  );
+  return <div className="editorjs-renderer">{data?.blocks?.map(renderBlock)}</div>;
 };
 
 export default EditorJsRenderer;

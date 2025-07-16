@@ -550,3 +550,12 @@ h4 {
   font-size: medium;
   font-weight: 600;
 }
+.jodit-wysiwyg a {
+  color: blue;
+  text-decoration: underline;
+}
+
+.rendered-html a {
+  color: blue;
+  text-decoration: underline;
+}

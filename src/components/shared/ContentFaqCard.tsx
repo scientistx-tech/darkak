@@ -30,9 +30,10 @@ export default function ContentFaqCard({ content, faqs }: Props) {
   return (
     <div className="w-full space-y-8 rounded-2xl bg-white p-6 shadow">
       {/* Content */}
+
       <div>
         <div
-          className={`text-justify text-base font-light leading-relaxed tracking-wide text-gray-700 md:text-xl transition-all duration-300 overflow-hidden ${
+          className={`text-justify rendered-html text-base font-light leading-relaxed tracking-wide text-gray-700 md:text-xl transition-all duration-300 overflow-hidden ${
             showMore ? 'line-clamp-none' : 'line-clamp-[10]'
           }`}
           dangerouslySetInnerHTML={{ __html: content }}
