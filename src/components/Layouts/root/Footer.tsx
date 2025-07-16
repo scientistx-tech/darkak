@@ -1,75 +1,62 @@
-"use client";
-import Link from "next/link";
-import React, { useMemo, useRef } from "react";
-import { notification } from "antd";
+'use client';
+import Link from 'next/link';
+import React, { useMemo, useRef } from 'react';
+import { notification } from 'antd';
 
-import {
-  FaFacebookF,
-  FaInstagram,
-  FaWhatsapp,
-  FaYoutube,
-  FaPinterest,
-} from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaWhatsapp, FaYoutube, FaPinterest } from 'react-icons/fa';
 
-import img1 from "@/Data/Img/app_store_badge.svg";
-import img2 from "@/Data/Img/google_play_badge.svg";
-import imgBg from "@/Data/Img/Rectangle 136.jpeg";
-import Image from "next/image";
-import { AppDispatch, RootState } from "@/redux/store";
-import { useDispatch, useSelector } from "react-redux";
-import { clearUser } from "@/redux/slices/authSlice";
-import { auth } from "@/utils/firebase";
+import img1 from '@/Data/Img/app_store_badge.svg';
+import img2 from '@/Data/Img/google_play_badge.svg';
+import imgBg from '@/Data/Img/Rectangle 136.jpeg';
+import Image from 'next/image';
+import { AppDispatch, RootState } from '@/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearUser } from '@/redux/slices/authSlice';
+import { auth } from '@/utils/firebase';
 
-import { useGetProductCategoriesQuery } from "@/redux/services/client/categories";
-import { useAddSubscriberMutation } from "@/redux/services/client/subscribe";
-import { toast } from "react-toastify";
-import { useGetHomeContentQuery } from "@/redux/services/client/homeContentApi";
+import { useGetProductCategoriesQuery } from '@/redux/services/client/categories';
+import { useAddSubscriberMutation } from '@/redux/services/client/subscribe';
+import { toast } from 'react-toastify';
+import { useGetHomeContentQuery } from '@/redux/services/client/homeContentApi';
 
 function Footer() {
-  const { data: home } = useGetHomeContentQuery();
-  const [addSubscriber, { isLoading: subscribeLoading }] =
-    useAddSubscriberMutation();
-  const [api, contextHolder] = notification.useNotification();
-  const [email, setEmail] = React.useState("");
+  const lang = useSelector((state: RootState) => state.language.language);
 
-  const contextValue = useMemo(() => ({ name: "Ant Design" }), []);
+  const { data: home } = useGetHomeContentQuery();
+  const [addSubscriber, { isLoading: subscribeLoading }] = useAddSubscriberMutation();
+  const [api, contextHolder] = notification.useNotification();
+  const [email, setEmail] = React.useState('');
+
+  const contextValue = useMemo(() => ({ name: 'Ant Design' }), []);
 
   const openNotification = (
-    type: "success" | "error" | "warning",
+    type: 'success' | 'error' | 'warning',
     message: string,
-    description: string,
+    description: string
   ) => {
     api[type]({
       message,
       description,
-      placement: "topRight",
+      placement: 'topRight',
     });
   };
 
-  const {
-    data: categories,
-    isLoading,
-    error,
-  } = useGetProductCategoriesQuery("");
+  const { data: categories, isLoading, error } = useGetProductCategoriesQuery('');
 
   const handleSubscribe = async () => {
     if (!email) {
-      openNotification("warning", "Email Required", "Please enter your email.");
+      openNotification('warning', 'Email Required', 'Please enter your email.');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      openNotification(
-        "error",
-        "Invalid Email",
-        "Please enter a valid email address.",
-      );
+      openNotification('error', 'Invalid Email', 'Please enter a valid email address.');
     } else {
       try {
         const response = await addSubscriber({ email }).unwrap();
-        toast.success("Subscribed successfully!");
-        setEmail(""); // Clear the input field after successful subscription
+        toast.success('Subscribed successfully!');
+        setEmail(''); // Clear the input field after successful subscription
       } catch (error: any) {
         console.log(error);
 
-        toast.error(error?.data?.message || "Subscription failed!");
+        toast.error(error?.data?.message || 'Subscription failed!');
       }
     }
   };
@@ -95,14 +82,18 @@ function Footer() {
           {/* Left-side */}
           <div className="w-full pl-5 md:w-2/3 md:pl-10">
             <div className="right-5 mt-[-65px] flex w-[97%] flex-col items-center justify-center rounded-md bg-[#F1F6FF] px-3 py-6 shadow-2xl md:w-[50%]">
-              <p className="text-xl font-semibold text-[#003084]">SUBSCRIBE TO OUR NEWSLETTER</p>
+              <p className="text-xl font-semibold text-[#003084]">
+                {lang === 'bn'
+                  ? 'নতুন অফার ও আপডেট পেতে সাবস্ক্রাইব করুন'
+                  : 'SUBSCRIBE TO OUR NEWSLETTER'}
+              </p>
               <div className="mt-5 flex w-[80%] rounded-full bg-white">
                 <input
                   onChange={(e) => setEmail(e.target.value)}
                   value={email}
                   className="w-2/3 rounded-l-full border-none py-2 pl-4 outline-none"
                   type="text"
-                  placeholder="Your email goes here..."
+                  placeholder={lang === 'bn' ? 'আপনার ইমেইল লিখুন...' : 'Your email goes here...'}
                   disabled={subscribeLoading}
                 />
                 <button
@@ -110,7 +101,13 @@ function Footer() {
                   disabled={subscribeLoading}
                   className="w-1/3 rounded-r-full bg-primary py-2 text-white transition-all duration-500 ease-in-out hover:bg-[#003084] disabled:opacity-60"
                 >
-                  {subscribeLoading ? 'Loading...' : 'SUBSCRIBE'}
+                  {subscribeLoading
+                    ? lang === 'bn'
+                      ? 'লোড হচ্ছে...'
+                      : 'Loading...'
+                    : lang === 'bn'
+                      ? 'সাবস্ক্রাইব করুন'
+                      : 'SUBSCRIBE'}
                 </button>
               </div>
             </div>
@@ -118,7 +115,9 @@ function Footer() {
             <div className="flex w-full justify-end md:hidden">
               <div className="mt-[40px] w-[80%] rounded-bl-full rounded-tl-full bg-primary px-3 py-2 text-white md:hidden">
                 <p className="text-end font-medium">
-                  Have a Great Time and keep shopping with DARKAK
+                  {lang === 'bn'
+                    ? 'শুভ সময় কাটুক, DARKAK এর সাথেই থাকুন'
+                    : 'Have a Great Time and keep shopping with DARKAK'}
                 </p>
               </div>
             </div>
@@ -126,51 +125,58 @@ function Footer() {
             <div className="mt-6 flex w-full flex-col md:flex-row">
               <div className="flex w-full flex-col md:w-2/3">
                 <div className="flex w-full">
+                  {/* Quick Links */}
                   <div className="flex w-1/2 flex-col">
-                    <p className="mb-3 text-xl text-[#BBD4FF] md:mb-5">Quick Links</p>
+                    <p className="mb-3 text-xl text-[#BBD4FF] md:mb-5">
+                      {lang === 'bn' ? 'দ্রুত লিংক' : 'Quick Links'}
+                    </p>
 
                     <Link href="/" className="text-[#F6F6F6] hover:text-white">
-                      Home
+                      {lang === 'bn' ? 'হোম' : 'Home'}
                     </Link>
                     <Link href="/shop" className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3">
-                      Shop
+                      {lang === 'bn' ? 'দোকান' : 'Shop'}
                     </Link>
                     <Link href="/product" className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3">
-                      Product
+                      {lang === 'bn' ? 'পণ্য' : 'Product'}
                     </Link>
                     <Link
                       href="/contact-us"
                       className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3"
                     >
-                      Contact Us
+                      {lang === 'bn' ? 'যোগাযোগ করুন' : 'Contact Us'}
                     </Link>
                   </div>
+
+                  {/* Support */}
                   <div className="flex w-1/2 flex-col">
-                    <p className="mb-3 text-xl text-[#BBD4FF] md:mb-5">Support</p>
+                    <p className="mb-3 text-xl text-[#BBD4FF] md:mb-5">
+                      {lang === 'bn' ? 'সহায়তা' : 'Support'}
+                    </p>
 
                     <Link href="/about-us" className="text-[#F6F6F6] hover:text-white">
-                      About Us
+                      {lang === 'bn' ? 'আমাদের সম্পর্কে' : 'About Us'}
                     </Link>
                     <Link
                       href="/privacy-policy"
                       className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3"
                     >
-                      Privacy policy
+                      {lang === 'bn' ? 'গোপনীয়তা নীতি' : 'Privacy Policy'}
                     </Link>
                     <Link
                       href="/terms-and-condition"
                       className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3"
                     >
-                      Terms and Condition
+                      {lang === 'bn' ? 'শর্তাবলি' : 'Terms and Condition'}
                     </Link>
                     <Link href="/faq" className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3">
-                      FAQ
+                      {lang === 'bn' ? 'প্রশ্নোত্তর' : 'FAQ'}
                     </Link>
                   </div>
                 </div>
 
                 <p className="mt-8 hidden text-2xl text-[#BBD4FF] md:block">
-                  Download Our Mobile App
+                  {lang === 'bn' ? 'আমাদের মোবাইল অ্যাপ ডাউনলোড করুন' : 'Download Our Mobile App'}
                 </p>
                 <div className="mt-5 hidden justify-start gap-5 md:flex">
                   <button className="h-[50px] w-auto opacity-70 transition-all duration-500 ease-in-out hover:opacity-100">
@@ -183,7 +189,9 @@ function Footer() {
                 </div>
               </div>
               <div className="mt-8 flex flex-col md:mt-0 md:w-1/3">
-                <p className="mb-3 text-xl text-[#BBD4FF] md:mb-5">Product Categories</p>
+                <p className="mb-3 text-xl text-[#BBD4FF] md:mb-5">
+                  {lang === 'bn' ? 'পণ্যের বিভাগসমূহ' : 'Product Categories'}
+                </p>
 
                 {isLoading ? (
                   [...Array(5)].map((_, i) => (
@@ -209,7 +217,7 @@ function Footer() {
               </div>
 
               <p className="mt-8 block text-2xl text-[#BBD4FF] md:hidden">
-                Download Our Mobile App
+                {lang === 'bn' ? 'আমাদের মোবাইল অ্যাপ ডাউনলোড করুন' : 'Download Our Mobile App'}
               </p>
               <div className="mt-5 flex justify-start gap-5 md:hidden">
                 <button className="h-[40px] w-auto">
@@ -227,7 +235,9 @@ function Footer() {
           <div className="flex w-full flex-col items-start justify-start pl-5 md:w-1/3 md:items-end md:pl-0">
             <div className="mt-[-40px] hidden w-[100%] rounded-bl-full rounded-tl-full bg-primary px-3 py-5 text-white md:block">
               <p className="text-end text-lg font-medium">
-                Have a Great Time and keep shopping with DARKAK
+                {lang === 'bn'
+                  ? 'শুভ সময় কাটুক, DARKAK এর সাথেই থাকুন কেনাকাটায়'
+                  : 'Have a Great Time and keep shopping with DARKAK'}
               </p>
             </div>
             <div className="flex flex-col items-start justify-center md:items-end md:pr-10">
@@ -241,7 +251,7 @@ function Footer() {
                   onClick={handleLogOut}
                   className="mt-5 rounded-full border-[2px] border-primary bg-primary px-4 py-1 text-xl font-medium text-white transition-all duration-500 ease-in-out hover:bg-transparent hover:text-primary md:py-2"
                 >
-                  Log Out
+                  {lang === 'bn' ? 'প্রস্থান করুন' : 'Log Out'}
                 </button>
               ) : (
                 <div className="flex items-center gap-2">
@@ -249,12 +259,14 @@ function Footer() {
                     href="/auth/signup"
                     className="mt-5 rounded-full border-[2px] border-primary bg-primary px-4 py-1 text-xl font-medium text-white transition-all duration-500 ease-in-out hover:bg-transparent hover:text-primary md:py-2"
                   >
-                    Register now
+                    {lang === 'bn' ? 'এখনই রেজিস্টার করুন' : 'Register now'}
                   </Link>
                 </div>
               )}
 
-              <p className="mt-5 text-xl text-[#BBD4FF] md:mt-8">Contact</p>
+              <p className="mt-5 text-xl text-[#BBD4FF] md:mt-8">
+                {lang === 'bn' ? 'যোগাযোগ' : 'Contact'}
+              </p>
 
               <p className="mt-1 text-[#F6F6F6] opacity-55 transition-all duration-500 ease-in-out hover:text-white hover:opacity-100 md:mt-3">
                 Email:{' '}
@@ -273,7 +285,9 @@ function Footer() {
                 Address: Upashahar , Bogura -5800
               </p>
 
-              <p className="mt-5 text-xl text-[#BBD4FF] md:mt-8">Stay Connected</p>
+              <p className="mt-5 text-xl text-[#BBD4FF] md:mt-8">
+                {lang === 'bn' ? 'সংযুক্ত থাকুন' : 'Stay Connected'}
+              </p>
 
               <div className="mb-[80px] mt-3 flex gap-4 md:mb-0">
                 <a

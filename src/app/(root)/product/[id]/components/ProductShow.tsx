@@ -1,17 +1,17 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import ReactImageMagnify from "react-image-magnify";
-import { BsWhatsapp } from "react-icons/bs";
-import DeliveryDetails from "./DeliveryDetails";
-import Image from "next/image";
-import { AppDispatch, RootState } from "@/redux/store";
-import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
-import { useAddToCartMutation } from "@/redux/services/client/myCart";
-import { setCart } from "@/redux/slices/authSlice";
-import DOMPurify from "dompurify";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import ReactImageMagnify from 'react-image-magnify';
+import { BsWhatsapp } from 'react-icons/bs';
+import DeliveryDetails from './DeliveryDetails';
+import Image from 'next/image';
+import { AppDispatch, RootState } from '@/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
+import { useAddToCartMutation } from '@/redux/services/client/myCart';
+import { setCart } from '@/redux/slices/authSlice';
+import DOMPurify from 'dompurify';
 
 interface ProductShowProps {
   data: {
@@ -58,6 +58,8 @@ interface ProductShowProps {
 }
 
 const ProductShow = ({ data, slug }: ProductShowProps) => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const [quantity, setQuantity] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState<{
     [itemId: number]: number;
@@ -79,29 +81,22 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // Collect all images: product images, thumbnail, color option images
-  const productImagesArr =
-    data?.product?.Image?.map((img: any) => img.url) || [];
+  const productImagesArr = data?.product?.Image?.map((img: any) => img.url) || [];
   const thumbnailImg = data?.product?.thumbnail ? [data.product.thumbnail] : [];
   const colorOptionImagesArr =
     data?.product?.items
-      ?.filter((item: any) => item.title?.toLowerCase() === "color")
+      ?.filter((item: any) => item.title?.toLowerCase() === 'color')
       .flatMap((item: any) =>
-        Array.isArray(item.options)
-          ? item.options.map((opt: any) => opt.image).filter(Boolean)
-          : [],
+        Array.isArray(item.options) ? item.options.map((opt: any) => opt.image).filter(Boolean) : []
       ) || [];
 
   const allImages = Array.from(
-    new Set(
-      [...productImagesArr, ...thumbnailImg, ...colorOptionImagesArr].filter(
-        Boolean,
-      ),
-    ),
+    new Set([...productImagesArr, ...thumbnailImg, ...colorOptionImagesArr].filter(Boolean))
   );
 
   const stockkkk = !data?.product?.items.length
@@ -109,28 +104,20 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
     : data?.product?.items.map((item: any) => {
         if (item?.id === Object.keys(selectedOptions)[0]) {
           return (
-            item.options.find(
-              (option: any) => option.id === selectedOptions[item.id],
-            )?.stock || 0
+            item.options.find((option: any) => option.id === selectedOptions[item.id])?.stock || 0
           );
         }
       });
 
-  console.log("stockkkk", stockkkk);
-  console.log(
-    "product stock, items stock",
-    data?.product?.stock,
-    data?.product,
-  );
+  console.log('stockkkk', stockkkk);
+  console.log('product stock, items stock', data?.product?.stock, data?.product);
 
-  console.log("slectedOptions", selectedOptions);
+  console.log('slectedOptions', selectedOptions);
 
-  const fallbackImage = "/images/fallback.png";
+  const fallbackImage = '/images/fallback.png';
 
   //  Selected image state
-  const [selectedImage, setSelectedImage] = useState<string>(
-    allImages[0] || fallbackImage,
-  );
+  const [selectedImage, setSelectedImage] = useState<string>(allImages[0] || fallbackImage);
 
   //  Update selectedImage if productImages change
   useEffect(() => {
@@ -138,8 +125,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
   }, [JSON.stringify(allImages)]);
 
   //  Check if product has discount
-  const hasDiscount =
-    !!data?.product?.discount && Number(data.product.discount) > 0;
+  const hasDiscount = !!data?.product?.discount && Number(data.product.discount) > 0;
   const price = Number(data?.product?.price) || 0;
   const discount = Number(data?.product?.discount) || 0;
   const discountType = data?.product?.discount_type;
@@ -147,9 +133,9 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
 
   // Calculate discount price based on type
   if (hasDiscount) {
-    if (discountType === "flat") {
+    if (discountType === 'flat') {
       discountPrice = price - discount;
-    } else if (discountType === "percentage") {
+    } else if (discountType === 'percentage') {
       discountPrice = price - (price * discount) / 100;
     }
   }
@@ -176,13 +162,11 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
   // Helper to get max quantity based on Color option or fallback to product stock
   const getMaxQuantity = () => {
     const colorItem = data?.product?.items?.find(
-      (item: any) => item.title?.toLowerCase() === "color",
+      (item: any) => item.title?.toLowerCase() === 'color'
     );
     if (colorItem) {
       const selectedOptionId = selectedOptions[colorItem.id];
-      const selectedOption = colorItem.options.find(
-        (opt: any) => opt.id === selectedOptionId,
-      );
+      const selectedOption = colorItem.options.find((opt: any) => opt.id === selectedOptionId);
       return selectedOption?.stock ?? 1;
     }
     return data?.product?.stock || 1;
@@ -210,9 +194,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
     };
 
     // Extract first option from each item (if any)
-    const selectedOptions = product.items
-      ?.map((item: any) => item.options?.[0])
-      .filter(Boolean);
+    const selectedOptions = product.items?.map((item: any) => item.options?.[0]).filter(Boolean);
     cart.cart_items = selectedOptions.map((option: any) => ({ option }));
 
     return cart;
@@ -222,15 +204,15 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
   //  This function handles the "Buy Now" button click
   const handleBuyNow = async () => {
     const cartObject = buildCartObject(data?.product);
-    console.log("cartobject", cartObject);
+    console.log('cartobject', cartObject);
     try {
-      localStorage.setItem("checkout_items", JSON.stringify([cartObject]));
-      router.push("/easy-checkout");
+      localStorage.setItem('checkout_items', JSON.stringify([cartObject]));
+      router.push('/easy-checkout');
     } catch (error: any) {
       if (error?.status === 401) {
-        return router.replace("/auth/login");
+        return router.replace('/auth/login');
       }
-      toast.error(error?.data?.message || "Failed to add to cart");
+      toast.error(error?.data?.message || 'Failed to add to cart');
     }
   };
 
@@ -240,9 +222,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
     e.stopPropagation(); // Prevent navigation to product detail page
 
     const optionIds = data?.product?.items?.length
-      ? data?.product?.items
-          .map((item: any) => item.options?.[0]?.id)
-          .filter(Boolean)
+      ? data?.product?.items.map((item: any) => item.options?.[0]?.id).filter(Boolean)
       : [];
 
     try {
@@ -252,12 +232,12 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
         optionIds,
       }).unwrap();
       dispatch(setCart(Math.random()));
-      toast.success("Item added to cart!");
+      toast.success('Item added to cart!');
     } catch (error: any) {
       if (error?.status === 401) {
-        return router.replace("/auth/login");
+        return router.replace('/auth/login');
       }
-      toast.error(error?.data?.message || "Failed to add to cart");
+      toast.error(error?.data?.message || 'Failed to add to cart');
     }
   };
   return (
@@ -273,7 +253,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
                 src={selectedImage}
                 alt={data?.product.title}
                 className="h-auto w-full rounded object-cover"
-                style={{ maxHeight: "60vh" }}
+                style={{ maxHeight: '60vh' }}
               />
             ) : (
               <ReactImageMagnify
@@ -291,21 +271,21 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
                     height: 900,
                   },
                   enlargedImageContainerDimensions: {
-                    width: "180%",
-                    height: "100%",
+                    width: '180%',
+                    height: '100%',
                   },
                   enlargedImageContainerStyle: {
-                    background: "#fff",
-                    border: "1px solid #ccc",
-                    borderRadius: "0.5rem",
+                    background: '#fff',
+                    border: '1px solid #ccc',
+                    borderRadius: '0.5rem',
                     zIndex: 99,
                   },
-                  enlargedImagePosition: "beside",
+                  enlargedImagePosition: 'beside',
                   isHintEnabled: true,
-                  hintTextMouse: "Hover to zoom",
+                  hintTextMouse: 'Hover to zoom',
                   lensStyle: {
-                    backgroundColor: "rgba(255,255,255,0.4)",
-                    border: "1px solid #ccc",
+                    backgroundColor: 'rgba(255,255,255,0.4)',
+                    border: '1px solid #ccc',
                   },
                   lensDimensions: {
                     width: 80,
@@ -317,14 +297,15 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
             {data?.product.discount && (
               <div className="absolute left-0 top-6 rounded-r-full bg-secondaryBlue px-3 py-2 text-xs text-white shadow-md">
                 {data?.product.discount}
-                {data?.product?.discount_type === "flat" ? "৳" : "%"} OFF
+                {data?.product?.discount_type === 'flat' ? '৳' : '%'}{' '}
+                {lang === 'bn' ? 'ছাড়' : 'OFF'}
               </div>
             )}
           </div>
 
           <div
             className="scrollbar-thin hide-scrollbar scrollbar-thumb-gray-300 scrollbar-track-gray-100 mx-auto mt-4 flex max-w-[320px] flex-row gap-x-3 overflow-x-auto py-2 sm:max-w-sm md:max-w-md lg:max-w-lg"
-            style={{ scrollSnapType: "x mandatory" }}
+            style={{ scrollSnapType: 'x mandatory' }}
           >
             {allImages.map((img, idx) => (
               <img
@@ -332,14 +313,12 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
                 onClick={() => setSelectedImage(img)}
                 src={img}
                 className={`h-16 w-16 min-w-16 flex-shrink-0 cursor-pointer rounded border object-cover ${
-                  selectedImage === img
-                    ? "border-primaryBlue ring-2 ring-primaryBlue"
-                    : ""
+                  selectedImage === img ? 'border-primaryBlue ring-2 ring-primaryBlue' : ''
                 }`}
                 alt={`thumb-${idx}`}
                 style={{
-                  transition: "box-shadow 0.2s",
-                  scrollSnapAlign: "start",
+                  transition: 'box-shadow 0.2s',
+                  scrollSnapAlign: 'start',
                 }}
               />
             ))}
@@ -348,16 +327,15 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
         {/* Details Section */}
         <div className="flex flex-1 flex-col items-center justify-center md:items-start md:justify-start">
           <p className="text-sm uppercase text-[#4B4E55]">
-            Brand: {data?.product?.brand?.title}
+            {lang === 'bn' ? 'ব্র্যান্ড: ' : 'Brand: '}
+            {data?.product?.brand?.title}
           </p>
-          <h1 className="mt-2 text-xl font-semibold text-[#4B4E55]">
-            {data?.product?.title}
-          </h1>
+          <h1 className="mt-2 text-xl font-semibold text-[#4B4E55]">{data?.product?.title}</h1>
 
           <div className="mt-4 flex flex-wrap gap-2">
             <span
               className={`rounded bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue shadow-1 ${
-                hasDiscount ? "line-through" : ""
+                hasDiscount ? 'line-through' : ''
               }`}
             >
               {price} BDT
@@ -370,22 +348,22 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
             <span className="">
               {data?.product?.stock > 0 ? (
                 <div className="flex items-center gap-2 rounded bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue shadow-1">
-                  <p>In Stock</p>
+                  <p>{lang === 'bn' ? 'স্টকে আছে: ' : 'In Stock: '}</p>
                   <p>{`(${data?.product?.stock} items)`}</p>
                 </div>
               ) : (
                 <p className="rounded bg-red-100 px-4 py-2 text-sm text-red shadow-1">
-                  Out of Stock
+                  {lang === 'bn' ? 'স্টকে নেই' : 'Out of Stock'}
                 </p>
               )}
             </span>
             <p className="inline-block rounded bg-secondaryWhite px-4 py-2 text-xs shadow-1 md:text-sm">
-              Product Code: {data?.product.code}
+              {lang === 'bn' ? 'প্রোডাক্ট কোড: ' : 'Product Code: '} {data?.product.code}
             </p>
           </div>
 
           <div className="mt-2 flex items-center gap-4 md:mt-4">
-            {" "}
+            {' '}
             <a
               href="https://api.whatsapp.com/send?phone=8801711726501&text=hello%F0%9F%98%87"
               target="_blank"
@@ -393,11 +371,13 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
               className="flex w-max items-center gap-2 rounded bg-green-100 px-2 py-1 text-xs text-green-700 md:px-4 md:py-2 md:text-sm"
             >
               <BsWhatsapp className="h-5 w-5" />
-              Message on Whatsapp
+              {lang === 'bn' ? 'হোয়াটসঅ্যাপে বার্তা দিন' : 'Message on Whatsapp'}
             </a>
             <div className="text-sm font-semibold text-[#323232]">
-              <p className="inline text-sm text-gray-500">Warranty Type:</p>{" "}
-              {data?.product.warranty}{" "}
+              <p className="inline text-sm text-gray-500">
+                {lang === 'bn' ? 'ওয়ারেন্টির ধরন: ' : 'Warranty Type: '}
+              </p>{' '}
+              {data?.product.warranty}{' '}
               <p className="inline animate-pulse text-xs md:text-base">{`(${data?.product.warranty_time})`}</p>
             </div>
           </div>
@@ -424,13 +404,13 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
                       }}
                       className={`cursor-pointer rounded-full border-2 px-4 py-0.5 transition-colors duration-200 ${
                         selectedOptions[item.id] === option.id
-                          ? "border-primaryBlue bg-primaryBlue text-white shadow-2"
+                          ? 'border-primaryBlue bg-primaryBlue text-white shadow-2'
                           : isOutOfStock
-                            ? "cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400"
-                            : "border-blue-300 bg-white text-primaryBlue"
+                            ? 'cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400'
+                            : 'border-blue-300 bg-white text-primaryBlue'
                       }`}
-                      title={isOutOfStock ? "This option is stock out" : ""}
-                      style={isOutOfStock ? { pointerEvents: "none" } : {}}
+                      title={isOutOfStock ? 'This option is stock out' : ''}
+                      style={isOutOfStock ? { pointerEvents: 'none' } : {}}
                     >
                       {option.title}
                     </div>
@@ -460,7 +440,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
 
           {/* Quantity */}
           <div className="mt-6 flex items-center gap-4">
-            <p className="text-sm font-medium">Quantity</p>
+            <p className="text-sm font-medium">{lang === 'bn' ? 'পরিমাণ' : 'Quantity'}</p>
             <div className="flex items-center overflow-hidden rounded-full border">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -472,9 +452,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
               </button>
               <span className="px-4">{quantity}</span>
               <button
-                onClick={() =>
-                  setQuantity(Math.min(quantity + 1, getMaxQuantity()))
-                }
+                onClick={() => setQuantity(Math.min(quantity + 1, getMaxQuantity()))}
                 className="bg-secondaryBlue px-4 py-1 text-white transition-all duration-300 hover:bg-primaryBlue"
                 disabled={quantity >= getMaxQuantity()}
                 aria-label="Increase quantity"
@@ -506,11 +484,11 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
                   if (data?.product?.stock > 0) {
                     handleBuyNow();
                   } else {
-                    toast.info("Product is out of stock");
+                    toast.info('Product is out of stock');
                   }
                 }}
               >
-                BUY NOW
+                {lang === 'bn' ? 'এখনই কিনুন' : 'BUY NOW'}
               </button>
 
               <motion.button
@@ -521,11 +499,11 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
                   if (data?.product?.stock > 0) {
                     handleAddToCart(e);
                   } else {
-                    toast.info("Product is out of stock");
+                    toast.info('Product is out of stock');
                   }
                 }}
               >
-                ADD TO CART
+                {lang === 'bn' ? 'কার্টে যোগ করুন' : 'ADD TO CART'}
               </motion.button>
             </div>
           ) : (
@@ -535,7 +513,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
                 handleBuyNow();
               }}
             >
-              Pre Order
+              {lang === 'bn' ? 'পূর্ব অর্ডার' : 'Pre Order'}
             </button>
           )}
 
@@ -543,9 +521,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
         </div>
         {/* delivery section */}
         <div className="mx-auto w-full md:w-[20%]">
-          <DeliveryDetails
-            deliveryInfo={data?.product?.delivery_info}
-          ></DeliveryDetails>
+          <DeliveryDetails deliveryInfo={data?.product?.delivery_info}></DeliveryDetails>
         </div>
       </div>
     </div>

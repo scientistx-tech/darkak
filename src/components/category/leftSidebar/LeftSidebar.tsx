@@ -9,6 +9,9 @@ import { useGetProductCategoriesQuery } from '@/redux/services/client/categories
 import { useGetBrandsPublicQuery } from '@/redux/services/client/brands';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+
 const availabilityOptions = [
   { value: 'in-stock', label: 'In stock' },
   { value: 'pre-order', label: 'Pre Order' },
@@ -63,6 +66,8 @@ const regionOptions = [
 // Add your nested categories data here or fetch from API
 
 const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props) => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const [availability, setAvailability] = useState('');
   const [warranty, setWarranty] = useState('darkak');
   const [region, setRegion] = useState('BD');
@@ -369,7 +374,9 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
       {/* category */}
       <div className="rounded bg-blue-100 p-3">
         <div className={`mb-3 flex items-center justify-between`}>
-          <h2 className="text-lg font-semibold text-blue-900">Category</h2>
+          <h2 className="text-lg font-semibold text-blue-900">
+            {lang === 'bn' ? 'বিভাগ' : 'Category'}
+          </h2>
           <div className="flex items-center gap-2">
             {(selectedCategory || selectedSubCategory || selectedSubSubCategory) && (
               <button
@@ -388,7 +395,7 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
                 type="button"
                 title="Clear category filter"
               >
-                Clear
+                {lang === 'bn' ? 'মুছে ফেলুন' : 'Clear'}
               </button>
             )}
             <button
@@ -418,7 +425,9 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
       {/* Brand Filter */}
       <div className="rounded bg-blue-100 p-3">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-blue-900">Brand</h2>
+          <h2 className="text-lg font-semibold text-blue-900">
+            {lang === 'bn' ? 'ব্র্যান্ড' : 'Brand'}
+          </h2>
         </div>
         <input
           type="text"
@@ -449,7 +458,9 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
             <span className="truncate text-sm">All</span>
           </label>
           {visibleBrands.length === 0 && (
-            <div className="py-2 text-sm text-gray-400">No brands found</div>
+            <div className="py-2 text-sm text-gray-400">
+              {lang === 'bn' ? 'কোনো ব্র্যান্ড পাওয়া যায়নি' : 'No brands found'}
+            </div>
           )}
           {/* Brand filter UI */}
           {visibleBrands.map((brand: any) => (
@@ -483,26 +494,32 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
             onClick={() => setShowAllBrands((v) => !v)}
             type="button"
           >
-            {showAllBrands ? 'Show less' : `Show all (${filteredBrands.length})`}
+            {showAllBrands
+              ? lang === 'bn'
+                ? 'কম দেখান'
+                : 'Show less'
+              : lang === 'bn'
+                ? `সব দেখান (${filteredBrands.length})`
+                : `Show all (${filteredBrands.length})`}
           </button>
         )}
       </div>
       <FilterRadioGroup
-        title="Availability"
+        title={lang === 'bn' ? 'উপলব্ধতা' : 'Availability'}
         name="availability"
         options={availabilityOptions}
         selected={availability}
         onChange={handleAvailabilityChange}
       />
       <FilterRadioGroup
-        title="Warranty"
+        title={lang === 'bn' ? 'ওয়ারেন্টি' : 'Warranty'}
         name="warranty"
         options={warrantyOptions}
         selected={warranty}
         onChange={handleChangeWarranty}
       />
       <FilterRadioSearch
-        title="Region"
+        title={lang === 'bn' ? 'অঞ্চল' : 'Region'}
         name="region"
         options={regionOptions}
         selected={region}

@@ -6,9 +6,14 @@ import NavLink from '@/components/shared/NavLink';
 import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
 import { useGetProductCategoriesQuery } from '@/redux/services/client/categories';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+
 const shimmer = 'animate-pulse bg-secondaryLiteBlue rounded-md h-6 mb-2';
 
 export default function Test() {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const [hoveredMain, setHoveredMain] = useState<string | null>(null);
   const [hoveredSub, setHoveredSub] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -43,7 +48,7 @@ export default function Test() {
         href="/category"
         className="group flex cursor-pointer items-center gap-2 font-serif text-lg text-secondaryWhite transition-colors duration-300 hover:text-secondaryBlue"
       >
-        Category
+        {lang === 'bn' ? 'ক্যাটাগরি' : 'Category'}
         <FaAngleDown
           className={`transition-transform duration-300 ${
             isDropdownOpen ? 'rotate-180' : 'rotate-0'

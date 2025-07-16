@@ -98,10 +98,16 @@ export default function BillingSection() {
         <div className="mb-4 flex w-full flex-1 items-end justify-between">
           <div className="w-1/2">
             <p className="font-medium text-black">Customer Information</p>
-            <p><span className="mr-5 text-black">Name:</span>Mr. XYZ</p>
-            <p><span className="mr-4 text-black">Phone:</span>0123456789</p>
+            <p>
+              <span className="mr-5 text-black">Name:</span>Mr. XYZ
+            </p>
+            <p>
+              <span className="mr-4 text-black">Phone:</span>0123456789
+            </p>
           </div>
-          <Button danger onClick={handleClearCart}>Clear Cart</Button>
+          <Button danger onClick={handleClearCart}>
+            Clear Cart
+          </Button>
         </div>
 
         <div className="grid grid-cols-4 border-b py-2 font-semibold text-gray-700">
@@ -125,7 +131,12 @@ export default function BillingSection() {
             </div>
             <div className="font-medium text-gray-700">${(item.qty * item.price).toFixed(2)}</div>
             <div>
-              <Button danger shape="circle" icon={<DeleteOutlined />} onClick={() => handleDeleteProduct(item.id)} />
+              <Button
+                danger
+                shape="circle"
+                icon={<DeleteOutlined />}
+                onClick={() => handleDeleteProduct(item.id)}
+              />
             </div>
           </div>
         ))}
@@ -203,7 +214,7 @@ export default function BillingSection() {
         onCancel={() => setOpenHoldModal(false)}
         footer={null}
       >
-        <p>Hold orders list will be displayed here...</p>
+        <p>Hold orders list will be displayed here.</p>
       </Modal>
 
       {/* Add New Customer */}
@@ -213,29 +224,143 @@ export default function BillingSection() {
         onCancel={() => setOpenAddCustomerModal(false)}
         footer={null}
       >
-        <Form layout="vertical">
-          <Form.Item label="Customer Name" name="name">
-            <Input placeholder="Enter customer name" />
+        <Form
+          layout="vertical"
+          onFinish={(values) => {
+            console.log('Customer Info:', values);
+            message.success('Customer added!');
+            setOpenAddCustomerModal(false);
+          }}
+        >
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Form.Item
+              label="First Name"
+              name="firstName"
+              rules={[{ required: true, message: 'First name is required' }]}
+            >
+              <Input placeholder="Enter first name" />
+            </Form.Item>
+
+            <Form.Item
+              label="Last Name"
+              name="lastName"
+              rules={[{ required: true, message: 'Last name is required' }]}
+            >
+              <Input placeholder="Enter last name" />
+            </Form.Item>
+          </div>
+
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: 'Email is required' },
+              { type: 'email', message: 'Enter a valid email' },
+            ]}
+          >
+            <Input placeholder="Enter email address" />
           </Form.Item>
-          <Form.Item label="Phone Number" name="phone">
+
+          <Form.Item
+            label="Phone Number"
+            name="phone"
+            rules={[{ required: true, message: 'Phone number is required' }]}
+          >
             <Input placeholder="Enter phone number" />
           </Form.Item>
+
+          <Form.Item label="Zip Code" name="zip">
+            <Input placeholder="Enter zip code" />
+          </Form.Item>
+
+          <Form.Item label="Address" name="address">
+            ›
+            <Input.TextArea placeholder="Enter address" rows={3} />
+          </Form.Item>
+
           <Form.Item>
-            <Button type="primary" block onClick={() => message.success('Customer added!')}>
+            <Button type="primary" htmlType="submit" block>
               Save Customer
             </Button>
           </Form.Item>
         </Form>
       </Modal>
 
-       {/* Extra Discount */}
+      {/* Extra Discount */}
       <Modal
-        title="Update discount"
+        title="Update Discount"
         open={openExtraDiscount}
         onCancel={() => setOpenExtraDiscount(false)}
         footer={null}
       >
-        <p>Extra Discount</p>
+        <Form
+          layout="vertical"
+          onFinish={(values) => {
+            console.log('Discount Type:', values.type);
+            console.log('Discount Value:', values.value);
+            message.success(
+              `Discount of ${values.value}${values.type === 'percentage' ? '%' : '৳'} applied!`
+            );
+            setOpenExtraDiscount(false);
+          }}
+        >
+          <Form.Item
+            label="Discount Type"
+            name="type"
+            initialValue="amount"
+            rules={[{ required: true, message: 'Please select a discount type' }]}
+          >
+            <Select>
+              <Select.Option value="amount">Amount</Select.Option>
+              <Select.Option value="percentage">Percentage</Select.Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            label="Discount Value"
+            name="value"
+            rules={[{ required: true, message: 'Please enter a discount value' }]}
+          >
+            <Input placeholder="Enter discount value" type="number" />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
+              Apply Discount
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Coupon Discount */}
+      <Modal
+        title="Coupon Discount"
+        open={openCouponDiscount}
+        onCancel={() => setOpenCouponDiscount(false)}
+        footer={null}
+      >
+        <Form
+          layout="vertical"
+          onFinish={(values) => {
+            console.log('Applied Coupon:', values.coupon);
+            message.success(`Coupon "${values.coupon}" applied!`);
+            setOpenCouponDiscount(false);
+          }}
+        >
+          <Form.Item
+            label="Enter Coupon Code"
+            name="coupon"
+            rules={[{ required: true, message: 'Please enter a coupon code' }]}
+          >
+            <Input placeholder="e.g. SAVE10" />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
+              Apply Coupon
+            </Button>
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   );

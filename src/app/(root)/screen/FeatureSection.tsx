@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import React from 'react';
 import {
@@ -11,53 +13,64 @@ import {
   FaUserShield,
 } from 'react-icons/fa';
 
-const topFeatures = [
-  {
-    icon: <FaTruck className="text-3xl text-primaryBlue" />,
-    title: 'Fast Delivery all across the country',
-  },
-  {
-    icon: <FaShieldAlt className="text-3xl text-primaryBlue" />,
-    title: 'Safe Payment',
-  },
-  {
-    icon: <FaUndo className="text-3xl text-primaryBlue" />,
-    title: '7 Days Return Policy',
-  },
-  {
-    icon: <FaCertificate className="text-3xl text-primaryBlue" />,
-    title: '100% Authentic Products',
-  },
-];
-
-const bottomLinks = [
-  {
-    icon: <FaBuilding className="mb-2 text-3xl text-primaryBlue" />,
-    title: 'About us',
-    description: 'Know about our company more.',
-    href: '/about-us',
-  },
-  {
-    icon: <FaComments className="mb-2 text-3xl text-primaryBlue" />,
-    title: 'Contact Us',
-    description: 'We are Here to Help',
-    href: '/contact-us',
-  },
-  {
-    icon: <FaQuestionCircle className="mb-2 text-3xl text-primaryBlue" />,
-    title: 'FAQ',
-    description: 'Get all Answers',
-    href: '/faq',
-  },
-  {
-    icon: <FaUserShield className="mb-2 text-3xl text-primaryBlue" />,
-    title: 'Privacy Policy',
-    description: 'Understand how we protect your data.',
-    href: '/privacy-policy',
-  },
-];
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 const FeatureSection = () => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
+  const topFeatures = [
+    {
+      icon: <FaTruck className="text-3xl text-primaryBlue" />,
+      title:
+        lang === 'bn'
+          ? 'সারা দেশে দ্রুত ডেলিভারি'
+          : 'Fast Delivery all across the country',
+    },
+    {
+      icon: <FaShieldAlt className="text-3xl text-primaryBlue" />,
+      title: lang === 'bn' ? 'নিরাপদ পেমেন্ট' : 'Safe Payment',
+    },
+    {
+      icon: <FaUndo className="text-3xl text-primaryBlue" />,
+      title: lang === 'bn' ? '৭ দিনের রিটার্ন নীতি' : '7 Days Return Policy',
+    },
+    {
+      icon: <FaCertificate className="text-3xl text-primaryBlue" />,
+      title: lang === 'bn' ? '১০০% আসল পণ্য' : '100% Authentic Products',
+    },
+  ];
+
+  const bottomLinks = [
+    {
+      icon: <FaBuilding className="mb-2 text-3xl text-primaryBlue" />,
+      title: lang === 'bn' ? 'আমাদের সম্পর্কে' : 'About us',
+      description: lang === 'bn' ? 'আমাদের সম্পর্কে জানুন।' : 'Know about our company more.',
+      href: '/about-us',
+    },
+    {
+      icon: <FaComments className="mb-2 text-3xl text-primaryBlue" />,
+      title: lang === 'bn' ? 'যোগাযোগ করুন' : 'Contact Us',
+      description: lang === 'bn' ? 'আমরা সাহায্য করতে প্রস্তুত।' : 'We are Here to Help',
+      href: '/contact-us',
+    },
+    {
+      icon: <FaQuestionCircle className="mb-2 text-3xl text-primaryBlue" />,
+      title: lang === 'bn' ? 'প্রশ্নোত্তর' : 'FAQ',
+      description: lang === 'bn' ? 'সব প্রশ্নের উত্তর এখানে।' : 'Get all Answers',
+      href: '/faq',
+    },
+    {
+      icon: <FaUserShield className="mb-2 text-3xl text-primaryBlue" />,
+      title: lang === 'bn' ? 'গোপনীয়তা নীতি' : 'Privacy Policy',
+      description:
+        lang === 'bn'
+          ? 'আপনার তথ্য কিভাবে নিরাপদে রাখা হয় জানুন।'
+          : 'Understand how we protect your data.',
+      href: '/privacy-policy',
+    },
+  ];
+
   return (
     <section className="mt-8 w-full md:mt-10">
       {/* Top Features */}

@@ -4,6 +4,9 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+
 type FAQ = {
   question: string;
   answer: string;
@@ -15,7 +18,10 @@ type Props = {
 };
 
 export default function ContentFaqCard({ content, faqs }: Props) {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [showMore, setShowMore] = useState(false)
 
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -24,15 +30,31 @@ export default function ContentFaqCard({ content, faqs }: Props) {
   return (
     <div className="w-full space-y-8 rounded-2xl bg-white p-6 shadow">
       {/* Content */}
-      <div
-        className="rendered-html text-justify text-base font-light leading-relaxed tracking-wide text-gray-700 md:text-xl"
-        dangerouslySetInnerHTML={{ __html: content }}
-      ></div>
+
+      <div>
+        <div
+          className={`text-justify rendered-html text-base font-light leading-relaxed tracking-wide text-gray-700 md:text-xl transition-all duration-300 overflow-hidden ${
+            showMore ? 'line-clamp-none' : 'line-clamp-[10]'
+          }`}
+          dangerouslySetInnerHTML={{ __html: content }}
+        ></div>
+
+        <div className='flex w-full justify-end'>
+          <button
+          onClick={() => setShowMore((prev) => !prev)}
+          className="mt-3 text-sm font-medium text-blue-600 hover:underline"
+        >
+          {showMore
+            ? lang === 'bn' ? 'কম দেখান' : 'See Less'
+            : lang === 'bn' ? 'আরও দেখুন' : 'See More'}
+        </button>
+        </div>
+      </div>
 
       {/* FAQ Section */}
       <div>
         <h2 className="mb-6 border-b pb-4 text-xl font-bold text-primaryBlue md:text-3xl">
-          Frequently Asked Questions
+          {lang === 'bn' ? 'প্রায়ই জিজ্ঞাসিত প্রশ্নাবলী' : 'Frequently Asked Questions'}
         </h2>
 
         <div className="space-y-5">

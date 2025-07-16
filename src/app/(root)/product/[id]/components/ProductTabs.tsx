@@ -1,14 +1,17 @@
-"use client";
-import { useRef, RefObject, useState } from "react";
-import { motion } from "framer-motion";
+'use client';
+import { useRef, RefObject, useState } from 'react';
+import { motion } from 'framer-motion';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 const tabs = [
-  { id: "specification", label: "Specification" },
-  { id: "description", label: "Description" },
-  { id: "warranty", label: "Warranty" },
+  { id: 'specification', label: 'Specification' },
+  { id: 'description', label: 'Description' },
+  { id: 'warranty', label: 'Warranty' },
 ] as const;
 
-type TabId = (typeof tabs)[number]["id"];
+type TabId = (typeof tabs)[number]['id'];
 
 // Allow refs to possibly be null (which is always the case with useRef)
 type SectionRefs = Record<TabId, RefObject<HTMLDivElement | null>>;
@@ -22,15 +25,31 @@ export const ProductTabs = ({
     warranty_details: string;
   };
 }) => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const sectionRefs: SectionRefs = {
     specification: useRef(null),
     description: useRef(null),
     warranty: useRef(null),
   };
-  const [activeTab, setActiveTab] = useState<TabId>("specification");
+  const [activeTab, setActiveTab] = useState<TabId>('specification');
 
   const scrollToSection = (id: TabId) => {
-    sectionRefs[id]?.current?.scrollIntoView({ behavior: "smooth" });
+    sectionRefs[id]?.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const getLabel = (id: TabId) => {
+    if (lang === 'bn') {
+      switch (id) {
+        case 'specification':
+          return 'স্পেসিফিকেশন';
+        case 'description':
+          return 'বিবরণ';
+        case 'warranty':
+          return 'ওয়ারেন্টি';
+      }
+    }
+    return tabs.find((tab) => tab.id === id)?.label || '';
   };
 
   return (
@@ -46,11 +65,11 @@ export const ProductTabs = ({
             }}
             className={`w-full rounded-md py-2 text-center transition-colors duration-200 ${
               activeTab === tab.id
-                ? "bg-primaryBlue text-white hover:bg-primaryDarkBlue"
-                : "text-primaryDarkBlue hover:bg-primaryBlue hover:text-white"
+                ? 'bg-primaryBlue text-white hover:bg-primaryDarkBlue'
+                : 'text-primaryDarkBlue hover:bg-primaryBlue hover:text-white'
             }`}
           >
-            {tab.label}
+            {getLabel(tab.id)}
           </button>
         ))}
       </div>
@@ -66,8 +85,9 @@ export const ProductTabs = ({
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
         >
-          <h3 className="mb-2 font-semibold">Specification</h3>
+          <h3 className="mb-2 font-semibold">{lang === 'bn' ? 'স্পেসিফিকেশন' : 'Specification'}</h3>
           <div className="rendered-html" dangerouslySetInnerHTML={{ __html: data?.specification }} />
+
         </motion.div>
 
         <motion.div
@@ -79,8 +99,9 @@ export const ProductTabs = ({
           transition={{ duration: 0.5, delay: 0.1 }}
           viewport={{ once: true }}
         >
-          <h3 className="mb-2 font-semibold">Description</h3>
+          <h3 className="mb-2 font-semibold">{lang === 'bn' ? 'বিবরণ' : 'Description'}</h3>
           <div className="rendered-html" dangerouslySetInnerHTML={{ __html: data?.description }} />
+
         </motion.div>
 
         <motion.div
@@ -92,7 +113,7 @@ export const ProductTabs = ({
           transition={{ duration: 0.5, delay: 0.2 }}
           viewport={{ once: true }}
         >
-          <h3 className="mb-2 font-semibold">Warranty</h3>
+          <h3 className="mb-2 font-semibold">{lang === 'bn' ? 'ওয়ারেন্টি' : 'Warranty'}</h3>
           <div className="rendered-html" dangerouslySetInnerHTML={{ __html: data?.warranty_details }} />
         </motion.div>
       </div>
