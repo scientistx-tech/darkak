@@ -1,15 +1,12 @@
-import React from 'react'
-import ContactPage from './ContactPage'
+import React from 'react';
+import ContactPage from './ContactPage';
 import { Metadata } from 'next';
-// export const metadata: Metadata = {
-//   title: "Contact Us"
-// };
 
+import ContentFaqCard from '@/components/shared/ContentFaqCard';
 import getSeoData from '../getSeoData';
-// Fetch metadata for SEO
+
 export async function generateMetadata() {
   const data = await getSeoData('contact');
-  //console.log(data);
 
   return {
     title: data?.data?.meta_title || '',
@@ -29,12 +26,17 @@ export async function generateMetadata() {
     },
   };
 }
-export default function page() {
+export default async function page() {
+  const data = await getSeoData('contact');
   return (
-    <div className='w-full'>
-      <div className="h-[65px] md:h-[109px] w-full"/>
-      
-        <ContactPage />
+    <div className="w-full">
+      <div className="h-[65px] w-full md:h-[109px]" />
+
+      <ContactPage />
+
+      <div className="ml-[2.5%] mt-8 w-[95%] md:mt-16">
+        <ContentFaqCard content={data?.data?.content} faqs={data?.data?.faq?.faq || []} />
+      </div>
     </div>
-  )
+  );
 }

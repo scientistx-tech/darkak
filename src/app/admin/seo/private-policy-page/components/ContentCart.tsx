@@ -11,7 +11,7 @@ import EditorHTML from '@/components/EditorHTML';
 export default function ContentCart() {
   const [mainContent, setMainContent] = useState('');
   const specificationEditor = useRef<any>(null);
-  const { data, isLoading, refetch } = useGetSeoPageDataQuery('contact');
+  const { data, isLoading, refetch } = useGetSeoPageDataQuery('privacy_policy');
   const [loading, setLoading] = useState(false);
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setMainContent(e.target.value);
@@ -23,7 +23,7 @@ export default function ContentCart() {
     setLoading(true);
     try {
       const payload = {
-        type: 'contact',
+        type: 'privacy_policy',
         meta_title: data.data.meta_title,
         meta_description: data.data.meta_description,
         meta_keywords: data.data.meta_keywords,
