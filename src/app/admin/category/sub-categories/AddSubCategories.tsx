@@ -14,7 +14,7 @@ import { toast } from 'react-toastify';
 import Image from 'next/image';
 import { isNull } from 'util';
 import { useUploadImagesMutation } from '@/redux/services/admin/adminProductApis';
-import JoditEditor from 'jodit-react';
+import EditorHTML from '@/components/EditorHTML';
 
 export type FaqType = {
   faq: {
@@ -338,20 +338,9 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
           onChange={(e) => setMetaDescription(e.target.value)}
         />
       </div>
-      <JoditEditor
-        ref={specificationEditor}
-        config={{
-          askBeforePasteHTML: false,
-          defaultActionOnPaste: 'insert_only_text',
-          uploader: {
-            insertImageAsBase64URI: true,
-          },
-          placeholder: 'Start writing specification',
-          height: '250px',
-          toolbar: true,
-        }}
+      <EditorHTML
         value={content}
-        onBlur={(newContent) => {
+        onChange={(newContent) => {
           setContent(newContent);
         }}
       />

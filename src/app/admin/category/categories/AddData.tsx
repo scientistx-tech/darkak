@@ -9,9 +9,9 @@ import { toast } from 'react-toastify';
 import SelectField from '@/app/(root)/user/profile/components/SelectField';
 import Image from 'next/image';
 import Textarea from '../../components/Textarea';
-import JoditEditor from 'jodit-react';
 import { useUploadImagesMutation } from '@/redux/services/admin/adminProductApis';
 import { values } from '@remirror/core';
+import EditorHTML from '@/components/EditorHTML';
 
 export type FaqType = {
   question: string;
@@ -78,7 +78,7 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
       setTitle(value?.title);
       setSelectedCategoryPriority(value.serial);
       setPreviewImage(value?.icon);
-      setFaqList(value?.faq||[]);
+      setFaqList(value?.faq || []);
       setMetaImagePreview(value?.meta_image);
       setMetaAlt(value?.meta_alt);
       setMetaDescription(value?.meta_description);
@@ -94,7 +94,6 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
     }
     return 'text-green-600';
   };
-
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -400,20 +399,9 @@ function AddData({ refetch, value, setIsEditable }: AddDataProps) {
           </div>
         </div>
         <div className="col-span-2">
-          <JoditEditor
-            ref={specificationEditor}
-            config={{
-              askBeforePasteHTML: false,
-              defaultActionOnPaste: 'insert_only_text',
-              uploader: {
-                insertImageAsBase64URI: true,
-              },
-              placeholder: 'Start writing specification',
-              height: '250px',
-              toolbar: true,
-            }}
+          <EditorHTML
             value={content}
-            onBlur={(newContent) => {
+            onChange={(newContent) => {
               setContent(newContent);
             }}
           />
