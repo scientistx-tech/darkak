@@ -4,6 +4,9 @@ import React, { useState } from 'react';
 import { Table, Input, Button, Popconfirm, Pagination, Space, Modal, Select, Tag } from 'antd';
 
 import { SearchOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
+import baseApi from '@/redux/baseApi';
+import { toast } from 'react-toastify';
+import Loader from '@/components/shared/Loader';
 
 const { Option } = Select;
 
@@ -13,32 +16,65 @@ interface ContactMessage {
   email: string;
   phone: string;
   message: string;
-  time: string;
-  status: 'Unseen' | 'Processing' | 'Replied';
+  date: string;
+  status: 'pending' | 'replied' | 'processing';
 }
 
-const generateDummyData = (): ContactMessage[] => {
-  return Array.from({ length: 50 }, (_, i) => ({
-    id: i + 1,
-    name: `Customer ${i + 1}`,
-    email: `customer${i + 1}@example.com`,
-    phone: `0171${Math.floor(1000000 + Math.random() * 9000000)}`,
-    message: `This is a message from customer ${i + 1} about a serious issue regarding the product delivery and more...jhjkhkjhkhkhkhkhkhkhkjhkjehtgkjdfhgklj'dfhgkjdfhg;kdfjhgkjdfshgkhgdfhg;kljdfg dfkg kdfjgbuiodfhgjdf gdf gujdfgiufdhgiufdhg;ifuh`,
-    time: new Date().toISOString(),
-    status: 'Unseen',
-  }));
-};
+export const adminContactUs = baseApi.injectEndpoints({
+  endpoints: (builder) => ({
+    getContactUsList: builder.query<{ data: ContactMessage[]; totalPage: number }, any>({
+      query: (params) => {
+        const query = new URLSearchParams(params);
+        return `/admin/contact/get?${query}`;
+      },
+    }),
+    updateContactStatus: builder.mutation<
+      any,
+      { id: number; body: { status: 'pending' | 'replied' | 'processing' } }
+    >({
+      query: (query) => ({
+        url: `/admin/contact/status/${query.id}`,
+        method: 'PUT',
+        body: query.body,
+      }),
+    }),
+    deleteContact: builder.mutation<any, number>({
+      query: (id) => ({
+        url: `/admin/contact/delete/${id}`,
+        method: 'DELETE',
+      }),
+    }),
+  }),
+});
+
+export const {
+  useGetContactUsListQuery,
+  useUpdateContactStatusMutation,
+  useDeleteContactMutation,
+} = adminContactUs;
 
 export default function AdminContactPage() {
-  const [data, setData] = useState<ContactMessage[]>(generateDummyData());
+  const pageSize = 10;
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const { data, refetch, isLoading } = useGetContactUsListQuery({
+    page: currentPage,
+    limit: pageSize,
+    search: search,
+  });
+  const [deleteApi] = useDeleteContactMutation();
+  const [updateApi] = useUpdateContactStatusMutation();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
-  const pageSize = 10;
 
-  const handleDelete = (id: number) => {
-    setData(data.filter((item) => item.id !== id));
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteApi(id).unwrap();
+      toast.success('Successful');
+      refetch();
+    } catch (error: any) {
+      toast.error(error?.data?.message);
+    }
   };
 
   const handleView = (record: ContactMessage) => {
@@ -46,24 +82,17 @@ export default function AdminContactPage() {
     setIsModalVisible(true);
   };
 
-  const handleStatusChange = (value: ContactMessage['status']) => {
-    if (selectedMessage) {
-      const updated = data.map((msg) =>
-        msg.id === selectedMessage.id ? { ...msg, status: value } : msg
-      );
-      setData(updated);
-      setSelectedMessage({ ...selectedMessage, status: value });
+  const handleStatusChange = async (value: ContactMessage['status'], id: number) => {
+    setSelectedMessage((prev) => (prev ? { ...prev, status: value } : null));
+
+    try {
+      await updateApi({ id: id, body: { status: value } }).unwrap();
+      toast.success('Successful');
+      refetch();
+    } catch (error: any) {
+      toast.error(error?.data?.message);
     }
   };
-
-  const filteredData = data.filter(
-    (item) =>
-      item.name.toLowerCase().includes(search.toLowerCase()) ||
-      item.email.toLowerCase().includes(search.toLowerCase()) ||
-      item.phone.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const currentData = filteredData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const columns = [
     {
@@ -98,16 +127,16 @@ export default function AdminContactPage() {
     },
     {
       title: 'Time & Date',
-      dataIndex: 'time',
-      key: 'time',
-      render: (time: string) => new Date(time).toLocaleString(),
+      dataIndex: 'date',
+      key: 'date',
+      render: (date: string) => new Date(date).toLocaleString(),
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
       render: (status: ContactMessage['status']) => (
-        <Tag color={status === 'Replied' ? 'green' : status === 'Processing' ? 'blue' : 'default'}>
+        <Tag color={status === 'replied' ? 'green' : status === 'processing' ? 'blue' : 'default'}>
           {status}
         </Tag>
       ),
@@ -136,6 +165,8 @@ export default function AdminContactPage() {
     },
   ];
 
+  if (isLoading) return <Loader />;
+
   return (
     <div className="p-4">
       <h2 className="mb-4 text-xl font-semibold">Contact Us Messages</h2>
@@ -153,13 +184,13 @@ export default function AdminContactPage() {
       </Space>
 
       {/* Table */}
-      <Table dataSource={currentData} columns={columns} rowKey="id" pagination={false} bordered />
+      <Table dataSource={data?.data} columns={columns} rowKey="id" pagination={false} bordered />
 
       {/* Pagination */}
       <div className="mt-4 flex justify-end">
         <Pagination
           current={currentPage}
-          total={filteredData.length}
+          total={data?.totalPage || 1}
           pageSize={pageSize}
           onChange={setCurrentPage}
           showSizeChanger={false}
@@ -192,16 +223,14 @@ export default function AdminContactPage() {
               <div>
                 <p className="text-gray-500">Time</p>
                 <p className="font-medium text-gray-800">
-                  {new Date(selectedMessage.time).toLocaleString()}
+                  {new Date(selectedMessage.date).toLocaleString()}
                 </p>
               </div>
             </div>
 
             <div className="border-t pt-4">
               <p className="mb-1 text-gray-500">Message</p>
-              <p className=" rounded-md bg-gray-100 p-3 text-gray-800">
-                {selectedMessage.message}
-              </p>
+              <p className="rounded-md bg-gray-100 p-3 text-gray-800">{selectedMessage.message}</p>
             </div>
 
             <div className="border-t pt-4">
@@ -209,12 +238,12 @@ export default function AdminContactPage() {
               <Select
                 value={selectedMessage.status}
                 style={{ width: '100%' }}
-                onChange={handleStatusChange}
+                onChange={(e) => handleStatusChange(e, selectedMessage?.id || 0)}
                 className="w-full"
               >
-                <Option value="Unseen">🟡 Unseen</Option>
-                <Option value="Processing">🔵 Processing</Option>
-                <Option value="Replied">🟢 Replied</Option>
+                <Option value="pending">🟡 Unseen</Option>
+                <Option value="processing">🔵 Processing</Option>
+                <Option value="replied">🟢 Replied</Option>
               </Select>
             </div>
           </div>

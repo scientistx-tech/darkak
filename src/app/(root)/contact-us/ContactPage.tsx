@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { notification } from 'antd';
+import axios from 'axios';
 
 import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from 'react-icons/fa';
 import SendButton from '@/components/Button/SendButton';
@@ -16,6 +17,7 @@ const ContactPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const [api, contextHolder] = notification.useNotification();
   const openNotification = (
@@ -33,7 +35,8 @@ const ContactPage: React.FC = () => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
+    if (isLoading) return;
     if (!name || !email || !phone || !message) {
       openNotification('warning', 'Incomplete Form', 'Please fill out all required fields.');
       return;
@@ -44,14 +47,30 @@ const ContactPage: React.FC = () => {
       return;
     }
 
-    openNotification('success', 'Signup Successful', 'You have successfully signed up!');
+    try {
+      setIsLoading(true);
+      const res = await axios.post('https://api.darkak.com.bd/api/public/contact', {
+        name,
+        email,
+        phone,
+        message,
+      });
 
-    // console.log({ name, email, phone, message });
-
-    setName('');
-    setEmail('');
-    setPhone('');
-    setMessage('');
+      if (res.data?.success !== false) {
+        openNotification('success', 'Message Sent', 'Your message has been sent successfully!');
+        setName('');
+        setEmail('');
+        setPhone('');
+        setMessage('');
+      } else {
+        openNotification('error', 'Failed', res.data?.message || 'Something went wrong.');
+      }
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Failed to send message.';
+      openNotification('error', 'Error', message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -70,7 +89,6 @@ const ContactPage: React.FC = () => {
             <div className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-primaryBlue md:h-[40px] md:w-[40px]">
               <FaEnvelope className="text-white md:text-xl" />
             </div>
-
             <p className="text-secondary md:text-xl">info@darkak.com.bd</p>
           </div>
 
@@ -78,7 +96,6 @@ const ContactPage: React.FC = () => {
             <div className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-primaryBlue md:h-[40px] md:w-[40px]">
               <FaPhoneAlt className="text-white md:text-xl" />
             </div>
-
             <p className="text-secondary md:text-xl">01711726501</p>
           </div>
 
@@ -86,7 +103,6 @@ const ContactPage: React.FC = () => {
             <div className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-primaryBlue md:h-[40px] md:w-[40px]">
               <FaMapMarkerAlt className="text-white md:text-xl" />
             </div>
-
             <p className="text-secondary md:text-xl">Upashahar , Bogura -5800</p>
           </div>
         </div>
@@ -172,15 +188,11 @@ const ContactPage: React.FC = () => {
           </div>
 
           {/* Submit Button */}
-          {/* <button
-            onClick={handleSignup}
-            className="mt-5 w-[50%] rounded-3xl border border-primaryBlue bg-primaryBlue py-2 text-xl font-medium text-white transition-all duration-300 hover:bg-transparent hover:text-primaryBlue md:w-[40%]"
-          >
-            Send
-          </button> */}
-
           <div className="mt-5">
-            <SendButton link={handleSignup} text={lang === 'bn' ? 'পাঠান' : 'Send'} />
+            <SendButton
+              link={handleSignup}
+              text={isLoading ? 'Loading...' : lang === 'bn' ? 'পাঠান' : 'Send'}
+            />
           </div>
         </div>
       </div>

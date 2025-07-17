@@ -1,39 +1,23 @@
-import baseApi from "@/redux/baseApi";
+import baseApi from '@/redux/baseApi';
 
 export const adminVendorApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getVendorsReview: builder.query({
-      query: ({
-        id,
-        params,
-      }: {
-        id: number;
-        params?: Record<string, string>;
-      }) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
+      query: ({ id, params }: { id: number; params?: Record<string, string> }) => {
+        const queryString = params ? `?${new URLSearchParams(params).toString()}` : '';
         return {
           url: `/admin/vendor/reviews/${id}/${queryString}`,
-          method: "GET",
+          method: 'GET',
         };
       },
     }),
 
     getVendorsTransaction: builder.query({
-      query: ({
-        id,
-        params,
-      }: {
-        id: number;
-        params?: Record<string, string>;
-      }) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
+      query: ({ id, params }: { id: number; params?: Record<string, string> }) => {
+        const queryString = params ? `?${new URLSearchParams(params).toString()}` : '';
         return {
           url: `/admin/vendor/transactions/${id}${queryString}`,
-          method: "GET",
+          method: 'GET',
         };
       },
     }),
@@ -41,47 +25,54 @@ export const adminVendorApi = baseApi.injectEndpoints({
     getVendorsProduct: builder.query({
       query: ({ id }) => ({
         url: `/admin/vendor/products/${id}`,
-        method: "GET",
+        method: 'GET',
       }),
     }),
 
     getVendorsOrder: builder.query({
       query: ({ id }) => ({
         url: `/admin/vendor/orders/${id}`,
-        method: "GET",
+        method: 'GET',
       }),
     }),
 
     getVendorDetailsByIdAdmin: builder.query({
       query: ({ id }) => ({
         url: `/admin/vendor/details/${id}`,
-        method: "GET",
+        method: 'GET',
       }),
     }),
 
     changeVendorStatus: builder.mutation<any, any>({
       query: (id) => ({
         url: `/admin/vendor/status-update-vendor/${id}`,
-        method: "GET",
+        method: 'GET',
       }),
     }),
 
     getAllVendors: builder.query({
       query: (params?: Record<string, string>) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
+        const queryString = params ? `?${new URLSearchParams(params).toString()}` : '';
         return {
           url: `/admin/vendor/get${queryString}`,
-          method: "GET",
+          method: 'GET',
+        };
+      },
+    }),
+    getAllVendorsPublic: builder.query({
+      query: (params?: Record<string, string>) => {
+        const queryString = params ? `?${new URLSearchParams(params).toString()}` : '';
+        return {
+          url: `/public/seller-all${queryString}`,
+          method: 'GET',
         };
       },
     }),
 
     createVendor: builder.mutation<any, any>({
       query: (data) => ({
-        url: "/admin/vendor/create",
-        method: "POST",
+        url: '/admin/vendor/create',
+        method: 'POST',
         body: data,
       }),
     }),
@@ -89,53 +80,44 @@ export const adminVendorApi = baseApi.injectEndpoints({
     getVendorComissionSetting: builder.query({
       query: ({ id }) => ({
         url: `/admin/vendor/commission/${id}`,
-        method: "GET",
+        method: 'GET',
       }),
     }),
 
-    updateVendorComissionSetting: builder.mutation<
-      any,
-      { data: { charge: number }; id: number }
-    >({
+    updateVendorComissionSetting: builder.mutation<any, { data: { charge: number }; id: number }>({
       query: ({ data, id }) => ({
         url: `/admin/vendor/commission/${id}`,
-        method: "POST",
+        method: 'POST',
         body: data,
       }),
     }),
 
     getVendorsRequestedProducts: builder.query({
       query: (params?: Record<string, string>) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
+        const queryString = params ? `?${new URLSearchParams(params).toString()}` : '';
         return {
           url: `/admin/vendor/get-product-request/pending${queryString}`,
-          method: "GET",
+          method: 'GET',
         };
       },
     }),
 
     getVendorsApprovedProducts: builder.query({
       query: (params?: Record<string, string>) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
+        const queryString = params ? `?${new URLSearchParams(params).toString()}` : '';
         return {
           url: `/admin/vendor/get-product-request/approved${queryString}`,
-          method: "GET",
+          method: 'GET',
         };
       },
     }),
 
     getVendorsRejectedProducts: builder.query({
       query: (params?: Record<string, string>) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
+        const queryString = params ? `?${new URLSearchParams(params).toString()}` : '';
         return {
           url: `/admin/vendor/get-product-request/rejected${queryString}`,
-          method: "GET",
+          method: 'GET',
         };
       },
     }),
@@ -143,26 +125,24 @@ export const adminVendorApi = baseApi.injectEndpoints({
     changeVendorsProductRequestStatus: builder.mutation<any, any>({
       query: ({ id, data }) => ({
         url: `/admin/vendor/reuest/update/${id}`,
-        method: "POST",
+        method: 'POST',
         body: data,
       }),
     }),
 
     getVendorsProductRequestCounts: builder.query<any, any>({
       query: () => ({
-        url: "/admin/vendor/get-product-request-count",
-        method: "GET",
+        url: '/admin/vendor/get-product-request-count',
+        method: 'GET',
       }),
     }),
 
     getVendorsRestockRequestedProducts: builder.query({
       query: (params?: Record<string, string>) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
+        const queryString = params ? `?${new URLSearchParams(params).toString()}` : '';
         return {
           url: `/admin/vendor/get-product-request/re-request${queryString}`,
-          method: "GET",
+          method: 'GET',
         };
       },
     }),
@@ -186,4 +166,5 @@ export const {
   useChangeVendorsProductRequestStatusMutation,
   useGetVendorsProductRequestCountsQuery,
   useGetVendorsRestockRequestedProductsQuery,
+  useGetAllVendorsPublicQuery,
 } = adminVendorApi;
