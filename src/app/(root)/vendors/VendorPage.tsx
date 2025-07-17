@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import VendorCard from "@/components/shared/VendorCard";
-import { useGetAllVendorsQuery } from "@/redux/services/admin/adminVendorApis";
-import React, { useState } from "react";
-import { FaSearch } from "react-icons/fa";
+import VendorCard from '@/components/shared/VendorCard';
+import { useGetAllVendorsQuery } from '@/redux/services/admin/adminVendorApis';
+import React, { useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
 
 export default function VendorPage() {
-  const [search, setSearch] = useState<string>("");
+  const [search, setSearch] = useState<string>('');
   const {
     data: vendorsData,
     isLoading,
@@ -20,9 +20,7 @@ export default function VendorPage() {
         {/* Text Section */}
         <div className="w-full text-white md:w-1/2">
           <h1 className="text-2xl font-bold">ALL STORES</h1>
-          <p className="mt-1">
-            Find your desired stores and shop your favourite products
-          </p>
+          <p className="mt-1">Find your desired stores and shop your favourite products</p>
         </div>
 
         {/* Search Box */}
@@ -48,7 +46,7 @@ export default function VendorPage() {
         {vendorsData?.vendors?.map((vendor: any, i: number) => (
           <VendorCard
             key={i}
-            shopLink={`/vendors/shop-view/${vendor?.id}`}
+            shopLink={`/vendors/shop-view/${vendor?.store_name?.split(' ').join('-')}`}
             shopBanner={vendor?.shop_banner}
             shopLogo={vendor?.shop_logo}
             shopName={vendor?.store_name}
