@@ -1,12 +1,12 @@
 'use client';
 import { useGetSeoPageDataQuery } from '@/redux/services/admin/adminFAQApi';
 import axios from 'axios';
-import JoditEditor from 'jodit-react';
 import React, { useState, ChangeEvent, useRef, useEffect } from 'react';
 import { toast } from 'react-toastify';
 const BASE_URL = 'https://api.darkak.com.bd/api';
 import Cookies from 'js-cookie';
 import Loader from '@/components/shared/Loader';
+import EditorHTML from '@/components/EditorHTML';
 
 export default function ContentCart() {
   const [mainContent, setMainContent] = useState('');
@@ -53,20 +53,9 @@ export default function ContentCart() {
     <div className="mt-6">
       <div className="w-full">
         <label className="block font-medium text-gray-700">Main Content:</label>
-        <JoditEditor
-          ref={specificationEditor}
-          config={{
-            askBeforePasteHTML: false,
-            defaultActionOnPaste: 'insert_only_text',
-            uploader: {
-              insertImageAsBase64URI: true,
-            },
-            placeholder: 'Start writing specification',
-            height: '450px',
-            toolbar: true,
-          }}
+        <EditorHTML
           value={mainContent}
-          onBlur={(newContent) => {
+          onChange={(newContent) => {
             setMainContent(newContent);
           }}
         />

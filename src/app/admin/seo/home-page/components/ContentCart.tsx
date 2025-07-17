@@ -1,8 +1,8 @@
+import EditorHTML from '@/components/EditorHTML';
 import {
   useGetPageContentQuery,
   useUpdatePageContentMutation,
 } from '@/redux/services/admin/adminContentApi';
-import JoditEditor from 'jodit-react';
 import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
@@ -74,20 +74,9 @@ const ContentCart: React.FC = () => {
             <label className="text-sm font-medium text-gray-700">
               Main Content <span className="text-red-500">*</span>
             </label>
-            <JoditEditor
-              ref={specificationEditor}
-              config={{
-                askBeforePasteHTML: false,
-                defaultActionOnPaste: 'insert_only_text',
-                uploader: {
-                  insertImageAsBase64URI: true,
-                },
-                placeholder: 'Start writing specification',
-                height: '450px',
-                toolbar: true,
-              }}
+            <EditorHTML
               value={formData.content}
-              onBlur={(newContent) => {
+              onChange={(newContent) => {
                 setFormData((d) => ({ ...d, content: newContent }));
               }}
             />

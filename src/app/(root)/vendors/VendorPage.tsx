@@ -1,18 +1,22 @@
-"use client";
+'use client';
 
-import VendorCard from "@/components/shared/VendorCard";
-import { useGetAllVendorsQuery } from "@/redux/services/admin/adminVendorApis";
-import React, { useState } from "react";
-import { FaSearch } from "react-icons/fa";
+import ContentFaqCard from '@/components/shared/ContentFaqCard';
+import VendorCard from '@/components/shared/VendorCard';
+import { useGetAllVendorsQuery } from '@/redux/services/admin/adminVendorApis';
+import React, { useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
+
+import { useGetHomeContentQuery } from '@/redux/services/client/homeContentApi';
 
 export default function VendorPage() {
-  const [search, setSearch] = useState<string>("");
+  const [search, setSearch] = useState<string>('');
   const {
     data: vendorsData,
     isLoading,
     error,
     refetch,
   } = useGetAllVendorsQuery({ shop_name: search });
+
   return (
     <div className="w-full px-6 py-3 md:px-12 md:py-6">
       {/* Header */}
@@ -20,9 +24,7 @@ export default function VendorPage() {
         {/* Text Section */}
         <div className="w-full text-white md:w-1/2">
           <h1 className="text-2xl font-bold">ALL STORES</h1>
-          <p className="mt-1">
-            Find your desired stores and shop your favourite products
-          </p>
+          <p className="mt-1">Find your desired stores and shop your favourite products</p>
         </div>
 
         {/* Search Box */}
