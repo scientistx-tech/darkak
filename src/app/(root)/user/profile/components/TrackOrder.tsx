@@ -1,40 +1,59 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import {
-  useGetMyOrdersQuery,
-  useGetOrderDetailsQuery,
-} from "@/redux/services/client/order";
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { useGetMyOrdersQuery, useGetOrderDetailsQuery } from '@/redux/services/client/order';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 const steps = [
   {
-    title: "Pending",
-    description: "We received your order.",
+    title: 'Pending',
+    description: 'We received your order.',
   },
   {
-    title: "Processing",
-    description: "Your order is being prepared.",
+    title: 'Processing',
+    description: 'Your order is being prepared.',
   },
   {
-    title: "Shipped",
-    description: "Your order is on the way.",
+    title: 'Shipped',
+    description: 'Your order is on the way.',
   },
   {
-    title: "Delivered",
-    description: "Order delivered to your address.",
+    title: 'Delivered',
+    description: 'Order delivered to your address.',
+  },
+];
+
+const stepsBn = [
+  {
+    title: 'মুলতুবি',
+    description: 'আমরা আপনার অর্ডার পেয়েছি।',
+  },
+  {
+    title: 'প্রসেসিং',
+    description: 'আপনার অর্ডার প্রস্তুত করা হচ্ছে।',
+  },
+  {
+    title: 'পাঠানো হয়েছে',
+    description: 'আপনার অর্ডার পাঠানো হয়েছে।',
+  },
+  {
+    title: 'ডেলিভারড',
+    description: 'অর্ডার আপনার ঠিকানায় পৌঁছে গেছে।',
   },
 ];
 
 const getStepFromStatus = (status: string) => {
   switch (status) {
-    case "pending":
+    case 'pending':
       return 0;
-    case "processing":
+    case 'processing':
       return 1;
-    case "shipped":
+    case 'shipped':
       return 2;
-    case "delivered":
+    case 'delivered':
       return 3;
     default:
       return 0;
@@ -42,17 +61,18 @@ const getStepFromStatus = (status: string) => {
 };
 
 export default function TrackOrder() {
-  const [orderId, setOrderId] = useState<number | undefined>(undefined);
-  // console.log(orderId);
+  const lang = useSelector((state: RootState) => state.language.language);
+  const isBn = lang === 'bn';
 
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(1000);
+  const [orderId, setOrderId] = useState<number | undefined>(undefined);
+  const [page] = useState(1);
+  const [limit] = useState(1000);
 
   const { data: ordersData } = useGetMyOrdersQuery({ page, limit });
 
   useEffect(() => {
     if (ordersData?.data?.length && orderId === undefined) {
-      setOrderId(ordersData.data[0].orderId); // Automatically select first order
+      setOrderId(ordersData.data[0].orderId);
     }
   }, [ordersData, orderId]);
 
@@ -61,21 +81,22 @@ export default function TrackOrder() {
     isLoading,
     isError,
   } = useGetOrderDetailsQuery(Number(orderId), {
-    skip: orderId === undefined, // skip if no order selected yet
+    skip: orderId === undefined,
   });
 
-  const activeStep = getStepFromStatus(order?.status || "");
+  const activeStep = getStepFromStatus(order?.status || '');
+  const localizedSteps = isBn ? stepsBn : steps;
 
   return (
     <div className="mx-auto w-full max-w-7xl rounded-3xl border bg-gradient-to-tr from-[#ffffff80] via-[#ecf3ff90] to-[#ffffff80] p-4 shadow-2xl backdrop-blur-md md:p-10">
       <h2 className="mb-6 text-center text-2xl font-semibold text-primaryBlue md:mb-12 md:text-4xl">
-        Track your order here
+        {isBn ? 'এখানে আপনার অর্ডার ট্র্যাক করুন' : 'Track your order here'}
       </h2>
 
       {/* Product Cards */}
       <div className="mb-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {ordersData?.data
-          ?.filter((item) => item.order.status !== "canceled") // Exclude canceled orders
+          ?.filter((item) => item.order.status !== 'canceled')
           .map((item) => {
             const isActive = item.orderId === orderId;
             return (
@@ -83,9 +104,7 @@ export default function TrackOrder() {
                 key={item.id}
                 onClick={() => setOrderId(item.orderId)}
                 className={`flex cursor-pointer items-center rounded-xl p-4 transition hover:shadow-lg ${
-                  isActive
-                    ? "bg-blue-100 ring-2 ring-primaryBlue"
-                    : "bg-white shadow-md"
+                  isActive ? 'bg-blue-100 ring-2 ring-primaryBlue' : 'bg-white shadow-md'
                 }`}
               >
                 <Image
@@ -96,9 +115,7 @@ export default function TrackOrder() {
                   className="rounded-lg object-cover"
                 />
                 <div className="ml-4">
-                  <h3 className="text-md font-semibold">
-                    {item.product.title}
-                  </h3>
+                  <h3 className="text-md font-semibold">{item.product.title}</h3>
                   <p className="text-sm text-gray-500">
                     {item.quantity} {item.product.unit} / {item.product.price}
                   </p>
@@ -112,15 +129,15 @@ export default function TrackOrder() {
       <div className="overflow-x-auto p-4 pb-6">
         {isLoading ? (
           <div className="flex h-20 items-center justify-center text-primaryBlue">
-            Updating step tracker...
+            {isBn ? 'স্টেপ ট্র্যাকার আপডেট করা হচ্ছে...' : 'Updating step tracker...'}
           </div>
         ) : isError || !order ? (
           <div className="flex h-20 items-center justify-center text-red-600">
-            Failed to load order details.
+            {isBn ? 'অর্ডার বিস্তারিত লোড করতে ব্যর্থ হয়েছে।' : 'Failed to load order details.'}
           </div>
         ) : (
           <div className="flex min-w-[700px] items-center space-x-8 md:min-w-full">
-            {steps.map((step, index) => (
+            {localizedSteps.map((step, index) => (
               <div
                 key={index}
                 className="relative flex w-28 flex-shrink-0 flex-col items-center md:w-36"
@@ -128,15 +145,15 @@ export default function TrackOrder() {
                 <div
                   className={`flex h-10 w-10 items-center justify-center rounded-full border-4 md:h-14 md:w-14 ${
                     index <= activeStep
-                      ? "border-primaryBlue bg-primaryBlue text-white"
-                      : "border-gray-300 bg-gray-300 text-gray-500"
+                      ? 'border-primaryBlue bg-primaryBlue text-white'
+                      : 'border-gray-300 bg-gray-300 text-gray-500'
                   }`}
                 >
                   ✓
                 </div>
                 <h4
                   className={`mt-2 text-center text-xs font-semibold md:text-sm ${
-                    index <= activeStep ? "text-primaryBlue" : "text-gray-400"
+                    index <= activeStep ? 'text-primaryBlue' : 'text-gray-400'
                   }`}
                 >
                   {step.title}
@@ -145,13 +162,12 @@ export default function TrackOrder() {
                   {step.description}
                 </p>
 
-                {/* Line between steps */}
-                {index !== steps.length - 1 && (
+                {index !== localizedSteps.length - 1 && (
                   <div
                     className={`absolute right-[-47%] top-7 hidden h-1 md:block ${
-                      index < activeStep ? "bg-primaryBlue" : "bg-gray-300"
+                      index < activeStep ? 'bg-primaryBlue' : 'bg-gray-300'
                     }`}
-                    style={{ width: "100px" }}
+                    style={{ width: '100px' }}
                   />
                 )}
               </div>

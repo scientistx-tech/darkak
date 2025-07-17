@@ -8,6 +8,9 @@ import { toast } from "react-toastify";
 import { useGetUserQuery } from "@/redux/services/authApis";
 import { useUpdateUserProfilePictureMutation } from "@/redux/services/userApis";
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+
 // Components
 import MenuItems from "./components/MenuItems";
 import PersonalInfo from "./components/PersonalInfo";
@@ -20,6 +23,8 @@ import ReturnAndRefund from "./components/ReturnAndRefund";
 import CustomerCare from "./components/CustomerCare";
 
 const ProfilePage: React.FC = () => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const { data, isLoading, isError, refetch } = useGetUserQuery(undefined);
   const [updateProfilePicture] = useUpdateUserProfilePictureMutation();
 
@@ -61,7 +66,7 @@ const ProfilePage: React.FC = () => {
     <div className="w-full">
       {/* Header */}
       <div className="flex h-[60px] w-full items-center justify-center bg-gradient-to-r from-[#00153B] to-[#00286EF2] md:h-[100px]">
-        <p className="text-xl text-white md:text-2xl">Profile</p>
+        <p className="text-xl text-white md:text-2xl">{lang === 'bn' ? 'প্রোফাইল' : 'Profile'}</p>
       </div>
 
       {/* Main Content */}

@@ -1,35 +1,32 @@
-"use client";
+'use client';
 
-import {
-  useAddReturnRequestMutation,
-  useGetMyOrdersQuery,
-} from "@/redux/services/client/order";
+import { useAddReturnRequestMutation, useGetMyOrdersQuery } from '@/redux/services/client/order';
 import {
   useUploadMultipleImagesMutation,
   useUploadVideosMutation,
-} from "@/redux/services/userApis";
-import React, { useState } from "react";
-import { FaTimes } from "react-icons/fa";
-import { toast } from "react-toastify";
+} from '@/redux/services/userApis';
+import React, { useState } from 'react';
+import { FaTimes } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 export default function ReturnAndRefund() {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(1000);
-  const {
-    data: orders,
-    isLoading,
-    isError,
-  } = useGetMyOrdersQuery({ page, limit });
-  const [addReturnRequest, { isLoading: isSubmitting }] =
-    useAddReturnRequestMutation();
+  const { data: orders, isLoading, isError } = useGetMyOrdersQuery({ page, limit });
+  const [addReturnRequest, { isLoading: isSubmitting }] = useAddReturnRequestMutation();
 
   const [imageUploading, setImageUploading] = useState(false);
   const [videoUploading, setVideoUploading] = useState(false);
   const [uploadImages] = useUploadMultipleImagesMutation();
   const [uploadVideos] = useUploadVideosMutation();
-  const [selectedOrder, setSelectedOrder] = useState("");
-  const [reason, setReason] = useState("");
-  const [returnMethod, setReturnMethod] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState('');
+  const [reason, setReason] = useState('');
+  const [returnMethod, setReturnMethod] = useState('');
   const [images, setImages] = useState<File[]>([]);
   const [video, setVideo] = useState<File | null>(null);
   const [imageURLs, setImageURLs] = useState<string[]>([]);
@@ -42,23 +39,23 @@ export default function ReturnAndRefund() {
 
     let tempImages: File[] = [...images];
     let tempVideo = video;
-    let errorMessage = "";
+    let errorMessage = '';
 
     const newImages: File[] = [];
     let newVideo: File | null = null;
 
     Array.from(files).forEach((file) => {
-      if (file.type.startsWith("image/")) {
+      if (file.type.startsWith('image/')) {
         if (tempImages.length + newImages.length < 5) {
           newImages.push(file);
         } else {
-          errorMessage = "You can upload maximum 5 images & 1 video.";
+          errorMessage = 'You can upload maximum 5 images & 1 video.';
         }
-      } else if (file.type.startsWith("video/")) {
+      } else if (file.type.startsWith('video/')) {
         if (!tempVideo && !newVideo) {
           newVideo = file;
         } else {
-          errorMessage = "Only 1 video allowed.";
+          errorMessage = 'Only 1 video allowed.';
         }
       }
     });
@@ -68,7 +65,7 @@ export default function ReturnAndRefund() {
       setImageUploading(true);
       try {
         const formData = new FormData();
-        newImages.forEach((img) => formData.append("images", img));
+        newImages.forEach((img) => formData.append('images', img));
         const res: any = await uploadImages(formData).unwrap();
 
         const uploadedURLs = res || [];
@@ -76,7 +73,7 @@ export default function ReturnAndRefund() {
         setImages((prev) => [...prev, ...newImages]);
         setImageURLs((prev) => [...prev, ...uploadedURLs]);
       } catch (err) {
-        toast.error("Image upload failed");
+        toast.error('Image upload failed');
       }
       setImageUploading(false);
     }
@@ -86,7 +83,7 @@ export default function ReturnAndRefund() {
       setVideoUploading(true);
       try {
         const formData = new FormData();
-        formData.append("videos", newVideo);
+        formData.append('videos', newVideo);
         const res: any = await uploadVideos(formData).unwrap();
         // console.log(res);
 
@@ -96,7 +93,7 @@ export default function ReturnAndRefund() {
           setVideoURL(videoUploadedURL);
         }
       } catch (err) {
-        toast.error("Video upload failed");
+        toast.error('Video upload failed');
       }
       setVideoUploading(false);
     }
@@ -104,7 +101,7 @@ export default function ReturnAndRefund() {
     if (errorMessage) setUploadError(errorMessage);
     else setUploadError(null);
 
-    e.target.value = "";
+    e.target.value = '';
   };
 
   const removeImage = (index: number) => {
@@ -118,7 +115,7 @@ export default function ReturnAndRefund() {
   };
   const handleSubmitRequest = async () => {
     if (!selectedOrder || !reason || !returnMethod) {
-      toast.error("Please complete all fields.");
+      toast.error('Please complete all fields.');
       return;
     }
 
@@ -134,43 +131,44 @@ export default function ReturnAndRefund() {
       };
 
       await addReturnRequest(payload).unwrap();
-      toast.success("Return request submitted successfully!");
+      toast.success('Return request submitted successfully!');
 
       // Reset state after successful submission
-      setSelectedOrder("");
-      setReason("");
-      setReturnMethod("");
+      setSelectedOrder('');
+      setReason('');
+      setReturnMethod('');
       setImages([]);
       setVideo(null);
       setImageURLs([]);
       setVideoURL(null);
       setUploadError(null);
     } catch (err: any) {
-      toast.error("Failed to submit return request");
+      toast.error('Failed to submit return request');
       console.error(err);
     }
   };
   return (
     <div className="mx-auto w-full max-w-3xl rounded-3xl bg-white/30 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-xl sm:p-10">
       <h2 className="mb-10 text-center text-4xl font-extrabold text-blue-900 drop-shadow-md">
-        Return & Refund Request
+        {lang === 'bn' ? 'রিটার্ন ও রিফান্ড অনুরোধ' : 'Return & Refund Request'}
       </h2>
 
       {/* Order Dropdown */}
       <div className="mb-6">
         <label className="mb-2 block text-lg font-semibold text-gray-700">
-          Select Order
+          {lang === 'bn' ? 'অর্ডার নির্বাচন করুন' : 'Select Order'}
         </label>
         <select
           value={selectedOrder}
           onChange={(e) => setSelectedOrder(e.target.value)}
           className="w-full rounded-xl border border-blue-200 bg-white px-4 py-3 transition focus:ring-2 focus:ring-blue-300"
         >
-          <option value="">-- Choose an Order --</option>
+          <option value="">
+            -- {lang === 'bn' ? 'একটি অর্ডার নির্বাচন করুন' : 'Choose an Order'} --
+          </option>
           {orders?.data.map((order) => (
             <option key={order.id} value={order.orderId}>
-              {order.product.title} (
-              {new Date(order.order.date).toLocaleDateString()})
+              {order.product.title} ({new Date(order.order.date).toLocaleDateString()})
             </option>
           ))}
         </select>
@@ -179,7 +177,7 @@ export default function ReturnAndRefund() {
       {/* File Upload */}
       <div className="mb-6">
         <label className="mb-2 block text-lg font-semibold text-gray-700">
-          Upload Image(s) or Video
+          {lang === 'bn' ? 'ছবি অথবা ভিডিও আপলোড করুন' : 'Upload Image(s) or Video'}
         </label>
         <input
           type="file"
@@ -193,10 +191,7 @@ export default function ReturnAndRefund() {
         {imageURLs.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-4">
             {imageURLs.map((url, idx) => (
-              <div
-                key={idx}
-                className="relative h-24 w-24 overflow-hidden rounded-xl shadow-lg"
-              >
+              <div key={idx} className="relative h-24 w-24 overflow-hidden rounded-xl shadow-lg">
                 <img
                   src={url}
                   alt={`uploaded-${idx}`}
@@ -217,7 +212,9 @@ export default function ReturnAndRefund() {
           </div>
         )}
         {imageUploading && (
-          <p className="mt-2 text-sm text-blue-700">Uploading images...</p>
+          <p className="mt-2 text-sm text-blue-700">
+            {lang === 'bn' ? 'ছবি আপলোড করা হচ্ছে...' : 'Uploading images...'}
+          </p>
         )}
 
         {/* Video Preview */}
@@ -236,14 +233,16 @@ export default function ReturnAndRefund() {
           </div>
         )}
         {videoUploading && (
-          <p className="mt-2 text-sm text-blue-700">Uploading video...</p>
+          <p className="mt-2 text-sm text-blue-700">
+            {lang === 'bn' ? 'ভিডিও আপলোড করা হচ্ছে...' : 'Uploading video...'}
+          </p>
         )}
       </div>
 
       {/* Reason */}
       <div className="mb-6">
         <label className="mb-2 block text-lg font-semibold text-gray-700">
-          Reason for Return
+          {lang === 'bn' ? 'রিটার্নের কারণ' : 'Reason for Return'}
         </label>
         <textarea
           rows={4}
@@ -257,23 +256,27 @@ export default function ReturnAndRefund() {
       {/* Return Method */}
       <div className="mb-6">
         <label className="mb-2 block text-lg font-semibold text-gray-700">
-          Return Method
+          {lang === 'bn' ? 'রিটার্ন পদ্ধতি' : 'Return Method'}
         </label>
         <select
           value={returnMethod}
           onChange={(e) => setReturnMethod(e.target.value)}
           className="w-full rounded-xl border border-blue-200 bg-white px-4 py-3 focus:ring-2 focus:ring-blue-300"
         >
-          <option value="">-- Choose a Method --</option>
-          <option value="pick-up">Courier Pickup</option>
-          <option value="drop-off">Drop-off at Store</option>
+          <option value="">
+            -- {lang === 'bn' ? 'একটি পদ্ধতি নির্বাচন করুন' : 'Choose a Method'} --
+          </option>
+          <option value="pick-up">{lang === 'bn' ? 'কুরিয়ার পিকআপ' : 'Courier Pickup'}</option>
+          <option value="drop-off">{lang === 'bn' ? 'স্টোরে জমা দিন' : 'Drop-off at Store'}</option>
         </select>
       </div>
 
       {/* Info Box */}
       <div className="mb-6 rounded-xl border border-blue-200 bg-blue-100 px-5 py-4 text-sm text-blue-900 shadow-inner sm:text-base">
-        <strong>Note:</strong> You will receive a coupon equal to your order
-        value. It can be used as a discount on your next purchase.
+        <strong>{lang === 'bn' ? 'বিঃদ্রঃ' : 'Note:'}</strong>{' '}
+        {lang === 'bn'
+          ? 'আপনি আপনার অর্ডারের সমমূল্যের একটি কুপন পাবেন, যা আপনার পরবর্তী ক্রয়ে ছাড় হিসেবে ব্যবহার করা যাবে।'
+          : 'You will receive a coupon equal to your order value. It can be used as a discount on your next purchase.'}
       </div>
 
       {/* Submit Button */}
@@ -282,7 +285,13 @@ export default function ReturnAndRefund() {
         className="w-full rounded-2xl bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 px-6 py-3 text-lg font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:from-gray-300 disabled:to-gray-400"
         onClick={handleSubmitRequest}
       >
-        {isSubmitting ? "Submitting..." : "Submit Request"}
+        {isSubmitting
+          ? lang === 'bn'
+            ? 'জমা দিচ্ছে...'
+            : 'Submitting...'
+          : lang === 'bn'
+            ? 'অনুরোধ জমা দিন'
+            : 'Submit Request'}
       </button>
     </div>
   );
