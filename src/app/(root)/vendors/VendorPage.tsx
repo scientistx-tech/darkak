@@ -1,7 +1,7 @@
 'use client';
 
 import VendorCard from '@/components/shared/VendorCard';
-import { useGetAllVendorsQuery } from '@/redux/services/admin/adminVendorApis';
+import { useGetAllVendorsPublicQuery } from '@/redux/services/admin/adminVendorApis';
 import React, { useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 
@@ -12,7 +12,7 @@ export default function VendorPage() {
     isLoading,
     error,
     refetch,
-  } = useGetAllVendorsQuery({ shop_name: search });
+  } = useGetAllVendorsPublicQuery({ search: search });
   return (
     <div className="w-full px-6 py-3 md:px-12 md:py-6">
       {/* Header */}
@@ -43,7 +43,7 @@ export default function VendorPage() {
       {/* Body-Par */}
 
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {vendorsData?.vendors?.map((vendor: any, i: number) => (
+        {vendorsData?.data?.map((vendor: any, i: number) => (
           <VendorCard
             key={i}
             shopLink={`/vendors/shop-view/${vendor?.store_name?.split(' ').join('-')}`}
