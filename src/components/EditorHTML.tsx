@@ -1,6 +1,11 @@
+// components/EditorHTML.tsx
 'use client';
-import JoditEditor from "jodit-pro-react";
-import React, { useEffect, useRef, useState } from 'react';
+
+import dynamic from 'next/dynamic';
+import React, { useState, useEffect, useMemo } from 'react';
+
+// Dynamically import JoditEditor (important!)
+const JoditEditor = dynamic(() => import('jodit-pro-react'), { ssr: false });
 
 interface Props {
   value: string;
@@ -8,28 +13,32 @@ interface Props {
 }
 
 export default function EditorHTML({ value, onChange }: Props) {
-  const ref = useRef<any>(null);
- 
+  const config = useMemo(
+    () => ({
+      readonly: false,
+      spellcheck: false,
+      askBeforePasteHTML: false,
+      uploader: {
+        insertImageAsBase64URI: true,
+      },
+      placeholder: 'Start writing warranty details',
+      height: 450,
+      toolbar: true,
+    }),
+    []
+  );
+
   return (
-    <JoditEditor
-      ref={ref}
-      config={{
-        askBeforePasteHTML: false,
-        uploader: {
-          insertImageAsBase64URI: true,
-        },
-        placeholder: 'Start writing warranty details',
-        height: '450px',
-        toolbar: true,
-      }}
-      value={value}
-      // onChange={(newContent) => setContent(newContent)}
-      onBlur={(newContent) => {
-        if (newContent !== value) {
-          //console.log(newContent)
-          onChange(newContent);
-        }
-      }}
-    />
+    <div className="editor-wrapper">
+      <JoditEditor
+        config={config}
+        value={value}
+        onChange={(newContent: string) => {
+          if (newContent !== value) {
+            onChange(newContent);
+          }
+        }}
+      />
+    </div>
   );
 }
