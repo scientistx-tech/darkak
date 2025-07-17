@@ -24,7 +24,7 @@ interface FaqType {
 }
 
 const FaqCart = () => {
-  const { data, isLoading, refetch } = useGetSeoPageDataQuery('contact');
+  const { data, isLoading, refetch } = useGetSeoPageDataQuery('terms_condition');
   const [form] = Form.useForm();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingFaq, setEditingFaq] = useState<FaqType | null>(null);
@@ -52,7 +52,7 @@ const FaqCart = () => {
       setFaq(updatedFaq); // Update UI immediately
 
       const payload = {
-        type: 'contact',
+        type: 'terms_condition',
         meta_title: data.data.meta_title,
         meta_description: data.data.meta_description,
         meta_keywords: data.data.meta_keywords,
@@ -95,7 +95,7 @@ const FaqCart = () => {
       setFaq(newFaqList);
 
       const payload = {
-        type: 'contact',
+        type: 'terms_condition',
         meta_title: data.data.meta_title,
         meta_description: data.data.meta_description,
         meta_keywords: data.data.meta_keywords,

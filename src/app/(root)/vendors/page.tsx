@@ -34,7 +34,7 @@ export default async function page() {
       <div className="h-[65px] w-full md:h-[109px]" />
       <VendorPage />
 
-      <div className="mt-8 md:mt-16">
+      <div className="w-[95%] ml-[2.5%] mt-8 md:mt-16">
         <ContentFaqCard
           content={data?.data?.content}
           faqs={data?.data?.faq?.faq || []}
