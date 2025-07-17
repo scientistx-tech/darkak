@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   FaUser,
   FaBell,
@@ -8,19 +8,21 @@ import {
   FaStar,
   FaMapMarkerAlt,
   FaCommentDots,
-} from "react-icons/fa";
+} from 'react-icons/fa';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 // Define the type for allowed tab names
 type TabKey =
-  | "personal"
-  | "edit"
-  | "notification"
-  | "order"
-  | "review"
-  | "track"
-  | "return"
-  | "customer";
+  | 'personal'
+  | 'edit'
+  | 'notification'
+  | 'order'
+  | 'review'
+  | 'track'
+  | 'return'
+  | 'customer';
 
 // Props interface
 interface MenuItemsProps {
@@ -29,103 +31,105 @@ interface MenuItemsProps {
 }
 
 const MenuItems: React.FC<MenuItemsProps> = ({ setActiveTab, activeTab }) => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   return (
     <div>
       <div className="mt-6 flex w-full flex-col gap-2">
         <button
-          onClick={() => setActiveTab("personal")}
+          onClick={() => setActiveTab('personal')}
           className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
-            activeTab === "personal"
-              ? "bg-primaryBlue text-white"
-              : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
+            activeTab === 'personal'
+              ? 'bg-primaryBlue text-white'
+              : 'bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white'
           }`}
         >
           <FaUser />
-          Personal information
+          {lang === 'bn' ? 'ব্যক্তিগত তথ্য' : 'Personal Information'}
         </button>
 
         <button
-          onClick={() => setActiveTab("edit")}
+          onClick={() => setActiveTab('edit')}
           className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
-            activeTab === "edit"
-              ? "bg-primaryBlue text-white"
-              : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
+            activeTab === 'edit'
+              ? 'bg-primaryBlue text-white'
+              : 'bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white'
           }`}
         >
           <FaPen />
-          Edit profile
+          {lang === 'bn' ? 'প্রোফাইল সম্পাদনা' : 'Edit Profile'}
         </button>
 
         <button
-          onClick={() => setActiveTab("notification")}
+          onClick={() => setActiveTab('notification')}
           className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
-            activeTab === "notification"
-              ? "bg-primaryBlue text-white"
-              : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
+            activeTab === 'notification'
+              ? 'bg-primaryBlue text-white'
+              : 'bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white'
           }`}
         >
           <FaBell />
-          Notification
+          {lang === 'bn' ? 'নোটিফিকেশন' : 'Notification'}
         </button>
 
         <button
-          onClick={() => setActiveTab("order")}
+          onClick={() => setActiveTab('order')}
           className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
-            activeTab === "order"
-              ? "bg-primaryBlue text-white"
-              : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
+            activeTab === 'order'
+              ? 'bg-primaryBlue text-white'
+              : 'bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white'
           }`}
         >
           <FaClipboardList />
-          Order History
+          {lang === 'bn' ? 'অর্ডার হিস্টোরি' : 'Order History'}
         </button>
 
         <button
-          onClick={() => setActiveTab("review")}
+          onClick={() => setActiveTab('review')}
           className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
-            activeTab === "review"
-              ? "bg-primaryBlue text-white"
-              : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
+            activeTab === 'review'
+              ? 'bg-primaryBlue text-white'
+              : 'bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white'
           }`}
         >
           <FaStar />
-          My Review
+          {lang === 'bn' ? 'আমার রিভিউ' : 'My Review'}
         </button>
 
         <button
-          onClick={() => setActiveTab("track")}
+          onClick={() => setActiveTab('track')}
           className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
-            activeTab === "track"
-              ? "bg-primaryBlue text-white"
-              : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
+            activeTab === 'track'
+              ? 'bg-primaryBlue text-white'
+              : 'bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white'
           }`}
         >
           <FaMapMarkerAlt />
-          Track Order
+          {lang === 'bn' ? 'অর্ডার ট্র্যাক করুন' : 'Track Order'}
         </button>
 
         <button
-          onClick={() => setActiveTab("return")}
+          onClick={() => setActiveTab('return')}
           className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
-            activeTab === "return"
-              ? "bg-primaryBlue text-white"
-              : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
+            activeTab === 'return'
+              ? 'bg-primaryBlue text-white'
+              : 'bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white'
           }`}
         >
           <FaShippingFast />
-          Return & Refund
+          {lang === 'bn' ? 'রিটার্ন এবং রিফান্ড' : 'Return & Refund'}
         </button>
 
         <button
-          onClick={() => setActiveTab("customer")}
+          onClick={() => setActiveTab('customer')}
           className={`flex cursor-pointer items-center gap-2 rounded-md px-4 py-3 transition-all duration-300 ${
-            activeTab === "customer"
-              ? "bg-primaryBlue text-white"
-              : "bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white"
+            activeTab === 'customer'
+              ? 'bg-primaryBlue text-white'
+              : 'bg-[#E6EEFF] hover:bg-primaryBlue hover:text-white'
           }`}
         >
-         <FaCommentDots />
-          Customer Care
+          <FaCommentDots />
+          {lang === 'bn' ? 'কাস্টমার কেয়ার' : 'Customer Care'}
         </button>
       </div>
     </div>
