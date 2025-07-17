@@ -1,13 +1,8 @@
-import React from 'react'
-import FaqPage from './FaqPage'
-
-// import { Metadata } from 'next';
-// export const metadata: Metadata = {
-//   title: "FAQ"
-// };
-
+import React from 'react';
 import getSeoData from '../getSeoData';
-// Fetch metadata for SEO
+
+import ContentFaqCard from '@/components/shared/ContentFaqCard';
+
 export async function generateMetadata() {
   const data = await getSeoData('faq');
   //console.log(data);
@@ -31,11 +26,14 @@ export async function generateMetadata() {
   };
 }
 
-export default function page() {
+export default async function page() {
+  const data = await getSeoData('faq');
   return (
     <div>
-         <div className="h-[65px] md:h-[109px] w-full"/>
-         <FaqPage />
+      <div className="h-[65px] w-full md:h-[109px]" />
+      <div className="ml-[2.5%] mt-8 w-[95%] md:mt-16">
+        <ContentFaqCard content={data?.data?.content} faqs={data?.data?.faq?.faq || []} />
+      </div>
     </div>
-  )
+  );
 }
