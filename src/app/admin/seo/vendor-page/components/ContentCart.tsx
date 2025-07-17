@@ -1,31 +1,75 @@
 'use client';
-import React, { useState, ChangeEvent } from 'react';
+import { useGetSeoPageDataQuery } from '@/redux/services/admin/adminFAQApi';
+import axios from 'axios';
+import JoditEditor from 'jodit-react';
+import React, { useState, ChangeEvent, useRef, useEffect } from 'react';
+import { toast } from 'react-toastify';
+const BASE_URL = 'https://api.darkak.com.bd/api';
+import Cookies from 'js-cookie';
+import Loader from '@/components/shared/Loader';
 
 export default function ContentCart() {
   const [mainContent, setMainContent] = useState('');
-
+  const specificationEditor = useRef<any>(null);
+  const { data, isLoading, refetch } = useGetSeoPageDataQuery('vendor');
+  const [loading, setLoading] = useState(false);
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setMainContent(e.target.value);
   };
+  useEffect(() => {
+    if (data && data?.data?.content) setMainContent(data?.data?.content);
+  }, [data]);
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      const payload = {
+        type: 'vendor',
+        meta_title: data.data.meta_title,
+        meta_description: data.data.meta_description,
+        meta_keywords: data.data.meta_keywords,
+        meta_image: data.data.meta_image,
+        meta_alt: data.data.meta_alt,
+        content: mainContent,
+        faq: data.data.faq,
+      };
 
-  const handleSave = () => {
-    if (mainContent.length >= 100 && mainContent.length <= 300) {
-      alert('Main content saved!');
-    } else {
-      alert('Content must be between 100 and 300 characters.');
+      await axios.post(`${BASE_URL}/admin/page/update-seo`, payload, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('token')}`,
+        },
+      });
+
+      refetch();
+
+      toast.success('SEO settings updated!');
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Failed to update SEO');
+    } finally {
+      setLoading(false);
     }
   };
-
+  if (isLoading) return <Loader />;
   return (
     <div className="mt-6">
       <div className="w-full">
         <label className="block font-medium text-gray-700">Main Content:</label>
-        <textarea
+        <JoditEditor
+          ref={specificationEditor}
+          config={{
+            askBeforePasteHTML: false,
+            defaultActionOnPaste: 'insert_only_text',
+            uploader: {
+              insertImageAsBase64URI: true,
+            },
+            placeholder: 'Start writing specification',
+            height: '450px',
+            toolbar: true,
+          }}
           value={mainContent}
-          onChange={handleChange}
-          rows={4}
-          className="mt-1 w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-        ></textarea>
+          onBlur={(newContent) => {
+            setMainContent(newContent);
+          }}
+        />
 
         <p className="mt-1 flex w-full justify-between text-sm text-gray-500">
           <span>Description should be between 100–300 characters.</span>
@@ -43,10 +87,11 @@ export default function ContentCart() {
 
       {/* Save Button */}
       <button
-        onClick={handleSave}
+        disabled={loading}
+        onClick={handleSubmit}
         className="mt-4 rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none"
       >
-        Save Content
+        {loading ? 'Laoding..' : 'Save Content'}
       </button>
     </div>
   );
