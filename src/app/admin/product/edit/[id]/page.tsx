@@ -27,10 +27,10 @@ import { useRouter } from 'next/navigation';
 import { FaTrashAlt } from 'react-icons/fa';
 import AsyncSelect from 'react-select/async';
 import { useSelector } from 'react-redux';
-import JoditEditor from 'jodit-react';
 import { FaqType } from '@/app/admin/category/sub-categories/AddSubCategories';
 import Input from '@/app/admin/components/Input';
 import Button from '@/app/admin/components/Button';
+import EditorHTML from '@/components/EditorHTML';
 
 const CustomEditor = dynamic(() => import('@/app/admin/components/CustomEditor'), { ssr: false });
 
@@ -771,7 +771,7 @@ const ProductEdit = () => {
         })),
       })),
       content: formData.content,
-      faq: formData.faq ,
+      faq: formData.faq,
     };
     // console.log(payload);
     // return;
@@ -931,56 +931,11 @@ const ProductEdit = () => {
               Description {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}{' '}
               <span className="text-red-500">*</span>
             </label>
-            <JoditEditor
-              ref={editor}
-              config={{
-                askBeforePasteHTML: false,
-                defaultActionOnPaste: 'insert_only_text',
-                uploader: {
-                  insertImageAsBase64URI: true,
-                },
-                style: {
-                  // background: "#E3E3E3",
-                },
-                placeholder: 'Start writing',
-                height: '450px',
-                toolbar: true,
-                buttons: [
-                  'bold',
-                  'italic',
-                  'underline',
-                  'strikethrough',
-                  '|',
-                  'ul',
-                  'ol', // <-- Add these for bullet and numbered lists
-                  'outdent',
-                  'indent',
-                  '|',
-                  'font',
-                  'fontsize',
-                  'brush',
-                  'paragraph',
-                  '|',
-                  'image',
-                  'video',
-                  'table',
-                  'link',
-                  '|',
-                  'align',
-                  'undo',
-                  'redo',
-                  'hr',
-                  'eraser',
-                  'copyformat',
-                  'fullsize',
-                  'source',
-                ],
-              }}
+            <EditorHTML
               value={formData.short_description}
-              onBlur={(newContent) => {
+              onChange={(newContent) => {
                 handleEditorChange('short_description')(newContent);
-              }} // preferred to use only this option to update the content for performance reasons
-              // onChange={newContent => {}}
+              }}
             />
           </div>
         </div>
@@ -2012,52 +1967,9 @@ const ProductEdit = () => {
                 Description
                 {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}
               </label>
-              <JoditEditor
-                ref={descriptionEditor}
-                config={{
-                  askBeforePasteHTML: false,
-                  defaultActionOnPaste: 'insert_only_text',
-                  uploader: {
-                    insertImageAsBase64URI: true,
-                  },
-                  style: {
-                    // background: "#E3E3E3",
-                  },
-                  placeholder: 'Start writing description',
-                  height: '450px',
-                  toolbar: true,
-                  buttons: [
-                    'bold',
-                    'italic',
-                    'underline',
-                    'strikethrough',
-                    '|',
-                    'ul',
-                    'ol', // <-- Add these for bullet and numbered lists
-                    'outdent',
-                    'indent',
-                    '|',
-                    'font',
-                    'fontsize',
-                    'brush',
-                    'paragraph',
-                    '|',
-                    'image',
-                    'video',
-                    'table',
-                    'link',
-                    '|',
-                    'align',
-                    'undo',
-                    'redo',
-                    'hr',
-                    'eraser',
-                    'copyformat',
-                    'fullsize',
-                  ],
-                }}
+              <EditorHTML
                 value={formData.description}
-                onBlur={(newContent) => {
+                onChange={(newContent) => {
                   handleEditorChange('description')(newContent);
                 }} // preferred to use only this option to update the content for performance reasons
                 // onChange={newContent => {}}
@@ -2069,55 +1981,11 @@ const ProductEdit = () => {
                 Specification
                 {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}
               </label>
-              <JoditEditor
-                ref={specificationEditor}
-                config={{
-                  askBeforePasteHTML: false,
-                  defaultActionOnPaste: 'insert_only_text',
-                  uploader: {
-                    insertImageAsBase64URI: true,
-                  },
-                  style: {
-                    // background: "#E3E3E3",
-                  },
-                  placeholder: 'Start writing specification',
-                  height: '450px',
-                  toolbar: true,
-                  buttons: [
-                    'bold',
-                    'italic',
-                    'underline',
-                    'strikethrough',
-                    '|',
-                    'ul',
-                    'ol', // <-- Add these for bullet and numbered lists
-                    'outdent',
-                    'indent',
-                    '|',
-                    'font',
-                    'fontsize',
-                    'brush',
-                    'paragraph',
-                    '|',
-                    'image',
-                    'video',
-                    'table',
-                    'link',
-                    '|',
-                    'align',
-                    'undo',
-                    'redo',
-                    'hr',
-                    'eraser',
-                    'copyformat',
-                    'fullsize',
-                  ],
-                }}
+              <EditorHTML
                 value={formData.specification}
-                onBlur={(newContent) => {
+                onChange={(newContent) => {
                   handleEditorChange('specification')(newContent);
-                }} // preferred to use only this option to update the content for performance reasons
-                // onChange={newContent => {}}
+                }}
               />
             </div>
           ) : (
@@ -2126,55 +1994,11 @@ const ProductEdit = () => {
                 Warranty details
                 {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}
               </label>
-              <JoditEditor
-                ref={warrantyEditor}
-                config={{
-                  askBeforePasteHTML: false,
-                  uploader: {
-                    insertImageAsBase64URI: true,
-                  },
-                  defaultActionOnPaste: 'insert_only_text',
-                  style: {
-                    // background: "#E3E3E3",
-                  },
-                  placeholder: 'Start writing warranty details',
-                  height: '450px',
-                  toolbar: true,
-                  buttons: [
-                    'bold',
-                    'italic',
-                    'underline',
-                    'strikethrough',
-                    '|',
-                    'ul',
-                    'ol', // <-- Add these for bullet and numbered lists
-                    'outdent',
-                    'indent',
-                    '|',
-                    'font',
-                    'fontsize',
-                    'brush',
-                    'paragraph',
-                    '|',
-                    'image',
-                    'video',
-                    'table',
-                    'link',
-                    '|',
-                    'align',
-                    'undo',
-                    'redo',
-                    'hr',
-                    'eraser',
-                    'copyformat',
-                    'fullsize',
-                  ],
-                }}
+              <EditorHTML
                 value={formData.warranty_details}
-                onBlur={(newContent) => {
+                onChange={(newContent) => {
                   handleEditorChange('warranty_details')(newContent);
-                }} // preferred to use only this option to update the content for performance reasons
-                // onChange={newContent => {}}
+                }}
               />
             </div>
           )}
@@ -2182,20 +2006,9 @@ const ProductEdit = () => {
         <div className="my-4">
           <label className="font-semibold">Page Content</label>
           <div className="h-4" />
-          <JoditEditor
-            ref={specificationEditors}
-            config={{
-              askBeforePasteHTML: false,
-              defaultActionOnPaste: 'insert_only_text',
-              uploader: {
-                insertImageAsBase64URI: true,
-              },
-              placeholder: 'Start writing specification',
-              height: '250px',
-              toolbar: true,
-            }}
+          <EditorHTML
             value={formData.content}
-            onBlur={(newContent) => {
+            onChange={(newContent) => {
               handleEditorChange('content')(newContent);
             }}
           />
