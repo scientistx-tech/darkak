@@ -1,16 +1,18 @@
-"use client";
+'use client';
 
-import React from "react";
-import Image from "next/image";
-import { useGetNotificationsQuery } from "@/redux/services/client/notification";
+import React from 'react';
+import Image from 'next/image';
+import { useGetNotificationsQuery } from '@/redux/services/client/notification';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 export default function NotificationPage() {
-  const { data, isLoading, isError, error, refetch } =
-    useGetNotificationsQuery();
+  const lang = useSelector((state: RootState) => state.language.language);
 
-  const [notifications, setNotifications] = React.useState(
-    data?.notification || [],
-  );
+  const { data, isLoading, isError, error, refetch } = useGetNotificationsQuery();
+
+  const [notifications, setNotifications] = React.useState(data?.notification || []);
 
   React.useEffect(() => {
     if (data?.notification) {
@@ -25,26 +27,28 @@ export default function NotificationPage() {
   return (
     <div className="mx-auto w-full max-w-4xl rounded-3xl border bg-gradient-to-tr from-[#ffffff80] via-[#ecf3ff90] to-[#ffffff80] p-10 shadow-2xl backdrop-blur-md">
       <h2 className="mb-6 text-center text-2xl font-semibold text-primaryBlue md:mb-12 md:text-4xl">
-        ✨ Notifications
+        ✨ {lang === 'bn' ? 'বিজ্ঞপ্তিসমূহ' : 'Notifications'}
       </h2>
 
       {isLoading && (
         <p className="animate-pulse text-center text-gray-500">
-          Loading notifications...
+          {lang === 'bn' ? 'বিজ্ঞপ্তি লোড হচ্ছে...' : 'Loading notifications...'}
         </p>
       )}
 
       {isError && (
         <p className="text-center text-red-500">
-          Failed to load notifications.{" "}
+          {lang === 'bn' ? 'বিজ্ঞপ্তি লোড করতে ব্যর্থ হয়েছে।' : 'Failed to load notifications.'}
           <button onClick={refetch} className="underline">
-            Try again
+            {lang === 'bn' ? 'আবার চেষ্টা করুন' : 'Try again'}
           </button>
         </p>
       )}
 
       {!isLoading && notifications.length === 0 && (
-        <p className="text-center text-gray-600">No notifications found.</p>
+        <p className="text-center text-gray-600">
+          {lang === 'bn' ? 'কোনো বিজ্ঞপ্তি পাওয়া যায়নি।' : 'No notifications found.'}
+        </p>
       )}
 
       <div className="space-y-4">
@@ -71,21 +75,16 @@ interface NotificationProps {
   onDelete: () => void;
 }
 
-const NotificationComponent: React.FC<NotificationProps> = ({
-  image,
-  name,
-  message,
-  onDelete,
-}) => {
+const NotificationComponent: React.FC<NotificationProps> = ({ image, name, message, onDelete }) => {
   return (
     <div className="flex items-center justify-between rounded-2xl border border-[#cfd8dc] bg-white/70 p-4 shadow-md backdrop-blur-lg transition-all hover:scale-[1.02] hover:shadow-xl">
       <div className="flex items-center gap-5">
         <Image
-          src={image || "https://cdn.pixabay.com/photo/2015/12/16/17/41/bell-1096280_1280.png"} // fallback image
+          src={image || 'https://cdn.pixabay.com/photo/2015/12/16/17/41/bell-1096280_1280.png'} // fallback image
           alt={name}
           width={70}
           height={70}
-          className="h-[70px] w-[70px] rounded-xl object-cover "
+          className="h-[70px] w-[70px] rounded-xl object-cover"
         />
         <div>
           <h3 className="text-xl font-semibold text-[#1a237e]">{name}</h3>
