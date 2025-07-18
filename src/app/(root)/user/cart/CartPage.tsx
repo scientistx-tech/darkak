@@ -1,25 +1,30 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { PlusOutlined, MinusOutlined, DeleteOutlined } from "@ant-design/icons";
-import Image from "next/image";
-import { Modal, message, Tooltip } from "antd";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from 'react';
+import { PlusOutlined, MinusOutlined, DeleteOutlined } from '@ant-design/icons';
+import Image from 'next/image';
+import { Modal, message, Tooltip } from 'antd';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-import ShopNowButton from "@/components/Button/ShopNowButton";
-import { Cart } from "@/types/client/myCartTypes";
+import ShopNowButton from '@/components/Button/ShopNowButton';
+import { Cart } from '@/types/client/myCartTypes';
 import {
   useDeleteCartMutation,
   useGetMyCartQuery,
   useUpdateCartMutation,
-} from "@/redux/services/client/myCart";
-import ClientLoading from "../../components/ClientLoading";
-import { setCart } from "@/redux/slices/authSlice";
-import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
+} from '@/redux/services/client/myCart';
+import ClientLoading from '../../components/ClientLoading';
+import { setCart } from '@/redux/slices/authSlice';
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 const CartPage: React.FC = () => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const [deleteCart, { isLoading: isDeleting }] = useDeleteCartMutation();
   const [cartUpdate] = useUpdateCartMutation();
   const [cartItems, setCartItems] = useState<Cart[]>();
@@ -49,10 +54,10 @@ const CartPage: React.FC = () => {
       <div className="flex h-screen w-full items-center justify-center">
         <div className="flex flex-col items-center justify-center gap-4">
           <p className="text-2xl font-bold text-primaryBlue">
-            Your cart is empty!
+            {lang === 'bn' ? 'আপনার কার্ট খালি!' : 'Your cart is empty!'}
           </p>
           <Link href="/" className="text-xl text-primaryBlue underline">
-            Go to Home
+            {lang === 'bn' ? 'হোমে যান' : 'Go to Home'}
           </Link>
         </div>
       </div>
@@ -65,7 +70,7 @@ const CartPage: React.FC = () => {
           const maxQty = item.product.stock ?? Infinity;
           if (item.quantity >= maxQty) {
             messageApi.open({
-              type: "warning",
+              type: 'warning',
               content: `Maximum stock limit (${maxQty}) reached!`,
             });
             return item;
@@ -75,7 +80,7 @@ const CartPage: React.FC = () => {
           return { ...item, quantity: newQty };
         }
         return item;
-      }),
+      })
     );
   };
 
@@ -86,7 +91,7 @@ const CartPage: React.FC = () => {
           const minQty = item.product.minOrder ?? 1;
           if (item.quantity <= minQty) {
             messageApi.open({
-              type: "warning",
+              type: 'warning',
               content: `Minimum order quantity is ${minQty}.`,
             });
             return item;
@@ -96,13 +101,13 @@ const CartPage: React.FC = () => {
           return { ...item, quantity: newQty };
         }
         return item;
-      }),
+      })
     );
   };
 
   const subTotal = cartItems?.reduce(
     (total, item) => total + item.product.price * item.quantity,
-    0,
+    0
   );
 
   const showModal = (id: number) => {
@@ -114,22 +119,20 @@ const CartPage: React.FC = () => {
     try {
       await cartUpdate({ id, quantity }).unwrap(); // call API with ID
     } catch (error) {
-      console.error("Delete failed:", error);
+      console.error('Delete failed:', error);
       // Optional: show toast or notification
-      toast.error("Failed to update!");
+      toast.error('Failed to update!');
     }
   };
   const handleOk = async () => {
     if (itemToDelete !== null) {
       try {
         await deleteCart(itemToDelete).unwrap(); // call API with ID
-        setCartItems((prev) =>
-          prev?.filter((item) => item.id !== itemToDelete),
-        ); // update UI
+        setCartItems((prev) => prev?.filter((item) => item.id !== itemToDelete)); // update UI
         dispatch(setCart(Math.random()));
         setItemToDelete(null);
       } catch (error) {
-        console.error("Delete failed:", error);
+        console.error('Delete failed:', error);
         // Optional: show toast or notification
       }
     }
@@ -143,22 +146,24 @@ const CartPage: React.FC = () => {
 
   const coupon = () => {
     messageApi.open({
-      type: "success",
-      content: "This coupon applied successfully!",
+      type: 'success',
+      content: 'This coupon applied successfully!',
     });
   };
 
   const voucher = () => {
     messageApi.open({
-      type: "warning",
-      content: "This voucher is not found! Please try again.",
+      type: 'warning',
+      content: 'This voucher is not found! Please try again.',
     });
   };
   return (
     <div className="w-full">
       {contextHolder}
       <div className="flex h-[60px] w-full items-center justify-center bg-gradient-to-r from-[#00153B] to-[#00286EF2] md:h-[100px]">
-        <p className="text-xl text-white md:text-2xl">Shopping Cart</p>
+        <p className="text-xl text-white md:text-2xl">
+          {lang === 'bn' ? 'শপিং কার্ট' : 'Shopping Cart'}
+        </p>
       </div>
 
       <div className="px-1 py-6 md:container md:mx-auto md:px-2 md:py-6 xl:px-4 xl:py-12">
@@ -166,22 +171,22 @@ const CartPage: React.FC = () => {
           {/* Header */}
           <div className="mb-2 mt-5 flex items-center justify-between">
             <div className="flex w-[19%] items-center justify-center rounded-md bg-[#E6EFFF] py-2 md:w-[12%] xl:w-[10%]">
-              Image
+              {lang === 'bn' ? 'ছবি' : 'Image'}
             </div>
             <div className="flex w-[42%] items-center justify-start rounded-md bg-[#E6EFFF] px-6 py-2 xl:w-[40%]">
-              Product Name
+              {lang === 'bn' ? 'পণ্যের নাম' : 'Product Name'}
             </div>
             <div className="hidden w-[20%] items-center justify-center rounded-md bg-[#E6EFFF] py-2 md:w-[12%] xl:flex xl:w-[10%]">
-              Model
+              {lang === 'bn' ? 'মডেল' : 'Model'}
             </div>
             <div className="flex w-[19%] items-center justify-center rounded-md bg-[#E6EFFF] py-2 md:w-[12%] xl:w-[10%]">
-              Quantity
+              {lang === 'bn' ? 'পরিমাণ' : 'Quantity'}
             </div>
             <div className="hidden w-[12%] items-center justify-center rounded-md bg-[#E6EFFF] py-2 md:flex xl:w-[10%]">
-              Unit Price
+              {lang === 'bn' ? 'একক মূল্য' : 'Unit Price'}
             </div>
             <div className="flex w-[19%] items-center justify-center rounded-md bg-[#E6EFFF] py-2 md:w-[12%] xl:w-[10%]">
-              Total
+              {lang === 'bn' ? 'মোট' : 'Total'}
             </div>
           </div>
 
@@ -206,16 +211,16 @@ const CartPage: React.FC = () => {
                   {item.product.title}
                 </p>
                 <p className="hidden text-sm md:block xl:text-base">
-                  <span className="text-black">Brand:</span>{" "}
+                  <span className="text-black">{lang === 'bn' ? 'ব্র্যান্ড: ' : 'Brand: '}</span>{' '}
                   {item.product.brand.title}
                 </p>
                 <p className="text-sm xl:hidden xl:text-base">
-                  <span className="text-black">Model:</span>
+                  <span className="text-black">{lang === 'bn' ? 'মডেল: ' : 'Model: '}</span>
                 </p>
               </div>
               <div className="hidden w-[12%] items-center justify-center rounded-md py-2 xl:flex xl:w-[10%]">
                 <p>
-                  <span className="text-black">Model:</span>
+                  <span className="text-black">{lang === 'bn' ? 'মডেল: ' : 'Model: '}</span>
                 </p>
               </div>
               <div className="flex w-[19%] items-center justify-center rounded-md py-2 md:w-[12%] xl:w-[10%]">
@@ -224,7 +229,7 @@ const CartPage: React.FC = () => {
                     title={
                       item.quantity <= (item.product.minOrder ?? 1)
                         ? `Minimum order quantity is ${item.product.minOrder ?? 1}`
-                        : ""
+                        : ''
                     }
                   >
                     <button
@@ -242,15 +247,13 @@ const CartPage: React.FC = () => {
                     title={
                       item.quantity >= (item.product.stock ?? Infinity)
                         ? `Maximum stock limit (${item.product.stock}) reached!`
-                        : ""
+                        : ''
                     }
                   >
                     <button
                       onClick={() => increaseQty(item.id)}
                       className="bg-primaryBlue px-1.5 py-1 text-white transition-all duration-300 hover:bg-primary md:rounded-br-full md:rounded-tr-full md:px-3 md:py-1.5 md:text-xl"
-                      disabled={
-                        item.quantity >= (item.product.stock ?? Infinity)
-                      }
+                      disabled={item.quantity >= (item.product.stock ?? Infinity)}
                     >
                       <PlusOutlined />
                     </button>
@@ -277,25 +280,22 @@ const CartPage: React.FC = () => {
           {/* Totals */}
           <div className="mt-5 flex w-full flex-col items-end justify-center gap-2">
             <p className="text-black md:text-xl">
-              Sub-Total:{" "}
+              {lang === 'bn' ? 'সাব-টোটাল:' : 'Sub-Total:'}
+              <span className="ml-2 text-primaryBlue md:ml-5">{subTotal} TK</span>
+            </p>
+            <p className="text-black md:text-xl">
+              {lang === 'bn' ? 'ডেলিভারি চার্জ:' : 'Delivery Charge:'}
               <span className="ml-2 text-primaryBlue md:ml-5">
-                {subTotal} TK
+                {lang === 'bn' ? 'যোগ করা হবে' : 'Will be added'}
               </span>
             </p>
             <p className="text-black md:text-xl">
-              Delivery Charge:{" "}
-              <span className="ml-2 text-primaryBlue md:ml-5">
-                Will be added
-              </span>
+              {lang === 'bn' ? 'ছাড়:' : 'Discount:'}{' '}
+              <span className="ml-2 text-primaryBlue md:ml-5">0</span>
             </p>
             <p className="text-black md:text-xl">
-              Discount: <span className="ml-2 text-primaryBlue md:ml-5">0</span>
-            </p>
-            <p className="text-black md:text-xl">
-              Total:{" "}
-              <span className="ml-2 text-primaryBlue md:ml-5">
-                {subTotal} TK
-              </span>
+              {lang === 'bn' ? 'মোট:' : 'Total:'}
+              <span className="ml-2 text-primaryBlue md:ml-5">{subTotal} TK</span>
             </p>
           </div>
 
@@ -333,33 +333,34 @@ const CartPage: React.FC = () => {
               onClick={() => router.back()}
               className="rounded-full bg-primaryBlue px-6 py-2.5 text-white transition-all duration-300 hover:bg-primary"
             >
-              Continue Shopping
+              {lang === 'bn' ? 'কেনাকাটা চালিয়ে যান' : 'Continue Shopping'}
             </button>
 
             <button
               className="rounded-full bg-blue-950 px-6 py-2 text-white transition-all duration-300 ease-in hover:bg-blue-600"
               onClick={() => {
-                localStorage.setItem(
-                  "checkout_items",
-                  JSON.stringify(cartItems),
-                );
-                router.push("/cart-checkout");
+                localStorage.setItem('checkout_items', JSON.stringify(cartItems));
+                router.push('/cart-checkout');
               }}
             >
-              Checkout
+              {lang === 'bn' ? 'চেকআউট' : 'Checkout'}
             </button>
           </div>
         </div>
 
         <Modal
-          title="Are you sure?"
+          title={lang === 'bn' ? 'আপনি কি নিশ্চিত?' : 'Are you sure?'}
           open={isModalOpen}
           onOk={handleOk}
           onCancel={handleCancel}
           okText="Yes, Delete"
           cancelText="Cancel"
         >
-          <p>Do you really want to delete this product from your cart?</p>
+          <p>
+            {lang === 'bn'
+              ? 'আপনি কি সত্যিই এই পণ্যটি আপনার কার্ট থেকে মুছে ফেলতে চান?'
+              : 'Do you really want to delete this product from your cart?'}
+          </p>
         </Modal>
       </div>
     </div>

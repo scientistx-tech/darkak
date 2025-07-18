@@ -26,34 +26,9 @@ import { setCart } from '@/redux/slices/authSlice';
 import { BD_Division, BD_District } from '@/Data/addressData';
 import { useCheckCouponCodeMutation } from '@/redux/services/client/applyCoupon';
 
-const initialProducts = [
-  {
-    id: 1,
-    name: 'iPhone 16 Pro',
-    variant: '128GB, AUS, Black Titanium',
-    price: 132500,
-    image: product1,
-    quantity: 1,
-  },
-  {
-    id: 2,
-    name: 'Galaxy A56 5G',
-    variant: 'Graphite, 8/128GB',
-    price: 43000,
-    image: product2,
-    quantity: 1,
-  },
-  {
-    id: 3,
-    name: 'Xiaomi Pad 7',
-    variant: 'Black, 8/256GB, Without Book Cover',
-    price: 45500,
-    image: product3,
-    quantity: 1,
-  },
-];
-
 const CartCheckout: React.FC = () => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'online'>('cash');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
@@ -270,7 +245,9 @@ const CartCheckout: React.FC = () => {
         {/* left-side */}
         <div className="w-full md:w-1/2">
           {contextHolder}
-          <p className="text-xl font-medium md:text-2xl">Payment Method</p>
+          <p className="text-xl font-medium md:text-2xl">
+            {lang === 'bn' ? 'পেমেন্ট মেথড' : 'Payment Method'}
+          </p>
 
           <div className="mt-5 flex w-full justify-evenly rounded border border-primaryBlue bg-[#E6EFFF] px-2 py-1 transition-all duration-500 md:w-[90%] md:px-3 md:py-2">
             <button
@@ -282,7 +259,7 @@ const CartCheckout: React.FC = () => {
               onClick={() => setPaymentMethod('cash')}
             >
               {paymentMethod === 'cash' && <CheckOutlined className="text-xl" />}
-              Cash on Delivery
+              {lang === 'bn' ? 'ক্যাশ অন ডেলিভারি' : 'Cash on Delivery'}
             </button>
 
             <button
@@ -294,17 +271,20 @@ const CartCheckout: React.FC = () => {
               // onClick={() => setPaymentMethod("online")}
             >
               {paymentMethod === 'online' && <CheckOutlined className="text-xl" />}
-              Online Payment
+              {lang === 'bn' ? 'অনলাইন পেমেন্ট' : 'Online Payment'}
             </button>
           </div>
 
           <div className="mt-5 md:mt-10">
-            <h2 className="mb-3 text-lg font-semibold">Billing Details</h2>
+            <h2 className="mb-3 text-lg font-semibold">
+              {lang === 'bn' ? 'বিলিং বিবরণ' : 'Billing Details'}
+            </h2>
             <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
               {/* Full Name */}
               <div>
                 <label className="mb-1 block text-sm font-medium">
-                  Full Name <span className="text-primaryBlue">*</span>
+                  {lang === 'bn' ? 'পুরো নাম' : 'Full Name'}{' '}
+                  <span className="text-primaryBlue">*</span>
                 </label>
                 <Input
                   placeholder="Full Name"
@@ -319,7 +299,8 @@ const CartCheckout: React.FC = () => {
                 {/* Email */}
                 <div>
                   <label className="mb-1 block text-sm font-medium">
-                    Email Address <span className="text-primaryBlue">*</span>
+                    {lang === 'bn' ? 'ইমেইল ঠিকানা' : 'Email Address'}{' '}
+                    <span className="text-primaryBlue">*</span>
                   </label>
                   <Input
                     type="email"
@@ -334,7 +315,8 @@ const CartCheckout: React.FC = () => {
                 {/* Phone */}
                 <div>
                   <label className="mb-1 block text-sm font-medium">
-                    Phone Number <span className="text-primaryBlue">*</span>
+                    {lang === 'bn' ? 'ফোন নম্বর' : 'Phone Number'}{' '}
+                    <span className="text-primaryBlue">*</span>
                   </label>
                   <div className="flex gap-2">
                     <Input
@@ -352,7 +334,8 @@ const CartCheckout: React.FC = () => {
                 {/* Division */}
                 <div>
                   <label className="mb-1 block text-sm font-medium">
-                    Division <span className="text-primaryBlue">*</span>
+                    {lang === 'bn' ? 'বিভাগ' : 'Division'}{' '}
+                    <span className="text-primaryBlue">*</span>
                   </label>
                   <select
                     className="w-full rounded border border-primaryBlue px-3 py-2"
@@ -375,7 +358,8 @@ const CartCheckout: React.FC = () => {
                 {/* District */}
                 <div>
                   <label className="mb-1 block text-sm font-medium">
-                    District <span className="text-primaryBlue">*</span>
+                    {lang === 'bn' ? 'জেলা' : 'District'}{' '}
+                    <span className="text-primaryBlue">*</span>
                   </label>
                   <select
                     className="w-full rounded border border-primaryBlue px-3 py-2"
@@ -400,7 +384,8 @@ const CartCheckout: React.FC = () => {
                 {/* Sub-district */}
                 <div>
                   <label className="mb-1 block text-sm font-medium">
-                    Sub-district / Upazila <span className="text-primaryBlue">*</span>
+                    {lang === 'bn' ? 'উপজেলা / সাব-ডিস্ট্রিক্ট' : 'Sub-district / Upazila'}{' '}
+                    <span className="text-primaryBlue">*</span>
                   </label>
                   <Input
                     placeholder="e.g., Dhanmondi"
@@ -414,7 +399,8 @@ const CartCheckout: React.FC = () => {
                 {/* Delivery Area */}
                 <div>
                   <label className="mb-1 block text-sm font-medium">
-                    Delivery Area / Address <span className="text-primaryBlue">*</span>
+                    {lang === 'bn' ? 'ডেলিভারি এরিয়া / ঠিকানা' : 'Delivery Area / Address'}{' '}
+                    <span className="text-primaryBlue">*</span>
                   </label>
                   <Input
                     placeholder="e.g., House #12, Road #5"
@@ -429,7 +415,8 @@ const CartCheckout: React.FC = () => {
               {/* Full Address */}
               <div>
                 <label className="mb-1 block text-sm font-medium">
-                  Additional Address Notes <span className="text-primaryBlue">*</span>
+                  {lang === 'bn' ? 'অতিরিক্ত ঠিকানা নোট' : 'Additional Address Notes'}{' '}
+                  <span className="text-primaryBlue">*</span>
                 </label>
                 <Input.TextArea
                   placeholder="Additional address details"
@@ -442,23 +429,23 @@ const CartCheckout: React.FC = () => {
 
               {/* Agreement Checkbox */}
               <Checkbox checked={agree} onChange={(e) => setAgree(e.target.checked)} required>
-                I have read and agree to the{' '}
-                <button onClick={showModal} className="text-primaryBlue">
-                  Terms and Conditions
-                </button>{' '}
-                and{' '}
-                <button onClick={showModal2} className="text-primaryBlue">
-                  Privacy Policy
+                {lang === 'bn' ? 'আমি পড়েছি এবং একমত ' : 'I have read and agree to the '}
+                <button onClick={showModal} className="text-primaryBlue font-semibold">
+                  {lang === 'bn' ? ' শর্তাবলী ' : 'Terms & Conditions '}
+                </button>
+                {lang === 'bn' ? ' এবং ' : ' and '}
+                <button onClick={showModal2} className="text-primaryBlue font-semibold">
+                  {lang === 'bn' ? 'গোপনীয়তা নীতি' : 'Privacy Policy'}
                 </button>
               </Checkbox>
             </form>
 
             <div className="mt-5 hidden md:block">
               <button
-                className="rounded-full bg-blue-950 px-6 py-2 text-white"
+                className="w-full rounded-md hover:bg-primary bg-blue-950 px-16 py-2 text-white  font-medium"
                 onClick={handleCheckout}
               >
-                Order
+                {lang === 'bn' ? 'অর্ডার করুন' : 'Order'}
               </button>
             </div>
           </div>
@@ -466,7 +453,9 @@ const CartCheckout: React.FC = () => {
 
         {/* right side */}
         <div className="w-full md:w-1/2 md:pl-[10%]">
-          <h2 className="mb-0 mt-5 text-lg font-semibold md:mb-3">Your Order</h2>
+          <h2 className="mb-0 mt-5 text-lg font-semibold md:mb-3">
+            {lang === 'bn' ? 'আপনার অর্ডার' : 'Your Order'}
+          </h2>
 
           {checkoutItems?.map((item: any) => (
             <div
@@ -532,7 +521,9 @@ const CartCheckout: React.FC = () => {
           ))}
 
           {couponDiscount?.id ? (
-            <p className="animate-bounce py-3 text-right font-bold text-teal-400">Coupon Applied</p>
+            <p className="animate-bounce py-3 text-right font-bold text-teal-400">
+              {lang === 'bn' ? 'কুপন প্রয়োগ হয়েছে' : 'Coupon Applied'}
+            </p>
           ) : (
             <div className="mt-3 flex items-center gap-2">
               <Input
@@ -541,28 +532,28 @@ const CartCheckout: React.FC = () => {
                 className="flex-1"
               />
               <Button onClick={handleApplyCoupon} type="primary">
-                Apply
+                {lang === 'bn' ? 'প্রয়োগ করুন' : 'Apply'}
               </Button>
             </div>
           )}
 
           <div className="mt-5 space-y-1 text-sm">
             <div className="flex justify-between">
-              <span>Subtotal</span>
+              <span>{lang === 'bn' ? 'সাবটোটাল' : 'Subtotal'}</span>
               <span>BDT {subtotal}</span>
             </div>
             <div className="flex justify-between text-primaryBlue">
-              <span>Delivery Charge</span>
-              <span>will be added</span>
+              <span>{lang === 'bn' ? 'ডেলিভারি চার্জ' : 'Delivery Charge'}</span>
+              <span>{lang === 'bn' ? 'যোগ করা হবে' : 'will be added'}</span>
             </div>
             {couponDiscount?.id && (
               <div className="flex justify-between text-primaryBlue">
-                <span>Coupon Discount</span>
+                <span>{lang === 'bn' ? 'কুপন ছাড়' : 'Coupon Discount'}</span>
                 <span>{`-${couponDiscount?.discount_type === 'flat' ? 'Tk' : ''} ${couponDiscount?.discount_amount}${couponDiscount?.discount_type === 'percentage' ? '%' : ''} `}</span>
               </div>
             )}
             <div className="flex justify-between text-lg font-semibold text-black">
-              <span>Total</span>
+              <span>{lang === 'bn' ? 'মোট' : 'Total'}</span>
               <span>
                 BDT{' '}
                 {couponDiscount?.id
@@ -577,65 +568,92 @@ const CartCheckout: React.FC = () => {
 
         <div className="mt-5 block md:hidden">
           <button
-            className="w-full rounded-full bg-blue-950 px-6 py-2 text-white"
+            className="w-full rounded-md hover:bg-primary bg-blue-950 px-16 py-2 text-white  font-medium"
             onClick={handleCheckout}
           >
-            Order
+            {lang === 'bn' ? 'অর্ডার করুন' : 'Order'}
           </button>
         </div>
       </div>
 
       <Modal
-        title="Terms and Conditions - Darkak"
+        title={lang === 'bn' ? 'শর্তাবলী - ডারকাক' : 'Terms and Conditions - Darkak'}
         open={isModalOpen}
         onCancel={handleCancel}
         footer={false}
       >
+        <br />
         <p>
-          By placing an order on <strong>Darkak</strong>, you agree to our terms and conditions.
-          Please review the following before completing your purchase.
+          {lang === 'bn'
+            ? 'Darkak-এ অর্ডার প্লেস করার মাধ্যমে আপনি আমাদের শর্তাবলীতে সম্মত হচ্ছেন। দয়া করে অর্ডার সম্পন্ন করার আগে নিচের তথ্যগুলো পড়ে নিন।'
+            : 'By placing an order on Darkak, you agree to our terms and conditions. Please review the following before completing your purchase.'}
         </p>
+        <br />
         <p>
-          All orders are subject to availability and confirmation of the order price. We reserve the
-          right to refuse or cancel any order at our discretion.
+          {lang === 'bn'
+            ? 'সব অর্ডার প্রাপ্যতা এবং অর্ডারের মূল্যের নিশ্চিতকরণের উপর নির্ভরশীল। আমরা যে কোনো অর্ডার বাতিল করার অধিকার সংরক্ষণ করি।'
+            : 'All orders are subject to availability and confirmation of the order price. We reserve the right to refuse or cancel any order at our discretion.'}
         </p>
+        <br />
         <p>
-          Once your order is placed, you will receive an order confirmation. Shipping times may vary
-          based on your location and selected delivery method.
+          {lang === 'bn'
+            ? 'আপনার অর্ডার সম্পন্ন হলে একটি অর্ডার কনফার্মেশন পাবেন। আপনার লোকেশন ও ডেলিভারি পদ্ধতির উপর ভিত্তি করে শিপিং সময় পরিবর্তিত হতে পারে।'
+            : 'Once your order is placed, you will receive an order confirmation. Shipping times may vary based on your location and selected delivery method.'}
         </p>
+        <br />
         <p>
-          Please ensure your shipping information is accurate. Darkak is not responsible for orders
-          delivered to incorrect addresses provided by the customer.
+          {lang === 'bn'
+            ? 'অনুগ্রহ করে আপনার শিপিং তথ্য সঠিকভাবে প্রদান করুন। গ্রাহক প্রদত্ত ভুল ঠিকানায় অর্ডার পৌঁছালে Darkak দায়ী নয়।'
+            : 'Please ensure your shipping information is accurate. Darkak is not responsible for orders delivered to incorrect addresses provided by the customer.'}
         </p>
+        <br />
         <p>
-          For any return, refund, or cancellation, please review our dedicated policies listed on
-          our website or contact customer support.
+          {lang === 'bn'
+            ? 'যেকোনো রিটার্ন, রিফান্ড বা ক্যানসেলেশন সম্পর্কিত নীতিমালা আমাদের ওয়েবসাইটে দেখুন অথবা কাস্টমার সাপোর্টে যোগাযোগ করুন।'
+            : 'For any return, refund, or cancellation, please review our dedicated policies listed on our website or contact customer support.'}
         </p>
+        <br />
       </Modal>
 
       <Modal
-        title="Privacy Policy - Darkak"
+        title={lang === 'bn' ? 'গোপনীয়তা নীতি - ডারকাক' : 'Privacy Policy - Darkak'}
         open={isModalOpen2}
         onCancel={handleCancel2}
         footer={false}
       >
+        <br />
         <p>
-          <strong>Darkak</strong> values your privacy. We collect your personal data during checkout
-          to process your order and provide support.
+          {lang === 'bn' ? (
+            <>
+              <strong>Darkak</strong> আপনার গোপনীয়তাকে গুরুত্ব দেয়। চেকআউটের সময় আমরা আপনার
+              ব্যক্তিগত তথ্য সংগ্রহ করি যাতে অর্ডার প্রক্রিয়া ও সাপোর্ট প্রদান করা যায়।
+            </>
+          ) : (
+            <>
+              <strong>Darkak</strong> values your privacy. We collect your personal data during
+              checkout to process your order and provide support.
+            </>
+          )}
         </p>
+        <br />
         <p>
-          The data collected includes your name, shipping address, contact details, and payment
-          method. This information is securely stored and never shared with third parties without
-          your consent.
+          {lang === 'bn'
+            ? 'সংগ্রহকৃত তথ্যের মধ্যে আপনার নাম, শিপিং ঠিকানা, যোগাযোগের বিবরণ এবং পেমেন্ট পদ্ধতি অন্তর্ভুক্ত। এই তথ্য নিরাপদভাবে সংরক্ষিত হয় এবং আপনার অনুমতি ছাড়া তৃতীয় পক্ষের সাথে কখনও শেয়ার করা হয় না।'
+            : 'The data collected includes your name, shipping address, contact details, and payment method. This information is securely stored and never shared with third parties without your consent.'}
         </p>
+        <br />
         <p>
-          We may use your contact details to send order updates or promotional offers. You can opt
-          out at any time.
+          {lang === 'bn'
+            ? 'আমরা আপনার যোগাযোগের তথ্য ব্যবহার করে অর্ডার আপডেট বা প্রোমোশনাল অফার পাঠাতে পারি। আপনি যেকোনো সময় এই সুবিধা বন্ধ করতে পারেন।'
+            : 'We may use your contact details to send order updates or promotional offers. You can opt out at any time.'}
         </p>
+        <br />
         <p>
-          By continuing with your order, you consent to our privacy practices. For more details,
-          please refer to the full Privacy Policy page.
+          {lang === 'bn'
+            ? 'আপনার অর্ডার চালিয়ে যাওয়ার মাধ্যমে, আপনি আমাদের গোপনীয়তা নীতিতে সম্মতি দিচ্ছেন। আরও বিস্তারিত জানার জন্য অনুগ্রহ করে আমাদের সম্পূর্ণ প্রাইভেসি পলিসি পৃষ্ঠাটি দেখুন।'
+            : 'By continuing with your order, you consent to our privacy practices. For more details, please refer to the full Privacy Policy page.'}
         </p>
+        <br />
       </Modal>
     </div>
   );

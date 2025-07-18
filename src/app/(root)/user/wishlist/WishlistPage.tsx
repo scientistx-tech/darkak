@@ -1,21 +1,26 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Modal, Spin } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
-import { FaShoppingCart } from "react-icons/fa";
-import { WishlistItem } from "@/types/client/myWishlistType";
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Modal, Spin } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
+import { FaShoppingCart } from 'react-icons/fa';
+import { WishlistItem } from '@/types/client/myWishlistType';
 import {
   useGetMyWishListQuery,
   useDeleteWishListMutation,
-} from "@/redux/services/client/myWishList";
-import ClientLoading from "../../components/ClientLoading";
-import { setWish } from "@/redux/slices/authSlice";
-import { useDispatch } from "react-redux";
+} from '@/redux/services/client/myWishList';
+import ClientLoading from '../../components/ClientLoading';
+import { setWish } from '@/redux/slices/authSlice';
+import { useDispatch } from 'react-redux';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 const WishlistPage: React.FC = () => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const { data, isLoading, isError, refetch } = useGetMyWishListQuery({
     page: 1,
     limit: 10,
@@ -24,8 +29,7 @@ const WishlistPage: React.FC = () => {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const dispatch = useDispatch();
 
-  const [deleteWishList, { isLoading: isDeleting }] =
-    useDeleteWishListMutation();
+  const [deleteWishList, { isLoading: isDeleting }] = useDeleteWishListMutation();
 
   useEffect(() => {
     setWishlist(data?.data || null);
@@ -38,13 +42,11 @@ const WishlistPage: React.FC = () => {
     if (deleteId !== null) {
       try {
         await deleteWishList(deleteId).unwrap();
-        setWishlist(
-          (prev) => prev?.filter((item) => item.id !== deleteId) || null,
-        );
+        setWishlist((prev) => prev?.filter((item) => item.id !== deleteId) || null);
         dispatch(setWish(Math.random()));
         setDeleteId(null);
       } catch (error) {
-        console.error("Failed to delete wishlist item:", error);
+        console.error('Failed to delete wishlist item:', error);
       }
     }
   };
@@ -55,10 +57,10 @@ const WishlistPage: React.FC = () => {
       <div className="flex h-screen w-full items-center justify-center">
         <div className="flex flex-col items-center justify-center gap-4">
           <p className="text-2xl font-bold text-primaryBlue">
-            Your wishlist is empty!
+            {lang === 'bn' ? 'আপনার উইশলিস্ট খালি!' : 'Your wishlist is empty!'}
           </p>
           <Link href="/" className="text-xl text-primaryBlue underline">
-            Go to Home
+            {lang === 'bn' ? 'হোমে যান' : 'Go to Home'}
           </Link>
         </div>
       </div>
@@ -67,7 +69,9 @@ const WishlistPage: React.FC = () => {
   return (
     <div className="w-full">
       <div className="flex h-[60px] w-full items-center justify-center bg-gradient-to-r from-[#00153B] to-[#00286EF2] md:h-[100px]">
-        <p className="text-xl text-white md:text-2xl">Wishlist</p>
+        <p className="text-xl text-white md:text-2xl">
+          {lang === 'bn' ? 'ইচ্ছেতালিকা' : 'Wishlist'}
+        </p>
       </div>
 
       <div className="flex justify-center px-2 py-6 md:container md:mx-auto md:px-2 md:py-6 xl:px-4 xl:py-12">
@@ -97,13 +101,14 @@ const WishlistPage: React.FC = () => {
                   {/* Info */}
                   <div className="flex-1 space-y-1">
                     <p className="text-base font-semibold text-[#00153B] md:text-lg">
-                      Product Name: {item.product.title}
+                      {lang === 'bn' ? 'পণ্যের নাম:' : 'Product Name:'} {item.product.title}
                     </p>
                     <p className="text-[#00153B]">
-                      Brand: {item.product.brand.title}
+                      {lang === 'bn' ? 'ব্র্যান্ড:' : 'Brand:'} {item.product.brand.title}
                     </p>
                     <p className="font-medium text-[#00153B]">
-                      Price: {item.product.price}
+                      {lang === 'bn' ? 'মূল্য: ' : 'Price: '}
+                      {item.product.price}
                     </p>
                   </div>
 
@@ -119,7 +124,7 @@ const WishlistPage: React.FC = () => {
                     <div className="flex items-center justify-evenly gap-4">
                       <Link href="/easy-checkout">
                         <p className="text-primbg-primaryWhite scale-90 cursor-pointer rounded-full bg-primaryBlue px-4 py-2 text-sm font-medium text-secondaryWhite transition-all duration-300 hover:bg-primary hover:text-white md:scale-100 md:px-6 md:font-semibold lg:text-base">
-                          BUY NOW
+                          {lang === 'bn' ? 'এখনই কিনুন' : 'BUY NOW'}
                         </p>
                       </Link>
 
@@ -139,11 +144,11 @@ const WishlistPage: React.FC = () => {
 
       {/* Delete Modal */}
       <Modal
-        title="Are you sure you want to remove this item?"
+        title={lang === 'bn' ? 'আপনি কি নিশ্চিতভাবে এই আইটেমটি মুছে ফেলতে চান?' : 'Are you sure you want to remove this item?'}
         open={deleteId !== null}
         onOk={handleDelete}
         onCancel={() => setDeleteId(null)}
-        okText={isDeleting ? "Deleting..." : "Yes, Delete"}
+        okText={isDeleting ? 'Deleting...' : 'Yes, Delete'}
         cancelText="Cancel"
         confirmLoading={isDeleting}
       />
