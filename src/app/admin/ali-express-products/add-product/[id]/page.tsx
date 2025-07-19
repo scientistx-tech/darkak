@@ -1927,7 +1927,7 @@ const AliExpressProductEdit = () => {
       </div>
 
       <div className="mt-5 flex items-center justify-end gap-3">
-        {/* <button
+        <button
           type="button"
           onClick={() => handleSubmit(true)}
           className="rounded bg-yellow-600 px-4 py-2 text-white shadow"
@@ -1939,7 +1939,7 @@ const AliExpressProductEdit = () => {
           }
         >
           Draft
-        </button> */}
+        </button>
         <button
           type="button"
           onClick={() => handleSubmit(false)}

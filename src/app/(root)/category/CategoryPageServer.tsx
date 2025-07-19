@@ -34,7 +34,6 @@ export default function CategoryPageServer({ searchPage }: { searchPage?: boolea
   // Add currentPage to sidebarFilters before calling useGetAllProductsQuery
   const filtersWithPageAndLimit = {
     ...sidebarFilters,
-    search: search || '',
     page: String(visibleCount),
     limit: '20',
   };
