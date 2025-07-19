@@ -16,11 +16,11 @@ const product = {
   totalStock: 104,
 };
 
-export default function PosProductCard() {
+export default function PosProductCard({ data }: { data: any }) {
   const [open, setOpen] = useState(false);
   const [qty, setQty] = useState(1);
 
-  const totalPrice = qty * product.price;
+  const totalPrice = qty * (data?.offerPrice || data?.price || 0);
 
   return (
     <>
@@ -34,10 +34,10 @@ export default function PosProductCard() {
           {product.totalStock}
         </div>
 
-        <img src={product.image} alt={product.name} className="mx-auto h-28 object-contain" />
+        <img src={data?.thumbnail} alt={data?.meta_alt} className="mx-auto h-28 object-contain" />
         <div className="mt-3 text-center">
-          <p className="text-sm font-medium text-gray-800">{product.name}</p>
-          <p className="text-sm font-semibold text-blue-600">${product.price.toFixed(2)}</p>
+          <p className="text-sm font-medium text-gray-800">{data?.title}</p>
+          <p className="text-sm font-semibold text-blue-600">৳{data?.offerPrice || data?.price}</p>
         </div>
       </div>
 
@@ -45,17 +45,19 @@ export default function PosProductCard() {
       <Modal title={null} open={open} onCancel={() => setOpen(false)} footer={null} centered>
         <div className="flex flex-col items-center gap-6 p-4 md:p-6 lg:flex-row">
           <div className="w-full md:w-1/3">
-            <img src={product.image} alt="preview" className="h-40 w-40 object-contain" />
+            <img src={data?.thumbnail} alt="preview" className="h-40 w-40 object-contain" />
           </div>
           <div className="w-2/3">
-            <span className="mb-1 inline-block rounded-full bg-green-100 px-2 py-1 text-xs text-green-600">
-              {product.stock}
+            <span
+              className={`mb-1 inline-block rounded-full ${data?.stock ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'} px-2 py-1 text-xs`}
+            >
+              {data.stock ? 'In Stock' : 'Out Of Stock'}
             </span>
-            <h2 className="mb-2 text-xl font-semibold">{product.name}</h2>
+            <h2 className="mb-2 text-xl font-semibold">{data.title}</h2>
             <p className="mb-2 font-semibold">
-              Total Stock: <span className="text-green-500">{product.totalStock}</span>
+              Total Stock: <span className="text-green-500">{data.stock}</span>
             </p>
-            <p className="text-lg font-bold text-blue-600">${product.price.toFixed(2)}</p>
+            <p className="text-lg font-bold text-blue-600">৳{data?.offerPrice || data?.price}</p>
 
             <div className="mt-3 flex items-center gap-2">
               <label className="text-sm font-medium">Qty:</label>
@@ -72,7 +74,7 @@ export default function PosProductCard() {
                 </button>
               </div>
               <p className="ml-auto text-sm font-semibold">
-                Total Price: <span className="text-blue-600">${totalPrice.toFixed(2)}</span>
+                Total Price: <span className="text-blue-600">৳{totalPrice.toFixed(2)}</span>
               </p>
             </div>
 
