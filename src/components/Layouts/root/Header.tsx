@@ -302,6 +302,10 @@ const Header: React.FC = () => {
               <HeaderDropdown />
             </div>
 
+            <NavLink href="/explore" className="font-serif text-lg hover:text-primary">
+              {lang === 'bn' ? 'ঘুরে দেখুন' : 'Explore'}
+            </NavLink>
+
             <NavLink href="/vendors" className="font-serif text-lg hover:text-primary">
               {lang === 'bn' ? 'ভেন্ডরস' : 'Vendors'}
             </NavLink>
