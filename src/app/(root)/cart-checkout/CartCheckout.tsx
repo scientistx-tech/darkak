@@ -6,9 +6,6 @@ import { Input, Button, notification, Checkbox, Modal } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import product1 from '@/Data/Demo/product-2-1.png';
-import product2 from '@/Data/Demo/product-2-3.png';
-import product3 from '@/Data/Demo/product-2-4.png';
 import SendButton from '@/components/Button/SendButton';
 import {
   useDeleteCartMutation,
