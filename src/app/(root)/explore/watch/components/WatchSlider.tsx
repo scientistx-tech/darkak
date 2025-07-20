@@ -48,7 +48,7 @@ export default function WatchSlider() {
   };
 
   return (
-    <div className="relative md:h-[calc(100vh-109px)] w-full overflow-hidden bg-primary">
+    <div className="relative md:h-[calc(100vh-109px)] w-full overflow-hidden bg-primaryBlue">
       {/* Background Image Transition */}
       {slides.map((slide, index) => (
         <Image
