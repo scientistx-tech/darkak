@@ -6,7 +6,7 @@ import img from '@/Data/Demo/thumb-1920-479220.jpg';
 
 export default function WatchCategories() {
   return (
-    <div className="mt-5 flex w-full flex-col md:justify-between gap-4 md:mt-10 md:flex-row md:gap-6">
+    <div className="mt-5 flex w-full flex-col gap-4 md:mt-10 md:flex-row md:justify-between md:gap-6">
       <WatchCategoriesContainer img={img} alt="Men Watch" name="FOR MEN" link="/" />
       <WatchCategoriesContainer img={img} alt="Women Watch" name="FOR WOMEN" link="/" />
       <WatchCategoriesContainer img={img} alt="Kids Watch" name="FOR KIDS" link="/" />
@@ -26,7 +26,7 @@ const WatchCategoriesContainer = ({
   link: string;
 }) => {
   return (
-    <div className="group relative h-[200px] md:h-[300px] w-full overflow-hidden rounded-xl shadow-lg transition-transform duration-300 hover:scale-105 md:w-[32%]">
+    <div className="group relative h-[200px] w-full overflow-hidden rounded-xl shadow-lg transition-transform duration-300 hover:scale-105 md:h-[300px] md:w-[32%]">
       <Image
         src={img}
         alt={alt}
