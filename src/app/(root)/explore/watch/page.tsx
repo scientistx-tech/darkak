@@ -12,7 +12,7 @@ import WatchNewArrival from './components/WatchNewArrival';
 export default function page() {
   return (
     <div>
-      <div className="h-[65px] w-full md:h-[109px]" />
+      <div className="h-[65px] w-full xl:h-[109px]" />
       <WatchSlider />
 
       <div className="container mx-auto flex flex-col gap-y-5 px-2 md:px-4">
