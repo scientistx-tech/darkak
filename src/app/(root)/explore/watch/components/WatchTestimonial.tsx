@@ -64,7 +64,7 @@ export default function WatchTestimonial() {
   };
 
   return (
-    <div className="relative w-full bg-gradient-to-r from-blue-100 via-white to-blue-100 py-16 px-4 flex justify-center items-center">
+    <div className="relative w-full md:bg-gradient-to-r from-blue-100 via-white to-blue-100 py-16 px-4 flex justify-center items-center">
       {/* Glass Card */}
       <div className="relative max-w-3xl w-full rounded-2xl border border-blue-200 bg-white/60 backdrop-blur-md px-8 py-12 shadow-xl transition-all duration-500">
         {/* Quote icon */}

@@ -15,7 +15,7 @@ import * as Icons from '../icons';
 import { BsTornado } from 'react-icons/bs';
 import { FaListAlt } from 'react-icons/fa';
 import { IoMdAddCircle } from 'react-icons/io';
-import { FaRegListAlt } from 'react-icons/fa';
+import { FaRegListAlt, FaClock, FaShoppingBag } from 'react-icons/fa';
 import { FaHeadphones } from "react-icons/fa6";
 export const getSellerNavData = (data: any) => [
   {
@@ -632,6 +632,54 @@ export const getNavData = (data: any, vendorData: any) => [
       },
     ],
   },
+
+
+  {
+    label: 'Landing Page',
+    items: [
+      
+      {
+        title: 'Watch',
+        accessKey: 'watch',
+        icon: FaClock,
+        items: [
+          {
+            title: 'Slider',
+            url: '/admin/landing-page/watch/watch-slider',
+            accessKey: 'watch-slider',
+          },
+          {
+            title: 'Add Product',
+            url: '/admin/landing-page/watch/add-product',
+            accessKey: 'watch-add-product',
+          },
+          {
+            title: 'Product List',
+            url: '/admin/landing-page/watch/product-list',
+            accessKey: 'watch-product-list',
+          },
+          {
+            title: 'Category & Brand',
+            url: '/admin/landing-page/watch/category-brand',
+            accessKey: 'watch-category-brand',
+          },
+          {
+            title: 'Testimonial & Poster',
+            url: '/admin/landing-page/watch/testimonial-poster',
+            accessKey: 'watch-testimonial-poster',
+          },
+        ],
+      },
+      {
+        title: 'Bag',
+        accessKey: 'bag',
+        icon: FaShoppingBag,
+        url: '/admin/landing-page/bag',
+      },
+    ],
+  },
+
+
   {
     label: 'OTHERS',
     items: [
