@@ -45,6 +45,7 @@ export default function WatchBestSeller() {
           price={15000}
           discount={20}
         />
+        
       </div>
     </div>
   );
