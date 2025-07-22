@@ -755,6 +755,11 @@ export const getNavData = (data: any, vendorData: any) => [
             accessKey: 'seo',
           },
           {
+            title: 'Return & Refund Policy Page',
+            url: '/admin/seo/return-refund-policy-page',
+            accessKey: 'seo',
+          },
+          {
             title: 'FAQ Page',
             url: '/admin/seo/faq-page',
             accessKey: 'seo',
