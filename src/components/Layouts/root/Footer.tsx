@@ -19,6 +19,8 @@ import { useAddSubscriberMutation } from '@/redux/services/client/subscribe';
 import { toast } from 'react-toastify';
 import { useGetHomeContentQuery } from '@/redux/services/client/homeContentApi';
 
+import paymentBanner from '@/Data/Img/Payment Banner 2 - Copy.png';
+
 function Footer() {
   const lang = useSelector((state: RootState) => state.language.language);
 
@@ -169,13 +171,21 @@ function Footer() {
                     >
                       {lang === 'bn' ? 'শর্তাবলি' : 'Terms and Condition'}
                     </Link>
+
+                    <Link
+                      href="/return-refund-policy"
+                      className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3"
+                    >
+                      {lang === 'bn' ? 'রিটার্ন এবং রিফান্ড নীতিমালা' : 'Return and Refund Policy'}
+                    </Link>
+
                     <Link href="/faq" className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3">
                       {lang === 'bn' ? 'প্রশ্নোত্তর' : 'FAQ'}
                     </Link>
                   </div>
                 </div>
 
-                <p className="mt-8 hidden text-2xl text-[#BBD4FF] md:block">
+                <p className="mt-5 hidden text-2xl text-[#BBD4FF] md:block">
                   {lang === 'bn' ? 'আমাদের মোবাইল অ্যাপ ডাউনলোড করুন' : 'Download Our Mobile App'}
                 </p>
                 <div className="mt-5 hidden justify-start gap-5 md:flex">
@@ -338,6 +348,10 @@ function Footer() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="w-full">
+        <Image src={paymentBanner} alt="Payment Methods" className="w-full object-cover" />
       </div>
     </div>
   );
