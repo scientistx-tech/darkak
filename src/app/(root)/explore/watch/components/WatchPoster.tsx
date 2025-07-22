@@ -24,8 +24,8 @@ export default function WatchPoster() {
           <p className="font-serif text-2xl font-medium text-primaryBlue md:text-[40px]">Lington</p>
 
           <p className="mt-5 text-slate-800 md:text-right">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
-            has been the industry's standard dummy text ever since the 1500s
+           {` Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
+            has been the industry's standard dummy text ever since the 1500s`}
           </p>
         </div>
       </div>
@@ -43,8 +43,8 @@ export default function WatchPoster() {
           <p className="font-serif text-xl font-medium text-white md:text-[35px]">Lington</p>
 
           <p className="mt-5 text-slate-200">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
-            has been the industry's standard dummy text ever since the 1500s
+            {`Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
+            has been the industry's standard dummy text ever since the 1500s`}
           </p>
 
           <Link
