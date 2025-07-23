@@ -659,15 +659,11 @@ export const getNavData = (data: any, vendorData: any) => [
             accessKey: 'watch-product-list',
           },
           {
-            title: 'Category & Brand',
-            url: '/admin/landing-page/watch/category-brand',
-            accessKey: 'watch-category-brand',
+            title: 'Others Content',
+            url: '/admin/landing-page/watch/others-content',
+            accessKey: 'watch-others-content',
           },
-          {
-            title: 'Testimonial & Poster',
-            url: '/admin/landing-page/watch/testimonial-poster',
-            accessKey: 'watch-testimonial-poster',
-          },
+          
         ],
       },
       {

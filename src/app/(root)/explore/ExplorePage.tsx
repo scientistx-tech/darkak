@@ -1,42 +1,44 @@
-import Link from 'next/link';
+'use client';
+
 import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { notification } from 'antd';
+
+import watchImg from '@/Data/Demo/thumb-1920-831859.jpg';
+
+type Category = {
+  name: string;
+  href: string;
+  available: boolean;
+};
+
+const categories: Category[] = [{ name: 'WATCHES', href: '/explore/watch', available: true }];
 
 export default function ExplorePage() {
+  const [api, contextHolder] = notification.useNotification();
+
   return (
     <div className="w-full">
-      <div>
-        <p>WATCHES</p>
-        <Link href="/explore/watch" className="text-blue-500 hover:underline">
-          Explore Now
-        </Link>
-      </div>
+      {contextHolder}
 
-      <div>
-        <p>PURSE</p>
-        <Link href="" className="text-blue-500 hover:underline">
-          Explore Now
-        </Link>
-      </div>
+      {/* Watch Section */}
+      <div className="relative mb-12 h-[500px] w-full overflow-hidden">
+        <Image src={watchImg} alt="Explore Banner" fill className="object-cover" priority />
+        <div className="absolute p-12 inset-0 flex flex-col items-start justify-end bg-black bg-opacity-40 px-4 text-center text-white">
+          <h1 className="mb-4 text-4xl font-medium font-serif">Explore Our Collections</h1>
 
-      <div>
-        <p>JEWELRY</p>
-        <Link href="" className="text-blue-500 hover:underline">
-          Explore Now
-        </Link>
-      </div>
-
-      <div>
-        <p>CURLER</p>
-        <Link href="" className="text-blue-500 hover:underline">
-          Explore Now
-        </Link>
-      </div>
-
-      <div>
-        <p>BAG PACKS</p>
-        <Link href="" className="text-blue-500 hover:underline">
-          Explore Now
-        </Link>
+          <Link
+            href="/explore/watch"
+            className="group relative inline-flex items-center justify-start overflow-hidden rounded bg-white px-6 py-3 font-medium transition-all hover:bg-white"
+          >
+            <span className="absolute bottom-0 left-0 mb-9 ml-9 h-48 w-48 -translate-x-full translate-y-full rotate-[-40deg] rounded bg-primary transition-all duration-500 ease-out group-hover:mb-32 group-hover:ml-0 group-hover:translate-x-0"></span>
+            <span className="relative w-full text-left text-black transition-colors duration-300 ease-in-out group-hover:text-white">
+              Explore Now
+            </span>
+          </Link>
+          
+        </div>
       </div>
     </div>
   );

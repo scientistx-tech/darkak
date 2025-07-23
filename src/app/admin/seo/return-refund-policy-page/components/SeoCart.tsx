@@ -19,7 +19,7 @@ export default function SeoCart() {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`${BASE_URL}/public/page-seo/refund`) ///will cahnge type "about","about"
+      .get(`${BASE_URL}/public/page-seo/return`) ///will cahnge type "about","about"
       .then((res) => {
         const data = res.data?.data;
         setMetaTitle(data?.meta_title || '');
@@ -70,7 +70,7 @@ export default function SeoCart() {
       }
 
       const payload = {
-        type: 'refund',
+        type: 'return',
         meta_title: metaTitle,
         meta_description: metaDescription,
         meta_keywords: keywords,

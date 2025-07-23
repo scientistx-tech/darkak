@@ -5,7 +5,7 @@ import ContentFaqCard from '@/components/shared/ContentFaqCard';
 
 
 export async function generateMetadata() {
-  const data = await getSeoData('terms_condition');
+  const data = await getSeoData('return');
   //console.log(data);
 
   return {
@@ -27,13 +27,13 @@ export async function generateMetadata() {
   };
 }
 export default async function page() {
-  const data = await getSeoData('terms_condition');
+  const data = await getSeoData('return');
   return (
     <div>
       <div className="h-[65px] w-full md:h-[109px]" />
       <div className="ml-[2.5%] mt-8 w-[95%] md:mt-16">
         <ContentFaqCard content={data?.data?.content} faqs={data?.data?.faq?.faq || []} />
       </div>
-    </div>
+    </div> 
   );
 }
