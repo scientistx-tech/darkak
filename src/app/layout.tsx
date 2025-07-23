@@ -3,6 +3,10 @@ import '@/css/satoshi.css';
 import '@/css/style.css';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'jsvectormap/dist/jsvectormap.css';
+import 'antd/dist/reset.css';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 import type { Metadata } from 'next';
 import { PropsWithChildren } from 'react';
 import UpdateNotice from '@/app/(root)/component/UpdateNotice';
@@ -247,6 +251,9 @@ export const metadata: Metadata = {
     'og:image:alt':
       'Darkak Mart - Premium imported goods including bags, watches, and electronics in Bangladesh',
     'og:logo': 'https://www.darkak.com.bd/favicon.ico',
+  },
+  alternates: {
+    canonical: '/', // 👈 This sets the canonical URL to "https://www.darkak.com.bd/"
   },
 };
 
