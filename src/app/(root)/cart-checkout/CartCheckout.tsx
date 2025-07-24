@@ -22,6 +22,7 @@ import {
 import { setCart } from '@/redux/slices/authSlice';
 import { BD_Division, BD_District } from '@/Data/addressData';
 import { useCheckCouponCodeMutation } from '@/redux/services/client/applyCoupon';
+import getSeoData from '../getSeoData';
 
 const CartCheckout: React.FC = () => {
   const lang = useSelector((state: RootState) => state.language.language);
@@ -53,6 +54,16 @@ const CartCheckout: React.FC = () => {
   const { data, isLoading, isError, refetch } = useGetMyCartQuery();
   const [createOrder] = useOrderCartProductsMutation();
 
+  const [privacy, setPrivacy] = useState();
+  const [terms, setTerms] = useState();
+
+  const getContentData = async () => {
+    const p = await getSeoData('privacy_policy');
+    const t = await getSeoData('terms_condition');
+    setPrivacy(p?.data?.content);
+    setTerms(t?.data?.content);
+  };
+
   // ✅ Load checkout_items from localStorage when component mounts
   useEffect(() => {
     const storedItems = localStorage.getItem('checkout_items');
@@ -77,6 +88,7 @@ const CartCheckout: React.FC = () => {
 
   // ✅ Clear on route change (SPA navigation)
   useEffect(() => {
+    getContentData();
     // When pathname changes, check and clear localStorage if needed
     if (!pathname.includes('checkout')) {
       localStorage.removeItem('checkout_items');
@@ -427,19 +439,19 @@ const CartCheckout: React.FC = () => {
               {/* Agreement Checkbox */}
               <Checkbox checked={agree} onChange={(e) => setAgree(e.target.checked)} required>
                 {lang === 'bn' ? 'আমি পড়েছি এবং একমত ' : 'I have read and agree to the '}
-                <button onClick={showModal} className="text-primaryBlue font-semibold">
+                <span onClick={showModal} className="font-semibold text-primaryBlue">
                   {lang === 'bn' ? ' শর্তাবলী ' : 'Terms & Conditions '}
-                </button>
+                </span>
                 {lang === 'bn' ? ' এবং ' : ' and '}
-                <button onClick={showModal2} className="text-primaryBlue font-semibold">
+                <span onClick={showModal2} className="font-semibold text-primaryBlue">
                   {lang === 'bn' ? 'গোপনীয়তা নীতি' : 'Privacy Policy'}
-                </button>
+                </span>
               </Checkbox>
             </form>
 
             <div className="mt-5 hidden md:block">
               <button
-                className="w-full rounded-md hover:bg-primary bg-blue-950 px-16 py-2 text-white  font-medium"
+                className="w-full rounded-md bg-blue-950 px-16 py-2 font-medium text-white hover:bg-primary"
                 onClick={handleCheckout}
               >
                 {lang === 'bn' ? 'অর্ডার করুন' : 'Order'}
@@ -565,7 +577,7 @@ const CartCheckout: React.FC = () => {
 
         <div className="mt-5 block md:hidden">
           <button
-            className="w-full rounded-md hover:bg-primary bg-blue-950 px-16 py-2 text-white  font-medium"
+            className="w-full rounded-md bg-blue-950 px-16 py-2 font-medium text-white hover:bg-primary"
             onClick={handleCheckout}
           >
             {lang === 'bn' ? 'অর্ডার করুন' : 'Order'}
@@ -573,84 +585,12 @@ const CartCheckout: React.FC = () => {
         </div>
       </div>
 
-      <Modal
-        title={lang === 'bn' ? 'শর্তাবলী - ডারকাক' : 'Terms and Conditions - Darkak'}
-        open={isModalOpen}
-        onCancel={handleCancel}
-        footer={false}
-      >
-        <br />
-        <p>
-          {lang === 'bn'
-            ? 'Darkak-এ অর্ডার প্লেস করার মাধ্যমে আপনি আমাদের শর্তাবলীতে সম্মত হচ্ছেন। দয়া করে অর্ডার সম্পন্ন করার আগে নিচের তথ্যগুলো পড়ে নিন।'
-            : 'By placing an order on Darkak, you agree to our terms and conditions. Please review the following before completing your purchase.'}
-        </p>
-        <br />
-        <p>
-          {lang === 'bn'
-            ? 'সব অর্ডার প্রাপ্যতা এবং অর্ডারের মূল্যের নিশ্চিতকরণের উপর নির্ভরশীল। আমরা যে কোনো অর্ডার বাতিল করার অধিকার সংরক্ষণ করি।'
-            : 'All orders are subject to availability and confirmation of the order price. We reserve the right to refuse or cancel any order at our discretion.'}
-        </p>
-        <br />
-        <p>
-          {lang === 'bn'
-            ? 'আপনার অর্ডার সম্পন্ন হলে একটি অর্ডার কনফার্মেশন পাবেন। আপনার লোকেশন ও ডেলিভারি পদ্ধতির উপর ভিত্তি করে শিপিং সময় পরিবর্তিত হতে পারে।'
-            : 'Once your order is placed, you will receive an order confirmation. Shipping times may vary based on your location and selected delivery method.'}
-        </p>
-        <br />
-        <p>
-          {lang === 'bn'
-            ? 'অনুগ্রহ করে আপনার শিপিং তথ্য সঠিকভাবে প্রদান করুন। গ্রাহক প্রদত্ত ভুল ঠিকানায় অর্ডার পৌঁছালে Darkak দায়ী নয়।'
-            : 'Please ensure your shipping information is accurate. Darkak is not responsible for orders delivered to incorrect addresses provided by the customer.'}
-        </p>
-        <br />
-        <p>
-          {lang === 'bn'
-            ? 'যেকোনো রিটার্ন, রিফান্ড বা ক্যানসেলেশন সম্পর্কিত নীতিমালা আমাদের ওয়েবসাইটে দেখুন অথবা কাস্টমার সাপোর্টে যোগাযোগ করুন।'
-            : 'For any return, refund, or cancellation, please review our dedicated policies listed on our website or contact customer support.'}
-        </p>
-        <br />
+      <Modal title="Terms and Conditions" open={isModalOpen} onCancel={handleCancel} footer={false}>
+        <div dangerouslySetInnerHTML={{ __html: terms || `<div>Loading..</div>` }} />
       </Modal>
 
-      <Modal
-        title={lang === 'bn' ? 'গোপনীয়তা নীতি - ডারকাক' : 'Privacy Policy - Darkak'}
-        open={isModalOpen2}
-        onCancel={handleCancel2}
-        footer={false}
-      >
-        <br />
-        <p>
-          {lang === 'bn' ? (
-            <>
-              <strong>Darkak</strong> আপনার গোপনীয়তাকে গুরুত্ব দেয়। চেকআউটের সময় আমরা আপনার
-              ব্যক্তিগত তথ্য সংগ্রহ করি যাতে অর্ডার প্রক্রিয়া ও সাপোর্ট প্রদান করা যায়।
-            </>
-          ) : (
-            <>
-              <strong>Darkak</strong> values your privacy. We collect your personal data during
-              checkout to process your order and provide support.
-            </>
-          )}
-        </p>
-        <br />
-        <p>
-          {lang === 'bn'
-            ? 'সংগ্রহকৃত তথ্যের মধ্যে আপনার নাম, শিপিং ঠিকানা, যোগাযোগের বিবরণ এবং পেমেন্ট পদ্ধতি অন্তর্ভুক্ত। এই তথ্য নিরাপদভাবে সংরক্ষিত হয় এবং আপনার অনুমতি ছাড়া তৃতীয় পক্ষের সাথে কখনও শেয়ার করা হয় না।'
-            : 'The data collected includes your name, shipping address, contact details, and payment method. This information is securely stored and never shared with third parties without your consent.'}
-        </p>
-        <br />
-        <p>
-          {lang === 'bn'
-            ? 'আমরা আপনার যোগাযোগের তথ্য ব্যবহার করে অর্ডার আপডেট বা প্রোমোশনাল অফার পাঠাতে পারি। আপনি যেকোনো সময় এই সুবিধা বন্ধ করতে পারেন।'
-            : 'We may use your contact details to send order updates or promotional offers. You can opt out at any time.'}
-        </p>
-        <br />
-        <p>
-          {lang === 'bn'
-            ? 'আপনার অর্ডার চালিয়ে যাওয়ার মাধ্যমে, আপনি আমাদের গোপনীয়তা নীতিতে সম্মতি দিচ্ছেন। আরও বিস্তারিত জানার জন্য অনুগ্রহ করে আমাদের সম্পূর্ণ প্রাইভেসি পলিসি পৃষ্ঠাটি দেখুন।'
-            : 'By continuing with your order, you consent to our privacy practices. For more details, please refer to the full Privacy Policy page.'}
-        </p>
-        <br />
+      <Modal title="Privacy Policy" open={isModalOpen2} onCancel={handleCancel2} footer={false}>
+        <div dangerouslySetInnerHTML={{ __html: privacy || `<div>Loading..</div>` }} />
       </Modal>
     </div>
   );
