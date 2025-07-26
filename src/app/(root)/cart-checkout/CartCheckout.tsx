@@ -56,12 +56,15 @@ const CartCheckout: React.FC = () => {
 
   const [privacy, setPrivacy] = useState();
   const [terms, setTerms] = useState();
+  const [refund, setRefund] = useState();
 
   const getContentData = async () => {
     const p = await getSeoData('privacy_policy');
     const t = await getSeoData('terms_condition');
+    const q = await getSeoData('return');
     setPrivacy(p?.data?.content);
     setTerms(t?.data?.content);
+    setRefund(q?.data?.content);
   };
 
   // ✅ Load checkout_items from localStorage when component mounts
@@ -97,6 +100,7 @@ const CartCheckout: React.FC = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
+  const [isModalOpen3, setIsModalOpen3] = useState(false);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -112,6 +116,14 @@ const CartCheckout: React.FC = () => {
 
   const handleCancel2 = () => {
     setIsModalOpen2(false);
+  };
+
+  const showModal3 = () => {
+    setIsModalOpen3(true);
+  };
+
+  const handleCancel3 = () => {
+    setIsModalOpen3(false);
   };
   // For right side
 
@@ -239,11 +251,11 @@ const CartCheckout: React.FC = () => {
           {paymentMethod === 'cash' ? (
             <>
               অর্ডার সংক্রান্ত যেকোনো প্রয়োজনে কথা বলুন আমাদের কাস্টমার সার্ভিস প্রতিনিধির সাথে -{' '}
-              <strong> 01915665089</strong>
+              <strong> 01711726501</strong>
             </>
           ) : (
             <>
-              অনলাইন পেমেন্ট সংক্রান্ত সহায়তার জন্য হেল্পলাইন - <strong> 01915665089</strong>
+              অনলাইন পেমেন্ট সংক্রান্ত সহায়তার জন্য হেল্পলাইন - <strong> 01711726501</strong>
             </>
           )}
         </motion.div>
@@ -439,13 +451,16 @@ const CartCheckout: React.FC = () => {
               {/* Agreement Checkbox */}
               <Checkbox checked={agree} onChange={(e) => setAgree(e.target.checked)} required>
                 {lang === 'bn' ? 'আমি পড়েছি এবং একমত ' : 'I have read and agree to the '}
-                <span onClick={showModal} className="font-semibold text-primaryBlue">
-                  {lang === 'bn' ? ' শর্তাবলী ' : 'Terms & Conditions '}
-                </span>
+                <button onClick={showModal} className="font-semibold text-primaryBlue">
+                  {lang === 'bn' ? ' শর্তাবলী, ' : 'Terms & Conditions, '}
+                </button>
+                <button onClick={showModal3} className="font-semibold text-primaryBlue">
+                  {lang === 'bn' ? ' রিটার্ন & রিফান্ড ' : ' Return & Refund '}
+                </button>
                 {lang === 'bn' ? ' এবং ' : ' and '}
-                <span onClick={showModal2} className="font-semibold text-primaryBlue">
+                <button onClick={showModal2} className="font-semibold text-primaryBlue">
                   {lang === 'bn' ? 'গোপনীয়তা নীতি' : 'Privacy Policy'}
-                </span>
+                </button>
               </Checkbox>
             </form>
 
@@ -585,12 +600,31 @@ const CartCheckout: React.FC = () => {
         </div>
       </div>
 
-      <Modal title="Terms and Conditions" open={isModalOpen} onCancel={handleCancel} footer={false}>
+      <Modal
+        title={lang === 'bn' ? 'শর্তাবলী' : 'Terms and Conditions'}
+        open={isModalOpen}
+        onCancel={handleCancel}
+        footer={false}
+      >
         <div dangerouslySetInnerHTML={{ __html: terms || `<div>Loading..</div>` }} />
       </Modal>
 
-      <Modal title="Privacy Policy" open={isModalOpen2} onCancel={handleCancel2} footer={false}>
+      <Modal
+        title={lang === 'bn' ? 'গোপনীয়তা নীতি' : 'Privacy Policy'}
+        open={isModalOpen2}
+        onCancel={handleCancel2}
+        footer={false}
+      >
         <div dangerouslySetInnerHTML={{ __html: privacy || `<div>Loading..</div>` }} />
+      </Modal>
+
+      <Modal
+        title={lang === 'bn' ? 'রিটার্ন এবং রিফান্ড নীতি' : 'Return and Refund Policy'}
+        open={isModalOpen3}
+        onCancel={handleCancel3}
+        footer={false}
+      >
+        <div dangerouslySetInnerHTML={{ __html: refund || `<div>Loading..</div>` }} />
       </Modal>
     </div>
   );
