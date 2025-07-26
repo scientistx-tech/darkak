@@ -7,14 +7,23 @@ import WatchBrand from './components/WatchBrand';
 import WatchCategory from './components/WatchCategory';
 import WatchPoster from './components/WatchPoster';
 import WatchTestimonial from './components/WatchTestimonial';
+import WatchBanner from './components/WatchBanner';
 
 export default function Page() {
-  const [activeTab, setActiveTab] = useState<'category' | 'brand' | 'poster' | 'testimonial'>('category');
+  const [activeTab, setActiveTab] = useState<'category' | 'brand' | 'poster' | 'banner' | 'testimonial'>('category');
 
   return (
     <div className="w-full px-4 py-6">
       {/* Tab Buttons */}
       <div className="mb-6 flex flex-wrap gap-4">
+        <button
+          onClick={() => setActiveTab('banner')}
+          className={`rounded-md px-4 py-2 text-white ${
+            activeTab === 'banner' ? 'bg-blue-600' : 'bg-gray-400 hover:bg-gray-500'
+          }`}
+        >
+          Banner
+        </button>
         <button
           onClick={() => setActiveTab('category')}
           className={`rounded-md px-4 py-2 text-white ${
@@ -97,6 +106,18 @@ export default function Page() {
               transition={{ duration: 0.3 }}
             >
               <WatchTestimonial />
+            </motion.div>
+          )}
+
+           {activeTab === 'banner' && (
+            <motion.div
+              key="banner"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <WatchBanner />
             </motion.div>
           )}
         </AnimatePresence>
