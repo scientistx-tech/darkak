@@ -4,8 +4,10 @@ import React, { useState, useRef } from 'react';
 import Input from '../../../../components/Input';
 import Button from '../../../../components/Button';
 import Image from 'next/image';
+import AsyncSelect from 'react-select/async';
 
 export default function WatchPoster() {
+  const [productId, setProductId] = useState('');
   const [form, setForm] = useState({
     topTitle: '',
     topDesc: '',
@@ -14,6 +16,14 @@ export default function WatchPoster() {
     posterDesc: '',
     posterAlt: '',
   });
+
+  const loadProductOptions = async (inputValue: string) => {
+    return [
+      { value: '1', label: 'Luxury Watch' },
+      { value: '2', label: 'Sport Watch' },
+      { value: '3', label: 'Smart Watch' },
+    ].filter((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()));
+  };
 
   const [topImg, setTopImg] = useState<File | null>(null);
   const [topPreview, setTopPreview] = useState<string | null>(null);
@@ -25,7 +35,7 @@ export default function WatchPoster() {
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImage = (
@@ -54,6 +64,20 @@ export default function WatchPoster() {
   return (
     <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
       <h2 className="mb-6 text-2xl font-semibold text-gray-800">Watch Poster Setup</h2>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 mb-6">
+        <AsyncSelect
+          cacheOptions
+          loadOptions={loadProductOptions}
+          onChange={(option: any) => setProductId(option?.value || '')}
+          placeholder="Select Product"
+          isClearable
+          styles={{
+            container: (base) => ({ ...base, height: '50px' }),
+            control: (base) => ({ ...base, height: '50px' }),
+          }}
+        />
+      </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Input
@@ -121,7 +145,7 @@ export default function WatchPoster() {
         </label>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 mt-8">
+      <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
         <Input
           label="Poster Title"
           name="posterTitle"
