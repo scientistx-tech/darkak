@@ -148,7 +148,7 @@ export default function WatchTestimonial() {
             ⭐ {t.rating}/5
           </div>
 
-          <p className="text-gray-700 text-base mb-3 italic">"{t.text}"</p>
+          <p className="text-gray-700 text-base mb-3 italic">{t.text}</p>
 
           <div className="text-sm text-gray-600">
             <p className="font-semibold">{t.name}</p>
