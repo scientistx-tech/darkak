@@ -15,7 +15,7 @@ import * as Icons from '../icons';
 import { BsTornado } from 'react-icons/bs';
 import { FaListAlt } from 'react-icons/fa';
 import { IoMdAddCircle } from 'react-icons/io';
-import { FaRegListAlt, FaClock, FaShoppingBag } from 'react-icons/fa';
+import { FaRegListAlt, FaClock, FaShoppingBag, FaShoppingCart, FaUndo } from 'react-icons/fa';
 import { FaHeadphones } from "react-icons/fa6";
 export const getSellerNavData = (data: any) => [
   {
@@ -202,9 +202,16 @@ export const getNavData = (data: any, vendorData: any) => [
       },
       {
         title: 'POS',
-        icon: GiPostOffice,
+        icon: FaShoppingCart,
         accessKey: 'pos',
         url: '/admin/pos',
+        items: [],
+      },
+      {
+        title: 'Product Stock',
+        icon: FaUndo,
+        accessKey: 'product-management',
+        url: '/admin/product-management',
         items: [],
       },
     ],
