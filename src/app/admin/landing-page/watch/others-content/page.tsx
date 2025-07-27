@@ -10,7 +10,7 @@ import WatchTestimonial from './components/WatchTestimonial';
 import WatchBanner from './components/WatchBanner';
 
 export default function Page() {
-  const [activeTab, setActiveTab] = useState<'category' | 'brand' | 'poster' | 'banner' | 'testimonial'>('category');
+  const [activeTab, setActiveTab] = useState<'category' | 'brand' | 'poster' | 'banner' | 'testimonial'>('banner');
 
   return (
     <div className="w-full px-4 py-6">

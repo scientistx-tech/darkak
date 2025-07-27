@@ -201,6 +201,7 @@ export const {
   useUpdateProductAttributeMutation,
   useCreateProductMutation,
   useGetProductsQuery,
+  useLazyGetProductsQuery,
   useGetAliExpressProductsQuery,
   useGetSingleProductDetailsQuery,
   useUpdateProductMutation,
