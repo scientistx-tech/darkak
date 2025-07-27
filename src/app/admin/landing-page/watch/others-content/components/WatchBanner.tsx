@@ -1,10 +1,30 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import AsyncSelect from 'react-select/async';
 import Image from 'next/image';
 import Input from '../../../../components/Input';
 import Button from '../../../../components/Button';
+import { toast } from 'react-toastify';
+import { useLazyGetProductsQuery } from '@/redux/services/admin/adminProductApis';
+import baseApi from '@/redux/baseApi';
+
+export const watchBannerApi = baseApi.injectEndpoints({
+  endpoints: (build) => ({
+    getWatchBanners: build.query<any, void>({
+      query: () => '/admin/watch/banner',
+    }),
+    createOrUpdateWatchBanners: build.mutation<any, FormData>({
+      query: (formData) => ({
+        url: '/admin/watch/banner/create',
+        method: 'POST',
+        body: formData,
+      }),
+    }),
+  }),
+});
+
+export const { useGetWatchBannersQuery, useCreateOrUpdateWatchBannersMutation } = watchBannerApi;
 
 export default function WatchBanner() {
   const [productId, setProductId] = useState('');
@@ -14,24 +34,27 @@ export default function WatchBanner() {
   const [thumbAlt, setThumbAlt] = useState('');
   const [thumbImage, setThumbImage] = useState<File | null>(null);
   const [previewThumb, setPreviewThumb] = useState<string | null>(null);
-  const [banners, setBanners] = useState<any[]>([]);
-
   const thumbInputRef = useRef<HTMLInputElement>(null);
 
-  const loadProductOptions = async (inputValue: string) => {
-    return [
-      { value: '1', label: 'Luxury Watch' },
-      { value: '2', label: 'Sport Watch' },
-      { value: '3', label: 'Smart Watch' },
-    ].filter((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()));
-  };
+  const { data: bannersData = [], refetch } = useGetWatchBannersQuery();
+  const [createOrUpdateBanner, { isLoading }] = useCreateOrUpdateWatchBannersMutation();
+  const [triggerGetProducts] = useLazyGetProductsQuery();
 
-  const loadBannerOptions = async (inputValue: string) => {
-    return [
-      { value: '1', label: 'Casual Watch' },
-      { value: '2', label: 'Premium Watch' },
-    ].filter((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()));
-  };
+  const loadProductOptions = useCallback(
+    async (inputValue: string) => {
+      if (!inputValue) return [];
+      try {
+        const result = await triggerGetProducts({ search: inputValue }).unwrap();
+        return (result?.data || []).map((p: any) => ({ value: p.id, label: p.title }));
+      } catch (error) {
+        console.error('Failed to load products', error);
+        return [];
+      }
+    },
+    [triggerGetProducts]
+  );
+
+  
 
   const handleImage = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -42,49 +65,43 @@ export default function WatchBanner() {
     if (file) {
       setImage(file);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
+      reader.onloadend = () => setPreview(reader.result as string);
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = () => {
-    if (!title || !shortDescription || !previewThumb) {
-      alert('Please fill all fields and upload an image.');
-      return;
+  const handleSubmit = async () => {
+    if (!title || !shortDescription || !thumbAlt || !bannerType || !productId || !thumbImage) {
+      return toast.error('Please fill all fields and upload an image.');
     }
 
-    const newBanner = {
-      id: Date.now(),
-      productId,
-      bannerType,
-      title,
-      shortDescription,
-      thumbAlt,
-      thumbImage: previewThumb,
-    };
+    const formData = new FormData();
+    formData.append('productId', productId);
+    formData.append('type', bannerType);
+    formData.append('title', title);
+    formData.append('description', shortDescription);
+    formData.append('alt', thumbAlt);
+    formData.append('file', thumbImage);
 
-    setBanners((prev) => [...prev, newBanner]);
-
-    // Reset fields
-    setProductId('');
-    setBannerType('');
-    setTitle('');
-    setShortDescription('');
-    setThumbAlt('');
-    setThumbImage(null);
-    setPreviewThumb(null);
-    if (thumbInputRef.current) thumbInputRef.current.value = '';
-  };
-
-  const handleDelete = (id: number) => {
-    setBanners((prev) => prev.filter((item) => item.id !== id));
+    try {
+      await createOrUpdateBanner(formData).unwrap();
+      toast.success('Banner saved successfully!');
+      refetch();
+      setProductId('');
+      setBannerType('');
+      setTitle('');
+      setShortDescription('');
+      setThumbAlt('');
+      setThumbImage(null);
+      setPreviewThumb(null);
+      if (thumbInputRef.current) thumbInputRef.current.value = '';
+    } catch (error) {
+      toast.error('Failed to save banner.');
+    }
   };
 
   return (
     <div>
-      {/* Form Section */}
       <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
         <h2 className="text-lg font-semibold">Add Banner For Landing Page</h2>
 
@@ -96,10 +113,6 @@ export default function WatchBanner() {
               onChange={(option: any) => setProductId(option?.value || '')}
               placeholder="Select Product"
               isClearable
-              styles={{
-                container: (base) => ({ ...base, height: '50px' }),
-                control: (base) => ({ ...base, height: '50px' }),
-              }}
             />
           </div>
           <Input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -111,37 +124,32 @@ export default function WatchBanner() {
             value={shortDescription}
             onChange={(e) => setShortDescription(e.target.value)}
           />
-          <div className="h-[50px] w-full">
-            <AsyncSelect
-              cacheOptions
-              loadOptions={loadBannerOptions}
-              onChange={(option: any) => setBannerType(option?.value || '')}
-              placeholder="Select Banner"
-              isClearable
-              styles={{
-                container: (base) => ({ ...base, height: '50px' }),
-                control: (base) => ({ ...base, height: '50px' }),
-              }}
-            />
-          </div>
+
+          <select
+            value={bannerType}
+            onChange={(e) => setBannerType(e.target.value)}
+            className="h-[50px] w-full rounded border border-gray-300 px-3"
+          >
+            <option value="">Select Banner Type</option>
+            <option value="casual">Casual Watch</option>
+            <option value="premium">Premium Watch</option>
+          </select>
         </div>
 
-        {/* Thumbnail Upload */}
         <div className="mt-5">
-          <p className="mb-1 font-medium">Thumbnail Image</p>
           <Input
             placeholder="Thumbnail Alt Tag"
             value={thumbAlt}
             onChange={(e) => setThumbAlt(e.target.value)}
             className="mb-2"
           />
-          <label className="flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-500 hover:bg-gray-50">
+          <label className="flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed">
             {previewThumb ? (
               <div className="relative h-full w-full">
                 <Image
                   src={previewThumb}
                   alt="Thumbnail"
-                  className="h-full w-full rounded-lg object-contain py-3"
+                  className="h-full w-full object-contain py-3"
                   width={300}
                   height={300}
                 />
@@ -152,13 +160,13 @@ export default function WatchBanner() {
                     setPreviewThumb(null);
                     if (thumbInputRef.current) thumbInputRef.current.value = '';
                   }}
-                  className="absolute right-2 top-2 rounded bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600"
+                  className="absolute right-2 top-2 bg-red-500 px-2 py-1 text-xs text-white"
                 >
                   Remove
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center">
+              <div className="flex flex-col items-center">
                 <Image src="/images/icon/icon-image.png" width={30} height={30} alt="upload" />
                 <p className="mt-2 text-sm text-gray-500">Upload Thumbnail Image</p>
               </div>
@@ -173,45 +181,37 @@ export default function WatchBanner() {
           </label>
         </div>
 
-        {/* Submit */}
         <div className="mt-6">
-          <Button onClick={handleSubmit}>Submit</Button>
+          <Button onClick={handleSubmit} disabled={isLoading}>
+            Submit
+          </Button>
         </div>
       </div>
 
-      {/* Banner List Section */}
       <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
-        <h2 className="text-lg font-semibold mb-4">Banner List</h2>
-        {banners.length === 0 ? (
-          <p>No banners added yet.</p>
+        <h2 className="mb-4 text-lg font-semibold">Banner List</h2>
+        {bannersData?.data?.length === 0 ? (
+          <p>No banners found.</p>
         ) : (
           <div className="grid gap-4">
-            {banners.map((item) => (
+            {bannersData?.data?.map((item: any) => (
               <div
                 key={item.id}
-                className="flex flex-col md:flex-row items-start md:items-center justify-between border rounded-lg p-4"
+                className="flex flex-col items-start justify-between rounded-lg border p-4 md:flex-row md:items-center"
               >
                 <div className="flex items-center gap-4">
                   <Image
-                    src={item.thumbImage}
-                    alt={item.thumbAlt}
+                    src={item.image}
+                    alt={item.alt}
                     width={80}
                     height={80}
                     className="rounded object-cover"
                   />
                   <div>
                     <p className="font-semibold">{item.title}</p>
-                    <p className="text-sm text-gray-600">{item.shortDescription}</p>
-                    <p className="text-sm text-gray-600">{item.bannerType}</p>
+                    <p className="text-sm text-gray-600">{item.description}</p>
+                    <p className="text-sm text-gray-600">{item.type}</p>
                   </div>
-                </div>
-                <div className="mt-3 md:mt-0 flex gap-2">
-                  <Button  onClick={() => alert('Edit Coming Soon')}>
-                    Edit
-                  </Button>
-                  <Button className=" bg-red-500 hover:bg-red-600"  onClick={() => handleDelete(item.id)}>
-                    Delete
-                  </Button>
                 </div>
               </div>
             ))}

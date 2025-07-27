@@ -1,19 +1,22 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import Input from '../../../components/Input';
 import Button from '../../../components/Button';
 import Image from 'next/image';
 import AsyncSelect from 'react-select/async';
-
-interface WatchSliderItem {
-  id: string;
-  productLabel: string;
-  title: string;
-  offerName: string;
-  imageAlt: string;
-  image: string;
-}
+import {
+  useGetProductsQuery,
+  useLazyGetProductsQuery,
+} from '@/redux/services/admin/adminProductApis';
+import {
+  useCreateWatchSliderMutation,
+  useDeleteWatchSliderMutation,
+  useGetWatchSlidersQuery,
+  useUpdateWatchSliderMutation,
+} from './watchSliderApi';
+import { message, Spin } from 'antd';
+import { toast } from 'react-toastify';
 
 export default function WatchSliderPage() {
   const [productId, setProductId] = useState('');
@@ -23,18 +26,40 @@ export default function WatchSliderPage() {
   const [imageAlt, setImageAlt] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [sliders, setSliders] = useState<WatchSliderItem[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const { data: productData, isLoading: productLoading } = useGetProductsQuery(
+    searchTerm ? { search: searchTerm } : {}
+  );
+  const { data: sliders = [], refetch, isLoading } = useGetWatchSlidersQuery();
+  const [createSlider] = useCreateWatchSliderMutation();
+  const [updateSlider] = useUpdateWatchSliderMutation();
+  const [deleteSlider] = useDeleteWatchSliderMutation();
+  const [triggerGetProducts] = useLazyGetProductsQuery();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const loadProductOptions = async (inputValue: string) => {
-    return [
-      { value: '1', label: 'Luxury Watch' },
-      { value: '2', label: 'Sport Watch' },
-      { value: '3', label: 'Smart Watch' },
-    ].filter((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()));
-  };
+  const loadProductOptions = useCallback(
+    async (inputValue: string) => {
+      if (!inputValue) return [];
+
+      try {
+        // Call the API with search term
+        const result = await triggerGetProducts({ search: inputValue }).unwrap();
+
+        // Map to select options format
+        return (result?.data || []).map((p: any) => ({
+          value: p.id,
+          label: p.title,
+        }));
+      } catch (error) {
+        console.error('Failed to load products', error);
+        return [];
+      }
+    },
+    [triggerGetProducts]
+  );
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -58,49 +83,89 @@ export default function WatchSliderPage() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const handleSubmit = () => {
-    if (!productId || !title || !offerName || !imageAlt || !previewImage) return;
-
-    const newItem: WatchSliderItem = {
-      id: Date.now().toString(),
-      productLabel,
-      title,
-      offerName,
-      imageAlt,
-      image: previewImage,
-    };
-
-    if (editIndex !== null) {
-      const updated = [...sliders];
-      updated[editIndex] = newItem;
-      setSliders(updated);
-    } else {
-      setSliders([...sliders, newItem]);
+  const handleSubmit = async () => {
+    if (!productId || !title || !offerName || !imageAlt || !imageFile) {
+      toast.error('All fields are required.');
+      return;
     }
 
-    resetForm();
+    const formData = new FormData();
+    formData.append('productId', productId);
+    formData.append('title', title);
+    formData.append('offer_name', offerName);
+    formData.append('alt', imageAlt);
+    formData.append('image', imageFile);
+
+    const toastId = toast.loading('Saving slider...');
+    try {
+      if (editIndex !== null) {
+        const sliderId = sliders[editIndex].id;
+        await updateSlider({ id: Number(sliderId), data: formData }).unwrap();
+        toast.update(toastId, {
+          render: 'Slider updated!',
+          type: 'success',
+          isLoading: false,
+          autoClose: 3000,
+        });
+      } else {
+        await createSlider(formData).unwrap();
+        toast.update(toastId, {
+          render: 'Slider created!',
+          type: 'success',
+          isLoading: false,
+          autoClose: 3000,
+        });
+      }
+      refetch();
+      resetForm();
+    } catch (err) {
+      toast.update(toastId, {
+        render: 'Failed to save slider!',
+        type: 'error',
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const handleDelete = async (index: number) => {
+    const id = sliders[index].id;
+    const toastId = toast.loading('Deleting slider...');
+
+    try {
+      await deleteSlider(id).unwrap();
+      toast.update(toastId, {
+        render: 'Slider deleted!',
+        type: 'success',
+        isLoading: false,
+        autoClose: 3000,
+      });
+      refetch();
+      if (editIndex === index) resetForm();
+    } catch (err) {
+      toast.update(toastId, {
+        render: 'Delete failed!',
+        type: 'error',
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
   };
 
   const handleEdit = (index: number) => {
     const item = sliders[index];
     setEditIndex(index);
-    setProductId(item.id);
-    setProductLabel(item.productLabel);
+    setProductId(item.product?.id?.toString() || '');
+    setProductLabel(item.product?.title || '');
     setTitle(item.title);
-    setOfferName(item.offerName);
-    setImageAlt(item.imageAlt);
+    setOfferName(item.offer_name);
+    setImageAlt(item.alt);
     setPreviewImage(item.image);
-  };
-
-  const handleDelete = (index: number) => {
-    const updated = [...sliders];
-    updated.splice(index, 1);
-    setSliders(updated);
-    if (editIndex === index) resetForm();
   };
 
   return (
     <div className="w-full">
+      {/* Create/Edit Form */}
       <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
         <h2 className="mb-6 text-2xl font-semibold text-gray-800">
           {editIndex !== null ? 'Edit' : 'Add'} Watch Slider
@@ -137,7 +202,7 @@ export default function WatchSliderPage() {
           />
         </div>
 
-        {/* Image Uploader */}
+        {/* Image Upload */}
         <div
           className="mt-6"
           onDragOver={(e) => e.preventDefault()}
@@ -201,54 +266,53 @@ export default function WatchSliderPage() {
       <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
         <h2 className="mb-6 text-2xl font-semibold text-gray-800">Watch Slider List</h2>
 
-        {sliders.length === 0 ? (
-          <p className="text-gray-500">No sliders added yet.</p>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2">
-            {sliders.map((item, index) => (
-              <div
-                key={item.id}
-                className="relative rounded border p-4 shadow transition hover:shadow-md"
-              >
-                <Image
-                  src={item.image}
-                  alt={item.imageAlt}
-                  width={300}
-                  height={200}
-                  className="mb-2 h-40 w-full object-contain rounded"
-                />
-                <div className="text-sm">
-                  <p>
-                    <strong>Product:</strong> {item.productLabel}
-                  </p>
-                  <p>
-                    <strong>Title:</strong> {item.title}
-                  </p>
-                  <p>
-                    <strong>Offer:</strong> {item.offerName}
-                  </p>
-                  <p>
-                    <strong>Alt:</strong> {item.imageAlt}
-                  </p>
+        <Spin spinning={isLoading}>
+          {sliders.length === 0 ? (
+            <p className="text-gray-500">No sliders added yet.</p>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              {sliders.map((item: any, index: number) => (
+                <div
+                  key={item.id}
+                  className="relative rounded border p-4 shadow transition hover:shadow-md"
+                >
+                  <Image
+                    src={item.image}
+                    alt={item.alt}
+                    width={300}
+                    height={200}
+                    className="mb-2 h-40 w-full rounded object-contain"
+                  />
+                  <div className="text-sm">
+                    <p>
+                      <strong>Title:</strong> {item.title}
+                    </p>
+                    <p>
+                      <strong>Offer:</strong> {item.offer_name}
+                    </p>
+                    <p>
+                      <strong>Alt:</strong> {item.alt}
+                    </p>
+                  </div>
+                  <div className="mt-3 flex justify-end gap-2">
+                    <button
+                      onClick={() => handleEdit(index)}
+                      className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(index)}
+                      className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
-                <div className="mt-3 flex justify-end gap-2">
-                  <button
-                    onClick={() => handleEdit(index)}
-                    className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(index)}
-                    className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </Spin>
       </div>
     </div>
   );

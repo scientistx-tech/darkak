@@ -1,58 +1,143 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import Input from '../../../components/Input';
 import Button from '../../../components/Button';
 import Image from 'next/image';
 import AsyncSelect from 'react-select/async';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {
+  useLazyGetProductsQuery,
+  useUploadImagesMutation,
+} from '@/redux/services/admin/adminProductApis';
+import { useCreateWatchProductMutation } from '../watch-slider/watchSliderApi';
 
 export default function AddProductPage() {
   const [productId, setProductId] = useState('');
   const [shortTitle, setShortTitle] = useState('');
+  const [type, setType] = useState<'casual' | 'premium' | ''>('');
 
-  const [thumbImage, setThumbImage] = useState<File | null>(null);
+  const [thumbFile, setThumbFile] = useState<File | null>(null);
   const [thumbAlt, setThumbAlt] = useState('');
   const [previewThumb, setPreviewThumb] = useState<string | null>(null);
 
-  const [additionalImage, setAdditionalImage] = useState<File | null>(null);
+  const [additionalFile, setAdditionalFile] = useState<File | null>(null);
   const [additionalAlt, setAdditionalAlt] = useState('');
   const [previewAdditional, setPreviewAdditional] = useState<string | null>(null);
 
   const thumbInputRef = useRef<HTMLInputElement>(null);
   const addInputRef = useRef<HTMLInputElement>(null);
 
-  const loadProductOptions = async (inputValue: string) => {
-    return [
-      { value: '1', label: 'Luxury Watch' },
-      { value: '2', label: 'Sport Watch' },
-      { value: '3', label: 'Smart Watch' },
-    ].filter((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()));
-  };
+  const [searchTerm, setSearchTerm] = useState('');
+  const [triggerGetProducts] = useLazyGetProductsQuery();
+  const [uploadImages] = useUploadImagesMutation();
+  const [createProduct] = useCreateWatchProductMutation();
 
-  const handleImage = (
+  const loadProductOptions = useCallback(
+    async (inputValue: string) => {
+      if (!inputValue) return [];
+
+      try {
+        // Call the API with search term
+        const result = await triggerGetProducts({ search: inputValue }).unwrap();
+
+        // Map to select options format
+        return (result?.data || []).map((p: any) => ({
+          value: p.id,
+          label: p.title,
+        }));
+      } catch (error) {
+        console.error('Failed to load products', error);
+        return [];
+      }
+    },
+    [triggerGetProducts]
+  );
+
+  const handleImageSelect = (
     e: React.ChangeEvent<HTMLInputElement>,
-    setFile: React.Dispatch<React.SetStateAction<File | null>>,
-    setPreview: React.Dispatch<React.SetStateAction<string | null>>,
+    setFile: (file: File) => void,
+    setPreview: (preview: string | null) => void
   ) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => setPreview(reader.result as string);
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+    setFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setPreview(reader.result as string);
+    reader.readAsDataURL(file);
   };
 
-  const handleSubmit = () => {
-    console.log({
-      productId,
-      shortTitle,
-      thumbImage,
-      thumbAlt,
-      additionalImage,
-      additionalAlt,
-    });
-    alert('Submitted! Check console.');
+  const handleSubmit = async () => {
+    if (
+      !productId ||
+      !shortTitle ||
+      !thumbFile ||
+      !thumbAlt ||
+      !additionalFile ||
+      !additionalAlt ||
+      !type
+    ) {
+      toast.error('All fields are required.');
+      return;
+    }
+
+    const toastId = toast.loading('Uploading images...');
+
+    try {
+      // Upload thumbnail image
+      const thumbForm = new FormData();
+      thumbForm.append('images', thumbFile);
+      const thumbRes = await uploadImages(thumbForm).unwrap();
+      const thumbnail = thumbRes[0];
+
+      // Upload additional image
+      const addForm = new FormData();
+      addForm.append('images', additionalFile);
+      const addRes = await uploadImages(addForm).unwrap();
+      const additional = addRes[0];
+
+      // Now send JSON product data
+      const payload = {
+        productId: Number(productId),
+        title: shortTitle,
+        type,
+        thumbnail,
+        thumbnail_alt: thumbAlt,
+        additional,
+        additional_alt: additionalAlt,
+      };
+
+      await createProduct(payload).unwrap();
+
+      toast.update(toastId, {
+        render: 'Product created successfully!',
+        type: 'success',
+        isLoading: false,
+        autoClose: 3000,
+      });
+
+      // Reset form
+      setProductId('');
+      setShortTitle('');
+      setType('');
+      setThumbFile(null);
+      setThumbAlt('');
+      setPreviewThumb(null);
+      setAdditionalFile(null);
+      setAdditionalAlt('');
+      setPreviewAdditional(null);
+      if (thumbInputRef.current) thumbInputRef.current.value = '';
+      if (addInputRef.current) addInputRef.current.value = '';
+    } catch (error) {
+      console.error(error);
+      toast.update(toastId, {
+        render: 'Failed to create product!',
+        type: 'error',
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
   };
 
   return (
@@ -60,28 +145,34 @@ export default function AddProductPage() {
       <h2 className="mb-6 text-2xl font-semibold text-gray-800">Add Product Info</h2>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div className="h-[50px] w-full">
-          <AsyncSelect
-            cacheOptions
-            loadOptions={loadProductOptions}
-            onChange={(option: any) => setProductId(option?.value || '')}
-            placeholder="Select Product"
-            isClearable
-            styles={{
-              container: (base) => ({ ...base, height: '50px' }),
-              control: (base) => ({ ...base, height: '50px' }),
-            }}
-          />
-        </div>
-
+        <AsyncSelect
+          cacheOptions
+          loadOptions={loadProductOptions}
+          onChange={(option: any) => setProductId(option?.value || '')}
+          placeholder="Select Product"
+          isClearable
+          styles={{
+            container: (base) => ({ ...base, height: '50px' }),
+            control: (base) => ({ ...base, height: '50px' }),
+          }}
+        />
         <Input
           placeholder="Short Title"
           value={shortTitle}
           onChange={(e) => setShortTitle(e.target.value)}
         />
+        <select
+          value={type}
+          onChange={(e) => setType(e.target.value as 'casual' | 'premium')}
+          className="h-[50px] w-full rounded border border-gray-300 px-3"
+        >
+          <option value="">Select Type</option>
+          <option value="casual">Casual</option>
+          <option value="premium">Premium</option>
+        </select>
       </div>
 
-      {/* Thumbnail Upload */}
+      {/* Thumbnail */}
       <div className="mt-6">
         <p className="mb-1 font-medium">Thumbnail Image</p>
         <Input
@@ -103,7 +194,7 @@ export default function AddProductPage() {
               <button
                 type="button"
                 onClick={() => {
-                  setThumbImage(null);
+                  setThumbFile(null);
                   setPreviewThumb(null);
                   if (thumbInputRef.current) thumbInputRef.current.value = '';
                 }}
@@ -121,14 +212,14 @@ export default function AddProductPage() {
           <input
             type="file"
             accept="image/*"
-            onChange={(e) => handleImage(e, setThumbImage, setPreviewThumb)}
+            onChange={(e) => handleImageSelect(e, setThumbFile, setPreviewThumb)}
             ref={thumbInputRef}
             className="hidden"
           />
         </label>
       </div>
 
-      {/* Additional Image Upload */}
+      {/* Additional */}
       <div className="mt-6">
         <p className="mb-1 font-medium">Additional Image</p>
         <Input
@@ -150,7 +241,7 @@ export default function AddProductPage() {
               <button
                 type="button"
                 onClick={() => {
-                  setAdditionalImage(null);
+                  setAdditionalFile(null);
                   setPreviewAdditional(null);
                   if (addInputRef.current) addInputRef.current.value = '';
                 }}
@@ -168,7 +259,7 @@ export default function AddProductPage() {
           <input
             type="file"
             accept="image/*"
-            onChange={(e) => handleImage(e, setAdditionalImage, setPreviewAdditional)}
+            onChange={(e) => handleImageSelect(e, setAdditionalFile, setPreviewAdditional)}
             ref={addInputRef}
             className="hidden"
           />
