@@ -1,21 +1,18 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-
 import Input from '../../../../components/Input';
 import Button from '../../../../components/Button';
-
-interface Testimonial {
-  id: number;
-  rating: number;
-  text: string;
-  name: string;
-  address: string;
-}
+import { toast } from 'react-toastify';
+import {
+  useCreateTestimonialMutation,
+  useDeleteTestimonialMutation,
+  useGetTestimonialsQuery,
+  useUpdateTestimonialMutation,
+} from './adminTestimonialApis';
 
 export default function WatchTestimonial() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [form, setForm] = useState<Omit<Testimonial, 'id'>>({
+  const [form, setForm] = useState({
     rating: 5,
     text: '',
     name: '',
@@ -23,75 +20,101 @@ export default function WatchTestimonial() {
   });
   const [editId, setEditId] = useState<number | null>(null);
 
-  // Load from local storage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem('watch_testimonials');
-    if (saved) {
-      setTestimonials(JSON.parse(saved));
-    }
-  }, []);
+  const { data, refetch, isLoading } = useGetTestimonialsQuery(undefined);
+  const [createTestimonial] = useCreateTestimonialMutation();
+  const [updateTestimonial] = useUpdateTestimonialMutation();
+  const [deleteTestimonial] = useDeleteTestimonialMutation();
 
-  // Save to local storage on change
-  useEffect(() => {
-    localStorage.setItem('watch_testimonials', JSON.stringify(testimonials));
-  }, [testimonials]);
+  const testimonials = data?.data || [];
 
-  const handleSubmit = () => {
-    if (!form.text || !form.name || !form.address) return;
+  const handleSubmit = async () => {
+    const payload = {
+      rate: form.rating,
+      message: form.text,
+      name: form.name,
+      area: form.address,
+    };
 
-    if (editId !== null) {
-      // Edit mode
-      const updated = testimonials.map((t) =>
-        t.id === editId ? { id: editId, ...form } : t
-      );
-      setTestimonials(updated);
+    const toastId = toast.loading(editId ? 'Updating...' : 'Creating...');
+
+    try {
+      if (editId !== null) {
+        await updateTestimonial({ id: editId, ...payload }).unwrap();
+        toast.update(toastId, {
+          render: 'Updated successfully',
+          type: 'success',
+          isLoading: false,
+          autoClose: 2000,
+        });
+      } else {
+        await createTestimonial(payload).unwrap();
+        toast.update(toastId, {
+          render: 'Created successfully',
+          type: 'success',
+          isLoading: false,
+          autoClose: 2000,
+        });
+      }
+
+      setForm({ rating: 5, text: '', name: '', address: '' });
       setEditId(null);
-    } else {
-      // Add mode
-      const newTestimonial: Testimonial = {
-        id: Date.now(),
-        ...form,
-      };
-      setTestimonials([newTestimonial, ...testimonials]);
-    }
-
-    setForm({ rating: 5, text: '', name: '', address: '' });
-  };
-
-  const handleDelete = (id: number) => {
-    const filtered = testimonials.filter((t) => t.id !== id);
-    setTestimonials(filtered);
-  };
-
-  const handleEdit = (id: number) => {
-    const selected = testimonials.find((t) => t.id === id);
-    if (selected) {
-      setForm({
-        rating: selected.rating,
-        text: selected.text,
-        name: selected.name,
-        address: selected.address,
+      refetch();
+    } catch (err: any) {
+      toast.update(toastId, {
+        render: err?.data?.message || 'Operation failed',
+        type: 'error',
+        isLoading: false,
+        autoClose: 3000,
       });
-      setEditId(id);
     }
+  };
+
+  const handleDelete = async (id: number) => {
+    const toastId = toast.loading('Deleting...');
+    try {
+      await deleteTestimonial(id).unwrap();
+      toast.update(toastId, {
+        render: 'Deleted successfully',
+        type: 'success',
+        isLoading: false,
+        autoClose: 2000,
+      });
+      refetch();
+    } catch (err: any) {
+      toast.update(toastId, {
+        render: err?.data?.message || 'Delete failed',
+        type: 'error',
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const handleEdit = (t: any) => {
+    setForm({
+      rating: t.rate,
+      text: t.message,
+      name: t.name,
+      address: t.area,
+    });
+    setEditId(t.id);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <div>
-      {/* Form Section */}
+      {/* Form */}
       <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
-        <h2 className="text-lg font-semibold mb-4">
+        <h2 className="mb-4 text-lg font-semibold">
           {editId ? 'Edit Testimonial' : 'Add Testimonial'}
         </h2>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="block mb-1 font-medium">Rating (1–5)</label>
+            <label className="mb-1 block font-medium">Rating (1–5)</label>
             <select
               value={form.rating}
-              onChange={(e) =>
-                setForm({ ...form, rating: Number(e.target.value) })
-              }
+              onChange={(e) => setForm({ ...form, rating: Number(e.target.value) })}
               className="w-full rounded border p-2"
             >
               {[1, 2, 3, 4, 5].map((r) => (
@@ -108,14 +131,12 @@ export default function WatchTestimonial() {
             value={form.text}
             onChange={(e) => setForm({ ...form, text: e.target.value })}
           />
-
           <Input
             label="Name"
             placeholder="Your name"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
-
           <Input
             label="Address"
             placeholder="Your address"
@@ -131,50 +152,51 @@ export default function WatchTestimonial() {
         </div>
       </div>
 
-     {/* List Section */}
-<div className="mt-6 w-full rounded-2xl bg-white p-6 shadow-lg border border-gray-200">
-  <h2 className="text-xl font-bold text-gray-800 mb-6">✨ Testimonial List</h2>
+      {/* List */}
+      <div className="mt-6 w-full rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
+        <h2 className="mb-6 text-xl font-bold text-gray-800">✨ Testimonial List</h2>
 
-  {testimonials.length === 0 ? (
-    <p className="text-gray-500 text-sm">No testimonials added yet. Be the first to share!</p>
-  ) : (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-      {testimonials.map((t) => (
-        <div
-          key={t.id}
-          className="relative rounded-xl border border-gray-100 bg-gray-50 p-5 shadow-md hover:shadow-lg transition-all duration-300"
-        >
-          <div className="absolute top-3 right-3 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
-            ⭐ {t.rating}/5
+        {isLoading ? (
+          <p className="text-sm text-gray-500">Loading testimonials...</p>
+        ) : testimonials.length === 0 ? (
+          <p className="text-sm text-gray-500">No testimonials added yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {testimonials.map((t: any) => (
+              <div
+                key={t.id}
+                className="relative rounded-xl border border-gray-100 bg-gray-50 p-5 shadow-md transition-all duration-300 hover:shadow-lg"
+              >
+                <div className="absolute right-3 top-3 rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
+                  ⭐ {t.rate}/5
+                </div>
+
+                <p className="mb-3 text-base italic text-gray-700">{t.message}</p>
+
+                <div className="text-sm text-gray-600">
+                  <p className="font-semibold">{t.name}</p>
+                  <p className="text-xs">{t.area}</p>
+                </div>
+
+                <div className="mt-4 flex justify-end gap-2">
+                  <button
+                    className="rounded-lg bg-blue-600 px-3 py-1 text-sm font-medium text-white transition hover:bg-blue-700"
+                    onClick={() => handleEdit(t)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="rounded-lg bg-red-500 px-3 py-1 text-sm font-medium text-white transition hover:bg-red-600"
+                    onClick={() => handleDelete(t.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-
-          <p className="text-gray-700 text-base mb-3 italic">{t.text}</p>
-
-          <div className="text-sm text-gray-600">
-            <p className="font-semibold">{t.name}</p>
-            <p className="text-xs">{t.address}</p>
-          </div>
-
-          <div className="mt-4 flex justify-end gap-2">
-            <button
-              className="px-3 py-1 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition"
-              onClick={() => handleEdit(t.id)}
-            >
-              Edit
-            </button>
-            <button
-              className="px-3 py-1 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition"
-              onClick={() => handleDelete(t.id)}
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
-
+        )}
+      </div>
     </div>
   );
 }

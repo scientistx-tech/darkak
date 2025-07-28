@@ -54,8 +54,6 @@ export default function WatchBanner() {
     [triggerGetProducts]
   );
 
-  
-
   const handleImage = (
     e: React.ChangeEvent<HTMLInputElement>,
     setImage: React.Dispatch<React.SetStateAction<File | null>>,
@@ -81,7 +79,7 @@ export default function WatchBanner() {
     formData.append('title', title);
     formData.append('description', shortDescription);
     formData.append('alt', thumbAlt);
-    formData.append('file', thumbImage);
+    if (thumbImage) formData.append('image', thumbImage);
 
     try {
       await createOrUpdateBanner(formData).unwrap();
@@ -96,6 +94,7 @@ export default function WatchBanner() {
       setPreviewThumb(null);
       if (thumbInputRef.current) thumbInputRef.current.value = '';
     } catch (error) {
+      console.log(error);
       toast.error('Failed to save banner.');
     }
   };

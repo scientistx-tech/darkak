@@ -5,8 +5,9 @@ import img1 from '@/Data/Demo/watch-product-removebg-preview.png';
 import img2 from '@/Data/Demo/miller-charm-rose-gold-2-600x720.jpg';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
+import { WatchProduct } from '../types';
 
-export default function WatchBestSeller() {
+export default function WatchBestSeller({ seller }: { seller: WatchProduct[] | undefined }) {
   const dummyData = [
     { price: 30000, discount: 30 },
     { price: 20000, discount: 25 },
@@ -42,17 +43,17 @@ export default function WatchBestSeller() {
             slidesPerView: 5,
           },
         }}
-        className="h-[300px] w-full mt-4 md:h-[400px]"
+        className="mt-4 h-[300px] w-full md:h-[400px]"
       >
-        {dummyData.map((item, i) => (
+        {seller?.map((item, i) => (
           <SwiperSlide key={i} className="relative flex justify-center">
             <WatchCard
-              href="/explore"
-              img1={img1}
-              img2={img2}
+              href={`/product/${item.product.slug}`}
+              img1={item.thumbnail}
+              img2={item.additional}
               name="Miller Charm Rose Gold"
-              price={item.price}
-              discount={item.discount}
+              price={item.product.offerPrice ?? item.product.price}
+              discount={item.product.discount}
             />
           </SwiperSlide>
         ))}

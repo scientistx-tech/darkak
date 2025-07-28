@@ -35,6 +35,16 @@ export const adminSliderApis = baseApi.injectEndpoints({
         body,
       }),
     }),
+    updateWatchProduct: build.mutation<any, any>({
+      query: ({ id, body }) => ({
+        url: `/admin/watch/product/${id}`,
+        method: 'PUT',
+        body,
+      }),
+    }),
+    getWatchProductById: build.query<any, string>({
+      query: (id) => `/admin/watch/product/${id}`,
+    }),
     getWatchProducts: build.query<
       any,
       {
@@ -92,4 +102,6 @@ export const {
   useGetWatchProductsQuery,
   useDeleteWatchProductMutation,
   useChangeWatchProductStatusMutation,
+  useUpdateWatchProductMutation,
+  useGetWatchProductByIdQuery,
 } = adminSliderApis;

@@ -1,13 +1,39 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+export const watchPosterApi = baseApi.injectEndpoints({
+  endpoints: (builder) => ({
+    createOrUpdatePoster: builder.mutation({
+      query: (data) => ({
+        url: `/admin/watch/poster/create`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    getPoster: builder.query({
+      query: () => `/admin/watch/poster`,
+    }),
+  }),
+});
+
+export const { useCreateOrUpdatePosterMutation, useGetPosterQuery } = watchPosterApi;
+
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Input from '../../../../components/Input';
 import Button from '../../../../components/Button';
 import Image from 'next/image';
 import AsyncSelect from 'react-select/async';
+import {
+  useLazyGetProductsQuery,
+  useUploadImagesMutation,
+} from '@/redux/services/admin/adminProductApis';
+import { toast } from 'react-toastify';
+import baseApi from '@/redux/baseApi';
+import Loader from '@/components/shared/Loader';
 
 export default function WatchPoster() {
   const [productId, setProductId] = useState('');
+  const [triggerGetProducts] = useLazyGetProductsQuery();
+  const [createOrUpdatePoster] = useCreateOrUpdatePosterMutation();
   const [form, setForm] = useState({
     topTitle: '',
     topDesc: '',
@@ -17,61 +43,166 @@ export default function WatchPoster() {
     posterAlt: '',
   });
 
-  const loadProductOptions = async (inputValue: string) => {
-    return [
-      { value: '1', label: 'Luxury Watch' },
-      { value: '2', label: 'Sport Watch' },
-      { value: '3', label: 'Smart Watch' },
-    ].filter((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()));
-  };
+  const loadProductOptions = useCallback(
+    async (inputValue: string) => {
+      if (!inputValue) return [];
+
+      try {
+        // Call the API with search term
+        const result = await triggerGetProducts({ search: inputValue }).unwrap();
+
+        // Map to select options format
+        return (result?.data || []).map((p: any) => ({
+          value: p.id,
+          label: p.title,
+        }));
+      } catch (error) {
+        console.error('Failed to load products', error);
+        return [];
+      }
+    },
+    [triggerGetProducts]
+  );
 
   const [topImg, setTopImg] = useState<File | null>(null);
   const [topPreview, setTopPreview] = useState<string | null>(null);
   const topRef = useRef<HTMLInputElement>(null);
-
   const [posterImg, setPosterImg] = useState<File | null>(null);
   const [posterPreview, setPosterPreview] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<any>();
   const posterRef = useRef<HTMLInputElement>(null);
+  const [uploadImages] = useUploadImagesMutation();
+  const {
+    data: posterData,
+    isLoading: loadingPoster,
+    refetch,
+  } = useGetPosterQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImage = (
+  const handleImage = async (
     e: React.ChangeEvent<HTMLInputElement>,
     setImage: React.Dispatch<React.SetStateAction<File | null>>,
     setPreview: React.Dispatch<React.SetStateAction<string | null>>
   ) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (!file) return;
+
+    const toastId = toast.loading('Uploading image...');
+
+    try {
       setImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => setPreview(reader.result as string);
-      reader.readAsDataURL(file);
+
+      const imgForm = new FormData();
+      imgForm.append('images', file);
+
+      const res = await uploadImages(imgForm).unwrap();
+      const url = res[0];
+
+      setPreview(url);
+
+      toast.update(toastId, {
+        render: 'Image uploaded successfully',
+        type: 'success',
+        isLoading: false,
+        autoClose: 2000,
+      });
+    } catch (err: any) {
+      console.error('Image upload failed', err);
+
+      toast.update(toastId, {
+        render: err?.data?.message || 'Image upload failed',
+        type: 'error',
+        isLoading: false,
+        autoClose: 3000,
+      });
+
+      // Optionally reset image/preview
+      setImage(null);
+      setPreview(null);
     }
   };
 
-  const handleSubmit = () => {
-    console.log({
-      ...form,
-      topImg,
-      posterImg,
-    });
-    alert('Submitted! Check console for output.');
-  };
+  const handleSubmit = async () => {
+    if (!productId) return toast.error('Please select a product.');
+    if (!topPreview) return toast.error('Top image is required.');
+    if (!posterPreview) return toast.error('Poster image is required.');
 
+    const payload = {
+      top_title: form.topTitle,
+      top_description: form.topDesc,
+      top_image: topPreview,
+      top_alt: form.topAlt,
+      poster_title: form.posterTitle,
+      poster_description: form.posterDesc,
+      poster_image: posterPreview,
+      poster_alt: form.posterAlt,
+      productId: Number(productId),
+    };
+
+    const toastId = toast.loading('Submitting poster...');
+
+    try {
+      await createOrUpdatePoster(payload).unwrap();
+
+      toast.update(toastId, {
+        render: 'Poster saved successfully!',
+        type: 'success',
+        isLoading: false,
+        autoClose: 2000,
+      });
+      refetch();
+      // Optional: Reset form
+      setTopImg(null);
+      setPosterImg(null);
+      if (topRef.current) topRef.current.value = '';
+      if (posterRef.current) posterRef.current.value = '';
+    } catch (err: any) {
+      toast.update(toastId, {
+        render: err?.data?.message || 'Failed to save poster',
+        type: 'error',
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
+  };
+  useEffect(() => {
+    if (posterData) {
+      setForm({
+        topTitle: posterData.top_title || '',
+        topDesc: posterData.top_description || '',
+        topAlt: posterData.top_alt || '',
+        posterTitle: posterData.poster_title || '',
+        posterDesc: posterData.poster_description || '',
+        posterAlt: posterData.poster_alt || '',
+      });
+      setSelectedProduct({ label: posterData.product.title, value: posterData.productId });
+      setProductId(String(posterData.productId));
+      setTopPreview(posterData.top_image);
+      setPosterPreview(posterData.poster_image);
+    }
+  }, [posterData]);
+  if (loadingPoster) return <Loader />;
   return (
     <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
       <h2 className="mb-6 text-2xl font-semibold text-gray-800">Watch Poster Setup</h2>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 mb-6">
+      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
         <AsyncSelect
           cacheOptions
           loadOptions={loadProductOptions}
-          onChange={(option: any) => setProductId(option?.value || '')}
+          onChange={(option: any) => {
+            setProductId(option?.value || '');
+            setSelectedProduct(option);
+          }}
           placeholder="Select Product"
           isClearable
+          value={selectedProduct}
           styles={{
             container: (base) => ({ ...base, height: '50px' }),
             control: (base) => ({ ...base, height: '50px' }),

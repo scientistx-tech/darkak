@@ -5,17 +5,9 @@ import img1 from '@/Data/Demo/watch-product-removebg-preview.png';
 import img2 from '@/Data/Demo/miller-charm-rose-gold-2-600x720.jpg';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
+import { WatchProduct } from '../types';
 
-export default function WatchNewArrival() {
-  const dummyData = [
-    { price: 30000, discount: 30 },
-    { price: 20000, discount: 25 },
-    { price: 10000, discount: 35 },
-    { price: 15000, discount: 20 },
-    { price: 18000, discount: 15 },
-    { price: 25000, discount: 10 },
-    { price: 17000, discount: 40 },
-  ];
+export default function WatchNewArrival({ arrival }: { arrival: WatchProduct[] | undefined }) {
   return (
     <div className="mt-4 flex w-full flex-col items-center justify-center md:mt-8">
       <h1 className="font-serif text-xl font-medium text-primaryBlue md:text-[35px]">
@@ -43,15 +35,15 @@ export default function WatchNewArrival() {
         }}
         className="mt-4 h-[300px] w-full md:h-[400px]"
       >
-        {dummyData.map((item, i) => (
+        {arrival?.map((item, i) => (
           <SwiperSlide key={i} className="relative flex justify-center">
             <WatchCard
-              href="/explore"
-              img1={img1}
-              img2={img2}
+              href={`/product/${item.product.slug}`}
+              img1={item.thumbnail}
+              img2={item.additional}
               name="Miller Charm Rose Gold"
-              price={item.price}
-              discount={item.discount}
+              price={item.product.offerPrice ?? item.product.price}
+              discount={item.product.discount}
             />
           </SwiperSlide>
         ))}

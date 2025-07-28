@@ -3,13 +3,20 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import img from '@/Data/Demo/thumb-1920-479220.jpg';
+import { WatchCategory } from '../types';
 
-export default function WatchCategories() {
+export default function WatchCategories({ category }: { category: WatchCategory[] | undefined }) {
   return (
     <div className="mt-5 flex w-full flex-col gap-4 md:mt-10 md:flex-row md:justify-between md:gap-6">
-      <WatchCategoriesContainer img={img} alt="Men Watch" name="FOR MEN" link="/" />
-      <WatchCategoriesContainer img={img} alt="Women Watch" name="FOR WOMEN" link="/" />
-      <WatchCategoriesContainer img={img} alt="Kids Watch" name="FOR KIDS" link="/" />
+      {category?.map((d) => (
+        <WatchCategoriesContainer
+          key={d.id}
+          img={d.image}
+          alt={d.alt || ''}
+          name={d.title}
+          link={`/category/${d.subCategory.category.title.split(' ').join('-')}/${d.subCategory.title.split(' ').join('-')}`}
+        />
+      ))}
     </div>
   );
 }
