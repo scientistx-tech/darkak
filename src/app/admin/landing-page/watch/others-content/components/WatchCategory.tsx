@@ -5,8 +5,19 @@ import AsyncSelect from 'react-select/async';
 import Image from 'next/image';
 import Input from '../../../../components/Input';
 import Button from '../../../../components/Button';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import {
+  useCreateWatchCategoryMutation,
+  useDeleteWatchCategoryMutation,
+  useGetWatchCategoriesQuery,
+  useUpdateWatchCategoryMutation,
+} from './adminWatchCategoryApis';
+import Loader from '@/components/shared/Loader';
 
 export default function WatchCategory() {
+  const token = useSelector((state: any) => state.auth.token);
+
   const [form, setForm] = useState({
     title: '',
     alt: '',
@@ -17,8 +28,13 @@ export default function WatchCategory() {
   const [topPreview, setTopPreview] = useState<string | null>(null);
   const topRef = useRef<HTMLInputElement>(null);
 
-  const [categoryList, setCategoryList] = useState<any[]>([]);
-  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [editId, setEditId] = useState<number | null>(null);
+
+  const { data: categoryData, isLoading, refetch } = useGetWatchCategoriesQuery({});
+  const [addWatchCategory] = useCreateWatchCategoryMutation();
+  const [editWatchCategory] = useUpdateWatchCategoryMutation();
+  const [deleteWatchCategory] = useDeleteWatchCategoryMutation();
+  const [subCategory, setSubCategory] = useState<any>();
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -36,61 +52,109 @@ export default function WatchCategory() {
     }
   };
 
-  const loadOptions = async (inputValue: string) => {
-    const results = [
-      { value: 'luxury', label: 'Luxury Watches' },
-      { value: 'sports', label: 'Sports Watches' },
-    ];
-
-    return results.filter((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()));
-  };
-
-  const handleSubmit = () => {
-    const newCategory = {
-      title: form.title,
-      alt: form.alt,
-      subCategory: form.subCategory,
-      image: topPreview,
-    };
-
-    if (editIndex !== null) {
-      const updated = [...categoryList];
-      updated[editIndex] = newCategory;
-      setCategoryList(updated);
-      setEditIndex(null);
-    } else {
-      setCategoryList([...categoryList, newCategory]);
-    }
-
-    // Clear form
+  const resetForm = () => {
     setForm({ title: '', alt: '', subCategory: '' });
     setTopImg(null);
     setTopPreview(null);
+    setEditId(null);
+    setSubCategory(undefined);
     if (topRef.current) topRef.current.value = '';
   };
 
-  const handleEdit = (index: number) => {
-    const item = categoryList[index];
-    setForm({
-      title: item.title,
-      alt: item.alt,
-      subCategory: item.subCategory,
-    });
-    setTopPreview(item.image);
-    setEditIndex(index);
+  const loadSubCategoryOptions = async (inputValue: string) => {
+    const res = await fetch(
+      `https://api.darkak.com.bd/api/admin/category/sub-category?search=${inputValue}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const json = await res.json();
+    return json?.data?.map((item: any) => ({
+      value: item.id,
+      label: item.title,
+    }));
   };
 
-  const handleDelete = (index: number) => {
-    const filtered = categoryList.filter((_, i) => i !== index);
-    setCategoryList(filtered);
-    // Reset form if editing the deleted one
-    if (editIndex === index) {
-      setEditIndex(null);
-      setForm({ title: '', alt: '', subCategory: '' });
-      setTopPreview(null);
+  const handleSubmit = async () => {
+    if (!form.title || !form.subCategory) {
+      toast.error('All fields are required');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('title', form.title);
+    formData.append('alt', form.alt);
+    formData.append('subCategoryId', form.subCategory);
+    if (topImg) formData.append('image', topImg);
+    const toastId = toast.loading(editId ? 'Updating...' : 'Submitting...');
+    try {
+      if (editId === null) {
+        await addWatchCategory(formData).unwrap();
+        toast.update(toastId, {
+          render: 'Category added',
+          type: 'success',
+          isLoading: false,
+          autoClose: 2000,
+        });
+      } else {
+        await editWatchCategory({ id: editId, data: formData }).unwrap();
+        toast.update(toastId, {
+          render: 'Category updated',
+          type: 'success',
+          isLoading: false,
+          autoClose: 2000,
+        });
+      }
+      refetch();
+      resetForm();
+    } catch (err: any) {
+      toast.update(toastId, {
+        render: err?.data?.message || 'Something went wrong',
+        type: 'error',
+        isLoading: false,
+        autoClose: 2000,
+      });
     }
   };
 
+  const handleEdit = (item: any) => {
+    setForm({
+      title: item.title,
+      alt: item.alt,
+      subCategory: item.subCategoryId,
+    });
+    setSubCategory({ label: item?.subCategory?.title, value: item.subCategoryId });
+    setTopPreview(item.image); // image already uploaded
+    setEditId(item.id); // for conditional update
+    window?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDelete = async (id: number) => {
+    const toastId = toast.loading('Deleting category...');
+
+    try {
+      await deleteWatchCategory(id).unwrap();
+      toast.update(toastId, {
+        render: 'Category deleted',
+        type: 'success',
+        isLoading: false,
+        autoClose: 2000,
+      });
+      if (editId === id) resetForm();
+      refetch();
+    } catch (err: any) {
+      toast.update(toastId, {
+        render: err?.data?.message || 'Delete failed',
+        type: 'error',
+        isLoading: false,
+        autoClose: 2000,
+      });
+    }
+  };
+  if (isLoading) return <Loader />;
   return (
     <div>
       <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
@@ -100,10 +164,12 @@ export default function WatchCategory() {
           <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-1">
             <AsyncSelect
               cacheOptions
-              loadOptions={loadOptions}
+              loadOptions={loadSubCategoryOptions}
               onChange={(option: any) => {
                 setForm((prev) => ({ ...prev, subCategory: option?.value || '' }));
+                setSubCategory(option);
               }}
+              value={subCategory}
               placeholder="Select Sub Category"
               isClearable
               styles={{
@@ -171,7 +237,7 @@ export default function WatchCategory() {
 
           <div className="mt-5">
             <Button onClick={handleSubmit}>
-              {editIndex !== null ? 'Update Category' : 'Submit Category'}
+              {editId !== null ? 'Update Category' : 'Submit Category'}
             </Button>
           </div>
         </div>
@@ -179,15 +245,15 @@ export default function WatchCategory() {
 
       {/* Category List Section */}
       <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
-        <h2 className="text-lg font-semibold mb-4">Watch Category List</h2>
+        <h2 className="mb-4 text-lg font-semibold">Watch Category List</h2>
 
         <div className="space-y-4">
-          {categoryList.length === 0 ? (
+          {categoryData?.data?.length === 0 ? (
             <p className="text-gray-500">No categories added yet.</p>
           ) : (
-            categoryList.map((item, index) => (
+            categoryData?.data?.map((item: any) => (
               <div
-                key={index}
+                key={item.id}
                 className="flex items-center justify-between gap-4 rounded border p-4 shadow-sm"
               >
                 <div className="flex items-center gap-4">
@@ -202,18 +268,18 @@ export default function WatchCategory() {
                   )}
                   <div>
                     <p className="font-semibold">{item.title}</p>
-                    <p className="text-sm text-gray-500">Sub: {item.subCategory}</p>
+                    <p className="text-sm text-gray-500">Sub: {item.subCategoryId}</p>
                   </div>
                 </div>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => handleEdit(index)}
+                    onClick={() => handleEdit(item)}
                     className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(index)}
+                    onClick={() => handleDelete(item.id)}
                     className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
                   >
                     Delete

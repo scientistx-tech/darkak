@@ -84,7 +84,7 @@ export default function WatchSliderPage() {
   };
 
   const handleSubmit = async () => {
-    if (!productId || !title || !offerName || !imageAlt || !imageFile) {
+    if (!productId || !title || !offerName || !imageAlt) {
       toast.error('All fields are required.');
       return;
     }
@@ -94,7 +94,7 @@ export default function WatchSliderPage() {
     formData.append('title', title);
     formData.append('offer_name', offerName);
     formData.append('alt', imageAlt);
-    formData.append('image', imageFile);
+    if (imageFile) formData.append('image', imageFile);
 
     const toastId = toast.loading('Saving slider...');
     try {

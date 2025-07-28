@@ -4,59 +4,110 @@ import React, { useRef, useState } from 'react';
 import Image from 'next/image';
 import AsyncSelect from 'react-select/async';
 import Button from '../../../../components/Button';
-
-interface Brand {
-  name: string;
-  image: string;
-}
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import {
+  useAddWatchBrandMutation,
+  useDeleteWatchBrandMutation,
+  useGetWatchBrandsQuery,
+  useUpdateWatchBrandMutation,
+} from './adminWatchBrandApis';
 
 export default function WatchBrand() {
   const [selectedBrand, setSelectedBrand] = useState<any>(null);
-  const [brands, setBrands] = useState<Brand[]>([]);
   const [brandImage, setBrandImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [editId, setEditId] = useState<number | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const handleAddBrand = () => {
-    if (selectedBrand && preview) {
-      const newBrand = {
-        name: selectedBrand.label,
-        image: preview,
-      };
-      setBrands([...brands, newBrand]);
-      setSelectedBrand(null);
-      setPreview(null);
-      setBrandImage(null);
-      if (fileRef.current) fileRef.current.value = '';
+  const { data: brandList, refetch } = useGetWatchBrandsQuery({});
+  const [addWatchBrand] = useAddWatchBrandMutation();
+  const [updateWatchBrand] = useUpdateWatchBrandMutation();
+  const [deleteWatchBrand] = useDeleteWatchBrandMutation();
+  const token = useSelector((state: any) => state.auth.token);
+
+  const resetForm = () => {
+    setSelectedBrand(null);
+    setBrandImage(null);
+    setPreview(null);
+    setEditId(null);
+    if (fileRef.current) fileRef.current.value = '';
+  };
+
+  const handleAddOrUpdate = async () => {
+    if (!selectedBrand) return toast.error('Please select a brand');
+
+    const formData = { brandId: selectedBrand.value };
+
+    const toastId = toast.loading(editId ? 'Updating...' : 'Adding...');
+
+    try {
+      if (editId) {
+        await updateWatchBrand({ id: editId, formData }).unwrap();
+        toast.update(toastId, {
+          render: 'Brand updated successfully',
+          type: 'success',
+          isLoading: false,
+          autoClose: 2000,
+        });
+      } else {
+        await addWatchBrand(formData).unwrap();
+        toast.update(toastId, {
+          render: 'Brand added successfully',
+          type: 'success',
+          isLoading: false,
+          autoClose: 2000,
+        });
+      }
+      resetForm();
+      refetch();
+    } catch (err: any) {
+      toast.update(toastId, {
+        render: err?.data?.message || 'Operation failed',
+        type: 'error',
+        isLoading: false,
+        autoClose: 2000,
+      });
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setBrandImage(file);
-      setPreview(URL.createObjectURL(file));
+  const handleDelete = async (id: number) => {
+    const toastId = toast.loading('Deleting...');
+    try {
+      await deleteWatchBrand(id).unwrap();
+      toast.update(toastId, {
+        render: 'Brand deleted',
+        type: 'success',
+        isLoading: false,
+        autoClose: 2000,
+      });
+      if (editId === id) resetForm();
+      refetch();
+    } catch (err: any) {
+      toast.update(toastId, {
+        render: err?.data?.message || 'Delete failed',
+        type: 'error',
+        isLoading: false,
+        autoClose: 2000,
+      });
     }
   };
 
-  const handleDelete = (index: number) => {
-    const updated = [...brands];
-    updated.splice(index, 1);
-    setBrands(updated);
-  };
-
-  const loadOptions = (inputValue: string, callback: any) => {
-    const options = [
-      { label: 'Rolex', value: 'rolex' },
-      { label: 'Fossil', value: 'fossil' },
-      { label: 'Casio', value: 'casio' },
-      { label: 'Seiko', value: 'seiko' },
-    ];
-
-    const filtered = options.filter((opt) =>
-      opt.label.toLowerCase().includes(inputValue.toLowerCase())
+  const loadBrandOptions = async (inputValue: string) => {
+    const res = await fetch(
+      `https://api.darkak.com.bd/api/admin/brand/get?search=${inputValue || ''}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
-    callback(filtered);
+    const json = await res.json();
+    return json.data.map((item: any) => ({
+      value: item.id,
+      label: item.title,
+    }));
   };
 
   return (
@@ -68,7 +119,7 @@ export default function WatchBrand() {
           <AsyncSelect
             cacheOptions
             defaultOptions
-            loadOptions={loadOptions}
+            loadOptions={loadBrandOptions}
             value={selectedBrand}
             onChange={(option) => setSelectedBrand(option)}
             placeholder="Select Brand"
@@ -78,36 +129,35 @@ export default function WatchBrand() {
               control: (base) => ({ ...base, height: '50px' }),
             }}
           />
-        </div>
 
-        <Button onClick={handleAddBrand} className="mt-4">
-          Add Brand
-        </Button>
+          <Button onClick={handleAddOrUpdate}>{editId ? 'Update Brand' : 'Add Brand'}</Button>
+        </div>
       </div>
 
       <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
         <h3 className="text-md mb-2 font-semibold">Brand List</h3>
         <div className="grid gap-4 md:grid-cols-3">
-          {brands.map((brand, index) => (
+          {brandList?.data?.map((brand: any) => (
             <div
-              key={index}
+              key={brand.id}
               className="relative rounded-lg border p-4 shadow transition hover:shadow-lg"
             >
               <Image
-                src={brand.image}
-                alt={brand.name}
-                width={100}
-                height={100}
-                className="mb-2 h-24 w-24 object-contain"
+                src={brand.brand?.icon || '/fallback.jpg'}
+                alt={brand.brand?.name}
+                width={400}
+                height={400}
+                className="mb-2 h-24  object-contain"
               />
-              <p className="text-center font-medium">{brand.name}</p>
-              <button
-                onClick={() => handleDelete(index)}
-                className="absolute right-2 top-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
-                title="Delete"
-              >
-                ✕
-              </button>
+              <p className="text-center font-medium">{brand.brand?.name}</p>
+              <div className="absolute right-2 top-2 flex gap-2">
+                <button
+                  onClick={() => handleDelete(brand.id)}
+                  className="aspect-square h-8 w-8 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
           ))}
         </div>

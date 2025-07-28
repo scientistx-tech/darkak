@@ -18,6 +18,11 @@ import {
   useDeleteWatchProductMutation,
   useGetWatchProductsQuery,
 } from '../watch-slider/watchSliderApi';
+import { useSelector } from 'react-redux';
+import { useGetSubCategoriesQuery } from '@/redux/services/admin/adminCategoryApis';
+import { useGetBrandsQuery } from '@/redux/services/admin/adminBrandApis';
+import Loader from '@/components/shared/Loader';
+import Link from 'next/link';
 
 export default function ProductListPage() {
   // Filters state
@@ -42,8 +47,15 @@ export default function ProductListPage() {
   });
 
   const [deleteProduct, { isLoading: isDeleting }] = useDeleteWatchProductMutation();
-
+  const token = useSelector((state: any) => state.auth.token);
   const [changeStatus, { isLoading: isChangingStatus }] = useChangeWatchProductStatusMutation();
+  const {
+    data: subCategoriesData,
+    isLoading: isSubCategoriesLoading,
+    error: subCategoriesError,
+    refetch: refetchSubCategories,
+  } = useGetSubCategoriesQuery({});
+  const { data: brandsData } = useGetBrandsQuery({});
 
   // New handler for toggle switches
   const handleToggleStatus = async (id: number, type: 'drafted' | 'seller' | 'arival') => {
@@ -72,7 +84,7 @@ export default function ProductListPage() {
   return (
     <div className="p-6">
       <h3 className="mb-4 text-lg font-semibold">Filter Products</h3>
-      <div className="mb-4 flex flex-wrap gap-4">
+      <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4 xl:grid-cols-6">
         <input
           type="text"
           placeholder="Search by name"
@@ -88,8 +100,12 @@ export default function ProductListPage() {
         >
           <option value="">All Categories</option>
           {/* Populate with real subcategories */}
-          <option value="1">Watches Category 1</option>
-          <option value="2">Watches Category 2</option>
+          {subCategoriesData?.data &&
+            subCategoriesData?.data?.map((subCat: any, i: number) => (
+              <option key={subCat?.id} value={subCat?.id}>
+                {subCat?.title}
+              </option>
+            ))}
         </select>
 
         <select
@@ -99,8 +115,12 @@ export default function ProductListPage() {
         >
           <option value="">All Brands</option>
           {/* Populate with real brands */}
-          <option value="1">Brand 1</option>
-          <option value="2">Brand 2</option>
+          {brandsData?.data &&
+            brandsData?.data?.map((brand: any, i: number) => (
+              <option key={brand?.id} value={brand?.id}>
+                {brand?.title}
+              </option>
+            ))}
         </select>
 
         <select
@@ -137,7 +157,7 @@ export default function ProductListPage() {
       <h1 className="mb-4 text-2xl font-semibold">Product List</h1>
 
       {isLoading ? (
-        <p>Loading products...</p>
+        <Loader />
       ) : (
         <Table>
           <TableHeader className="bg-blue-100">
@@ -214,13 +234,13 @@ export default function ProductListPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-3">
-                      <button
+                      <Link
+                        href={`/admin/landing-page/watch/product-list/${product.id}`}
                         className="text-blue-600 hover:text-blue-800"
                         // Implement edit logic
-                        onClick={() => alert(`Edit product ${product.id}`)}
                       >
                         <Pencil size={18} />
-                      </button>
+                      </Link>
                       <button
                         className="text-red-600 hover:text-red-800"
                         disabled={isDeleting}
