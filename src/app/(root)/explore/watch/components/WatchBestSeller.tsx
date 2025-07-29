@@ -54,6 +54,9 @@ export default function WatchBestSeller({ seller }: { seller: WatchProduct[] | u
               name="Miller Charm Rose Gold"
               price={item.product.offerPrice ?? item.product.price}
               discount={item.product.discount}
+              img1Alt={item.thumbnail_alt}
+              img2Alt={item.additional_alt}
+              discountType={item.product.discount_type}
             />
           </SwiperSlide>
         ))}

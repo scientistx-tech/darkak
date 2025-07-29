@@ -5,9 +5,10 @@ import WatchCard from './WatchCard';
 import img1 from '@/Data/Demo/watch-product-removebg-preview.png';
 import img2 from '@/Data/Demo/miller-charm-rose-gold-2-600x720.jpg';
 import img3 from '@/Data/Demo/thumb-1920-831859.jpg';
-import { WatchBanner } from '../types';
+import { SellerProductResponse, WatchBanner } from '../types';
 
-export default function CasualWatch({ banner }: { banner: WatchBanner | undefined }) {
+export default async function CasualWatch({ banner }: { banner: WatchBanner | undefined }) {
+  const data = await fetchSellerProducts();
   return (
     <div className="mt-5 w-full md:mt-10">
       <div className="flex items-center justify-between">
@@ -29,31 +30,25 @@ export default function CasualWatch({ banner }: { banner: WatchBanner | undefine
             name={banner.title}
           />
         )}
-        <WatchCard
-          href="/explore"
-          img1={img1}
-          img2={img2}
-          name="Miller Charm Rose Gold"
-          price={30000}
-          discount={30}
-        />
-        <WatchCard
-          href="/explore"
-          img1={img1}
-          img2={img2}
-          name="Miller Charm Rose Gold"
-          price={20000}
-          discount={25}
-        />
-        <WatchCard
-          href="/explore"
-          img1={img1}
-          img2={img2}
-          name="Miller Charm Rose Gold"
-          price={10000}
-          discount={35}
-        />
+        {data?.data?.map((d) => (
+          <WatchCard
+            key={d.id}
+            href={`/product/${d.product.slug}`}
+            img1={d.thumbnail}
+            img2={d.additional}
+            name={d.title}
+            discountType={d.product.discount_type}
+            img1Alt={d.thumbnail_alt}
+            img2Alt={d.additional_alt}
+            price={d.product.price}
+            discount={d.product.discount}
+          />
+        ))}
       </div>
     </div>
   );
 }
+const fetchSellerProducts = async (): Promise<SellerProductResponse> => {
+  const res = await fetch('https://api.darkak.com.bd/api/public/watch-products/casual');
+  return res.json();
+};
