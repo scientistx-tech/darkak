@@ -25,7 +25,7 @@ export default async function page() {
         <WatchBestSeller seller={data?.seller} />
         <WatchPoster poster={data?.poster} />
         <WatchNewArrival arrival={data?.arrivals} />
-        <WatchTestimonial />
+        <WatchTestimonial review={data?.reviews || []} />
       </div>
     </div>
   );
