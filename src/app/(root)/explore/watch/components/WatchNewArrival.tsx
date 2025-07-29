@@ -36,7 +36,7 @@ export default function WatchNewArrival({ arrival }: { arrival: WatchProduct[] |
         className="mt-4 h-[300px] w-full md:h-[400px]"
       >
         {arrival?.map((item, i) => (
-          <SwiperSlide key={i} className="relative flex justify-center">
+          <SwiperSlide key={i} className="md:ml-6 relative flex justify-center md:px-3">
             <WatchCard
               href={`/product/${item.product.slug}`}
               img1={item.thumbnail}
