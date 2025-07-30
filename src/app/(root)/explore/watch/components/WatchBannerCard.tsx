@@ -15,7 +15,7 @@ export default function WatchBannerCard({ href, img, name, text, alt }: WatchBan
   return (
     <Link
       href={href}
-      className="group relative h-[280px] w-[180px] cursor-pointer overflow-hidden rounded-xl shadow-md md:h-[400px] md:w-[300px]"
+      className="group relative h-[280px]  cursor-pointer overflow-hidden rounded-xl shadow-md md:h-[400px] w-full"
     >
       {/* Background Image */}
       <Image

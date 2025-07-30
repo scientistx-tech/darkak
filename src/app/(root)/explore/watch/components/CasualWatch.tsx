@@ -6,6 +6,7 @@ import img1 from '@/Data/Demo/watch-product-removebg-preview.png';
 import img2 from '@/Data/Demo/miller-charm-rose-gold-2-600x720.jpg';
 import img3 from '@/Data/Demo/thumb-1920-831859.jpg';
 import { SellerProductResponse, WatchBanner } from '../types';
+import Link from 'next/link';
 
 export default async function CasualWatch({ banner }: { banner: WatchBanner | undefined }) {
   const data = await fetchSellerProducts();
@@ -15,12 +16,15 @@ export default async function CasualWatch({ banner }: { banner: WatchBanner | un
         <p className="font-serif text-xl font-medium text-primaryBlue md:text-[35px]">
           Casual Watch
         </p>
-        <button className="rounded-full bg-primary px-3 py-1.5 font-medium text-white transition-all duration-300 hover:bg-primaryBlue md:px-4 md:py-2">
+        <Link
+          href={`/explore/watch/more/${banner?.type}`}
+          className="rounded-full bg-primary px-3 py-1.5 font-medium text-white transition-all duration-300 hover:bg-primaryBlue md:px-4 md:py-2"
+        >
           View All
-        </button>
+        </Link>
       </div>
 
-      <div className="mt-0 grid w-full grid-cols-2 items-center justify-between gap-2 md:mt-8 md:flex md:flex-row md:flex-wrap md:gap-5">
+      <div className="mt-0 grid w-full grid-cols-1 items-center gap-2 sm:grid-cols-2 md:mt-8 md:grid-cols-2 md:gap-5 lg:grid-cols-3 xl:grid-cols-4">
         {banner && (
           <WatchBannerCard
             href={`/product/${banner?.product.slug}`}
@@ -30,6 +34,7 @@ export default async function CasualWatch({ banner }: { banner: WatchBanner | un
             name={banner.title}
           />
         )}
+
         {data?.data?.map((d) => (
           <WatchCard
             key={d.id}
@@ -42,6 +47,7 @@ export default async function CasualWatch({ banner }: { banner: WatchBanner | un
             img2Alt={d.additional_alt}
             price={d.product.price}
             discount={d.product.discount}
+            product={d.product}
           />
         ))}
       </div>

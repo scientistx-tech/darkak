@@ -24,19 +24,28 @@ export default function WatchNewArrival({ arrival }: { arrival: WatchProduct[] |
         spaceBetween={20}
         breakpoints={{
           0: {
+            slidesPerView: 1,
+          },
+          600: {
             slidesPerView: 2,
           },
           768: {
             slidesPerView: 3,
           },
-          1024: {
+          1000: {
+            slidesPerView: 4,
+          },
+          1300: {
             slidesPerView: 5,
+          },
+          1800: {
+            slidesPerView: 6,
           },
         }}
         className="mt-4 h-[300px] w-full md:h-[400px]"
       >
         {arrival?.map((item, i) => (
-          <SwiperSlide key={i} className="relative flex justify-center">
+          <SwiperSlide key={i} className="w-[380px] md:px-3">
             <WatchCard
               href={`/product/${item.product.slug}`}
               img1={item.thumbnail}
@@ -47,6 +56,7 @@ export default function WatchNewArrival({ arrival }: { arrival: WatchProduct[] |
               img1Alt={item.thumbnail_alt}
               img2Alt={item.additional_alt}
               discountType={item.product.discount_type}
+              product={item.product}
             />
           </SwiperSlide>
         ))}
