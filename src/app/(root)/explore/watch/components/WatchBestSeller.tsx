@@ -46,7 +46,7 @@ export default function WatchBestSeller({ seller }: { seller: WatchProduct[] | u
         className="mt-4 h-[300px] w-full md:h-[400px]"
       >
         {seller?.map((item, i) => (
-          <SwiperSlide key={i} className="relative flex justify-center">
+          <SwiperSlide key={i} className="md:ml-6 flex justify-center md:px-3">
             <WatchCard
               href={`/product/${item.product.slug}`}
               img1={item.thumbnail}
