@@ -1,6 +1,53 @@
 'use client';
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { Button, Input, Modal } from 'antd';
+import Image from 'next/image';
+
+const dummyProducts = [
+  {
+    id: 1,
+    name: 'Smart Watch Ultra X',
+    price: 12000,
+    stock: 80,
+    thumbnail: '/watch1.jpg',
+    variants: [
+      { color: 'Black', size: 'M', storage: '64GB', stock: 40 },
+      { color: 'Silver', size: 'L', storage: '128GB', stock: 40 },
+    ],
+  },
+  {
+    id: 2,
+    name: 'Digital Watch Pro',
+    price: 9500,
+    stock: 50,
+    thumbnail: '/watch2.jpg',
+    variants: [
+      { color: 'Blue', size: 'S', storage: '32GB', stock: 25 },
+      { color: 'Black', size: 'M', storage: '64GB', stock: 25 },
+    ],
+  },
+
+  {
+    id: 3,
+    name: 'Digital Watch',
+    price: 12500,
+    stock: 130,
+    thumbnail: '/watch2.jpg',
+    variants: [
+      { color: 'Blue', size: 'S', storage: '32GB', stock: 25 },
+      { color: 'Black', size: 'M', storage: '64GB', stock: 25 },
+      { color: 'Red', size: 'XL', storage: '64GB', stock: 5 },
+      { color: 'Black', size: 'M', storage: '64GB', stock: 40 },
+      { color: 'Silver', size: 'L', storage: '128GB', stock: 40 },
+      { color: 'Blue', size: 'S', storage: '32GB', stock: 25 },
+      { color: 'Black', size: 'M', storage: '64GB', stock: 25 },
+      { color: 'Red', size: 'XL', storage: '64GB', stock: 5 },
+      { color: 'Black', size: 'M', storage: '64GB', stock: 40 },
+      { color: 'Silver', size: 'L', storage: '128GB', stock: 40 },
+    ],
+  },
+];
 
 export default function ProductManagementPage() {
   const [selectedBrandId, setSelectedBrandId] = useState('');
@@ -27,6 +74,33 @@ export default function ProductManagementPage() {
   };
   const subCategoriesData = { data: [{ id: '1', title: 'Smartwatches' }] };
   const subSubCategoriesData = { data: [{ id: '1', title: 'Fitness Watches' }] };
+
+  const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
+  const [stockUpdates, setStockUpdates] = useState<any>({});
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleOpenModal = (product: any) => {
+    setSelectedProduct(product);
+    const initStock: any = {};
+    product.variants.forEach((v: any, index: number) => {
+      initStock[index] = v.stock;
+    });
+    setStockUpdates(initStock);
+    setModalVisible(true);
+  };
+
+  const handleStockInput = (index: number, value: number) => {
+    setStockUpdates((prev: any) => ({
+      ...prev,
+      [index]: value,
+    }));
+  };
+
+  const handleSubmit = () => {
+    console.log('Updated stock for:', selectedProduct?.name, stockUpdates);
+    setModalVisible(false);
+    alert('Stock updated (check console).');
+  };
 
   return (
     <div className="w-full p-4">
@@ -189,12 +263,74 @@ export default function ProductManagementPage() {
             Add Product
           </Link>
         </div>
+
+        {/* Product List */}
+        <div className="mt-10 w-full overflow-x-auto">
+          <table className="w-full table-auto border-collapse border border-gray-300">
+            <thead className="bg-gray-100">
+              <tr className="text-left text-sm md:text-base">
+                <th className="border px-3 py-2">ID</th>
+                <th className="border px-3 py-2">Thumb</th>
+                <th className="border px-3 py-2">Product Name</th>
+                <th className="border px-3 py-2">Price</th>
+                <th className="border px-3 py-2">Total Stock</th>
+                <th className="border px-3 py-2">Variants</th>
+                <th className="border px-3 py-2">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dummyProducts.map((product) => (
+                <tr key={product.id} className="hover:bg-gray-50">
+                  <td className="border px-3 py-2">{product.id}</td>
+                  <td className="border px-3 py-2">
+                    <Image src={product.thumbnail} alt={product.name} width={50} height={50} />
+                  </td>
+                  <td className="border px-3 py-2">{product.name}</td>
+                  <td className="border px-3 py-2">৳{product.price}</td>
+                  <td className="border px-3 py-2">{product.stock}</td>
+                  <td className="border px-3 py-2">
+                    {product.variants.map((v, i) => (
+                      <div key={i}>
+                        <span className="text-xs md:text-sm">
+                          {v.color} | {v.size} | {v.storage} : {v.stock} pcs
+                        </span>
+                      </div>
+                    ))}
+                  </td>
+                  <td className="border px-3 py-2">
+                    <Button type="primary" onClick={() => handleOpenModal(product)}>
+                      Update Stock
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Product List */}
-      <div>
-        
-      </div>
+      {/* Modal */}
+      <Modal
+        title={`Update Stock for ${selectedProduct?.name}`}
+        open={modalVisible}
+        onOk={handleSubmit}
+        onCancel={() => setModalVisible(false)}
+        okText="Update"
+      >
+        {selectedProduct?.variants.map((v: any, index: number) => (
+          <div key={index} className="mb-4">
+            <p className="mb-1 font-medium">
+              {v.color} | {v.size} | {v.storage}
+            </p>
+            <Input
+              type="number"
+              min={0}
+              value={stockUpdates[index]}
+              onChange={(e) => handleStockInput(index, Number(e.target.value))}
+            />
+          </div>
+        ))}
+      </Modal>
     </div>
   );
 }
