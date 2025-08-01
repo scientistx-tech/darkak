@@ -15,7 +15,7 @@ export const sitemapApi = baseApi.injectEndpoints({
     updateSiteMap: builder.mutation({
       query: ({ id, ...body }) => ({
         url: `/admin/sitemap/${id}`,
-        method: 'PATCH',
+        method: 'PUT',
         body,
       }),
     }),
