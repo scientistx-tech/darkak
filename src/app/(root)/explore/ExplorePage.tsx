@@ -25,7 +25,7 @@ export default function ExplorePage() {
       {/* Watch Section */}
       <div className="relative mb-12 h-[500px] w-full overflow-hidden">
         <Image src={watchImg} alt="Explore Banner" fill className="object-cover" priority />
-        <div className="absolute p-12 inset-0 flex flex-col items-start justify-end bg-black bg-opacity-40 px-4 text-center text-white">
+        <div className="absolute p-12 md:p-20 inset-0 flex flex-col items-start justify-end bg-black bg-opacity-40 px-4 text-center text-white">
           <h1 className="mb-4 text-4xl font-medium font-serif">Explore Our Collections</h1>
 
           <Link
