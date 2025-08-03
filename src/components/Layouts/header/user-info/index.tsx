@@ -1,22 +1,18 @@
-"use client";
+'use client';
 
-import { ChevronUpIcon } from "@/assets/icons";
-import {
-  Dropdown,
-  DropdownContent,
-  DropdownTrigger,
-} from "@/components/ui/dropdown";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
-import { LogOutIcon, SettingsIcon, UserIcon } from "./icons";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "@/redux/store";
-import { clearUser } from "@/redux/slices/authSlice";
-import { auth } from "@/utils/firebase";
-import { Router } from "next/router";
-import { useRouter } from "next/navigation";
+import { ChevronUpIcon } from '@/assets/icons';
+import { Dropdown, DropdownContent, DropdownTrigger } from '@/components/ui/dropdown';
+import { cn } from '@/lib/utils';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
+import { LogOutIcon, SettingsIcon, UserIcon } from './icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from '@/redux/store';
+import { clearUser } from '@/redux/slices/authSlice';
+import { auth } from '@/utils/firebase';
+import { Router } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 export function UserInfo() {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +33,7 @@ export function UserInfo() {
   const handleLogOut = () => {
     dispatch(clearUser());
     auth.signOut();
-    router.push("/auth/login");
+    router.push('/auth/login');
   };
 
   return (
@@ -47,27 +43,24 @@ export function UserInfo() {
 
         <figure className="flex items-center gap-3">
           <Image
-            src={"/images/user/user-03.png"}
+            src={'/images/user/user-03.png'}
             className="size-12"
             alt={`Avatar of ${USER.name}`}
             role="presentation"
             width={200}
             height={200}
           />
-          <figcaption className="flex items-center gap-1 font-medium text-dark dark:text-dark-6 max-[1024px]:sr-only">
+          <figcaption className="flex items-start gap-1 font-medium text-dark dark:text-dark-6 max-[1024px]:sr-only">
             <span className="mr-2 flex flex-col">
               <p>{USER.name}</p>
               <p className="mt-1 text-sm text-gray-6">
-                {USER?.isAdmin ? "Admin" : "Moderator"}
+                {USER?.isAdmin ? 'Admin' : USER?.isSeller ? 'Seller' : 'Moderator'}
               </p>
             </span>
 
             <ChevronUpIcon
               aria-hidden
-              className={cn(
-                "rotate-180 transition-transform",
-                isOpen && "rotate-0",
-              )}
+              className={cn('rotate-180 transition-transform', isOpen && 'rotate-0')}
               strokeWidth={1.5}
             />
           </figcaption>
@@ -82,7 +75,7 @@ export function UserInfo() {
 
         <figure className="flex items-center gap-2.5 px-5 py-3.5">
           <Image
-            src={"/images/user/user-03.png"}
+            src={'/images/user/user-03.png'}
             className="size-12"
             alt={`Avatar for ${USER.name}`}
             role="presentation"
@@ -94,7 +87,7 @@ export function UserInfo() {
             <div className="mb-2 leading-none text-dark dark:text-white">
               <p>{USER.name}</p>
               <p className="mt-1 text-sm text-gray-6">
-                {USER?.isAdmin ? "Admin" : "Moderator"}
+                {USER?.isAdmin ? 'Admin' : USER?.isSeller ? 'Seller' : 'Moderator'}
               </p>
             </div>
 
@@ -106,7 +99,7 @@ export function UserInfo() {
 
         <div className="p-2 text-base text-[#4B5563] dark:text-dark-6 [&>*]:cursor-pointer">
           <Link
-            href={"/profile"}
+            href={'/profile'}
             onClick={() => setIsOpen(false)}
             className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[9px] hover:bg-gray-2 hover:text-dark dark:hover:bg-dark-3 dark:hover:text-white"
           >
@@ -116,15 +109,13 @@ export function UserInfo() {
           </Link>
 
           <Link
-            href={"/pages/settings"}
+            href={'/pages/settings'}
             onClick={() => setIsOpen(false)}
             className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[9px] hover:bg-gray-2 hover:text-dark dark:hover:bg-dark-3 dark:hover:text-white"
           >
             <SettingsIcon />
 
-            <span className="mr-auto text-base font-medium">
-              Account Settings
-            </span>
+            <span className="mr-auto text-base font-medium">Account Settings</span>
           </Link>
         </div>
 
