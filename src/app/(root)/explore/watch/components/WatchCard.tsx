@@ -147,7 +147,7 @@ export default function WatchCard({
         </div>
         <Link href={href}>
           {/* Image */}
-          <div className="relative mt-3 h-[70%] w-full rounded-xl bg-primaryBlue shadow-lg transition-all duration-500 md:h-[75%]">
+          <div className="relative mt-3 h-[70%] w-full rounded-xl bg-primaryBlue shadow-lg group-hover:shadow-none transition-all duration-500 md:h-[75%]">
             <Image
               src={isHovered ? img2 : img1}
               alt={isHovered ? img2Alt : img1Alt}
