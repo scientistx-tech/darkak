@@ -52,7 +52,7 @@ export default function PageManager() {
         await createSiteMap(payload).unwrap();
         toast.success('Sitemap created successfully');
       }
-      refetch()
+      refetch();
       resetForm();
     } catch (err: any) {
       toast.error(err?.data?.message || 'Something went wrong');
@@ -71,6 +71,7 @@ export default function PageManager() {
   const handleDelete = async (id: number) => {
     try {
       await deleteSiteMap(id).unwrap();
+      refetch();
       toast.success('Deleted successfully');
     } catch (err) {
       toast.error('Failed to delete');
