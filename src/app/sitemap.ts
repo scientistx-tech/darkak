@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-
+export const dynamic = 'force-dynamic';
 type RefreshType = 'weekly' | 'monthly' | 'yearly';
 
 interface Sitemap {
