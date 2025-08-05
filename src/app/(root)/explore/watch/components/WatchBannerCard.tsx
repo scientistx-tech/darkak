@@ -15,24 +15,27 @@ export default function WatchBannerCard({ href, img, name, text, alt }: WatchBan
   return (
     <Link
       href={href}
-      className="group relative h-[280px]  cursor-pointer overflow-hidden rounded-xl shadow-md md:h-[400px] w-full"
+      className="group relative mt-[-20px] h-[250px] w-full cursor-pointer overflow-hidden rounded-xl shadow-md md:mt-[-22px] md:h-[350px]"
     >
       {/* Background Image */}
       <Image
         src={img}
         alt={alt ?? name}
         fill
-        className="transition-transform duration-500 group-hover:scale-110 md:h-[398px] md:w-[298px]"
+        className="object-cover transition-transform duration-700 group-hover:scale-110"
       />
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-50 transition-all duration-500 group-hover:bg-opacity-60"></div>
+      {/* Gradient Overlay */}
+      <div className="absolute group-hover:hidden inset-0 bg-gradient-to-t from-slate-400/40 via-slate-100/20 to-transparent transition duration-500"></div>
 
-      {/* Content */}
-      <div className="absolute bottom-0 p-6 text-white transition-all duration-500 group-hover:bottom-4">
-        <h2 className="text-lg font-bold tracking-wide md:text-2xl">{name}</h2>
-        <p className="text-sm opacity-80 md:text-lg">{text}</p>
+      {/* Glassmorphism Content Box */}
+      <div className="absolute bottom-4 group-hover:hidden left-4 right-4 rounded-xl bg-white/80 p-4 text-black shadow-lg backdrop-blur-md transition-all duration-500 group-hover:bottom-6">
+        <h2 className="text-xl font-medium tracking-wide md:text-2xl font-serif">{name}</h2>
+        <p className="mt-1 text-sm opacity-90 md:text-base">{text}</p>
       </div>
+
+      {/* Shine Effect */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/5 to-white/0 opacity-0 transition duration-500 group-hover:opacity-10" />
     </Link>
   );
 }

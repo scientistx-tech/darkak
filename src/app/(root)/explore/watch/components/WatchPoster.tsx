@@ -2,8 +2,6 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import img2 from '@/Data/Demo/Rectangle 224.png';
-import img1 from '@/Data/Demo/miller-charm-rose-gold-2-600x720.jpg';
 import { Poster } from '../types';
 
 export default function WatchPoster({ poster }: { poster: Poster | undefined }) {

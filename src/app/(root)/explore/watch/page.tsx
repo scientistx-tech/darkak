@@ -17,7 +17,7 @@ export default async function page() {
       <div className="h-[65px] w-full xl:h-[109px]" />
       <WatchSlider sliders={data?.sliders || []} />
 
-      <div className="container mx-auto flex flex-col gap-y-5 px-2 md:px-4">
+      <div className="md:container mx-auto flex flex-col gap-y-5 px-3 md:px-4">
         <CasualWatch banner={data?.banners.find((d) => d.type === 'casual') || undefined} />
         <PremiumWatch banner={data?.banners.find((d) => d.type === 'premium') || undefined} />
         <WatchCategories category={data?.category || undefined} />
