@@ -23,16 +23,13 @@ export default function WatchBrand({ brand }: { brand: WTF[] | undefined }) {
 const WatchBrandContainer = ({ img, alt, link }: { img: any; alt: string; link: string }) => {
   return (
     <Link
-      href={link}
-      className="group relative flex h-[90px] w-[90px] items-center justify-center overflow-hidden rounded-xl border-2 border-primary shadow-lg transition-transform duration-300 hover:scale-105 hover:border-primaryBlue md:h-[130px] md:w-[130px]"
-    >
-      <Image
-        src={img}
-        alt={alt}
-        width={500}
-        height={500}
-        className="h-[50px] w-[50px] rounded-xl transition-opacity duration-500 md:h-[65px] md:w-[65px]"
-      />
-    </Link>
+  href={link}
+  className="group relative flex h-[90px] w-[90px] items-center justify-center overflow-hidden rounded-xl border-2 border-primary shadow-lg transition-transform duration-300 hover:scale-105 hover:border-primaryBlue bg-white md:h-[130px] md:w-[130px]"
+>
+  <div className="relative h-[50px] w-[50px] md:h-[65px] md:w-[65px]">
+    <Image src={img} alt={alt} fill className="object-contain" />
+  </div>
+</Link>
+
   );
 };

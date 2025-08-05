@@ -1,8 +1,7 @@
 'use client';
 import React from 'react';
 import WatchCard from './WatchCard';
-import img1 from '@/Data/Demo/watch-product-removebg-preview.png';
-import img2 from '@/Data/Demo/miller-charm-rose-gold-2-600x720.jpg';
+
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import { WatchProduct } from '../types';
@@ -24,7 +23,7 @@ export default function WatchBestSeller({ seller }: { seller: WatchProduct[] | u
         spaceBetween={10}
         breakpoints={{
           0: {
-            slidesPerView: 1,
+            slidesPerView: 2,
           },
           600: {
             slidesPerView: 2,
@@ -39,7 +38,7 @@ export default function WatchBestSeller({ seller }: { seller: WatchProduct[] | u
             slidesPerView: 5,
           },
           1800: {
-            slidesPerView: 6,
+            slidesPerView: 5,
           },
         }}
         className="mt-4 h-[300px] w-full md:h-[400px]"
