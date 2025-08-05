@@ -23,7 +23,7 @@ export default function WatchBestSeller({ seller }: { seller: WatchProduct[] | u
         spaceBetween={10}
         breakpoints={{
           0: {
-            slidesPerView: 1,
+            slidesPerView: 2,
           },
           600: {
             slidesPerView: 2,
@@ -38,7 +38,7 @@ export default function WatchBestSeller({ seller }: { seller: WatchProduct[] | u
             slidesPerView: 5,
           },
           1800: {
-            slidesPerView: 6,
+            slidesPerView: 5,
           },
         }}
         className="mt-4 h-[300px] w-full md:h-[400px]"

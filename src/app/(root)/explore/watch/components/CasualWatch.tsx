@@ -22,7 +22,7 @@ export default async function CasualWatch({ banner }: { banner: WatchBanner | un
         </Link>
       </div>
 
-      <div className="mt-0 grid w-full grid-cols-2 items-center gap-2 sm:grid-cols-2 md:mt-8 md:grid-cols-2 md:gap-5 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="mt-0 grid w-full grid-cols-2 items-center gap-4 sm:grid-cols-2 md:mt-8 md:grid-cols-2 md:gap-5 lg:grid-cols-3 xl:grid-cols-5">
         {banner && (
           <WatchBannerCard
             href={`/product/${banner?.product.slug}`}
