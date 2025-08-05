@@ -3,9 +3,6 @@
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
-import img1 from '@/Data/Demo/thumb-1920-831859.jpg';
-import img2 from '@/Data/Demo/thumb-1920-479220.jpg';
-import img3 from '@/Data/Demo/thumb-1920-394174.jpg';
 import ShopNowButton from '@/components/Button/ShopNowButton';
 import { Slider } from '../types';
 
