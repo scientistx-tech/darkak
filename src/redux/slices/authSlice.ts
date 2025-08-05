@@ -28,6 +28,7 @@ const authSlice = createSlice({
       state.token = undefined;
       state.accessList = [];
       Cookies.remove("token");
+      window.location.href="/"
     },
     setUser: (state, action: PayloadAction<AuthResponse>) => {
       const accessList =

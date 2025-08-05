@@ -37,6 +37,21 @@ const accessList = [
   'add-vendor',
   'vendor-list',
   'seo',
+  "pos",
+  "product-management",
+  "refund-request",
+  "contact",
+  "chat",
+  "coupon",
+  "landing-pages",
+  "ali-express-add-product",
+  "ali-express-product-list",
+  "ali-express-order-list",
+  "subscriber",
+  "settings",
+  "seo",
+  "sitemap",
+  "analytics"
 ];
 
 const AddModeratorModal = ({

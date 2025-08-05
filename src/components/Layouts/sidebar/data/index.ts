@@ -298,7 +298,7 @@ export const getNavData = (data: any, vendorData: any) => [
       },
       {
         title: 'Refund Request',
-        // accessKey: "refund-request",
+        accessKey: "refund-request",
         icon: GiTakeMyMoney,
         items: [
           {
@@ -451,7 +451,7 @@ export const getNavData = (data: any, vendorData: any) => [
       },
       {
         title: 'Orders',
-        // accessKey: "orders",
+        accessKey: "ali-express-order-list",
         icon: IoMdCart,
         items: [
           {
@@ -643,6 +643,7 @@ export const getNavData = (data: any, vendorData: any) => [
 
   {
     label: 'Landing Page',
+    accessKey: 'landing-pages',
     items: [
       
       {
