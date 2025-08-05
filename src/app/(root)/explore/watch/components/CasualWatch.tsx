@@ -2,9 +2,7 @@ import React from 'react';
 import WatchBannerCard from './WatchBannerCard';
 import WatchCard from './WatchCard';
 
-import img1 from '@/Data/Demo/watch-product-removebg-preview.png';
-import img2 from '@/Data/Demo/miller-charm-rose-gold-2-600x720.jpg';
-import img3 from '@/Data/Demo/thumb-1920-831859.jpg';
+
 import { SellerProductResponse, WatchBanner } from '../types';
 import Link from 'next/link';
 
@@ -24,7 +22,7 @@ export default async function CasualWatch({ banner }: { banner: WatchBanner | un
         </Link>
       </div>
 
-      <div className="mt-0 grid w-full grid-cols-1 items-center gap-2 sm:grid-cols-2 md:mt-8 md:grid-cols-2 md:gap-5 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="mt-0 grid w-full grid-cols-2 items-center gap-2 sm:grid-cols-2 md:mt-8 md:grid-cols-2 md:gap-5 lg:grid-cols-3 xl:grid-cols-5">
         {banner && (
           <WatchBannerCard
             href={`/product/${banner?.product.slug}`}
