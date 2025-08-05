@@ -1,5 +1,5 @@
-import { Product, UpdateProduct } from "@/types/apiTypes";
-import baseApi from "../../baseApi";
+import { Product, UpdateProduct } from '@/types/apiTypes';
+import baseApi from '../../baseApi';
 
 interface UpdateProductPayload {
   id: string;
@@ -12,11 +12,11 @@ export const adminApi = baseApi.injectEndpoints({
 
     createProductAttribute: builder.mutation<any, { title: string }>({
       query: (data) => ({
-        url: "/admin/attribute/create",
-        method: "POST",
+        url: '/admin/attribute/create',
+        method: 'POST',
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
         body: data,
       }),
@@ -24,13 +24,11 @@ export const adminApi = baseApi.injectEndpoints({
 
     getProductAttributes: builder.query({
       query: (params?: Record<string, string>) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
+        const queryString = params ? `?${new URLSearchParams(params).toString()}` : '';
 
         return {
           url: `/admin/attribute/get${queryString}`,
-          method: "GET",
+          method: 'GET',
         };
       },
     }),
@@ -44,10 +42,10 @@ export const adminApi = baseApi.injectEndpoints({
     >({
       query: ({ id, data }: { id: string; data: { title: string } }) => ({
         url: `/admin/attribute/update/${id}`,
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
         body: data,
       }),
@@ -56,10 +54,10 @@ export const adminApi = baseApi.injectEndpoints({
     deleteProductAttribute: builder.mutation<any, string>({
       query: (id) => ({
         url: `/admin/attribute/delete/${id}`,
-        method: "DELETE", // or "PATCH" depending on your API
+        method: 'DELETE', // or "PATCH" depending on your API
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
       }),
     }),
@@ -68,10 +66,10 @@ export const adminApi = baseApi.injectEndpoints({
 
     createProduct: builder.mutation<any, Product>({
       query: (data) => ({
-        url: "/admin/product/create",
-        method: "POST",
+        url: '/admin/product/create',
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       }),
@@ -79,24 +77,20 @@ export const adminApi = baseApi.injectEndpoints({
 
     getProducts: builder.query({
       query: (params?: Record<string, string>) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
+        const queryString = params ? `?${new URLSearchParams(params).toString()}` : '';
         return {
           url: `/admin/product/get${queryString}`,
-          method: "GET",
+          method: 'GET',
         };
       },
     }),
 
     getAliExpressProducts: builder.query({
       query: (params?: Record<string, string>) => {
-        const queryString = params
-          ? `?${new URLSearchParams(params).toString()}`
-          : "";
+        const queryString = params ? `?${new URLSearchParams(params).toString()}` : '';
         return {
           url: `/aliexpress/products${queryString}`,
-          method: "GET",
+          method: 'GET',
         };
       },
     }),
@@ -104,9 +98,9 @@ export const adminApi = baseApi.injectEndpoints({
     getSingleProductDetails: builder.query({
       query: (id) => ({
         url: `/admin/product/details/${id}`,
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       }),
     }),
@@ -114,9 +108,9 @@ export const adminApi = baseApi.injectEndpoints({
     updateProduct: builder.mutation<any, any>({
       query: ({ id, data }) => ({
         url: `/admin/product/update/${id}`,
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       }),
@@ -125,7 +119,7 @@ export const adminApi = baseApi.injectEndpoints({
     deleteProduct: builder.mutation<any, number>({
       query: (productId) => ({
         url: `/admin/product/delete/${productId}`,
-        method: "DELETE",
+        method: 'DELETE',
       }),
     }),
 
@@ -140,9 +134,9 @@ export const adminApi = baseApi.injectEndpoints({
     >({
       query: ({ id, data }: { id: string; data: { status: boolean } }) => ({
         url: `/admin/product/update/drafted/${id}`,
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: data,
       }),
@@ -157,9 +151,9 @@ export const adminApi = baseApi.injectEndpoints({
     >({
       query: ({ id, data }: { id: string; data: { status: boolean } }) => ({
         url: `/admin/product/update/deal/${id}`,
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: data,
       }),
@@ -174,9 +168,9 @@ export const adminApi = baseApi.injectEndpoints({
     >({
       query: ({ id, data }: { id: string; data: { status: boolean } }) => ({
         url: `/admin/product/update/feature/${id}`,
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: data,
       }),
@@ -186,8 +180,15 @@ export const adminApi = baseApi.injectEndpoints({
 
     uploadImages: builder.mutation<any, FormData>({
       query: (data) => ({
-        url: "/user/upload-multiple-images",
-        method: "POST",
+        url: '/user/upload-multiple-images',
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    updateProductStock: builder.mutation<any, any>({
+      query: (data) => ({
+        url: '/admin/product/update-stock',
+        method: 'POST',
         body: data,
       }),
     }),
@@ -210,4 +211,5 @@ export const {
   useUpdateFeatureStatusMutation,
   useUpdateTodaysDealStatusMutation,
   useUpdateDraftStatusMutation,
+  useUpdateProductStockMutation
 } = adminApi;
