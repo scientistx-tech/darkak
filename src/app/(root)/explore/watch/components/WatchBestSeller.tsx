@@ -1,8 +1,7 @@
 'use client';
 import React from 'react';
 import WatchCard from './WatchCard';
-import img1 from '@/Data/Demo/watch-product-removebg-preview.png';
-import img2 from '@/Data/Demo/miller-charm-rose-gold-2-600x720.jpg';
+
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import { WatchProduct } from '../types';
