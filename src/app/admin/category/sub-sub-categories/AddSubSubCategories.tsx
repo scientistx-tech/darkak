@@ -161,8 +161,8 @@ function AddSubSubCategories({
       setFaqList(
         Array.isArray(value.faq?.faq)
           ? value.faq.faq.map((f: any) => ({
-              question: f.ques || '',
-              answer: f.ans || '',
+              question: f.question || '',
+              answer: f.answer || '',
             }))
           : [
               { question: '', answer: '' },
@@ -202,8 +202,8 @@ function AddSubSubCategories({
   const onSubmit = async (data: any) => {
     const faqPayload = {
       faq: faqList?.map((f: any) => ({
-        ques: f.question,
-        ans: f.answer,
+        question: f.question,
+        answer: f.answer,
       })),
     };
 

@@ -59,6 +59,7 @@ export default function Page() {
   useEffect(() => {
     fetchAllProducts();
   }, [sidebarFilters, visibleCount]);
+  console.log(data.subCategory?.faq)
 
   //console.log('setSidebarFilters type:', typeof setSidebarFilters);
   //console.log('data', data);
