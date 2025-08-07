@@ -112,8 +112,8 @@ export default function PageManager() {
             onChange={(e) => setPriority(e.target.value)}
           >
             {Array.from({ length: 11 }, (_, i) => (
-              <option key={i} value={i}>
-                {i}
+              <option key={i} value={i===10?"1.0":`0.${i}`}>
+                {i===10?"1.0":`0.${i}`}
               </option>
             ))}
           </select>
