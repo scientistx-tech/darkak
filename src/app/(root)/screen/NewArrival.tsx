@@ -1,9 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Product } from '../types/ProductType';
 import ProductCard from '@/components/shared/ProductCard';
-import laptop from '@/Data/Demo/Rectangle 130 (1).png';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useGetNewArivalProductsQuery } from '@/redux/services/client/products';
