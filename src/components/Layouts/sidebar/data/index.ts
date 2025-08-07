@@ -15,7 +15,7 @@ import * as Icons from '../icons';
 import { BsTornado } from 'react-icons/bs';
 import { FaListAlt } from 'react-icons/fa';
 import { IoMdAddCircle } from 'react-icons/io';
-import { FaRegListAlt, FaClock, FaShoppingBag, FaShoppingCart, FaUndo, FaSitemap } from 'react-icons/fa';
+import { FaRegListAlt, FaClock, FaShoppingBag, FaShoppingCart, FaUndo, FaSitemap, FaBloggerB } from 'react-icons/fa';
 import { FaHeadphones } from "react-icons/fa6";
 export const getSellerNavData = (data: any) => [
   {
@@ -790,6 +790,12 @@ export const getNavData = (data: any, vendorData: any) => [
           },
           
         ],
+      },
+      {
+        title: 'Blog',
+        accessKey: 'blog',
+        icon: FaBloggerB,
+        url: '/admin/blog',
       },
        {
         title: 'Site Map',
