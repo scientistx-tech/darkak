@@ -728,6 +728,11 @@ export const getNavData = (data: any, vendorData: any) => [
             url: '/admin/seo/product-page',
             accessKey: 'seo',
           },
+           {
+            title: 'Blogs Page',
+            url: '/admin/seo/blogs-page',
+            accessKey: 'blogs',
+          },
           {
             title: 'Vendor Page',
             url: '/admin/seo/vendor-page',
