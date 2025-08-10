@@ -142,6 +142,9 @@ function Footer() {
                     <Link href="/product" className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3">
                       {lang === 'bn' ? 'পণ্য' : 'Product'}
                     </Link>
+                    <Link href="/blogs" className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3">
+                      {lang === 'bn' ? 'ব্লগ' : 'Blogs'}
+                    </Link>
                     <Link
                       href="/contact-us"
                       className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3"

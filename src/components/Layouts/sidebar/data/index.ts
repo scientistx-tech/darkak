@@ -15,7 +15,7 @@ import * as Icons from '../icons';
 import { BsTornado } from 'react-icons/bs';
 import { FaListAlt } from 'react-icons/fa';
 import { IoMdAddCircle } from 'react-icons/io';
-import { FaRegListAlt, FaClock, FaShoppingBag, FaShoppingCart, FaUndo, FaSitemap, FaBloggerB } from 'react-icons/fa';
+import { FaRegListAlt, FaClock, FaShoppingBag, FaLaptop, FaShoppingCart, FaUndo, FaSitemap, FaBloggerB } from 'react-icons/fa';
 import { FaHeadphones } from "react-icons/fa6";
 export const getSellerNavData = (data: any) => [
   {
@@ -678,7 +678,57 @@ export const getNavData = (data: any, vendorData: any) => [
         title: 'Bag',
         accessKey: 'bag',
         icon: FaShoppingBag,
-        url: '/admin/landing-page/bag',
+        items: [
+          {
+            title: 'Slider',
+            url: '/admin/landing-page/bag/bag-slider',
+            accessKey: 'bag-slider',
+          },
+          {
+            title: 'Add Product',
+            url: '/admin/landing-page/bag/add-product',
+            accessKey: 'bag-add-product',
+          },
+          {
+            title: 'Product List',
+            url: '/admin/landing-page/bag/product-list',
+            accessKey: 'bag-product-list',
+          },
+          {
+            title: 'Others Content',
+            url: '/admin/landing-page/bag/others-content',
+            accessKey: 'bag-others-content',
+          },
+          
+        ],
+      },
+      {
+        title: 'Electronics',
+        accessKey: 'electronics',
+        icon: FaLaptop ,
+        items: [
+          {
+            title: 'Slider',
+            url: '/admin/landing-page/electronics/electronics-slider',
+            accessKey: 'electronics-slider',
+          },
+          {
+            title: 'Add Product',
+            url: '/admin/landing-page/electronics/add-product',
+            accessKey: 'electronics-add-product',
+          },
+          {
+            title: 'Product List',
+            url: '/admin/landing-page/electronics/product-list',
+            accessKey: 'electronics-product-list',
+          },
+          {
+            title: 'Others Content',
+            url: '/admin/landing-page/electronics/others-content',
+            accessKey: 'electronics-others-content',
+          },
+          
+        ],
       },
     ],
   },
@@ -727,6 +777,11 @@ export const getNavData = (data: any, vendorData: any) => [
             title: 'Product Page',
             url: '/admin/seo/product-page',
             accessKey: 'seo',
+          },
+           {
+            title: 'Blogs Page',
+            url: '/admin/seo/blogs-page',
+            accessKey: 'blogs',
           },
           {
             title: 'Vendor Page',
