@@ -9,14 +9,14 @@ import { toast } from 'react-toastify';
 import { useLazyGetProductsQuery } from '@/redux/services/admin/adminProductApis';
 import baseApi from '@/redux/baseApi';
 
-export const watchBannerApi = baseApi.injectEndpoints({
+export const bagBannerApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getWatchBanners: build.query<any, void>({
-      query: () => '/admin/watch/banner',
+    getBagBanners: build.query<any, void>({
+      query: () => '/admin/bag/banner',
     }),
-    createOrUpdateWatchBanners: build.mutation<any, FormData>({
+    createOrUpdateBagBanners: build.mutation<any, FormData>({
       query: (formData) => ({
-        url: '/admin/watch/banner/create',
+        url: '/admin/bag/banner/create',
         method: 'POST',
         body: formData,
       }),
@@ -24,9 +24,9 @@ export const watchBannerApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetWatchBannersQuery, useCreateOrUpdateWatchBannersMutation } = watchBannerApi;
+export const { useGetBagBannersQuery, useCreateOrUpdateBagBannersMutation } = bagBannerApi;
 
-export default function WatchBanner() {
+export default function BagBanner() {
   const [productId, setProductId] = useState('');
   const [bannerType, setBannerType] = useState('');
   const [title, setTitle] = useState('');
@@ -36,8 +36,8 @@ export default function WatchBanner() {
   const [previewThumb, setPreviewThumb] = useState<string | null>(null);
   const thumbInputRef = useRef<HTMLInputElement>(null);
 
-  const { data: bannersData = [], refetch } = useGetWatchBannersQuery();
-  const [createOrUpdateBanner, { isLoading }] = useCreateOrUpdateWatchBannersMutation();
+  const { data: bannersData = [], refetch } = useGetBagBannersQuery();
+  const [createOrUpdateBanner, { isLoading }] = useCreateOrUpdateBagBannersMutation();
   const [triggerGetProducts] = useLazyGetProductsQuery();
 
   const loadProductOptions = useCallback(
@@ -130,8 +130,8 @@ export default function WatchBanner() {
             className="h-[50px] w-full rounded border border-gray-300 px-3"
           >
             <option value="">Select Banner Type</option>
-            <option value="casual">Casual Watch</option>
-            <option value="premium">Premium Watch</option>
+            <option value="casual">Casual Bag</option>
+            <option value="premium">Premium Bag</option>
           </select>
         </div>
 

@@ -8,14 +8,14 @@ import Button from '../../../../components/Button';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import {
-  useCreateWatchCategoryMutation,
-  useDeleteWatchCategoryMutation,
-  useGetWatchCategoriesQuery,
-  useUpdateWatchCategoryMutation,
-} from './adminWatchCategoryApis';
+  useCreateBagCategoryMutation,
+  useDeleteBagCategoryMutation,
+  useGetBagCategoriesQuery,
+  useUpdateBagCategoryMutation,
+} from './adminBagCategoryApis';
 import Loader from '@/components/shared/Loader';
 
-export default function WatchCategory() {
+export default function BagCategory() {
   const token = useSelector((state: any) => state.auth.token);
 
   const [form, setForm] = useState({
@@ -30,10 +30,10 @@ export default function WatchCategory() {
 
   const [editId, setEditId] = useState<number | null>(null);
 
-  const { data: categoryData, isLoading, refetch } = useGetWatchCategoriesQuery({});
-  const [addWatchCategory] = useCreateWatchCategoryMutation();
-  const [editWatchCategory] = useUpdateWatchCategoryMutation();
-  const [deleteWatchCategory] = useDeleteWatchCategoryMutation();
+  const { data: categoryData, isLoading, refetch } = useGetBagCategoriesQuery({});
+  const [addBagCategory] = useCreateBagCategoryMutation();
+  const [editBagCategory] = useUpdateBagCategoryMutation();
+  const [deleteBagCategory] = useDeleteBagCategoryMutation();
   const [subCategory, setSubCategory] = useState<any>();
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,7 +92,7 @@ export default function WatchCategory() {
     const toastId = toast.loading(editId ? 'Updating...' : 'Submitting...');
     try {
       if (editId === null) {
-        await addWatchCategory(formData).unwrap();
+        await addBagCategory(formData).unwrap();
         toast.update(toastId, {
           render: 'Category added',
           type: 'success',
@@ -100,7 +100,7 @@ export default function WatchCategory() {
           autoClose: 2000,
         });
       } else {
-        await editWatchCategory({ id: editId, data: formData }).unwrap();
+        await editBagCategory({ id: editId, data: formData }).unwrap();
         toast.update(toastId, {
           render: 'Category updated',
           type: 'success',
@@ -136,7 +136,7 @@ export default function WatchCategory() {
     const toastId = toast.loading('Deleting category...');
 
     try {
-      await deleteWatchCategory(id).unwrap();
+      await deleteBagCategory(id).unwrap();
       toast.update(toastId, {
         render: 'Category deleted',
         type: 'success',
@@ -154,11 +154,13 @@ export default function WatchCategory() {
       });
     }
   };
+
   if (isLoading) return <Loader />;
+
   return (
     <div>
       <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
-        <h2 className="text-lg font-semibold">Add Watch Sub Category For Landing Page</h2>
+        <h2 className="text-lg font-semibold">Add Bag Sub Category For Landing Page</h2>
 
         <div className="mt-5">
           <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-1">
@@ -183,7 +185,7 @@ export default function WatchCategory() {
               name="title"
               value={form.title}
               onChange={handleTextChange}
-              placeholder="Enter Top Title"
+              placeholder="Enter Title"
             />
           </div>
 
@@ -222,7 +224,7 @@ export default function WatchCategory() {
               ) : (
                 <div className="flex flex-col items-center justify-center">
                   <Image src="/images/icon/icon-image.png" width={30} height={30} alt="upload" />
-                  <p className="mt-2 text-sm text-gray-500">Upload Top Image</p>
+                  <p className="mt-2 text-sm text-gray-500">Upload Image</p>
                 </div>
               )}
               <input
@@ -245,7 +247,7 @@ export default function WatchCategory() {
 
       {/* Category List Section */}
       <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
-        <h2 className="mb-4 text-lg font-semibold">Watch Category List</h2>
+        <h2 className="mb-4 text-lg font-semibold">Bag Category List</h2>
 
         <div className="space-y-4">
           {categoryData?.data?.length === 0 ? (

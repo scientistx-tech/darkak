@@ -1,22 +1,5 @@
 'use client';
 
-export const watchPosterApi = baseApi.injectEndpoints({
-  endpoints: (builder) => ({
-    createOrUpdatePoster: builder.mutation({
-      query: (data) => ({
-        url: `/admin/watch/poster/create`,
-        method: 'POST',
-        body: data,
-      }),
-    }),
-    getPoster: builder.query({
-      query: () => `/admin/watch/poster`,
-    }),
-  }),
-});
-
-export const { useCreateOrUpdatePosterMutation, useGetPosterQuery } = watchPosterApi;
-
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Input from '../../../../components/Input';
 import Button from '../../../../components/Button';
@@ -30,10 +13,29 @@ import { toast } from 'react-toastify';
 import baseApi from '@/redux/baseApi';
 import Loader from '@/components/shared/Loader';
 
-export default function WatchPoster() {
+// Bag Poster API slice
+export const bagPosterApi = baseApi.injectEndpoints({
+  endpoints: (builder) => ({
+    createOrUpdatePoster: builder.mutation({
+      query: (data) => ({
+        url: `/admin/bag/poster/create`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    getPoster: builder.query({
+      query: () => `/admin/bag/poster`,
+    }),
+  }),
+});
+
+export const { useCreateOrUpdatePosterMutation, useGetPosterQuery } = bagPosterApi;
+
+export default function BagPoster() {
   const [productId, setProductId] = useState('');
   const [triggerGetProducts] = useLazyGetProductsQuery();
   const [createOrUpdatePoster] = useCreateOrUpdatePosterMutation();
+
   const [form, setForm] = useState({
     topTitle: '',
     topDesc: '',
@@ -43,19 +45,28 @@ export default function WatchPoster() {
     posterAlt: '',
   });
 
+  const [topImg, setTopImg] = useState<File | null>(null);
+  const [topPreview, setTopPreview] = useState<string | null>(null);
+  const topRef = useRef<HTMLInputElement>(null);
+
+  const [posterImg, setPosterImg] = useState<File | null>(null);
+  const [posterPreview, setPosterPreview] = useState<string | null>(null);
+  const posterRef = useRef<HTMLInputElement>(null);
+
+  const [selectedProduct, setSelectedProduct] = useState<any>();
+
+  const [uploadImages] = useUploadImagesMutation();
+
+  const { data: posterData, isLoading: loadingPoster, refetch } = useGetPosterQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
+
   const loadProductOptions = useCallback(
     async (inputValue: string) => {
       if (!inputValue) return [];
-
       try {
-        // Call the API with search term
         const result = await triggerGetProducts({ search: inputValue }).unwrap();
-
-        // Map to select options format
-        return (result?.data || []).map((p: any) => ({
-          value: p.id,
-          label: p.title,
-        }));
+        return (result?.data || []).map((p: any) => ({ value: p.id, label: p.title }));
       } catch (error) {
         console.error('Failed to load products', error);
         return [];
@@ -63,22 +74,6 @@ export default function WatchPoster() {
     },
     [triggerGetProducts]
   );
-
-  const [topImg, setTopImg] = useState<File | null>(null);
-  const [topPreview, setTopPreview] = useState<string | null>(null);
-  const topRef = useRef<HTMLInputElement>(null);
-  const [posterImg, setPosterImg] = useState<File | null>(null);
-  const [posterPreview, setPosterPreview] = useState<string | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<any>();
-  const posterRef = useRef<HTMLInputElement>(null);
-  const [uploadImages] = useUploadImagesMutation();
-  const {
-    data: posterData,
-    isLoading: loadingPoster,
-    refetch,
-  } = useGetPosterQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-  });
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -122,7 +117,6 @@ export default function WatchPoster() {
         autoClose: 3000,
       });
 
-      // Optionally reset image/preview
       setImage(null);
       setPreview(null);
     }
@@ -157,9 +151,22 @@ export default function WatchPoster() {
         autoClose: 2000,
       });
       refetch();
-      // Optional: Reset form
+
+      // Reset form
       setTopImg(null);
       setPosterImg(null);
+      setSelectedProduct(null);
+      setProductId('');
+      setForm({
+        topTitle: '',
+        topDesc: '',
+        topAlt: '',
+        posterTitle: '',
+        posterDesc: '',
+        posterAlt: '',
+      });
+      setTopPreview(null);
+      setPosterPreview(null);
       if (topRef.current) topRef.current.value = '';
       if (posterRef.current) posterRef.current.value = '';
     } catch (err: any) {
@@ -171,6 +178,7 @@ export default function WatchPoster() {
       });
     }
   };
+
   useEffect(() => {
     if (posterData) {
       setForm({
@@ -187,10 +195,12 @@ export default function WatchPoster() {
       setPosterPreview(posterData.poster_image);
     }
   }, [posterData]);
+
   if (loadingPoster) return <Loader />;
+
   return (
     <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
-      <h2 className="mb-6 text-2xl font-semibold text-gray-800">Watch Poster Setup</h2>
+      <h2 className="mb-6 text-2xl font-semibold text-gray-800">Bag Poster Setup</h2>
 
       <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
         <AsyncSelect

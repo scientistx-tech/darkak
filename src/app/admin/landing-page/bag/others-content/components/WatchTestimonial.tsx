@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Input from '../../../../components/Input';
 import Button from '../../../../components/Button';
 import { toast } from 'react-toastify';
@@ -11,7 +11,7 @@ import {
   useUpdateTestimonialMutation,
 } from './adminTestimonialApis';
 
-export default function WatchTestimonial() {
+export default function BagTestimonial() {
   const [form, setForm] = useState({
     rating: 5,
     text: '',
@@ -106,7 +106,7 @@ export default function WatchTestimonial() {
       {/* Form */}
       <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
         <h2 className="mb-4 text-lg font-semibold">
-          {editId ? 'Edit Testimonial' : 'Add Testimonial'}
+          {editId ? 'Edit Bag Testimonial' : 'Add Bag Testimonial'}
         </h2>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -154,7 +154,7 @@ export default function WatchTestimonial() {
 
       {/* List */}
       <div className="mt-6 w-full rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
-        <h2 className="mb-6 text-xl font-bold text-gray-800">✨ Testimonial List</h2>
+        <h2 className="mb-6 text-xl font-bold text-gray-800">✨ Bag Testimonial List</h2>
 
         {isLoading ? (
           <p className="text-sm text-gray-500">Loading testimonials...</p>
