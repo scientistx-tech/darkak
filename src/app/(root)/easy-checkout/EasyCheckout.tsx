@@ -146,6 +146,7 @@ const EasyCheckout: React.FC = () => {
       quantity: checkoutItems[0].quantity,
       deliveryFee: district === 'Dhaka' ? 60 : 120,
       order_type: !checkoutItems[0].product?.user?.isSeller ? 'in-house' : 'vendor',
+      couponId:couponDiscount?.id||undefined,
     };
     try {
       const res = await createOrder(payload).unwrap();
