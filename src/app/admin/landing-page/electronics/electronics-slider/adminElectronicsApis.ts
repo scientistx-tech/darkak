@@ -1,51 +1,55 @@
 import baseApi from '@/redux/baseApi';
 
-export const adminSliderApis = baseApi.injectEndpoints({
+export const adminElectronicsApis = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getWatchSliders: build.query<any, void>({
-      query: () => `/admin/watch/slider`,
+    getElectronicsSliders: build.query<any, void>({
+      query: () => `/admin/electronics/slider`,
     }),
 
-    createWatchSlider: build.mutation<any, FormData>({
+    createElectronicsSlider: build.mutation<any, FormData>({
       query: (body) => ({
-        url: `/admin/watch/slider/create`,
+        url: `/admin/electronics/slider/create`,
         method: 'POST',
         body,
       }),
     }),
 
-    updateWatchSlider: build.mutation<any, { id: number; data: FormData }>({
+    updateElectronicsSlider: build.mutation<any, { id: number; data: FormData }>({
       query: ({ id, data }) => ({
-        url: `/admin/watch/slider/${id}`,
+        url: `/admin/electronics/slider/${id}`,
         method: 'PUT',
         body: data,
       }),
     }),
 
-    deleteWatchSlider: build.mutation<any, number>({
+    deleteElectronicsSlider: build.mutation<any, number>({
       query: (id) => ({
-        url: `/admin/watch/slider/${id}`,
+        url: `/admin/electronics/slider/${id}`,
         method: 'DELETE',
       }),
     }),
-    createWatchProduct: build.mutation<any, any>({
+
+    createElectronicsProduct: build.mutation<any, any>({
       query: (body) => ({
-        url: `/admin/watch/product/create`,
+        url: `/admin/electronics/product/create`,
         method: 'POST',
         body,
       }),
     }),
-    updateWatchProduct: build.mutation<any, any>({
+
+    updateElectronicsProduct: build.mutation<any, any>({
       query: ({ id, body }) => ({
-        url: `/admin/watch/product/${id}`,
+        url: `/admin/electronics/product/${id}`,
         method: 'PUT',
         body,
       }),
     }),
-    getWatchProductById: build.query<any, string>({
-      query: (id) => `/admin/watch/product/${id}`,
+
+    getElectronicsProductById: build.query<any, string>({
+      query: (id) => `/admin/electronics/product/${id}`,
     }),
-    getWatchProducts: build.query<
+
+    getElectronicsProducts: build.query<
       any,
       {
         search?: string;
@@ -71,21 +75,23 @@ export const adminSliderApis = baseApi.injectEndpoints({
 
         const queryString = queryParams.toString();
 
-        return `/admin/watch/product${queryString ? `?${queryString}` : ''}`;
+        return `/admin/electronics/product${queryString ? `?${queryString}` : ''}`;
       },
     }),
-    deleteWatchProduct: build.mutation<any, number>({
+
+    deleteElectronicsProduct: build.mutation<any, number>({
       query: (id) => ({
-        url: `/admin/watch/product/${id}`,
+        url: `/admin/electronics/product/${id}`,
         method: 'DELETE',
       }),
     }),
-    changeWatchProductStatus: build.mutation<
+
+    changeElectronicsProductStatus: build.mutation<
       { message: string },
       { id: number; status: 'drafted' | 'seller' | 'arival' }
     >({
       query: ({ id, status }) => ({
-        url: `/admin/watch/product/status/${id}`,
+        url: `/admin/electronics/product/status/${id}`,
         method: 'POST',
         body: { status },
       }),
@@ -94,14 +100,14 @@ export const adminSliderApis = baseApi.injectEndpoints({
 });
 
 export const {
-  useGetWatchSlidersQuery,
-  useCreateWatchSliderMutation,
-  useDeleteWatchSliderMutation,
-  useUpdateWatchSliderMutation,
-  useCreateWatchProductMutation,
-  useGetWatchProductsQuery,
-  useDeleteWatchProductMutation,
-  useChangeWatchProductStatusMutation,
-  useUpdateWatchProductMutation,
-  useGetWatchProductByIdQuery,
-} = adminSliderApis;
+  useGetElectronicsSlidersQuery,
+  useCreateElectronicsSliderMutation,
+  useDeleteElectronicsSliderMutation,
+  useUpdateElectronicsSliderMutation,
+  useCreateElectronicsProductMutation,
+  useGetElectronicsProductsQuery,
+  useDeleteElectronicsProductMutation,
+  useChangeElectronicsProductStatusMutation,
+  useUpdateElectronicsProductMutation,
+  useGetElectronicsProductByIdQuery,
+} = adminElectronicsApis;

@@ -12,11 +12,11 @@ import baseApi from '@/redux/baseApi';
 export const watchBannerApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getWatchBanners: build.query<any, void>({
-      query: () => '/admin/watch/banner',
+      query: () => '/admin/electronics/banner',
     }),
     createOrUpdateWatchBanners: build.mutation<any, FormData>({
       query: (formData) => ({
-        url: '/admin/watch/banner/create',
+        url: '/admin/electronics/banner/create',
         method: 'POST',
         body: formData,
       }),
@@ -130,8 +130,8 @@ export default function WatchBanner() {
             className="h-[50px] w-full rounded border border-gray-300 px-3"
           >
             <option value="">Select Banner Type</option>
-            <option value="casual">Casual Watch</option>
-            <option value="premium">Premium Watch</option>
+            <option value="casual">Everyday Use Electronics</option>
+            <option value="premium">Travel & Adventure Electronics</option>
           </select>
         </div>
 
@@ -209,7 +209,13 @@ export default function WatchBanner() {
                   <div>
                     <p className="font-semibold">{item.title}</p>
                     <p className="text-sm text-gray-600">{item.description}</p>
-                    <p className="text-sm text-gray-600">{item.type}</p>
+                    <p className="text-sm text-gray-600">
+                      {item.type === 'casual'
+                        ? 'Everyday Use Electronics'
+                        : item.type === 'premium'
+                          ? 'Travel & Adventure Electronics'
+                          : item.type}
+                    </p>
                   </div>
                 </div>
               </div>

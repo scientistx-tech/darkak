@@ -2,19 +2,20 @@ import React from 'react';
 import WatchBannerCard from './WatchBannerCard';
 import WatchCard from './WatchCard';
 
+
 import { SellerProductResponse, WatchBanner } from '../types';
 import Link from 'next/link';
 
-export default async function PremiumWatch({ banner }: { banner: WatchBanner | undefined }) {
+export default async function CasualWatch({ banner }: { banner: WatchBanner | undefined }) {
   const data = await fetchSellerProducts();
   return (
-    <div className="mt-0 w-full md:mt-10">
+    <div className="mt-5 w-full md:mt-10">
       <div className="flex items-center justify-between">
         <p className="font-serif text-xl font-medium text-primaryBlue md:text-[35px]">
-          Travel & Adventure
+          Everyday Use Electronics
         </p>
         <Link
-          href={`/explore/bag/more/${banner?.type}`}
+          href={`/explore/electronics/more/${banner?.type}`}
           className="rounded-full bg-primary px-3 py-1.5 font-medium text-white transition-all duration-300 hover:bg-primaryBlue md:px-4 md:py-2"
         >
           View All
@@ -52,6 +53,6 @@ export default async function PremiumWatch({ banner }: { banner: WatchBanner | u
   );
 }
 const fetchSellerProducts = async (): Promise<SellerProductResponse> => {
-  const res = await fetch('https://api.darkak.com.bd/api/public/bag-products/premium');
+  const res = await fetch('https://api.darkak.com.bd/api/public/electronics-products/casual');
   return res.json();
 };

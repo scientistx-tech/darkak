@@ -11,7 +11,7 @@ import {
   useLazyGetProductsQuery,
   useUploadImagesMutation,
 } from '@/redux/services/admin/adminProductApis';
-import { useCreateWatchProductMutation } from '../electronics-slider/watchSliderApi';
+import { useCreateElectronicsProductMutation } from '../electronics-slider/adminElectronicsApis';
 
 export default function AddProductPage() {
   const [productId, setProductId] = useState('');
@@ -32,17 +32,15 @@ export default function AddProductPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [triggerGetProducts] = useLazyGetProductsQuery();
   const [uploadImages] = useUploadImagesMutation();
-  const [createProduct] = useCreateWatchProductMutation();
+  const [createProduct] = useCreateElectronicsProductMutation();
 
   const loadProductOptions = useCallback(
     async (inputValue: string) => {
       if (!inputValue) return [];
 
       try {
-        // Call the API with search term
         const result = await triggerGetProducts({ search: inputValue }).unwrap();
 
-        // Map to select options format
         return (result?.data || []).map((p: any) => ({
           value: p.id,
           label: p.title,
@@ -142,7 +140,7 @@ export default function AddProductPage() {
 
   return (
     <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
-      <h2 className="mb-6 text-2xl font-semibold text-gray-800">Add Product Info</h2>
+      <h2 className="mb-6 text-2xl font-semibold text-gray-800">Add Electronics Product</h2>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <AsyncSelect
@@ -167,8 +165,8 @@ export default function AddProductPage() {
           className="h-[50px] w-full rounded border border-gray-300 px-3"
         >
           <option value="">Select Type</option>
-          <option value="casual">Casual</option>
-          <option value="premium">Premium</option>
+          <option value="casual">Everyday Use Electronics</option>
+          <option value="premium">Travel & Adventure Electronics</option>
         </select>
       </div>
 
