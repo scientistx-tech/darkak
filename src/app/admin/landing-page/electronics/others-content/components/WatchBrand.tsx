@@ -11,7 +11,7 @@ import {
   useDeleteWatchBrandMutation,
   useGetWatchBrandsQuery,
   useUpdateWatchBrandMutation,
-} from './adminWatchBrandApis';
+} from './adminElectronicsBrandApis';
 
 export default function WatchBrand() {
   const [selectedBrand, setSelectedBrand] = useState<any>(null);
@@ -113,7 +113,7 @@ export default function WatchBrand() {
   return (
     <div>
       <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
-        <h2 className="mb-4 text-lg font-semibold">Add Watch Brand</h2>
+        <h2 className="mb-4 text-lg font-semibold">Add Electronics Brand</h2>
 
         <div className="grid grid-cols-1 gap-4">
           <AsyncSelect

@@ -4,13 +4,13 @@ export const watchPosterApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     createOrUpdatePoster: builder.mutation({
       query: (data) => ({
-        url: `/admin/watch/poster/create`,
+        url: `/admin/electronics/poster/create`,
         method: 'POST',
         body: data,
       }),
     }),
     getPoster: builder.query({
-      query: () => `/admin/watch/poster`,
+      query: () => `/admin/electronics/poster`,
     }),
   }),
 });
@@ -190,7 +190,7 @@ export default function WatchPoster() {
   if (loadingPoster) return <Loader />;
   return (
     <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
-      <h2 className="mb-6 text-2xl font-semibold text-gray-800">Watch Poster Setup</h2>
+      <h2 className="mb-6 text-2xl font-semibold text-gray-800">Electronics Poster Setup</h2>
 
       <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
         <AsyncSelect

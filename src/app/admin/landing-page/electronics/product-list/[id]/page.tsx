@@ -10,9 +10,9 @@ import {
   useUploadImagesMutation,
 } from '@/redux/services/admin/adminProductApis';
 import {
-  useGetWatchProductByIdQuery,
-  useUpdateWatchProductMutation,
-} from '../../electronics-slider/electronicsSliderApi';
+  useGetElectronicsProductByIdQuery,
+  useUpdateElectronicsProductMutation,
+} from '../../electronics-slider/adminElectronicsApis';
 import Input from '@/app/admin/components/Input';
 import { Button } from '@/components/ui-elements/button';
 import { useParams } from 'next/navigation';
@@ -23,7 +23,7 @@ export default function AddProductPage() {
   const [shortTitle, setShortTitle] = useState('');
   const [type, setType] = useState<'casual' | 'premium' | ''>('');
   const { id } = useParams();
-  const { data, isLoading } = useGetWatchProductByIdQuery(id as string);
+  const { data, isLoading } = useGetElectronicsProductByIdQuery(id as string);
 
   const [thumbFile, setThumbFile] = useState<File | null>(null);
   const [thumbAlt, setThumbAlt] = useState('');
@@ -39,7 +39,7 @@ export default function AddProductPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [triggerGetProducts] = useLazyGetProductsQuery();
   const [uploadImages] = useUploadImagesMutation();
-  const [createProduct] = useUpdateWatchProductMutation();
+  const [createProduct] = useUpdateElectronicsProductMutation();
   const [selectedProduct, setSelectedProduct] = useState<any>();
 
   const loadProductOptions = useCallback(

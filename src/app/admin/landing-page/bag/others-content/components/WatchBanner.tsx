@@ -209,7 +209,13 @@ export default function BagBanner() {
                   <div>
                     <p className="font-semibold">{item.title}</p>
                     <p className="text-sm text-gray-600">{item.description}</p>
-                    <p className="text-sm text-gray-600">{item.type}</p>
+                    <p className="text-sm text-gray-600">
+                      {item.type === 'casual'
+                        ? 'Casual Bag'
+                        : item.type === 'premium'
+                          ? 'Premium Bag'
+                          : item.type}
+                    </p>
                   </div>
                 </div>
               </div>

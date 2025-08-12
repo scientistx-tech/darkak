@@ -10,15 +10,15 @@ import {
   useLazyGetProductsQuery,
 } from '@/redux/services/admin/adminProductApis';
 import {
-  useCreateWatchSliderMutation,
-  useDeleteWatchSliderMutation,
-  useGetWatchSlidersQuery,
-  useUpdateWatchSliderMutation,
-} from './electronicsSliderApi';
+  useCreateElectronicsSliderMutation,
+  useDeleteElectronicsSliderMutation,
+  useGetElectronicsSlidersQuery,
+  useUpdateElectronicsSliderMutation,
+} from './adminElectronicsApis';
 import { message, Spin } from 'antd';
 import { toast } from 'react-toastify';
 
-export default function WatchSliderPage() {
+export default function ElectronicsSliderPage() {
   const [productId, setProductId] = useState('');
   const [productLabel, setProductLabel] = useState('');
   const [title, setTitle] = useState('');
@@ -32,10 +32,10 @@ export default function WatchSliderPage() {
   const { data: productData, isLoading: productLoading } = useGetProductsQuery(
     searchTerm ? { search: searchTerm } : {}
   );
-  const { data: sliders = [], refetch, isLoading } = useGetWatchSlidersQuery();
-  const [createSlider] = useCreateWatchSliderMutation();
-  const [updateSlider] = useUpdateWatchSliderMutation();
-  const [deleteSlider] = useDeleteWatchSliderMutation();
+   const { data: sliders = [], refetch, isLoading } = useGetElectronicsSlidersQuery();
+  const [createSlider] = useCreateElectronicsSliderMutation();
+  const [updateSlider] = useUpdateElectronicsSliderMutation();
+  const [deleteSlider] = useDeleteElectronicsSliderMutation();
   const [triggerGetProducts] = useLazyGetProductsQuery();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -168,7 +168,7 @@ export default function WatchSliderPage() {
       {/* Create/Edit Form */}
       <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
         <h2 className="mb-6 text-2xl font-semibold text-gray-800">
-          {editIndex !== null ? 'Edit' : 'Add'} Watch Slider
+          {editIndex !== null ? 'Edit' : 'Add'} Electronics Slider
         </h2>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -262,9 +262,9 @@ export default function WatchSliderPage() {
         </div>
       </div>
 
-      {/* Watch Slider List */}
+      {/* Electronics Slider List */}
       <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
-        <h2 className="mb-6 text-2xl font-semibold text-gray-800">Watch Slider List</h2>
+        <h2 className="mb-6 text-2xl font-semibold text-gray-800">Electronics Slider List</h2>
 
         <Spin spinning={isLoading}>
           {sliders.length === 0 ? (

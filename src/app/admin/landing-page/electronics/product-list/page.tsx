@@ -14,10 +14,10 @@ import * as Switch from '@radix-ui/react-switch';
 import { Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import {
-  useChangeWatchProductStatusMutation,
-  useDeleteWatchProductMutation,
-  useGetWatchProductsQuery,
-} from '../electronics-slider/electronicsSliderApi';
+  useChangeElectronicsProductStatusMutation,
+  useDeleteElectronicsProductMutation,
+  useGetElectronicsProductsQuery,
+} from '../electronics-slider/adminElectronicsApis';
 import { useSelector } from 'react-redux';
 import { useGetSubCategoriesQuery } from '@/redux/services/admin/adminCategoryApis';
 import { useGetBrandsQuery } from '@/redux/services/admin/adminBrandApis';
@@ -37,7 +37,7 @@ export default function ProductListPage() {
     data: products = [],
     isLoading,
     refetch,
-  } = useGetWatchProductsQuery({
+  } = useGetElectronicsProductsQuery({
     search,
     subCategoryId,
     brandId,
@@ -46,9 +46,9 @@ export default function ProductListPage() {
     availability,
   });
 
-  const [deleteProduct, { isLoading: isDeleting }] = useDeleteWatchProductMutation();
+  const [deleteProduct, { isLoading: isDeleting }] = useDeleteElectronicsProductMutation();
   const token = useSelector((state: any) => state.auth.token);
-  const [changeStatus, { isLoading: isChangingStatus }] = useChangeWatchProductStatusMutation();
+  const [changeStatus, { isLoading: isChangingStatus }] = useChangeElectronicsProductStatusMutation();
   const {
     data: subCategoriesData,
     isLoading: isSubCategoriesLoading,

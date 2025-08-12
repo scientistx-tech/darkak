@@ -158,7 +158,7 @@ export default function WatchCategory() {
   return (
     <div>
       <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
-        <h2 className="text-lg font-semibold">Add Watch Sub Category For Landing Page</h2>
+        <h2 className="text-lg font-semibold">Add Electronics Sub Category For Landing Page</h2>
 
         <div className="mt-5">
           <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-1">
@@ -245,7 +245,7 @@ export default function WatchCategory() {
 
       {/* Category List Section */}
       <div className="mt-6 w-full rounded-lg bg-white p-6 shadow-md">
-        <h2 className="mb-4 text-lg font-semibold">Watch Category List</h2>
+        <h2 className="mb-4 text-lg font-semibold">Electronics Category List</h2>
 
         <div className="space-y-4">
           {categoryData?.data?.length === 0 ? (
