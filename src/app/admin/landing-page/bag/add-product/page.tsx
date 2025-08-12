@@ -151,8 +151,8 @@ export default function AddProductPage() {
           className="h-[50px] w-full rounded border border-gray-300 px-3"
         >
           <option value="">Select Type</option>
-          <option value="casual">Casual</option>
-          <option value="premium">Premium</option>
+          <option value="casual">Everyday Carry Bags</option>
+          <option value="premium">Travel & Adventure Bags</option>
         </select>
       </div>
 

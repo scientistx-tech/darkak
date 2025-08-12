@@ -14,7 +14,7 @@ import {
   useDeleteWatchSliderMutation,
   useGetWatchSlidersQuery,
   useUpdateWatchSliderMutation,
-} from './watchSliderApi';
+} from './electronicsSliderApi';
 import { message, Spin } from 'antd';
 import { toast } from 'react-toastify';
 

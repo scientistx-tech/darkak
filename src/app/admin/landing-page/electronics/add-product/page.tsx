@@ -11,7 +11,7 @@ import {
   useLazyGetProductsQuery,
   useUploadImagesMutation,
 } from '@/redux/services/admin/adminProductApis';
-import { useCreateWatchProductMutation } from '../electronics-slider/watchSliderApi';
+import { useCreateWatchProductMutation } from '../electronics-slider/electronicsSliderApi';
 
 export default function AddProductPage() {
   const [productId, setProductId] = useState('');

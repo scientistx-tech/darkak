@@ -12,10 +12,10 @@ export default async function CasualWatch({ banner }: { banner: WatchBanner | un
     <div className="mt-5 w-full md:mt-10">
       <div className="flex items-center justify-between">
         <p className="font-serif text-xl font-medium text-primaryBlue md:text-[35px]">
-          Casual Watch
+          Everyday Carry
         </p>
         <Link
-          href={`/explore/watch/more/${banner?.type}`}
+          href={`/explore/bag/more/${banner?.type}`}
           className="rounded-full bg-primary px-3 py-1.5 font-medium text-white transition-all duration-300 hover:bg-primaryBlue md:px-4 md:py-2"
         >
           View All
@@ -53,6 +53,6 @@ export default async function CasualWatch({ banner }: { banner: WatchBanner | un
   );
 }
 const fetchSellerProducts = async (): Promise<SellerProductResponse> => {
-  const res = await fetch('https://api.darkak.com.bd/api/public/watch-products/casual');
+  const res = await fetch('https://api.darkak.com.bd/api/public/bag-products/casual');
   return res.json();
 };

@@ -12,7 +12,7 @@ import {
 import {
   useGetWatchProductByIdQuery,
   useUpdateWatchProductMutation,
-} from '../../electronics-slider/watchSliderApi';
+} from '../../electronics-slider/electronicsSliderApi';
 import Input from '@/app/admin/components/Input';
 import { Button } from '@/components/ui-elements/button';
 import { useParams } from 'next/navigation';

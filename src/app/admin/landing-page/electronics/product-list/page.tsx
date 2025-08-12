@@ -17,7 +17,7 @@ import {
   useChangeWatchProductStatusMutation,
   useDeleteWatchProductMutation,
   useGetWatchProductsQuery,
-} from '../electronics-slider/watchSliderApi';
+} from '../electronics-slider/electronicsSliderApi';
 import { useSelector } from 'react-redux';
 import { useGetSubCategoriesQuery } from '@/redux/services/admin/adminCategoryApis';
 import { useGetBrandsQuery } from '@/redux/services/admin/adminBrandApis';
