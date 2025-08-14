@@ -30,7 +30,7 @@ export default function Page() {
   //console.log(sidebarFilters);
   // Add currentPage to sidebarFilters before calling useGetAllProductsQuery
   const filtersWithPageAndLimit = {
-    brandId: decodeURIComponent(String(brandId)).replace(/-/g, ' '),
+    brandId: String(brandId),
     page: String(visibleCount),
     limit: '20',
     ...queryObject,
@@ -42,14 +42,14 @@ export default function Page() {
       ? `?${new URLSearchParams(filtersWithPageAndLimit).toString()}`
       : '';
     try {
-      setIsLoading(true), setIsFetching(true);
+      (setIsLoading(true), setIsFetching(true));
       const response = await fetch(`https://api.darkak.com.bd/api/public/filter${queryString}`);
       const data = await response.json();
       setData(data);
     } catch (error: any) {
       toast.error(error?.data?.message);
     } finally {
-      setIsLoading(false), setIsFetching(false);
+      (setIsLoading(false), setIsFetching(false));
     }
   };
 
@@ -64,15 +64,10 @@ export default function Page() {
       <div className="h-[65px] w-full md:h-[109px]" />
       <div className="h-[10px] w-full md:h-[20px]" />
       <div className="flex items-center gap-1 px-3 text-sm font-semibold md:px-5 lg:px-11">
-        <Link className="text-primary underline" href={'/'}>
-          Home
-        </Link>
-        <ArrowRightIcon />
         <Link className="text-primary underline" href={'/category'}>
-          Brand
+          brand
         </Link>
-        <ArrowRightIcon />
-        {brandId}
+        /{brandId}
       </div>
       <CategoryPage
         data={data}

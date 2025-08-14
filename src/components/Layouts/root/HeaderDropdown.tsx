@@ -8,6 +8,7 @@ import { useGetProductCategoriesQuery } from '@/redux/services/client/categories
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import { textToSlug } from '@/utils/urlConverter';
 
 const shimmer = 'animate-pulse bg-secondaryLiteBlue rounded-md h-6 mb-2';
 
@@ -77,7 +78,7 @@ export default function Test() {
                   }`}
                 >
                   <Link
-                    href={`/category/${cat?.title.trim().replace(/\s+/g, '-')}`}
+                    href={`/category/${cat?.slug}`}
                     className="flex w-full items-center gap-2"
                   >
                     <Image
@@ -120,7 +121,7 @@ export default function Test() {
                         }`}
                       >
                         <Link
-                          href={`/category/${selectedMainCategory?.title.trim().replace(/\s+/g, '-')}/${sub?.title.trim().replace(/\s+/g, '-')}`}
+                          href={`/category/${selectedMainCategory?.slug}/${sub?.slug}`}
                           // href={{
                           //   pathname: '/category',
                           //   query: {
@@ -158,7 +159,7 @@ export default function Test() {
                   : selectedSubCategory.sub_sub_category.map((item) => (
                       <Link
                         key={item.title}
-                        href={`/category/${parentCategory?.title.trim().replace(/\s+/g, '-')}/${selectedSubCategory?.title.trim().replace(/\s+/g, '-')}/${item?.title.trim().replace(/\s+/g, '-')}`}
+                        href={`/category/${parentCategory?.slug || ''}/${selectedSubCategory?.slug}/${item?.slug}`}
                         // href={{
                         //   pathname: '/category',
                         //   query: {

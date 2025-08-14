@@ -55,7 +55,7 @@ export default function VendorPage() {
         {vendorsData?.data?.map((vendor: any, i: number) => (
           <VendorCard
             key={i}
-            shopLink={`/vendors/shop-view/${vendor?.store_name?.split(' ').join('-')}`}
+            shopLink={`/vendors/shop-view/${vendor?.slug}`}
             shopBanner={vendor?.shop_banner}
             shopLogo={vendor?.shop_logo}
             shopName={vendor?.store_name}

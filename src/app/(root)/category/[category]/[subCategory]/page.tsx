@@ -1,5 +1,6 @@
 import React from 'react';
 import Page from './Component';
+import { slugToText } from '@/utils/urlConverter';
 interface Category {
   id: number;
   title: string;
@@ -68,7 +69,7 @@ export async function generateMetadata({
 }: {
   params: Promise<{ subSubCategory: string; subCategory: string; category: string }>;
 }) {
-  const id = (await params).subSubCategory;
+  const id = (await params).subCategory;
   const subCategory = (await params).subCategory;
   const category = (await params).category;
   const response = await fetch(`https://api.darkak.com.bd/api/public/filter?subCategoryId=${id}`);
