@@ -30,6 +30,7 @@ import RequireAccess from "@/components/Layouts/RequireAccess";
 import { useGetOrdersSellerQuery } from "@/redux/services/seller/sellerOrderApis";
 import Button from "@/app/admin/components/Button";
 import OrderInvoicePDF from "@/app/admin/orders/[id]/components/OrderInvoicePDF";
+import MiniButton from "@/app/admin/orders/[id]/components/MiniButton";
 
 const CancelledOrderList = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -192,16 +193,7 @@ const CancelledOrderList = () => {
                         >
                           <FaEye />
                         </Button>
-                        <PDFDownloadLink
-                          document={<OrderInvoicePDF orderDetails={order} />}
-                          fileName={`invoice_order_${order?.id}.pdf`}
-                        >
-                          {({ loading }) => (
-                            <button className="rounded-full bg-teal-100 p-1 text-base text-teal-700 hover:bg-teal-50">
-                              <MdFileDownload />
-                            </button>
-                          )}
-                        </PDFDownloadLink>
+                        <MiniButton orderDetails={order} />
                       </TableCell>
                     </TableRow>
                   ))

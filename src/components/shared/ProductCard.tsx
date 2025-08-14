@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import Link from 'next/link';
 
 interface ProductCardProps {
   product: Product;
@@ -67,18 +68,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
       ></RightIcons>
 
       {/* Image Container with polygon background */}
-      <div
+      <Link href={`/product/${product.slug}`}
         className="relative flex h-32 cursor-pointer items-center justify-center transition-all duration-500 md:h-48"
         onMouseEnter={() => {
           setTimeout(() => {
             setActiveImage((activeImage + 1) % product.Image.length);
           }, 1600);
         }}
-        onClick={() => {
-          // window.open(`/product/${product.slug}`, "_blank");
-          router.push(`/product/${product.slug}`);
-          if (setIsOpen) setIsOpen(false);
-        }}
+        // onClick={() => {
+        //   // window.open(`/product/${product.slug}`, "_blank");
+        //   router.push(`/product/${product.slug}`);
+        //   if (setIsOpen) setIsOpen(false);
+        // }}
       >
         {/* Polygon background behind the image */}
         <div
@@ -99,7 +100,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
           transition={{ duration: 1.6 }}
           className="z-10 h-32 object-contain md:h-48"
         />
-      </div>
+      </Link>
 
       {/* Image Indicators */}
       <div className="my-2 flex items-center justify-center gap-2">

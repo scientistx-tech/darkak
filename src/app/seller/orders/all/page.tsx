@@ -1,5 +1,5 @@
-"use client";
-import { Skeleton } from "@/components/ui/skeleton";
+'use client';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -7,23 +7,24 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import FilterOrders from "./FilterOrders";
-import { FaEye } from "react-icons/fa";
-import { MdFileDownload } from "react-icons/md";
-import Pagination from "@/components/shared/Pagination";
-import { useRouter } from "next/navigation";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import RequireAccess from "@/components/Layouts/RequireAccess";
-import Button from "@/app/admin/components/Button";
-import OrderInvoicePDF from "@/app/admin/orders/[id]/components/OrderInvoicePDF";
-import { useGetOrdersSellerQuery } from "@/redux/services/seller/sellerOrderApis";
+} from '@/components/ui/table';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import FilterOrders from './FilterOrders';
+import { FaEye } from 'react-icons/fa';
+import { MdFileDownload } from 'react-icons/md';
+import Pagination from '@/components/shared/Pagination';
+import { useRouter } from 'next/navigation';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import RequireAccess from '@/components/Layouts/RequireAccess';
+import Button from '@/app/admin/components/Button';
+import OrderInvoicePDF from '@/app/admin/orders/[id]/components/OrderInvoicePDF';
+import { useGetOrdersSellerQuery } from '@/redux/services/seller/sellerOrderApis';
+import MiniButton from '@/app/admin/orders/[id]/components/MiniButton';
 
 const AllOrderList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
 
   const {
     data: orderData,
@@ -32,7 +33,7 @@ const AllOrderList = () => {
     refetch,
   } = useGetOrdersSellerQuery({ page: String(currentPage), search });
 
-  console.log("orderData", orderData);
+  console.log('orderData', orderData);
 
   const router = useRouter();
 
@@ -44,10 +45,7 @@ const AllOrderList = () => {
     <RequireAccess permission="order-all">
       <div className="min-h-screen">
         <h2 className="mb-4 flex items-center gap-2 text-xl font-bold">
-          🏠 All Orders{" "}
-          <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">
-            194
-          </span>
+          🏠 All Orders <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">194</span>
         </h2>
 
         <FilterOrders />
@@ -127,10 +125,7 @@ const AllOrderList = () => {
 
                 {!isLoading && orderData?.data?.length <= 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="py-8 text-center text-red-500"
-                    >
+                    <TableCell colSpan={8} className="py-8 text-center text-red-500">
                       No Data to Show
                     </TableCell>
                   </TableRow>
@@ -174,35 +169,35 @@ const AllOrderList = () => {
                       </TableCell>
                       <TableCell>
                         <div className="flex justify-center">
-                          {order.status === "pending" ? (
+                          {order.status === 'pending' ? (
                             <p className="rounded-lg border border-blue-700 bg-blue-50 px-2 py-0.5 text-center font-bold text-blue-700">
                               Pending
                             </p>
-                          ) : order.status === "confirmed" ? (
+                          ) : order.status === 'confirmed' ? (
                             <p className="rounded-lg border border-green-700 bg-green-50 px-2 py-0.5 text-center font-bold text-green-700">
                               Confirmed
                             </p>
-                          ) : order.status === "packaging" ? (
+                          ) : order.status === 'packaging' ? (
                             <p className="rounded-lg border border-yellow-700 bg-yellow-50 px-2 py-0.5 text-center font-bold text-yellow-700">
                               Packaging
                             </p>
-                          ) : order.status === "out_for_delivery" ? (
+                          ) : order.status === 'out_for_delivery' ? (
                             <p className="rounded-lg border border-yellow-700 bg-yellow-50 px-2 py-0.5 text-center font-bold text-yellow-700">
                               Out For Delivery
                             </p>
-                          ) : order.status === "delivered" ? (
+                          ) : order.status === 'delivered' ? (
                             <p className="rounded-lg border border-green-700 bg-green-50 px-2 py-0.5 text-center font-bold text-green-700">
                               Delivered
                             </p>
-                          ) : order.status === "returned" ? (
+                          ) : order.status === 'returned' ? (
                             <p className="rounded-lg border border-red-700 bg-red-50 px-2 py-0.5 text-center font-bold text-red-700">
                               Returned
                             </p>
-                          ) : order.status === "cancelled" ? (
+                          ) : order.status === 'cancelled' ? (
                             <p className="rounded-lg border border-red-700 bg-red-50 px-2 py-0.5 text-center font-bold text-red-700">
                               Cancelled
                             </p>
-                          ) : order.status === "failed_to_delivery" ? (
+                          ) : order.status === 'failed_to_delivery' ? (
                             <p className="rounded-lg border border-red-700 bg-red-50 px-2 py-0.5 text-center font-bold text-red-700">
                               Failed To Deliver
                             </p>
@@ -224,16 +219,7 @@ const AllOrderList = () => {
                           >
                             <FaEye />
                           </Button>
-                          <PDFDownloadLink
-                            document={<OrderInvoicePDF orderDetails={order} />}
-                            fileName={`invoice_order_${order?.id}.pdf`}
-                          >
-                            {({ loading }) => (
-                              <button className="rounded-full bg-teal-100 p-1 text-base text-teal-700 hover:bg-teal-50">
-                                <MdFileDownload />
-                              </button>
-                            )}
-                          </PDFDownloadLink>
+                          <MiniButton orderDetails={order} />
                         </div>
                       </TableCell>
                     </TableRow>

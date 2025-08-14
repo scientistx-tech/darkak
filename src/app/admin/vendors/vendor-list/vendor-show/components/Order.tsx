@@ -16,6 +16,7 @@ import Button from "@/app/admin/components/Button";
 import { useGetVendorsOrderQuery } from "@/redux/services/admin/adminVendorApis";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
+import MiniButton from "@/app/admin/orders/[id]/components/MiniButton";
 
 const OrderTab = ({ id }: { id: string }) => {
   const { data, isLoading, error, refetch } = useGetVendorsOrderQuery({
@@ -188,16 +189,7 @@ const OrderTab = ({ id }: { id: string }) => {
                       >
                         <FaEye />
                       </Button>
-                      <PDFDownloadLink
-                        document={<OrderInvoicePDF orderDetails={order} />}
-                        fileName={`invoice_order_${order?.id}.pdf`}
-                      >
-                        {({ loading }) => (
-                          <button className="rounded-full bg-teal-100 p-1 text-base text-teal-700 hover:bg-teal-50">
-                            <MdFileDownload />
-                          </button>
-                        )}
-                      </PDFDownloadLink>
+                      <MiniButton orderDetails={order} />
                     </div>
                   </TableCell>
                 </TableRow>

@@ -1,5 +1,5 @@
-"use client";
-import { Skeleton } from "@/components/ui/skeleton";
+'use client';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -7,32 +7,33 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+} from '@/components/ui/table';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
 
 import {
   useGetBrandsQuery,
   useDeleteBrandMutation,
   useUpdateBrandMutation,
-} from "@/redux/services/admin/adminBrandApis";
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import Button from "../../components/Button";
-import { CiCirclePlus } from "react-icons/ci";
-import FilterOrders from "./FilterOrders";
-import { useGetOrdersQuery } from "@/redux/services/admin/adminOrderApis";
-import { FaEdit, FaEye } from "react-icons/fa";
-import { MdFileDownload } from "react-icons/md";
-import Pagination from "@/components/shared/Pagination";
-import { useRouter } from "next/navigation";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import OrderInvoicePDF from "../[id]/components/OrderInvoicePDF";
-import RequireAccess from "@/components/Layouts/RequireAccess";
+} from '@/redux/services/admin/adminBrandApis';
+import { toast } from 'react-toastify';
+import * as yup from 'yup';
+import Button from '../../components/Button';
+import { CiCirclePlus } from 'react-icons/ci';
+import FilterOrders from './FilterOrders';
+import { useGetOrdersQuery } from '@/redux/services/admin/adminOrderApis';
+import { FaEdit, FaEye } from 'react-icons/fa';
+import { MdFileDownload } from 'react-icons/md';
+import Pagination from '@/components/shared/Pagination';
+import { useRouter } from 'next/navigation';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import OrderInvoicePDF from '../[id]/components/OrderInvoicePDF';
+import RequireAccess from '@/components/Layouts/RequireAccess';
+import MiniButton from '../[id]/components/MiniButton';
 
 const AllOrderList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
 
   const {
     data: orderData,
@@ -41,7 +42,7 @@ const AllOrderList = () => {
     refetch,
   } = useGetOrdersQuery({ page: String(currentPage), search });
 
-  console.log("orderData", orderData);
+  //console.log("orderData", orderData);
 
   const router = useRouter();
 
@@ -231,16 +232,7 @@ const AllOrderList = () => {
                           >
                             <FaEye />
                           </Button>
-                          <PDFDownloadLink
-                            document={<OrderInvoicePDF orderDetails={order} />}
-                            fileName={`invoice_order_${order?.id}.pdf`}
-                          >
-                            {({ loading }) => (
-                              <button className="rounded-full bg-teal-100 p-1 text-base text-teal-700 hover:bg-teal-50">
-                                <MdFileDownload />
-                              </button>
-                            )}
-                          </PDFDownloadLink>
+                          <MiniButton orderDetails={order} />
                         </div>
                       </TableCell>
                     </TableRow>

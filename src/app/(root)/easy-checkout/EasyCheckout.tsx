@@ -59,9 +59,10 @@ const EasyCheckout: React.FC = () => {
   useEffect(() => {
     getContentData();
     const storedItems = localStorage.getItem('checkout_items');
-    console.log('stored items', storedItems);
+    
 
     if (storedItems) {
+      //console.log('stored items', JSON.parse(storedItems));
       setCheckoutItems(JSON.parse(storedItems));
     } else {
       router.push('/cart');
@@ -147,7 +148,13 @@ const EasyCheckout: React.FC = () => {
       deliveryFee: district === 'Dhaka' ? 60 : 120,
       order_type: !checkoutItems[0].product?.user?.isSeller ? 'in-house' : 'vendor',
       couponId:couponDiscount?.id||undefined,
+      options:checkoutItems[0]?.cart_items?.map((opt:any)=>({
+        itemId:opt?.option.itemId,
+        optionId:opt?.option?.id
+      }))
+      //ae_sku_attr:
     };
+    
     try {
       const res = await createOrder(payload).unwrap();
       toast.success(res?.message || 'Order placed successfully');

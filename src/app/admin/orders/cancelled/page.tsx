@@ -1,5 +1,5 @@
-"use client";
-import { Skeleton } from "@/components/ui/skeleton";
+'use client';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -7,32 +7,33 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+} from '@/components/ui/table';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
 
 import {
   useGetBrandsQuery,
   useDeleteBrandMutation,
   useUpdateBrandMutation,
-} from "@/redux/services/admin/adminBrandApis";
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import Button from "../../components/Button";
-import { CiCirclePlus } from "react-icons/ci";
-import { useGetOrdersQuery } from "@/redux/services/admin/adminOrderApis";
-import { FaEdit, FaEye } from "react-icons/fa";
-import { MdFileDownload } from "react-icons/md";
-import Pagination from "@/components/shared/Pagination";
-import { useRouter } from "next/navigation";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import OrderInvoicePDF from "../[id]/components/OrderInvoicePDF";
-import FilterOrders from "../all/FilterOrders";
-import RequireAccess from "@/components/Layouts/RequireAccess";
+} from '@/redux/services/admin/adminBrandApis';
+import { toast } from 'react-toastify';
+import * as yup from 'yup';
+import Button from '../../components/Button';
+import { CiCirclePlus } from 'react-icons/ci';
+import { useGetOrdersQuery } from '@/redux/services/admin/adminOrderApis';
+import { FaEdit, FaEye } from 'react-icons/fa';
+import { MdFileDownload } from 'react-icons/md';
+import Pagination from '@/components/shared/Pagination';
+import { useRouter } from 'next/navigation';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import OrderInvoicePDF from '../[id]/components/OrderInvoicePDF';
+import FilterOrders from '../all/FilterOrders';
+import RequireAccess from '@/components/Layouts/RequireAccess';
+import MiniButton from '../[id]/components/MiniButton';
 
 const CancelledOrderList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
 
   const {
     data: orderData,
@@ -42,10 +43,10 @@ const CancelledOrderList = () => {
   } = useGetOrdersQuery({
     page: String(currentPage),
     search,
-    status: "cancelled",
+    status: 'cancelled',
   });
 
-  console.log("orderData", orderData);
+  console.log('orderData', orderData);
 
   const router = useRouter();
 
@@ -57,7 +58,7 @@ const CancelledOrderList = () => {
     <RequireAccess permission="order-cancelled">
       <div className="min-h-screen">
         <h2 className="mb-4 flex items-center gap-2 text-xl font-bold dark:text-white">
-          🏠 Cancelled Orders{" "}
+          🏠 Cancelled Orders{' '}
           <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm text-green-600">
             {orderData?.total}
           </span>
@@ -89,7 +90,7 @@ const CancelledOrderList = () => {
                   onChange={(e) => {
                     setSearch(e.target.value);
                   }}
-                  className="w-full rounded-md border dark:bg-gray-700 border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none"
+                  className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none dark:bg-gray-700"
                 />
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                   <svg
@@ -138,10 +139,7 @@ const CancelledOrderList = () => {
 
                 {!isLoading && orderData?.data?.length <= 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="py-8 text-center text-red-500"
-                    >
+                    <TableCell colSpan={7} className="py-8 text-center text-red-500">
                       No Data to Show
                     </TableCell>
                   </TableRow>
@@ -168,8 +166,8 @@ const CancelledOrderList = () => {
                       </TableCell>
                       <TableCell>
                         {order?.courier_status === null
-                          ? "N/A"
-                          : order?.courier_status.split("_").join(" ")}
+                          ? 'N/A'
+                          : order?.courier_status.split('_').join(' ')}
                       </TableCell>
                       <TableCell>{order.order_type}</TableCell>
                       <TableCell>
@@ -197,16 +195,8 @@ const CancelledOrderList = () => {
                         >
                           <FaEye />
                         </Button>
-                        <PDFDownloadLink
-                          document={<OrderInvoicePDF orderDetails={order} />}
-                          fileName={`invoice_order_${order?.id}.pdf`}
-                        >
-                          {({ loading }) => (
-                            <button className="rounded-full bg-teal-100 p-1 text-base text-teal-700 hover:bg-teal-50">
-                              <MdFileDownload />
-                            </button>
-                          )}
-                        </PDFDownloadLink>
+
+                        <MiniButton orderDetails={order} />
                       </TableCell>
                     </TableRow>
                   ))

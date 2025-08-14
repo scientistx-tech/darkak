@@ -1,5 +1,5 @@
-"use client";
-import { Skeleton } from "@/components/ui/skeleton";
+'use client';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -7,24 +7,25 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+} from '@/components/ui/table';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
 
-import Button from "@/app/admin/components/Button";
-import { FaEye } from "react-icons/fa";
-import { MdFileDownload } from "react-icons/md";
-import Pagination from "@/components/shared/Pagination";
-import { useRouter } from "next/navigation";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import OrderInvoicePDF from "@/app/admin/orders/[id]/components/OrderInvoicePDF";
-import FilterOrders from "../all/FilterOrders";
-import RequireAccess from "@/components/Layouts/RequireAccess";
-import { useGetOrdersSellerQuery } from "@/redux/services/seller/sellerOrderApis";
+import Button from '@/app/admin/components/Button';
+import { FaEye } from 'react-icons/fa';
+import { MdFileDownload } from 'react-icons/md';
+import Pagination from '@/components/shared/Pagination';
+import { useRouter } from 'next/navigation';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import OrderInvoicePDF from '@/app/admin/orders/[id]/components/OrderInvoicePDF';
+import FilterOrders from '../all/FilterOrders';
+import RequireAccess from '@/components/Layouts/RequireAccess';
+import { useGetOrdersSellerQuery } from '@/redux/services/seller/sellerOrderApis';
+import MiniButton from '@/app/admin/orders/[id]/components/MiniButton';
 
 const PendingOrderList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
 
   const {
     data: orderData,
@@ -34,10 +35,10 @@ const PendingOrderList = () => {
   } = useGetOrdersSellerQuery({
     page: String(currentPage),
     search,
-    status: "pending",
+    status: 'pending',
   });
 
-  console.log("orderData", orderData);
+  console.log('orderData', orderData);
 
   const router = useRouter();
 
@@ -49,10 +50,8 @@ const PendingOrderList = () => {
     <RequireAccess permission="order-pending">
       <div className="min-h-screen">
         <h2 className="mb-4 flex items-center gap-2 text-xl font-bold">
-          🏠 Pending Orders{" "}
-          <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">
-            {orderData?.total}
-          </span>
+          🏠 Pending Orders{' '}
+          <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">{orderData?.total}</span>
         </h2>
 
         <FilterOrders />
@@ -129,10 +128,7 @@ const PendingOrderList = () => {
 
                 {!isLoading && orderData?.data?.length <= 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="py-8 text-center text-red-500"
-                    >
+                    <TableCell colSpan={7} className="py-8 text-center text-red-500">
                       No Data to Show
                     </TableCell>
                   </TableRow>
@@ -156,7 +152,7 @@ const PendingOrderList = () => {
                             {order.phone}
                           </div>
                         </div>
-                      </TableCell>{" "}
+                      </TableCell>{' '}
                       <TableCell>{order.order_type}</TableCell>
                       <TableCell>
                         {order.subTotal + order.deliveryFee}
@@ -182,16 +178,7 @@ const PendingOrderList = () => {
                         >
                           <FaEye />
                         </Button>
-                        <PDFDownloadLink
-                          document={<OrderInvoicePDF orderDetails={order} />}
-                          fileName={`invoice_order_${order?.id}.pdf`}
-                        >
-                          {({ loading }) => (
-                            <button className="rounded-full bg-teal-100 p-1 text-base text-teal-700 hover:bg-teal-50">
-                              <MdFileDownload />
-                            </button>
-                          )}
-                        </PDFDownloadLink>
+                        <MiniButton orderDetails={order} />
                       </TableCell>
                     </TableRow>
                   ))
