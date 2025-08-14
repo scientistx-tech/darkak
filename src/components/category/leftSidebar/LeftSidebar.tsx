@@ -168,7 +168,7 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
                 //     router.push(`?${params.toString()}`);
                 //   }
                 // }}
-                onClick={() => router.push(`/category/${cat?.title.trim().replace(/\s+/g, '-')}`)}
+                onClick={() => router.push(`/category/${cat?.slug}`)}
               >
                 {cat.title}
               </span>
@@ -220,7 +220,7 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
                         // }}
                         onClick={() =>
                           router.push(
-                            `/category/${cat?.title.trim().replace(/\s+/g, '-')}/${sub?.title.trim().replace(/\s+/g, '-')}`
+                            `/category/${cat?.slug}/${sub?.slug}`
                           )
                         }
                       >
@@ -279,7 +279,7 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
                                 // }}
                                 onClick={() =>
                                   router.push(
-                                    `/category/${cat?.title.trim().replace(/\s+/g, '-')}/${sub?.title.trim().replace(/\s+/g, '-')}/${subsub?.title.trim().replace(/\s+/g, '-')}`
+                                    `/category/${cat?.slug}/${sub?.slug}/${subsub?.slug}`
                                   )
                                 }
                               >
@@ -310,7 +310,7 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
   const handleBrandCheck = (id: string, title: string) => {
     setSelectedBrand(id);
     setSelectedBrandTitle(title);
-    router.push(`/brand/${title.trim().replace(/\s+/g, '-')}`);
+    router.push(`/brand/${title}`);
     return;
     if (selectedBrand === id) {
       setSelectedBrand('');
@@ -471,8 +471,8 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
               <input
                 type="radio"
                 name="brand-filter"
-                checked={decodeURIComponent(String(brandId)).replace(/-/g, ' ') === brand.title}
-                onChange={() => handleBrandCheck(brand.id, brand.title)}
+                checked={String(brandId) === brand.slug}
+                onChange={() => handleBrandCheck(brand.id, brand.slug)}
                 className="accent-blue-600"
               />
               {/* Brand logo if available */}

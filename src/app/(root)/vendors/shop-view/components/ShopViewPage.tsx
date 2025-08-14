@@ -31,7 +31,7 @@ export default function ShopViewPage({ shop, products }: { shop: any; products: 
   //console.log(sidebarFilters);
   // Add currentPage to sidebarFilters before calling useGetAllProductsQuery
   const filtersWithPageAndLimit = {
-    sellerId: decodeURIComponent(String(id)).replace(/-/g, ' '),
+    sellerId: String(id),
     page: String(visibleCount),
     limit: '20',
     ...queryObject,
@@ -43,14 +43,14 @@ export default function ShopViewPage({ shop, products }: { shop: any; products: 
       ? `?${new URLSearchParams(filtersWithPageAndLimit).toString()}`
       : '';
     try {
-      setIsLoading(true), setIsFetching(true);
+      (setIsLoading(true), setIsFetching(true));
       const response = await fetch(`https://api.darkak.com.bd/api/public/filter${queryString}`);
       const data = await response.json();
       setData(data);
     } catch (error: any) {
       toast.error(error?.data?.message);
     } finally {
-      setIsLoading(false), setIsFetching(false);
+      (setIsLoading(false), setIsFetching(false));
     }
   };
 
@@ -59,8 +59,8 @@ export default function ShopViewPage({ shop, products }: { shop: any; products: 
   }, [sidebarFilters, visibleCount]);
   //console.log("shop view shop", shop);
   return (
-    <div className="w-full px-12 py-6">
-      <div className="w-full">
+    <div className="w-full py-6">
+      <div className="w-full px-12">
         {/* Banner Image */}
         <div className="relative h-[400px] w-full">
           <Image
@@ -99,21 +99,20 @@ export default function ShopViewPage({ shop, products }: { shop: any; products: 
             </div>
           </div>
         </div>
-
-        <div className="mt-20 w-full">
-          {/* Orther products */}
-          <CategoryPage
-            data={data}
-            sidebarFilters={sidebarFilters}
-            setSidebarFilters={setSidebarFilters}
-            visibleCount={visibleCount}
-            setVisibleCount={setVisibleCount}
-            isLoading={isLoading}
-            setIsLoading={setIsLoading}
-            isFetching={isFetching}
-            setIsFetching={setIsFetching}
-          />
-        </div>
+      </div>
+      <div className="mt-20 w-full">
+        {/* Orther products */}
+        <CategoryPage
+          data={data}
+          sidebarFilters={sidebarFilters}
+          setSidebarFilters={setSidebarFilters}
+          visibleCount={visibleCount}
+          setVisibleCount={setVisibleCount}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+          isFetching={isFetching}
+          setIsFetching={setIsFetching}
+        />
       </div>
     </div>
   );

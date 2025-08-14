@@ -12,16 +12,13 @@ import { slugToText } from '@/utils/urlConverter';
 export default function Page() {
   const searchParams = useSearchParams();
   const params = useParams();
-  const { subSubCategory, category, subCategory } = params;
-
-  //console.log('subC', subSubCategory);
+  const { category } = params;
 
   const [sidebarFilters, setSidebarFilters] = useState<{ [key: string]: any }>({});
   const [data, setData] = useState<any>({});
   const [visibleCount, setVisibleCount] = useState(1);
   const [isFetching, setIsFetching] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
   const [queryObject, setQueryObject] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
@@ -31,10 +28,10 @@ export default function Page() {
     });
     setQueryObject(queryObj);
   }, [searchParams]);
-
+  //console.log(sidebarFilters);
   // Add currentPage to sidebarFilters before calling useGetAllProductsQuery
   const filtersWithPageAndLimit = {
-    subSubCategoryId: String(subSubCategory),
+    categoryId: String(category),
     page: String(visibleCount),
     limit: '20',
     ...queryObject,
@@ -61,25 +58,19 @@ export default function Page() {
     fetchAllProducts();
   }, [sidebarFilters, visibleCount]);
 
-  // console.log('setSidebarFilters type:', typeof setSidebarFilters);
-
+  //console.log('setSidebarFilters type:', typeof setSidebarFilters);
+  //console.log('data', data);
   return (
     <div className="w-full">
       <div className="h-[65px] w-full md:h-[109px]" />
       <div className="h-[10px] w-full md:h-[20px]" />
       <div className="flex items-center gap-1 px-3 text-sm font-semibold md:px-5 lg:px-11">
+        
         <Link className="text-primary underline" href={'/category'}>
           category
         </Link>
         /
-        <Link className="text-primary underline" href={`/category/${category}`}>
-          {category}
-        </Link>
-        /
-        <Link className="text-primary underline" href={`/category/${category}/${subCategory}`}>
-          {subCategory}
-        </Link>
-        /{subSubCategory}
+        {category}
       </div>
       <CategoryPage
         data={data}
@@ -93,10 +84,7 @@ export default function Page() {
         setIsFetching={setIsFetching}
       />
       <div className="mt-10 px-3 md:px-5 lg:px-11">
-        <ContentFaqCard
-          content={data?.subSubCategory?.content}
-          faqs={data?.subSubCategory?.faq?.faq || []}
-        />
+        <ContentFaqCard content={data?.category?.content} faqs={data?.category?.faq?.faq || []} />
       </div>
     </div>
   );

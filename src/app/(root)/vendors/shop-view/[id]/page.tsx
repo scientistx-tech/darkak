@@ -7,7 +7,7 @@ import ShopViewPage from '../components/ShopViewPage';
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const id = (await params).id;
   const token = (await cookies()).get('token')?.value;
-  const data = await getShopDetailsById(id.split('-').join(' ') as string, token || '');
+  const data = await getShopDetailsById(id as string, token || '');
   //console.log(data);
   const seller = data.seller;
 
@@ -36,7 +36,7 @@ export default async function page({ params }: { params: Promise<{ id: string }>
 
   //console.log('id', id);
 
-  const shopDetails = await getShopDetailsById(id.split("-").join(" "), token as string);
+  const shopDetails = await getShopDetailsById(id, token as string);
 
   //console.log('shopDetails details', shopDetails);
   return (

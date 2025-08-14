@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { ArrowRightIcon } from 'lucide-react';
 import ContentFaqCard from '@/components/shared/ContentFaqCard';
+import { slugToText } from '@/utils/urlConverter';
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -33,7 +34,7 @@ export default function Page() {
 
   // Add currentPage to sidebarFilters before calling useGetAllProductsQuery
   const filtersWithPageAndLimit = {
-    subCategoryId: decodeURIComponent(String(subCategory)).replace(/-/g, ' '),
+    subCategoryId: String(subCategory),
     page: String(visibleCount),
     limit: '20',
     ...queryObject,
@@ -59,7 +60,7 @@ export default function Page() {
   useEffect(() => {
     fetchAllProducts();
   }, [sidebarFilters, visibleCount]);
-  console.log(data.subCategory?.faq)
+  //console.log(data.subCategory?.faq)
 
   //console.log('setSidebarFilters type:', typeof setSidebarFilters);
   //console.log('data', data);
@@ -68,19 +69,17 @@ export default function Page() {
       <div className="h-[65px] w-full md:h-[109px]" />
       <div className="h-[10px] w-full md:h-[20px]" />
       <div className="flex items-center gap-1 px-3 text-sm font-semibold md:px-5 lg:px-11">
-        <Link className="text-primary underline" href={'/'}>
-          Home
-        </Link>
-        <ArrowRightIcon />
+        
+       
         <Link className="text-primary underline" href={'/category'}>
-          Category
+          category
         </Link>
-        <ArrowRightIcon />
+       /
         <Link className="text-primary underline" href={`/category/${category}`}>
-          {decodeURIComponent((category as string) || '').replace(/-/g, ' ')}
+          {category}
         </Link>
-        <ArrowRightIcon />
-        {decodeURIComponent((subCategory as string) || '').replace(/-/g, ' ')}
+        /
+        {subCategory}
       </div>
       <CategoryPage
         data={data}
