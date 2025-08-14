@@ -64,6 +64,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
   const [selectedOptions, setSelectedOptions] = useState<{
     [itemId: number]: number;
   }>({});
+  const [options, setOptions] = useState<any[]>([]);
   const [showFullDesc, setShowFullDesc] = useState(false);
 
   // redux hooks
@@ -109,10 +110,10 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
         }
       });
 
-  console.log('stockkkk', stockkkk);
-  console.log('product stock, items stock', data?.product?.stock, data?.product);
+  //console.log('stockkkk', stockkkk);
+  //console.log('product stock, items stock', data?.product?.stock, data?.product);
 
-  console.log('slectedOptions', selectedOptions);
+  //console.log('slectedOptions', selectedOptions);
 
   const fallbackImage = '/images/fallback.png';
 
@@ -181,6 +182,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
       productId: product.id,
       quantity: quantity,
       date: new Date().toISOString(),
+      
       cart_items: [],
       product: {
         title: product.title,
@@ -194,12 +196,19 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
     };
 
     // Extract first option from each item (if any)
-    const selectedOptions = product.items?.map((item: any) => item.options?.[0]).filter(Boolean);
-    cart.cart_items = selectedOptions.map((option: any) => ({ option }));
+
+    const selectedOption = product.items
+      ?.map((item: any) => {
+        if (selectedOptions[item.id]) {
+          return item.options?.find((d: any) => d.id === selectedOptions[item.id]);
+        }
+      })
+      .filter(Boolean);
+    cart.cart_items = selectedOption.map((option: any) => ({ option }));
 
     return cart;
   };
-
+console.log(data?.product)
   //  Handle Buy Now
   //  This function handles the "Buy Now" button click
   const handleBuyNow = async () => {
@@ -221,10 +230,18 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
   const handleAddToCart = async (e: any) => {
     e.stopPropagation(); // Prevent navigation to product detail page
 
+    // const optionIds = data?.product?.items?.length
+    //   ? data?.product?.items.map((item: any) => item.options?.[0]?.id).filter(Boolean)
+    //   : [];
     const optionIds = data?.product?.items?.length
-      ? data?.product?.items.map((item: any) => item.options?.[0]?.id).filter(Boolean)
+      ? data?.product?.items
+          .map((item: any) => {
+            if (selectedOptions[item.id]) {
+              return item.options?.find((d: any) => d.id === selectedOptions[item.id])?.id;
+            }
+          })
+          .filter(Boolean)
       : [];
-
     try {
       const result = await addToCart({
         productId: data?.product?.id,
@@ -398,6 +415,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
                           ...prev,
                           [item.id]: option.id,
                         }));
+
                         if (option.image) {
                           setSelectedImage(option.image);
                         }
@@ -467,7 +485,8 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
             <div className="mt-6 h-fit w-full">
               {/* <p className="inline">Description:</p> */}
               <div className="prose prose-table:border prose-td:border prose-th:border prose-td:p-2 prose-th:p-2 prose-table:bg-white prose-tr:bg-white prose-tr:odd:bg-gray-50 max-w-none">
-                <div className="rendered-html"
+                <div
+                  className="rendered-html"
                   dangerouslySetInnerHTML={{
                     __html: data?.product?.short_description,
                   }}

@@ -70,10 +70,11 @@ const CartCheckout: React.FC = () => {
   // ✅ Load checkout_items from localStorage when component mounts
   useEffect(() => {
     const storedItems = localStorage.getItem('checkout_items');
-    console.log('stored items', storedItems);
+    
 
     if (storedItems) {
       setCheckoutItems(JSON.parse(storedItems));
+      console.log('stored items', JSON.parse(storedItems));
     } else {
       router.push('/cart'); // redirect if nothing in storage
     }
@@ -181,6 +182,7 @@ const CartCheckout: React.FC = () => {
       deliveryFee: district === 'Dhaka' ? 60 : 120,
       order_type: !checkoutItems[0].product?.user?.isSeller ? 'in-house' : 'vendor',
       couponId: couponDiscount?.id || undefined,
+      //options:
     };
     try {
       const res = await createOrder(payload).unwrap();

@@ -30,6 +30,7 @@ export interface Product {
   discount: number;
   discount_type: 'flat' | 'percentage'; // adjust if more types exist
   brand: Brand;
+  slug:string
 }
 
 export interface Cart {

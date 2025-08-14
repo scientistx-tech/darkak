@@ -65,7 +65,13 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function OrderInvoicePDF({ orderDetails }: { orderDetails: any }) {
+export default function OrderInvoicePDF({
+  orderDetails,
+  imagesBase64,
+}: {
+  orderDetails: any;
+  imagesBase64: Record<string, string>;
+}) {
   if (!orderDetails) return null;
 
   const { user, order_items } = orderDetails;
@@ -161,15 +167,23 @@ export default function OrderInvoicePDF({ orderDetails }: { orderDetails: any })
         {order_items?.map((item: any, i: number) => {
           const { product, quantity } = item;
           const discountedPrice = product.price - (product.price * product.discount) / 100;
+          const base64Image = imagesBase64[product.title] || ''; // get base64 from props
           return (
             <View key={i} style={styles.tableRow}>
               <View style={{ width: '15%', paddingRight: 4 }}>
-                <Image
-                  src={product.thumbnail}
-                  style={{ width: 40, height: 40, objectFit: 'contain' }}
-                />
+                <Image src={base64Image} style={{ width: 40, height: 40 }} />
               </View>
-              <Text style={[{ width: '35%', paddingRight: 4 }, styles.cell]}>{product.title}</Text>
+              <View style={[{ width: '35%', paddingRight: 4 }, styles.cell]}>
+                <Text style={[styles.text, { fontSize: 10 }]}>{product.title}</Text>
+
+                <View>
+                  {item?.options?.map((option: any, i: number) => (
+                    <Text key={i} style={{ color: 'gray', fontSize: 9 }}>
+                      {option?.item?.title}: {option?.title}
+                    </Text>
+                  ))}
+                </View>
+              </View>
               <Text style={[{ width: '35%' }, styles.cell]}>{product.code}</Text>
               <Text style={[{ width: '10%', textAlign: 'center' }, styles.cell]}>{quantity}</Text>
               <Text style={[{ width: '20%', textAlign: 'right' }, styles.cell]}>

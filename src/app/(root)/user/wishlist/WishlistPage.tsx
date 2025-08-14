@@ -100,9 +100,12 @@ const WishlistPage: React.FC = () => {
                 <div className="w-[80%]">
                   {/* Info */}
                   <div className="flex-1 space-y-1">
-                    <p className="text-base font-semibold text-[#00153B] md:text-lg">
+                    <Link
+                      href={`/product/${item.product.slug}`}
+                      className="cursor-pointer text-base font-semibold text-[#00153B] hover:underline md:text-lg"
+                    >
                       {lang === 'bn' ? 'পণ্যের নাম:' : 'Product Name:'} {item.product.title}
-                    </p>
+                    </Link>
                     <p className="text-[#00153B]">
                       {lang === 'bn' ? 'ব্র্যান্ড:' : 'Brand:'} {item.product.brand.title}
                     </p>
@@ -144,7 +147,11 @@ const WishlistPage: React.FC = () => {
 
       {/* Delete Modal */}
       <Modal
-        title={lang === 'bn' ? 'আপনি কি নিশ্চিতভাবে এই আইটেমটি মুছে ফেলতে চান?' : 'Are you sure you want to remove this item?'}
+        title={
+          lang === 'bn'
+            ? 'আপনি কি নিশ্চিতভাবে এই আইটেমটি মুছে ফেলতে চান?'
+            : 'Are you sure you want to remove this item?'
+        }
         open={deleteId !== null}
         onOk={handleDelete}
         onCancel={() => setDeleteId(null)}

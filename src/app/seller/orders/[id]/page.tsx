@@ -5,11 +5,11 @@ import AddressCard from "./components/AddressCard";
 import CustomerInfo from "./components/CustomerInfo";
 import OrderStatusPanel from "./components/OrderStatusPanel";
 import OrderSummary from "./components/OrderSummary";
-import PrintButton from "./components/PrintButton";
 import { FaLeftLong } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useGetOrderDetailsSellerQuery } from "@/redux/services/seller/sellerOrderApis";
+import PrintButton from "@/app/admin/orders/[id]/components/PrintButton";
 
 export default function OrderDetailsPage() {
   const params = useParams();
@@ -45,6 +45,7 @@ export default function OrderDetailsPage() {
         </div>
         <div className="flex gap-2">
           <PrintButton orderDetails={orderDetailsData} />
+
         </div>
       </div>
 

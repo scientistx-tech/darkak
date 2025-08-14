@@ -29,6 +29,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import OrderInvoicePDF from "../[id]/components/OrderInvoicePDF";
 import FilterOrders from "../all/FilterOrders";
 import RequireAccess from "@/components/Layouts/RequireAccess";
+import MiniButton from "../[id]/components/MiniButton";
 
 const PackegingOrderList = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -197,16 +198,7 @@ const PackegingOrderList = () => {
                         >
                           <FaEye />
                         </Button>
-                        <PDFDownloadLink
-                          document={<OrderInvoicePDF orderDetails={order} />}
-                          fileName={`invoice_order_${order?.id}.pdf`}
-                        >
-                          {({ loading }) => (
-                            <button className="rounded-full bg-teal-100 p-1 text-base text-teal-700 hover:bg-teal-50">
-                              <MdFileDownload />
-                            </button>
-                          )}
-                        </PDFDownloadLink>
+                        <MiniButton orderDetails={order} />
                       </TableCell>
                     </TableRow>
                   ))

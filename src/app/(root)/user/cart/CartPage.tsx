@@ -38,6 +38,8 @@ const CartPage: React.FC = () => {
 
   const router = useRouter();
 
+  //  console.log(cartItems)
+
   useEffect(() => {
     if (data) {
       setCartItems(data.cart);
@@ -105,10 +107,21 @@ const CartPage: React.FC = () => {
     );
   };
 
-  const subTotal = cartItems?.reduce(
-    (total, item) => total + item.product.price * item.quantity,
-    0
-  );
+  const subtotal = cartItems.reduce((acc: number, item: any) => {
+    const price = item.product?.price ?? 0;
+    const discount = item.product?.discount ?? 0;
+    const discountType = item.product?.discount_type ?? 'flat';
+
+    let finalPrice = price;
+
+    if (discountType === 'percentage') {
+      finalPrice = price - (price * discount) / 100;
+    } else if (discountType === 'flat') {
+      finalPrice = price - discount;
+    }
+
+    return acc + finalPrice * item.quantity;
+  }, 0);
 
   const showModal = (id: number) => {
     setItemToDelete(id);
@@ -207,20 +220,34 @@ const CartPage: React.FC = () => {
                 </div>
               </div>
               <div className="flex w-[42%] flex-col items-start justify-start rounded-md px-6 py-2 xl:w-[40%]">
-                <p className="text-base font-bold text-primaryBlue md:text-xl">
+                <Link href={`/product/${item.product.slug}`} className="text-base cursor-pointer hover:underline font-bold text-primaryBlue md:text-xl">
                   {item.product.title}
-                </p>
+                </Link>
                 <p className="hidden text-sm md:block xl:text-base">
                   <span className="text-black">{lang === 'bn' ? 'ব্র্যান্ড: ' : 'Brand: '}</span>{' '}
                   {item.product.brand.title}
                 </p>
                 <p className="text-sm xl:hidden xl:text-base">
-                  <span className="text-black">{lang === 'bn' ? 'মডেল: ' : 'Model: '}</span>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    {item?.cart_items &&
+                      item?.cart_items.map((cart_item: any, i: number) => (
+                        <div key={i} className="text-xs text-blue-600">
+                          {cart_item?.option?.title}
+                        </div>
+                      ))}
+                  </div>
                 </p>
               </div>
               <div className="hidden w-[12%] items-center justify-center rounded-md py-2 xl:flex xl:w-[10%]">
                 <p>
-                  <span className="text-black">{lang === 'bn' ? 'মডেল: ' : 'Model: '}</span>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    {item?.cart_items &&
+                      item?.cart_items.map((cart_item: any, i: number) => (
+                        <div key={i} className="text-xs text-blue-600">
+                          {cart_item?.option?.title}
+                        </div>
+                      ))}
+                  </div>
                 </p>
               </div>
               <div className="flex w-[19%] items-center justify-center rounded-md py-2 md:w-[12%] xl:w-[10%]">
@@ -261,11 +288,39 @@ const CartPage: React.FC = () => {
                 </div>
               </div>
               <div className="hidden w-[12%] items-center justify-center rounded-md py-2 text-black md:flex xl:w-[10%]">
-                {item.product.price} TK
+                {(() => {
+                  const price = item?.product?.price ?? 0;
+                  const discount = item?.product?.discount ?? 0;
+                  const discountType = item?.product?.discount_type ?? 'flat';
+                  let finalPrice = price;
+
+                  if (discountType === 'percentage') {
+                    finalPrice = price - (price * discount) / 100;
+                  } else if (discountType === 'flat') {
+                    finalPrice = price - discount;
+                  }
+
+                  return finalPrice;
+                })()}{' '}
+                TK
               </div>
               <div className="flex w-[19%] flex-col items-center justify-evenly rounded-md py-2 md:w-[12%] md:flex-row xl:w-[10%]">
                 <p className="font-medium text-primaryDarkBlue">
-                  {item.product.price * item.quantity} TK
+                  {(() => {
+                    const price = item?.product?.price ?? 0;
+                    const discount = item?.product?.discount ?? 0;
+                    const discountType = item?.product?.discount_type ?? 'flat';
+                    let finalPrice = price;
+
+                    if (discountType === 'percentage') {
+                      finalPrice = price - (price * discount) / 100;
+                    } else if (discountType === 'flat') {
+                      finalPrice = price - discount;
+                    }
+
+                    return finalPrice * item.quantity;
+                  })()}{' '}
+                  TK
                 </p>
                 <button
                   onClick={() => showModal(item.id)}
@@ -281,7 +336,7 @@ const CartPage: React.FC = () => {
           <div className="mt-5 flex w-full flex-col items-end justify-center gap-2">
             <p className="text-black md:text-xl">
               {lang === 'bn' ? 'সাব-টোটাল:' : 'Sub-Total:'}
-              <span className="ml-2 text-primaryBlue md:ml-5">{subTotal} TK</span>
+              <span className="ml-2 text-primaryBlue md:ml-5">{subtotal} TK</span>
             </p>
             <p className="text-black md:text-xl">
               {lang === 'bn' ? 'ডেলিভারি চার্জ:' : 'Delivery Charge:'}
@@ -295,7 +350,7 @@ const CartPage: React.FC = () => {
             </p>
             <p className="text-black md:text-xl">
               {lang === 'bn' ? 'মোট:' : 'Total:'}
-              <span className="ml-2 text-primaryBlue md:ml-5">{subTotal} TK</span>
+              <span className="ml-2 text-primaryBlue md:ml-5">{subtotal} TK</span>
             </p>
           </div>
 
