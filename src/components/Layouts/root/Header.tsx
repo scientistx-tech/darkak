@@ -23,6 +23,8 @@ import {
   ShoppingOutlined,
   MinusOutlined,
   PlusOutlined,
+  ProductOutlined,
+  BoldOutlined,
 } from '@ant-design/icons';
 
 import { AnimatePresence, motion } from 'framer-motion';
@@ -433,193 +435,207 @@ const Header: React.FC = () => {
         className="custom-drawer"
         styles={{ body: { padding: 0 } }}
       >
-        <div className="flex h-full flex-col justify-between px-5 py-6 text-gray-800 backdrop-blur-md">
+        <div className="flex h-full flex-col justify-between text-gray-800 backdrop-blur-md">
           <div className="w-full">
             {/* Header */}
-            <div className="mb-6 flex h-[50px] items-center justify-between bg-primaryBlue">
+            <div className="mb-3 flex h-[65px] items-center justify-between bg-primaryBlue">
               <Link href="/" onClick={onClose} className="ml-5">
-                <Image alt="Darkak-Logo" src={logo} height={35} className="" />
+                <Image alt="Darkak-Logo" src={logo} height={45} className="" />
               </Link>
               <button onClick={onClose} className="mr-5">
                 <CloseOutlined className="text-xl text-white transition duration-200 hover:text-primary" />
               </button>
             </div>
 
-            {/* Search Bar */}
-            <div className="relative">
-              <div className="mb-7 flex items-center overflow-hidden rounded border border-primaryBlue bg-white pl-3 shadow-md">
-                <SearchOutlined className="mr-2 text-gray-500" />
-                <input
-                  placeholder={lang === 'bn' ? 'পণ্য অনুসন্ধান করুন...' : 'Search products...'}
-                  className="w-3/4 border-none bg-transparent py-2 text-sm outline-none"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  // onFocus={() => {
-                  //   if (searchTerm.trim() !== '') {
-                  //     setIsOpen(true);
-                  //   }
-                  // }}
-                />
-                <button
-                  onClick={() => {
-                    onClose();
-                    router.push(`/search?search=${searchTerm.trim()}`);
-                  }}
-                  className="w-1/4 bg-primaryBlue py-2 text-white transition-all duration-300 hover:bg-primaryDarkBlue"
-                >
-                  {lang === 'bn' ? 'অনুসন্ধান' : 'Search'}
-                </button>
+            <div className="px-5 py-2">
+              {/* Search Bar */}
+              <div className="relative">
+                <div className="mb-7 flex items-center overflow-hidden rounded border border-primaryBlue bg-white pl-3 shadow-md">
+                  <SearchOutlined className="mr-2 text-gray-500" />
+                  <input
+                    placeholder={lang === 'bn' ? 'পণ্য অনুসন্ধান করুন...' : 'Search products...'}
+                    className="w-3/4 border-none bg-transparent py-2 text-sm outline-none"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    // onFocus={() => {
+                    //   if (searchTerm.trim() !== '') {
+                    //     setIsOpen(true);
+                    //   }
+                    // }}
+                  />
+                  <button
+                    onClick={() => {
+                      onClose();
+                      router.push(`/search?search=${searchTerm.trim()}`);
+                    }}
+                    className="w-1/4 border border-primaryBlue bg-primaryBlue py-2 text-white transition-all duration-300 hover:bg-primaryDarkBlue"
+                  >
+                    {lang === 'bn' ? 'অনুসন্ধান' : 'Search'}
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {/* Navigation */}
-            <nav className="flex flex-col gap-4 text-base font-medium">
-              <Link
-                href="/"
-                onClick={onClose}
-                className="flex items-center gap-3 hover:text-primary"
-              >
-                <HomeOutlined />
-                {lang === 'bn' ? 'হোম' : 'Home'}
-              </Link>
-
-              {/* <Link
-                href="/shop"
-                onClick={onClose}
-                className="flex items-center gap-3 hover:text-primary"
-              >
-                <ShopOutlined />
-                Shop
-              </Link> */}
-
-              {/* Categories */}
-              <div className="flex items-center justify-between">
+              {/* Navigation */}
+              <nav className="flex flex-col gap-4 text-base font-medium">
                 <Link
-                  href="/category"
+                  href="/"
                   onClick={onClose}
                   className="flex items-center gap-3 hover:text-primary"
                 >
-                  <AppstoreOutlined />
-                  <div className="flex w-full items-center justify-between">
-                    <span>{lang === 'bn' ? 'ক্যাটাগরি' : 'Category'}</span>
-                  </div>
+                  <HomeOutlined />
+                  {lang === 'bn' ? 'হোম' : 'Home'}
                 </Link>
 
-                <button onClick={toggleSubmenu} className="w-auto">
-                  {submenuOpen ? (
-                    <MinusOutlined className="text-xl" />
-                  ) : (
-                    <PlusOutlined className="text-xl" />
-                  )}
-                </button>
-              </div>
-
-              <AnimatePresence initial={false}>
-                {submenuOpen && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="ml-[10%] overflow-hidden"
-                  >
-                    <MobileDropdown onClose={onClose} />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Vendors */}
-
-              <Link
-                href="/vendors"
-                onClick={onClose}
-                className="flex items-center gap-3 hover:text-primary"
-              >
-                <ShoppingOutlined />
-                {lang === 'bn' ? 'ভেন্ডরস' : 'Vendors'}
-              </Link>
-
-              <Link
-                href="/contact-us"
-                onClick={onClose}
-                className="flex items-center gap-3 hover:text-primary"
-              >
-                <PhoneOutlined />
-                {lang === 'bn' ? 'যোগাযোগ করুন' : 'Contact Us'}
-              </Link>
-
-              <Link
-                href="/about-us"
-                onClick={onClose}
-                className="flex items-center gap-3 hover:text-primary"
-              >
-                <InfoCircleOutlined />
-                {lang === 'bn' ? 'আমাদের সম্পর্কে' : 'About Us'}
-              </Link>
-            </nav>
-
-            {/* Language Switcher */}
-            <div className="mt-6 flex items-center gap-2">
-              <Image alt="Language" src={lang === 'bn' ? Bangla : English} width={20} height={20} />
-              <select
-                value={lang}
-                onChange={(e) => handleLanguageChange(e.target.value as 'en' | 'bn')}
-                className="rounded-md border border-gray-300 px-2 py-1 text-sm outline-none"
-              >
-                <option value="en">English</option>
-                <option value="bn">বাংলা</option>
-              </select>
-              {user ? (
-                <button
-                  onClick={handleLogOut}
-                  className="rounded-md bg-secondaryLiteBlue px-4 py-1 text-sm text-primaryDarkBlue transition hover:bg-primaryDarkBlue hover:text-primaryWhite"
-                >
-                  Log Out
-                </button>
-              ) : (
-                <div className="flex items-center gap-2">
+                {/* Categories */}
+                <div className="flex items-center justify-between">
                   <Link
-                    href="/auth/login"
+                    href="/category"
+                    onClick={onClose}
+                    className="flex items-center gap-3 hover:text-primary"
+                  >
+                    <AppstoreOutlined />
+                    <div className="flex w-full items-center justify-between">
+                      <span>{lang === 'bn' ? 'ক্যাটাগরি' : 'Category'}</span>
+                    </div>
+                  </Link>
+
+                  <button onClick={toggleSubmenu} className="w-auto">
+                    {submenuOpen ? (
+                      <MinusOutlined className="text-xl" />
+                    ) : (
+                      <PlusOutlined className="text-xl" />
+                    )}
+                  </button>
+                </div>
+
+                <AnimatePresence initial={false}>
+                  {submenuOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="ml-[10%] overflow-hidden"
+                    >
+                      <MobileDropdown onClose={onClose} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <Link
+                  href="/explore"
+                  onClick={onClose}
+                  className="flex items-center gap-3 hover:text-primary"
+                >
+                  <ProductOutlined />
+                  {lang === 'bn' ? 'ঘুরে দেখুন' : 'Explore Now'}
+                </Link>
+                {/* Vendors */}
+
+                <Link
+                  href="/vendors"
+                  onClick={onClose}
+                  className="flex items-center gap-3 hover:text-primary"
+                >
+                  <ShoppingOutlined />
+                  {lang === 'bn' ? 'ভেন্ডরস' : 'Vendors'}
+                </Link>
+
+                <Link
+                  href="/blogs"
+                  onClick={onClose}
+                  className="flex items-center gap-3 hover:text-primary"
+                >
+                  <BoldOutlined />
+                  {lang === 'bn' ? 'ব্লগ' : 'Blogs'}
+                </Link>
+
+                <Link
+                  href="/contact-us"
+                  onClick={onClose}
+                  className="flex items-center gap-3 hover:text-primary"
+                >
+                  <PhoneOutlined />
+                  {lang === 'bn' ? 'যোগাযোগ করুন' : 'Contact Us'}
+                </Link>
+
+                <Link
+                  href="/about-us"
+                  onClick={onClose}
+                  className="flex items-center gap-3 hover:text-primary"
+                >
+                  <InfoCircleOutlined />
+                  {lang === 'bn' ? 'আমাদের সম্পর্কে' : 'About Us'}
+                </Link>
+              </nav>
+
+              {/* Language Switcher */}
+              <div className="mt-6 flex items-center gap-2">
+                <Image
+                  alt="Language"
+                  src={lang === 'bn' ? Bangla : English}
+                  width={20}
+                  height={20}
+                />
+                <select
+                  value={lang}
+                  onChange={(e) => handleLanguageChange(e.target.value as 'en' | 'bn')}
+                  className="rounded-md border border-gray-300 px-2 py-1 text-sm outline-none"
+                >
+                  <option value="en">English</option>
+                  <option value="bn">বাংলা</option>
+                </select>
+                {user ? (
+                  <button
+                    onClick={handleLogOut}
                     className="rounded-md bg-secondaryLiteBlue px-4 py-1 text-sm text-primaryDarkBlue transition hover:bg-primaryDarkBlue hover:text-primaryWhite"
                   >
-                    Login
-                  </Link>
-                  <Link
-                    href="/auth/signup"
-                    className="rounded-md border border-primary px-4 py-1 text-sm text-primaryDarkBlue transition hover:bg-primaryDarkBlue hover:text-primaryWhite"
-                  >
-                    Register
-                  </Link>
-                </div>
-              )}
-            </div>
+                    Log Out
+                  </button>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href="/auth/login"
+                      className="rounded-md bg-secondaryLiteBlue px-4 py-1 text-sm text-primaryDarkBlue transition hover:bg-primaryDarkBlue hover:text-primaryWhite"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      href="/auth/signup"
+                      className="rounded-md border border-primary px-4 py-1 text-sm text-primaryDarkBlue transition hover:bg-primaryDarkBlue hover:text-primaryWhite"
+                    >
+                      Register
+                    </Link>
+                  </div>
+                )}
+              </div>
 
-            {/* Bottom Icons */}
-            <div className="mt-5 grid grid-cols-3 gap-4 text-center text-sm">
-              <Link href="/user/profile" onClick={onClose}>
-                <div className="flex flex-col items-center justify-center hover:text-primary">
-                  <UserOutlined className="text-xl" />
-                  <span className="mt-1">{lang === 'bn' ? 'প্রোফাইল' : 'Profile'}</span>
-                </div>
-              </Link>
-              <Link href="/user/wishlist" onClick={onClose}>
-                <div className="relative flex flex-col items-center hover:text-primary">
-                  <HeartOutlined className="text-xl" />
-                  <span className="absolute -top-1 right-7 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primaryBlue text-[10px] text-white">
-                    {wishlist ? wishlist.data.length : '0'}
-                  </span>
-                  <span className="mt-1">{lang === 'bn' ? 'ইচ্ছেতালিকা' : 'Wishlist'}</span>
-                </div>
-              </Link>
-              <Link href="/user/cart" onClick={onClose}>
-                <div className="relative flex flex-col items-center hover:text-primary">
-                  <ShoppingCartOutlined className="text-xl" />
-                  <span className="absolute -top-1 right-7 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primaryBlue text-[10px] text-white">
-                    {cart ? cart.cart.length : '0'}
-                  </span>
-                  <span className="mt-1">{lang === 'bn' ? 'কার্ট' : 'Cart'}</span>
-                </div>
-              </Link>
+              {/* Bottom Icons */}
+              <div className="mt-5 grid grid-cols-3 gap-4 text-center text-sm">
+                <Link href="/user/profile" onClick={onClose}>
+                  <div className="flex flex-col items-center justify-center hover:text-primary">
+                    <UserOutlined className="text-xl" />
+                    <span className="mt-1">{lang === 'bn' ? 'প্রোফাইল' : 'Profile'}</span>
+                  </div>
+                </Link>
+                <Link href="/user/wishlist" onClick={onClose}>
+                  <div className="relative flex flex-col items-center hover:text-primary">
+                    <HeartOutlined className="text-xl" />
+                    <span className="absolute -top-1 right-7 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primaryBlue text-[10px] text-white">
+                      {wishlist ? wishlist.data.length : '0'}
+                    </span>
+                    <span className="mt-1">{lang === 'bn' ? 'ইচ্ছেতালিকা' : 'Wishlist'}</span>
+                  </div>
+                </Link>
+                <Link href="/user/cart" onClick={onClose}>
+                  <div className="relative flex flex-col items-center hover:text-primary">
+                    <ShoppingCartOutlined className="text-xl" />
+                    <span className="absolute -top-1 right-7 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primaryBlue text-[10px] text-white">
+                      {cart ? cart.cart.length : '0'}
+                    </span>
+                    <span className="mt-1">{lang === 'bn' ? 'কার্ট' : 'Cart'}</span>
+                  </div>
+                </Link>
+              </div>
             </div>
           </div>
 

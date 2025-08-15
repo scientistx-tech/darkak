@@ -154,7 +154,7 @@ function Footer() {
                   </div>
 
                   {/* Support */}
-                  <div className="flex w-1/2 flex-col">
+                  <div className="flex w-1/2 flex-col items-end md:items-start mr-5 md:mr-0">
                     <p className="mb-3 text-xl text-[#BBD4FF] md:mb-5">
                       {lang === 'bn' ? 'সহায়তা' : 'Support'}
                     </p>
