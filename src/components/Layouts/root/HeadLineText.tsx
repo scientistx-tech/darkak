@@ -1,19 +1,21 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { useGetHomeContentQuery } from '@/redux/services/client/homeContentApi';
 
 export default function HeadLineText() {
+  const { data: home } = useGetHomeContentQuery();
   const [width, setWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const texts = [
-    "ANNOUNCEMENT:",
-    "Summer Deals Going On Now - Don't Miss Out!",
-    "Get 10% Off with Code 2025",
-    "24/7 Customer Support Available",
+    'ANNOUNCEMENT:',
+    `🎉 ${home?.content?.header_first_title ?? ''} 🎉`,
+    `✨ ${home?.content?.header_second_title ?? ''} ✨`,
+    '24/7 Customer Support Available',
     `All rights reserved © ${new Date().getFullYear()} Darkak`,
-    "Thank You for Shopping at Darkak.",
+    'Thank You for Shopping at Darkak.',
   ];
 
   useEffect(() => {
@@ -32,7 +34,7 @@ export default function HeadLineText() {
             // animate={{ x: [-width, 0] }}
             transition={{
               repeat: Infinity,
-              ease: "linear",
+              ease: 'linear',
               duration: 30,
             }}
           >

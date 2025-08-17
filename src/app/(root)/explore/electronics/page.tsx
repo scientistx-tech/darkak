@@ -33,7 +33,7 @@ export default async function page() {
 
 async function getWatchPage() {
   try {
-    const res = await fetch(`https://api.darkak.com.bd/api/public/bag-page`, {
+    const res = await fetch(`https://api.darkak.com.bd/api/public/electronics-page`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
