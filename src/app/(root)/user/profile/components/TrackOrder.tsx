@@ -115,7 +115,11 @@ export default function TrackOrder() {
                   className="rounded-lg object-cover"
                 />
                 <div className="ml-4">
-                  <h3 className="text-md font-semibold">{item.product.title}</h3>
+                  <h3 className="text-md font-semibold">
+                     {item.product.title.length > 27
+                  ? item.product.title.substring(0, 27) + '...'
+                  : item.product.title}
+                  </h3>
                   <p className="text-sm text-gray-500">
                     {item.quantity} {item.product.unit} / {item.product.price}
                   </p>
