@@ -167,11 +167,11 @@ const SellerDashboard: React.FC = () => {
       </div>
 
       {/* Bottom Sections */}
-      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+      {/* <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
         <TopCustomers customers={data.topCustomers} />
         <MostPopularStores stores={data.mostPopularStore} />
         <TopSellingProducts products={data.topSellingProduct} />
-      </div>
+      </div> */}
     </div>
   );
 };

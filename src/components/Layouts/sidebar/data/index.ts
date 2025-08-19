@@ -20,7 +20,14 @@ import { FaHeadphones } from "react-icons/fa6";
 export const getSellerNavData = (data: any) => [
   {
     label: 'Seller Dashboard',
+    
     items: [
+      {
+        title: 'Dashboard',
+        accessKey: 'Dashboard',
+        icon: Icons.HomeIcon,
+        url: '/seller',
+      },
       {
         title: 'My Products',
         icon: BiLogoProductHunt,
