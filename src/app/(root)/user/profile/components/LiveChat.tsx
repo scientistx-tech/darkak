@@ -211,28 +211,34 @@ export default function LiveChat({ id }: { id: number }) {
       )}
 
       <div ref={bottomRef} className="mb-2 flex max-h-96 flex-col gap-2 overflow-y-auto">
-        {isLoading ? (
-          <Loader />
-        ) : (
-          messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`w-fit max-w-xs rounded-md p-2 text-sm ${
-                msg.senderId === user?.id ? 'ml-auto bg-blue-100' : 'bg-gray-100'
-              }`}
-            >
-              {msg.message_files?.length > 0 && (
-                <img
-                  src={msg.message_files[0].url}
-                  alt="attachment"
-                  className="mb-1 h-auto w-40 rounded"
-                />
-              )}
-              {msg.message}
-            </div>
-          ))
-        )}
-      </div>
+  {isLoading ? (
+    <Loader />
+  ) : (
+    messages.map((msg) => {
+      const isUser = msg.senderId === user?.id;
+      return (
+        <div
+          key={msg.id}
+          className={`w-fit max-w-xs rounded-md p-2 text-sm ${
+            isUser
+              ? "ml-auto bg-blue-100 text-right"   // ✅ User message right side
+              : "mr-auto bg-gray-100 text-left"   // ✅ Admin reply left side
+          }`}
+        >
+          {msg.message_files?.length > 0 && (
+            <img
+              src={msg.message_files[0].url}
+              alt="attachment"
+              className="mb-1 h-auto w-40 rounded"
+            />
+          )}
+          {msg.message}
+        </div>
+      );
+    })
+  )}
+</div>
+
       {uploading && (
         <div className="bottom-0 my-2 flex items-center gap-1 text-sm text-blue-500">
           <Loader2Icon /> Uploading image...
