@@ -51,7 +51,7 @@ const BlogsCart: React.FC<BlogCardProps> = ({
             {title}
           </h3>
 
-          <p className="text-gray-600 text-sm md:text-base line-clamp-3">
+          <p className="text-gray-600 text-sm md:text-base line-clamp-3 h-[80px] md:h-[100px]">
             {description}
           </p>
 
