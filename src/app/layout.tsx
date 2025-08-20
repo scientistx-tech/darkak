@@ -324,10 +324,8 @@ async function fetchScripts() {
     const res = await fetch('https://api.darkak.com.bd/api/public/script', {
       cache: 'no-store',
     });
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}`);
-    }
-    return res.json();
+   
+    return await res.json();
   } catch (error) {
     console.error('Failed to fetch scripts:', error);
     return []; // fallback

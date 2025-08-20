@@ -1,7 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-
+import dynamic from 'next/dynamic';
+import { useGetBrandsQuery } from '@/redux/services/admin/adminBrandApis';
+import {
+  useGetProductAttributesQuery,
+  useUploadImagesMutation,
+} from '@/redux/services/admin/adminProductApis';
 import axios from 'axios';
 import { log } from 'util';
 import Image from 'next/image';
@@ -11,20 +16,12 @@ import { useRouter } from 'next/navigation';
 import { FaTrashAlt } from 'react-icons/fa';
 import AsyncSelect from 'react-select/async';
 import { useSelector } from 'react-redux';
-import { useAccess } from '@/hooks/use-access';
 import RequireAccess from '@/components/Layouts/RequireAccess';
-import {
-  useGetCategoriesSellerQuery,
-  useGetSubCategoriesSellerQuery,
-  useGetSubSubCategoriesSellerQuery,
-} from '@/redux/services/seller/sellerCategoryApis';
-import { useGetBrandsSellerQuery } from '@/redux/services/seller/sellerBrandsApis';
-import {
-  useCreateProductSellerMutation,
-  useGetProductAttributesSellerQuery,
-  useUploadImagesSellerMutation,
-} from '@/redux/services/seller/sellerProductApis';
 import EditorHTML from '@/components/EditorHTML';
+import { FaqType } from '@/app/admin/category/sub-categories/AddSubCategories';
+import Input from '@/app/admin/components/Input';
+import Button from '@/app/admin/components/Button';
+import { useCreateProductSellerMutation } from '@/redux/services/seller/sellerProductApis';
 
 // --- Type Definitions ---
 type DeliveryInfo = {
@@ -43,6 +40,7 @@ type AttributeOption = {
   stock?: number | string;
   key?: string;
   sku?: string;
+  alt?: string;
 };
 
 type AttributeItem = {
@@ -62,9 +60,15 @@ type ProductFormData = {
   meta_keywords: string;
   video_link: string;
   thumbnail: string;
+  thumbnail_alt: string;
+  slug: string;
+  meta_alt: string;
   price: string;
   discount_type: string;
+  discount_type_mobile: string;
   discount: string;
+  discount_mobile: string;
+  images: { url: string; alt: string }[];
   tax_amount: string;
   tax_type: string;
   available: string;
@@ -84,9 +88,10 @@ type ProductFormData = {
   subSubCategoryId: string;
   brandId: string;
   keywords: string;
-  images: string[];
   delivery_info: DeliveryInfo;
   items: AttributeItem[];
+  faq: FaqType;
+  content: string;
 };
 
 const countryCodes = [
@@ -297,9 +302,15 @@ export default function ProductForm() {
     meta_keywords: '',
     video_link: '',
     thumbnail: '',
+    thumbnail_alt: '',
+    slug: '',
+    meta_alt: '',
     price: '',
     discount_type: 'flat',
+    discount_type_mobile: 'flat',
     discount: '',
+    discount_mobile: '',
+    images: [],
     tax_amount: '',
     tax_type: 'include',
     available: 'in-stock',
@@ -319,7 +330,6 @@ export default function ProductForm() {
     brandId: '',
     keywords: '',
     drafted: false,
-    images: [],
     delivery_info: {
       delivery_time: '',
       delivery_charge: '',
@@ -329,11 +339,9 @@ export default function ProductForm() {
       multiply: '',
     } as DeliveryInfo,
     items: [],
+    content: '',
+    faq: { faq: [{ question: '', answer: '' }] },
   });
-  const editor = useRef(null);
-  const descriptionEditor = useRef(null);
-  const warrantyEditor = useRef(null);
-  const specificationEditor = useRef(null);
   const [short_description, setShortDescription] = useState<any>();
   const [currentLanguage, setCurrentLanguage] = useState('en');
   const [productSKU, setProductSKU] = useState('5Y5LMO');
@@ -359,20 +367,14 @@ export default function ProductForm() {
     value: string;
     label: string;
   } | null>(null);
+  const [isSlugModified, setIsSlugModified] = useState(false);
 
-  // load all categories, sub categories, sub sub categories and brands
-  const { data: categoriesData } = useGetCategoriesSellerQuery({});
-  const { data: subCategoriesData } = useGetSubCategoriesSellerQuery({});
-  const { data: subSubCategoriesData } = useGetSubSubCategoriesSellerQuery({});
-  const { data: brandsData } = useGetBrandsSellerQuery({});
-  const { data: attributesData } = useGetProductAttributesSellerQuery({});
-  const [uploadImages] = useUploadImagesSellerMutation();
+  //  redux hooks
+  const { data: attributesData } = useGetProductAttributesQuery({});
+  const [uploadImages] = useUploadImagesMutation();
   const [createProduct] = useCreateProductSellerMutation();
 
   const token = useSelector((state: any) => state.auth.token);
-
-  const user = useSelector((state: any) => state.auth.user);
-
   const router = useRouter();
 
   const loadBrandOptions = async (inputValue: string) => {
@@ -461,7 +463,28 @@ export default function ProductForm() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setFormData((prev) => {
+      if (name === 'title') {
+        setIsSlugModified(false);
+        return {
+          ...prev,
+          title: value,
+          slug: isSlugModified ? prev.slug : value.trim().replace(/\s+/g, '-'),
+        };
+      }
+
+      // If the user edits 'b', mark it as manually modified
+      if (name === 'slug') {
+        setIsSlugModified(true);
+      }
+
+      // Default behavior for all other fields
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
   };
 
   const handleDeliveryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -472,7 +495,7 @@ export default function ProductForm() {
     }));
   };
 
-  const handleEditorChange = (field: keyof ProductFormData) => (value: string) => {
+  const handleEditorChange = (field: keyof ProductFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -506,18 +529,6 @@ export default function ProductForm() {
           updatedItems[attributeIndex].options[optionIndex].image = url;
           return { ...prev, items: updatedItems };
         });
-      } else if (type === 'images') {
-        // Upload all images in one request
-        setImagesUploading(true);
-        const imgForm = new FormData();
-        files.forEach((file) => imgForm.append('images', file));
-        const res = await uploadImages(imgForm).unwrap();
-
-        const uploadedUrls = res || [];
-        setFormData((prev) => ({
-          ...prev,
-          images: [...prev.images, ...uploadedUrls],
-        }));
       } else {
         // Upload single file for thumbnail or meta_image
 
@@ -542,10 +553,71 @@ export default function ProductForm() {
     } finally {
       setThumbnailUploading(false);
       setMetaImageUploading(false);
-      setImagesUploading(false);
       setOptionImageUploading(false);
       e.target.value = ''; // Reset input
     }
+  };
+  const handleFaqChange = (index: number, field: keyof FaqType['faq'][number], val: string) => {
+    const updated = [...formData?.faq?.faq];
+    updated[index][field] = val;
+    setFormData((val) => ({ ...val, faq: { faq: updated } }));
+  };
+
+  const handleAddFaq = () => {
+    setFormData((val) => ({
+      ...val,
+      faq: { faq: [...val?.faq?.faq, { question: '', answer: '' }] },
+    }));
+  };
+
+  const handleRemoveFaq = (index: number) => {
+    //setFaqList((prev: any) => prev.filter((_: any, i: any) => i !== index));
+    setFormData((val) => ({
+      ...val,
+      faq: { faq: val?.faq?.faq.filter((_: any, i: any) => i !== index) },
+    }));
+  };
+  const handleAdditionalImagesUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    e.preventDefault && e.preventDefault();
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    try {
+      setImagesUploading(true);
+      const imgForm = new FormData();
+      imgForm.append('images', files[0]);
+      const res = await uploadImages(imgForm).unwrap();
+      const url = res[0];
+
+      setFormData((prev) => {
+        const updatedImages = [...prev.images];
+        updatedImages[index] = { ...updatedImages[index], url };
+        return { ...prev, images: updatedImages };
+      });
+    } catch (error) {
+      console.error('Image upload failed', error);
+    } finally {
+      setImagesUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleAltChange = (index: number, alt: string) => {
+    setFormData((prev) => {
+      const updatedImages = [...prev.images];
+      updatedImages[index] = { ...updatedImages[index], alt };
+      return { ...prev, images: updatedImages };
+    });
+  };
+
+  const addImageField = () => {
+    setFormData((prev) => ({
+      ...prev,
+      images: [...prev.images, { url: '', alt: '' }],
+    }));
   };
 
   function validateProductForm(formData: ProductFormData): string | null {
@@ -554,7 +626,10 @@ export default function ProductForm() {
     if (!formData.meta_title) return 'Meta Title is required';
     if (!formData.meta_image) return 'Meta Image is required';
     if (!formData.thumbnail) return 'Thumbnail is required';
+    if (!formData.thumbnail_alt) return 'Thumbnail is required';
     if (!formData.price) return 'Price is required';
+    if (!formData.meta_alt) return 'Meta Alt is required';
+    if (!formData.slug) return 'Slug is required';
     if (!formData.unit) return 'Unit is required';
     if (!formData.categoryId) return 'Category is required';
     if (!formData.brandId) return 'Brand is required';
@@ -583,9 +658,14 @@ export default function ProductForm() {
       meta_image: formData.meta_image,
       video_link: formData.video_link,
       thumbnail: formData.thumbnail,
+      thumbnail_alt: formData.thumbnail_alt,
+      slug: formData.slug,
+      meta_alt: formData.meta_alt,
       price: formData.price, // keep as string
       discount_type: formData.discount_type as DiscountType,
+      discount_type_mobile: formData.discount_type_mobile as DiscountType,
       discount: formData.discount || '0',
+      discount_mobile: formData.discount_mobile || '0',
       tax_amount: formData.tax_amount || '0',
       tax_type: formData.tax_type,
       available: formData.available,
@@ -633,8 +713,11 @@ export default function ProductForm() {
                 ? String(opt.stock)
                 : '',
           image: opt.image || '',
+          alt: opt.alt || '',
         })),
       })),
+      content: formData.content,
+      faq: formData.faq,
     };
     if (formData.subCategoryId) {
       payload.subCategoryId = formData.subCategoryId;
@@ -647,7 +730,7 @@ export default function ProductForm() {
     try {
       const res = await createProduct(payload).unwrap();
       toast.success('Successfully Product created');
-      router.push('/seller/product/pending-product-list');
+      router.push('/seller/product/product-list');
     } catch (error: any) {
       console.error(error);
       toast.error(error?.data?.message);
@@ -670,26 +753,21 @@ export default function ProductForm() {
 
   // Auto-calculate stock based on Color attribute options
   useEffect(() => {
-    // Find Color attribute (case-insensitive)
     const colorItem = formData.items.find((item) => item.title?.toLowerCase() === 'color');
     if (colorItem && Array.isArray(colorItem.options) && colorItem.options.length > 0) {
-      // Sum all option stocks (handle string/number/undefined)
       const totalStock = colorItem.options.reduce((sum, opt) => {
         let stockNum = 0;
         if (typeof opt.stock === 'number') stockNum = opt.stock;
         else if (typeof opt.stock === 'string') stockNum = parseInt(opt.stock) || 0;
         return sum + stockNum;
       }, 0);
-      // Always set stock to totalStock if Color exists
       if (formData.stock !== String(totalStock) || formData.stock === '') {
         setFormData((prev) => ({ ...prev, stock: String(totalStock) }));
       }
     }
-    // If no Color attribute, do nothing (stock input is used)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(formData.items)]);
 
-  console.log(formData, 'dataa');
+  //console.log(formData, 'dataa');
 
   return (
     <RequireAccess permission="product-add">
@@ -728,6 +806,19 @@ export default function ProductForm() {
                 className="w-full rounded border p-2"
               />
             </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="slug">
+                Product Slug {`( ${currentLanguage === 'en' ? 'EN' : 'BD'})`}{' '}
+                <span className="text-xs text-red-500">* Avoid Slash and Space</span>
+              </label>
+              <input
+                name="slug"
+                placeholder="Slug"
+                value={formData.slug}
+                onChange={handleChange}
+                className="w-full rounded border p-2"
+              />
+            </div>
 
             <div className="flex flex-col gap-2">
               <label htmlFor="title">
@@ -737,9 +828,7 @@ export default function ProductForm() {
 
               <EditorHTML
                 value={formData.short_description}
-                onChange={(newContent) => {
-                  handleEditorChange('short_description')(newContent);
-                }}
+                onChange={(content) => handleEditorChange('short_description', content)}
               />
             </div>
           </div>
@@ -1098,7 +1187,7 @@ export default function ProductForm() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">Discount Type</label>
+              <label className="text-sm font-medium text-gray-700">Discount Type Web</label>
               <select
                 name="discount_type"
                 value={formData.discount_type}
@@ -1111,7 +1200,20 @@ export default function ProductForm() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">Discount amount</label>
+              <label className="text-sm font-medium text-gray-700">Discount Type Mobile</label>
+              <select
+                name="discount_type_mobile"
+                value={formData.discount_type_mobile}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              >
+                <option value="flat">Flat</option>
+                <option value="percentage">Percentage</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700">Discount amount Web</label>
               <input
                 name="discount"
                 value={formData.discount}
@@ -1119,6 +1221,31 @@ export default function ProductForm() {
                 onChange={handleChange}
                 className="mt-1 w-full rounded-md border p-2"
               />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700">Discount amount Mobile</label>
+              <input
+                name="discount_mobile"
+                value={formData.discount_mobile}
+                type="number"
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700">Accept Payment Type</label>
+              <select
+                name="payment_type"
+                // value={formData.discount_type}
+                // onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              >
+                <option value="cod">Cash On Delivery</option>
+                <option value="online">Online</option>
+                <option value="both">Both</option>
+              </select>
             </div>
 
             <div>
@@ -1168,7 +1295,7 @@ export default function ProductForm() {
         </div>
 
         {/* thumbnail and images */}
-        <div className="mt-5 flex flex-col gap-6 md:flex-row">
+        <div className="mt-5 flex flex-col gap-6">
           {/* Thumbnail Upload */}
           <div className="flex-1 rounded-lg border bg-white p-4 shadow">
             <label className="mb-1 block text-sm font-semibold text-gray-700">
@@ -1219,67 +1346,84 @@ export default function ProductForm() {
                 )}
               </div>
             </div>
+
+            <div className="mt-2">
+              <label className="text-sm font-medium text-gray-700">
+                Thumbnail Alt <span className="text-red-500">*</span>
+              </label>
+              <input
+                name="thumbnail_alt"
+                type="text"
+                value={formData.thumbnail_alt}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              />
+            </div>
           </div>
 
           {/* Additional Images Upload */}
-          <div className="flex-[2] rounded-lg border bg-white p-4 shadow">
-            <label className="mb-1 block text-sm font-semibold text-gray-700">
-              Upload additional image
+          <div className="rounded-lg border bg-white p-4 shadow">
+            <label className="mb-2 block text-sm font-semibold text-gray-700">
+              Upload Product Images
             </label>
-            <p className="mb-2 text-xs text-blue-600">Ratio 1:1 (500 x 500 px)</p>
-            <p className="mb-2 text-sm text-gray-600">Upload additional product images</p>
-            <div className="relative flex h-32 cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                name="images"
-                className="absolute inset-0 cursor-pointer opacity-0"
-                onChange={(e) => handleImageUpload(e, 'images')}
-              />
-              <div className="relative z-10 w-full text-center text-sm text-gray-500">
-                {formData.images.length > 0 ? (
-                  <div className="flex flex-wrap justify-center gap-2">
-                    {formData.images.map((img, idx) => (
-                      <div key={idx} className="group relative">
-                        <Image
-                          src={img}
-                          alt={`Product image ${idx + 1}`}
-                          width={80}
-                          height={80}
-                          className="rounded border object-cover"
-                        />
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setFormData((prev) => ({
-                              ...prev,
-                              images: prev.images.filter((_, i) => i !== idx),
-                            }));
-                          }}
-                          className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white opacity-80 hover:opacity-100"
-                          style={{ zIndex: 10 }}
-                          title="Remove"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <>
-                    <p className="text-blue-600">
-                      {imagesUploading ? (
-                        <p className="mt-3">Uploading...</p>
-                      ) : (
-                        <p>Click to Upload</p>
-                      )}
+
+            <button
+              type="button"
+              onClick={addImageField}
+              className="mb-4 rounded bg-blue-600 px-4 py-1 text-white hover:bg-blue-700"
+            >
+              + Add Image
+            </button>
+
+            {formData.images.map((img, idx) => (
+              <div
+                key={idx}
+                className="mb-4 flex flex-col items-start gap-2 rounded border border-b border-slate-400 p-4"
+              >
+                <div className="relative flex h-32 w-full cursor-pointer items-center justify-center rounded-md border border-dashed hover:bg-gray-50">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="absolute inset-0 cursor-pointer opacity-0"
+                    onChange={(e) => handleAdditionalImagesUpload(e, idx)}
+                  />
+                  {img.url ? (
+                    <Image
+                      src={img.url}
+                      alt={`Uploaded ${idx + 1}`}
+                      width={100}
+                      height={100}
+                      className="rounded object-cover"
+                    />
+                  ) : (
+                    <p className="z-10 text-sm text-blue-600">
+                      {imagesUploading ? 'Uploading...' : 'Click to Upload'}
                     </p>
-                  </>
-                )}
+                  )}
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Enter image alt text"
+                  value={img.alt}
+                  onChange={(e) => handleAltChange(idx, e.target.value)}
+                  className="w-full rounded border px-3 py-2 text-sm"
+                />
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      images: prev.images.filter((_, i) => i !== idx),
+                    }))
+                  }
+                  className="border-red-500 bg-red-100 px-2 py-0.5 text-sm text-red-500 hover:underline"
+                >
+                  Remove
+                </button>
               </div>
-            </div>
+            ))}
           </div>
         </div>
 
@@ -1498,6 +1642,24 @@ export default function ProductForm() {
                         </div>
                       </div>
                     </div>
+                    <div className="mt-2">
+                      <label>
+                        Option Alt <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={option.alt}
+                        onChange={(e) => {
+                          const updatedItems = [...formData.items];
+                          updatedItems[attributeIndex].options[optionIndex].alt = e.target.value;
+                          setFormData((prev) => ({
+                            ...prev,
+                            items: updatedItems,
+                          }));
+                        }}
+                        className="mt-1 w-full rounded-md border p-2"
+                      />
+                    </div>
                   </div>
 
                   <button
@@ -1584,7 +1746,6 @@ export default function ProductForm() {
                 </span>
               </div>
             </div>
-
             <div>
               <label className="text-sm font-medium text-gray-700">
                 Meta Keywords <span className="text-red-500">*</span>
@@ -1674,6 +1835,18 @@ export default function ProductForm() {
                 </div>
               </div>
             </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700">
+                Alt Tag <span className="text-red-500">*</span>
+              </label>
+              <input
+                name="meta_alt"
+                type="text"
+                value={formData.meta_alt}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border p-2"
+              />
+            </div>
           </div>
         </div>
 
@@ -1713,7 +1886,7 @@ export default function ProductForm() {
                 <EditorHTML
                   value={formData.description || ''}
                   onChange={(newContent) => {
-                    handleEditorChange('description')(newContent);
+                    handleEditorChange('description', newContent);
                   }}
                 />
               </div>
@@ -1726,7 +1899,7 @@ export default function ProductForm() {
                 <EditorHTML
                   value={formData.specification || ''}
                   onChange={(newContent) => {
-                    handleEditorChange('specification')(newContent);
+                    handleEditorChange('specification', newContent);
                   }}
                 />
               </div>
@@ -1739,11 +1912,58 @@ export default function ProductForm() {
                 <EditorHTML
                   value={formData.warranty_details || ''}
                   onChange={(newContent) => {
-                    handleEditorChange('warranty_details')(newContent);
+                    handleEditorChange('warranty_details', newContent);
                   }}
                 />
               </div>
             )}
+          </div>
+          <div className="my-4">
+            <label className="font-semibold">Page Content</label>
+            <div className="h-4" />
+            <EditorHTML
+              value={formData.content}
+              onChange={(newContent) => {
+                handleEditorChange('content', newContent);
+              }}
+            />
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {formData.faq?.faq?.map((faq: any, index: any) => (
+              <React.Fragment key={index}>
+                {/* FAQ Question Input */}
+                <Input
+                  className="w-full"
+                  placeholder={`FAQ Question ${index + 1}`}
+                  value={faq.question}
+                  onChange={(e: any) => handleFaqChange(index, 'question', e.target.value)}
+                />
+
+                {/* FAQ Answer Input + Remove Button */}
+                <div className="flex items-center gap-2">
+                  <Input
+                    className="w-full"
+                    placeholder={`FAQ Answer ${index + 1}`}
+                    value={faq.answer}
+                    onChange={(e: any) => handleFaqChange(index, 'answer', e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => handleRemoveFaq(index)}
+                    className="shrink-0 bg-red-500 px-3 py-1 text-white hover:bg-red-600"
+                  >
+                    ✕
+                  </Button>
+                </div>
+              </React.Fragment>
+            ))}
+
+            {/* Add FAQ Button */}
+            <div className="col-span-2 flex w-full justify-end">
+              <Button type="button" onClick={handleAddFaq} className="bg-blue-500 text-white">
+                Add More FAQ
+              </Button>
+            </div>
           </div>
         </div>
 
