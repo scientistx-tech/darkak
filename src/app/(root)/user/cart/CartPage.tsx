@@ -22,6 +22,8 @@ import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
+
 const CartPage: React.FC = () => {
   const lang = useSelector((state: RootState) => state.language.language);
 
@@ -215,12 +217,15 @@ const CartPage: React.FC = () => {
                     src={item.product.thumbnail}
                     alt="product image"
                     fill
-                    className="rounded-md object-cover"
+                    className="rounded-md bg-white object-cover"
                   />
                 </div>
               </div>
               <div className="flex w-[42%] flex-col items-start justify-start rounded-md px-6 py-2 xl:w-[40%]">
-                <Link href={`/product/${item.product.slug}`} className="text-base cursor-pointer hover:underline font-bold text-primaryBlue md:text-xl">
+                <Link
+                  href={`/product/${item.product.slug}`}
+                  className="cursor-pointer text-base font-bold text-primaryBlue hover:underline md:text-xl"
+                >
                   {item.product.title}
                 </Link>
                 <p className="hidden text-sm md:block xl:text-base">
@@ -238,18 +243,20 @@ const CartPage: React.FC = () => {
                   </div>
                 </p>
               </div>
+
               <div className="hidden w-[12%] items-center justify-center rounded-md py-2 xl:flex xl:w-[10%]">
                 <p>
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     {item?.cart_items &&
                       item?.cart_items.map((cart_item: any, i: number) => (
-                        <div key={i} className="text-xs text-blue-600">
+                        <div key={i} className="text-lg font-medium text-blue-600">
                           {cart_item?.option?.title}
                         </div>
                       ))}
                   </div>
                 </p>
               </div>
+
               <div className="flex w-[19%] items-center justify-center rounded-md py-2 md:w-[12%] xl:w-[10%]">
                 <div className="flex">
                   <Tooltip
@@ -386,19 +393,22 @@ const CartPage: React.FC = () => {
           <div className="mb-10 mt-16 flex w-full items-center justify-between">
             <button
               onClick={() => router.back()}
-              className="rounded-full bg-primaryBlue px-6 py-2.5 text-white transition-all duration-300 hover:bg-primary"
+              className="flex items-center gap-2 rounded-full bg-primaryBlue px-6 py-2.5 text-white transition-all duration-300 hover:bg-primary"
             >
+              {' '}
+              <FaAngleLeft className="hidden md:block" />
               {lang === 'bn' ? 'কেনাকাটা চালিয়ে যান' : 'Continue Shopping'}
             </button>
 
             <button
-              className="rounded-full bg-blue-950 px-6 py-2 text-white transition-all duration-300 ease-in hover:bg-blue-600"
+              className="flex items-center gap-2 rounded-full bg-primaryBlue px-6 py-2 text-white transition-all duration-300 ease-in hover:bg-blue-600"
               onClick={() => {
                 localStorage.setItem('checkout_items', JSON.stringify(cartItems));
                 router.push('/cart-checkout');
               }}
             >
               {lang === 'bn' ? 'চেকআউট' : 'Checkout'}
+              <FaAngleRight className="hidden md:block" />
             </button>
           </div>
         </div>
