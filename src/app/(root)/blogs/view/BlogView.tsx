@@ -9,6 +9,7 @@ import heroImg from '@/Data/Demo/thumb-1920-831859.jpg';
 import BlogsCart from '@/components/shared/BlogsCart';
 
 import img from '@/Data/Demo/thumb-1920-831859.jpg';
+import ContentFaqCard from '@/components/shared/ContentFaqCard';
 
 export default function BlogView() {
   return (
@@ -109,6 +110,11 @@ export default function BlogView() {
           />
         </div>
       </div>
+
+      {/* <div className="ml-[2.5%] mt-8 w-[95%] md:mt-16">
+        <ContentFaqCard content={data?.data?.content} faqs={data?.data?.faq?.faq || []} />
+      </div> */}
+
     </div>
   );
 }
