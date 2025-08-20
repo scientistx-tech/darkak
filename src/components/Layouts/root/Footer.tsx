@@ -136,10 +136,10 @@ function Footer() {
                     <Link href="/" className="text-[#F6F6F6] hover:text-white">
                       {lang === 'bn' ? 'হোম' : 'Home'}
                     </Link>
-                    <Link href="/shop" className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3">
+                    <Link href="/category" className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3">
                       {lang === 'bn' ? 'দোকান' : 'Shop'}
                     </Link>
-                    <Link href="/product" className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3">
+                    <Link href="/category" className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3">
                       {lang === 'bn' ? 'পণ্য' : 'Product'}
                     </Link>
                     <Link href="/blogs" className="mt-1 text-[#F6F6F6] hover:text-white md:mt-3">
