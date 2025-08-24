@@ -7,8 +7,6 @@ import {
   useGetProductAttributesQuery,
   useUploadImagesMutation,
 } from '@/redux/services/admin/adminProductApis';
-import axios from 'axios';
-import { log } from 'util';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
 import { Router } from 'next/router';
