@@ -29,6 +29,7 @@ export async function generateMetadata() {
 export default function page() {
   return (
     <div>
+      <div className="h-[65px] w-full md:h-[109px]" />
         <EasyCheckout />
     </div>
   )
