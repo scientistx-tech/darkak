@@ -104,11 +104,25 @@ const EasyCheckout: React.FC = () => {
     console.log('id', id, 'type', type);
     const updated = checkoutItems.map((item: any) => {
       if (item.id === id) {
-        let newQty = type === 'inc' ? item.quantity + 1 : item.quantity - 1;
-        return { ...item, quantity: newQty < 1 ? 1 : newQty };
+        let newQty = item.quantity;
+
+        if (type === 'inc') {
+          // increase only if stock available
+          if (item.quantity < item.product.stock) {
+            newQty = item.quantity + 1;
+          } else {
+            toast.warn('Stock limit reached!');
+          }
+        } else if (type === 'dec') {
+          // decrease but never below 1
+          newQty = item.quantity > 1 ? item.quantity - 1 : 1;
+        }
+
+        return { ...item, quantity: newQty };
       }
       return item;
     });
+
     setCheckoutItems(updated);
   };
 
@@ -148,6 +162,7 @@ const EasyCheckout: React.FC = () => {
         itemId: opt?.option.itemId,
         optionId: opt?.option?.id,
       })),
+
       //ae_sku_attr:
     };
 
@@ -158,7 +173,7 @@ const EasyCheckout: React.FC = () => {
           cus_add1: address,
           cus_city: division,
           cus_country: 'Bangladesh',
-          cus_email: email,
+          cus_email: email || 'admin@gmail.com',
           cus_name: fullName,
           cus_phone: phone,
           cus_postcode: '1206',
@@ -322,7 +337,6 @@ const EasyCheckout: React.FC = () => {
                     className="border border-primaryBlue px-3 py-2"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    required
                   />
                 </div>
 

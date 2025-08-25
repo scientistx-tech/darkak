@@ -1,8 +1,22 @@
-import React from 'react';
+'use client';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { CheckCircle2 } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { setCart } from '@/redux/slices/authSlice';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/redux/store';
 
 export default function SuccessPage() {
+  const params = useSearchParams();
+  const orderId = params.get('orderId');
+  const total = params.get('total');
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(setCart(Math.random()));
+    localStorage?.removeItem('checkout_items');
+  }, [localStorage]);
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 px-4">
       <div className="w-full max-w-lg rounded-2xl bg-white p-10 text-center shadow-lg">
@@ -25,11 +39,11 @@ export default function SuccessPage() {
           <p className="font-semibold text-gray-700">Order Summary</p>
           <div className="mt-2 flex justify-between text-sm text-gray-600">
             <span>Order ID:</span>
-            <span>#123456</span>
+            <span>#{orderId}</span>
           </div>
           <div className="mt-2 flex justify-between text-sm text-gray-600">
             <span>Total:</span>
-            <span>৳950</span>
+            <span>৳${total}</span>
           </div>
           <div className="mt-2 flex justify-between text-sm text-gray-600">
             <span>Status:</span>
