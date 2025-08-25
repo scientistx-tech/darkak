@@ -76,8 +76,8 @@ export default function BlogList() {
                 <Image
                   src={blog.thumbnail}
                   alt={blog.title}
-                  width={150}
-                  height={150}
+                  width={80}
+                  height={80}
                   className="rounded-md object-cover"
                 />
                 <span className="text-gray-800">{blog.title}</span>

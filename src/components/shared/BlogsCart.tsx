@@ -6,7 +6,7 @@ import Link from "next/link";
 import { FaUser, FaCalendarAlt } from "react-icons/fa";
 
 interface BlogCardProps {
-  image: StaticImageData;
+  image: string | StaticImageData;
   writerName: string;
   date: string;
   title: string;
