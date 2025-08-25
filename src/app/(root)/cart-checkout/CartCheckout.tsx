@@ -16,6 +16,7 @@ import { RootState } from '@/redux/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import {
+  useGetPaymentUrlMutation,
   useOrderCartProductsMutation,
   useOrderSingleProductMutation,
 } from '@/redux/services/client/checkout';
@@ -27,7 +28,7 @@ import getSeoData from '../getSeoData';
 const CartCheckout: React.FC = () => {
   const lang = useSelector((state: RootState) => state.language.language);
 
-  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'online'>('cash');
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -73,14 +74,14 @@ const CartCheckout: React.FC = () => {
 
     if (storedItems) {
       setCheckoutItems(JSON.parse(storedItems));
-      console.log('stored items', JSON.parse(storedItems));
+      //console.log('stored items', JSON.parse(storedItems));
     } else {
-      router.push('/cart'); // redirect if nothing in storage
+      // router.push('/cart'); // redirect if nothing in storage
     }
 
     // ✅ Clear on browser unload
     const handleBeforeUnload = () => {
-      localStorage.removeItem('checkout_items');
+      // localStorage.removeItem('checkout_items');
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
 
@@ -94,13 +95,14 @@ const CartCheckout: React.FC = () => {
     getContentData();
     // When pathname changes, check and clear localStorage if needed
     if (!pathname.includes('checkout')) {
-      localStorage.removeItem('checkout_items');
+      //localStorage.removeItem('checkout_items');
     }
   }, [pathname]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [isModalOpen3, setIsModalOpen3] = useState(false);
+  const [paymentUrl] = useGetPaymentUrlMutation();
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -128,17 +130,36 @@ const CartCheckout: React.FC = () => {
   // For right side
 
   const updateQuantity = (id: number, type: 'inc' | 'dec') => {
-    console.log('id', id, 'type', type);
+    // console.log(checkoutItems);
+
     const updated = checkoutItems.map((item: any) => {
       if (item.id === id) {
-        let newQty = type === 'inc' ? item.quantity + 1 : item.quantity - 1;
-        handleUpdate(id, newQty);
-        return { ...item, quantity: newQty < 1 ? 1 : newQty };
+        let newQty = item.quantity;
+
+        if (type === 'inc') {
+          if (item.quantity < item.product.stock) {
+            newQty = item.quantity + 1;
+          } else {
+            toast.warn('Stock limit reached!');
+            newQty = item.quantity; // keep as is
+          }
+        } else if (type === 'dec') {
+          newQty = item.quantity > 1 ? item.quantity - 1 : 1;
+        }
+
+        // call update API only if quantity actually changed
+        if (newQty !== item.quantity) {
+          handleUpdate(id, newQty);
+        }
+
+        return { ...item, quantity: newQty };
       }
       return item;
     });
+
     setCheckoutItems(updated);
   };
+
   const handleUpdate = async (id: number, quantity: number) => {
     try {
       await cartUpdate({ id, quantity }).unwrap(); // call API with ID
@@ -163,7 +184,7 @@ const CartCheckout: React.FC = () => {
 
     return acc + finalPrice * item.quantity;
   }, 0);
-  console.log('cartitem', checkoutItems);
+  //console.log('cartitem', checkoutItems);
 
   const handleCheckout = async () => {
     const productIds = checkoutItems.map((item: any) => item.id);
@@ -176,7 +197,7 @@ const CartCheckout: React.FC = () => {
       district,
       sub_district: subDistrict,
       area,
-      paymentType: 'cod',
+      paymentType: paymentMethod,
       cartIds: productIds,
       deliveryFee: district === 'Dhaka' ? 60 : 120,
       order_type: !checkoutItems[0].product?.user?.isSeller ? 'in-house' : 'vendor',
@@ -185,9 +206,37 @@ const CartCheckout: React.FC = () => {
     };
     try {
       const res = await createOrder(payload).unwrap();
+      if (paymentMethod === 'online') {
+        const payData = await paymentUrl({
+          cus_add1: address,
+          cus_city: division,
+          cus_country: 'Bangladesh',
+          cus_email: email || 'admin@gmail.com',
+          cus_name: fullName,
+          cus_phone: phone,
+          cus_postcode: '1206',
+          order_id: res.order.id,
+          product_category: 'Darkak',
+          product_name: 'Darkak Product',
+          product_profile: 'Darkak',
+          ship_add1: address,
+          ship_city: division,
+          ship_country: 'Bangladesh',
+          ship_name: fullName,
+          ship_postcode: '1206',
+          shipping_method: 'Courier',
+          cus_add2: address,
+          cus_fax: phone,
+          cus_state: 'Bangladesh',
+          ship_add2: address,
+          ship_state: 'Bangladesh',
+        }).unwrap();
 
+        return (window.location.href = payData.url);
+      }
       dispatch(setCart(Math.random()));
       toast.success(res?.message || 'Order placed successfully!');
+      localStorage.removeItem('checkout_items');
       router.push(`/order-placed/${res?.order?.orderId}`);
     } catch (error: any) {
       toast.error(error?.data?.message);
@@ -250,7 +299,7 @@ const CartCheckout: React.FC = () => {
           transition={{ duration: 0.4 }}
           className="mb-6 rounded border border-primaryBlue bg-[#E6EFFF] px-2 py-1.5 text-center text-primaryBlue md:px-4 md:py-3"
         >
-          {paymentMethod === 'cash' ? (
+          {paymentMethod === 'cod' ? (
             <>
               অর্ডার সংক্রান্ত যেকোনো প্রয়োজনে কথা বলুন আমাদের কাস্টমার সার্ভিস প্রতিনিধির সাথে -{' '}
               <strong> 01711726501</strong>
@@ -275,13 +324,13 @@ const CartCheckout: React.FC = () => {
           <div className="mt-5 flex w-full justify-evenly rounded border border-primaryBlue bg-[#E6EFFF] px-2 py-1 transition-all duration-500 md:w-[90%] md:px-3 md:py-2">
             <button
               className={`flex items-center gap-2 rounded px-3 py-1 font-medium transition-all duration-300 md:px-3 md:py-1.5 ${
-                paymentMethod === 'cash'
+                paymentMethod === 'cod'
                   ? 'bg-primaryBlue text-white'
                   : 'text-black hover:bg-slate-50 hover:text-primaryBlue'
               }`}
-              onClick={() => setPaymentMethod('cash')}
+              onClick={() => setPaymentMethod('cod')}
             >
-              {paymentMethod === 'cash' && <CheckOutlined className="text-xl" />}
+              {paymentMethod === 'cod' && <CheckOutlined className="text-xl" />}
               {lang === 'bn' ? 'ক্যাশ অন ডেলিভারি' : 'Cash on Delivery'}
             </button>
 
@@ -330,7 +379,6 @@ const CartCheckout: React.FC = () => {
                     className="border border-primaryBlue px-3 py-2"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    required
                   />
                 </div>
 
