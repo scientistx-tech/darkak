@@ -455,7 +455,7 @@ const EasyCheckout: React.FC = () => {
                 className="w-full rounded-md bg-primaryBlue px-6 py-2 font-medium text-white transition-all duration-300 hover:bg-primaryBlue/90"
                 onClick={handleCheckout}
               >
-                {lang === 'bn' ? 'অর্ডার' : 'Order'}
+                {lang === 'bn' ? 'আপনার অর্ডার' : 'Your Order'}
               </button>
             </div>
           </div>
