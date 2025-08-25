@@ -217,6 +217,20 @@ export default function EditProfile({ refetch, data }: any) {
           />
         )}
       </div>
+      <div className="mt-5 flex justify-center md:mt-10">
+        <SendButton
+          link={handleSubmit}
+          text={
+            isUpdating
+              ? lang === 'bn'
+                ? 'প্রোফাইল আপডেট হচ্ছে...'
+                : 'Updating...'
+              : lang === 'bn'
+                ? 'প্রোফাইল আপডেট করুন'
+                : 'Update Profile'
+          }
+        />
+      </div>
       {/* <hr className="mt-6" /> */}
       <h2 className="my-10 text-center text-2xl font-semibold text-primaryBlue md:text-4xl">
         {lang === 'bn' ? 'ঠিকানা বিবরণ' : 'Address Details'}
@@ -273,7 +287,7 @@ export default function EditProfile({ refetch, data }: any) {
           onChange={handleAreaChange}
         />
       </div>
-      <div className="mt-10 flex justify-center">
+      <div className="mt-5 flex justify-center md:mt-10">
         <SendButton
           link={handleAddressSubmit}
           text={
@@ -284,21 +298,6 @@ export default function EditProfile({ refetch, data }: any) {
               : lang === 'bn'
                 ? 'ঠিকানা আপডেট করুন'
                 : 'Update Address'
-          }
-        />
-      </div>
-
-      <div className="mt-10 flex justify-center">
-        <SendButton
-          link={handleSubmit}
-          text={
-            isUpdating
-              ? lang === 'bn'
-                ? 'প্রোফাইল আপডেট হচ্ছে...'
-                : 'Updating...'
-              : lang === 'bn'
-                ? 'প্রোফাইল আপডেট করুন'
-                : 'Update Profile'
           }
         />
       </div>

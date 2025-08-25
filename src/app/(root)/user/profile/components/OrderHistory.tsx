@@ -72,7 +72,11 @@ export default function OrderHistory() {
                 height={50}
                 className="rounded-lg object-cover"
               />
-              <span className="hidden font-medium md:block">{order.product.title}</span>
+              <span className="hidden font-medium md:block">
+                {order.product.title.length > 27
+                  ? order.product.title.substring(0, 27) + '...'
+                  : order.product.title}
+              </span>
             </div>
 
             <div className="flex flex-col">
@@ -90,10 +94,10 @@ export default function OrderHistory() {
 
             <div className="flex items-center space-x-3">
               <span
-                className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                  order.order.status === 'Delivered'
+                className={`rounded-full px-3 py-1 text-xs font-semibold uppercase ${
+                  order.order.status === 'delivered'
                     ? 'bg-green-100 text-green-600'
-                    : order.order.status === 'Shipped'
+                    : order.order.status === 'packaging'
                       ? 'bg-orange-100 text-orange-600'
                       : 'bg-red-100 text-red-600'
                 }`}
