@@ -3,8 +3,17 @@
 import React, { useState } from 'react';
 import EditorHTML from '@/components/EditorHTML';
 import { FaPlus, FaTrash } from 'react-icons/fa';
+import { message } from 'antd';
+
+import { useGetBlogCreateMutation } from '../adminBlogApi';
+import { useUploadImagesMutation } from '@/redux/services/admin/adminProductApis';
 
 export default function BlogFrom() {
+  const [messageApi, contextHolder] = message.useMessage();
+  const [createBlog, { isLoading }] = useGetBlogCreateMutation();
+
+  const [uploadFile] = useUploadImagesMutation();
+
   const [formData, setFormData] = useState({
     writerName: '',
     blogTitle: '',
@@ -56,8 +65,95 @@ export default function BlogFrom() {
     }));
   };
 
+  const handleCreate = async () => {
+    // Validation
+    if (!formData.writerName.trim()) {
+      return messageApi.error('Writer name is required');
+    }
+    if (!formData.blogTitle.trim()) {
+      return messageApi.error('Blog title is required');
+    }
+    if (!formData.thambleImage) {
+      return messageApi.error('Thumbnail image is required');
+    }
+    if (!formData.description.trim()) {
+      return messageApi.error('Description is required');
+    }
+    if (!formData.metaTitle.trim()) {
+      return messageApi.error('Meta title is required');
+    }
+    if (!formData.metaDescription.trim()) {
+      return messageApi.error('Meta description is required');
+    }
+    if (!formData.metaImage) {
+      return messageApi.error('Meta image is required');
+    }
+    if (!formData.imageAlt.trim()) {
+      return messageApi.error('Meta image alt text is required');
+    }
+
+    try {
+      // ⬇️ Upload thumbnail
+      const thumbnailForm = new FormData();
+      thumbnailForm.append('images', formData.thambleImage);
+      const thumbnailRes = await uploadFile(thumbnailForm).unwrap();
+      const thumbnailUrl = thumbnailRes?.[0]; // depends on API response
+
+      // ⬇️ Upload meta image
+      const metaForm = new FormData();
+      metaForm.append('images', formData.metaImage);
+      const metaRes = await uploadFile(metaForm).unwrap();
+      const metaUrl = metaRes?.[0];
+
+      // ⬇️ Build payload
+      const payload = {
+        name: formData.writerName,
+        title: formData.blogTitle,
+        thumbnail: thumbnailUrl,
+        description: formData.description,
+        meta_title: formData.metaTitle,
+        meta_description: formData.metaDescription,
+        meta_keywords: {
+          keywords: formData.metaKeywords.split(',').map((k) => k.trim()), // ✅ convert string → array
+        },
+        meta_image: metaUrl,
+        meta_alt: formData.imageAlt,
+        content: formData.pageContent,
+        faq: {
+          faq: formData.faqs,
+        },
+      };
+
+      // ⬇️ Call API
+      const res = await createBlog(payload).unwrap();
+      messageApi.success('Blog created successfully!');
+      console.log('Blog created:', res);
+
+      // Reset form
+      setFormData({
+        writerName: '',
+        blogTitle: '',
+        thambleImage: null,
+        metaImage: null,
+        description: '',
+        metaTitle: '',
+        metaKeywords: '',
+        metaDescription: '',
+        imageAlt: '',
+        pageContent: '',
+        faqs: [{ question: '', answer: '' }],
+      });
+      setThamblePreview(null);
+      setMetaPreview(null);
+    } catch (error: any) {
+      messageApi.error(error?.data?.message || 'Failed to create blog');
+      console.error('Create blog error:', error);
+    }
+  };
+
   return (
     <div className="w-full">
+      {contextHolder}
       {/* Blog Info */}
       <div className="rounded-xl bg-white p-6 shadow-md">
         <h2 className="mb-4 border-b pb-2 text-xl font-semibold">Blog Info</h2>
@@ -182,6 +278,7 @@ export default function BlogFrom() {
               />
             </div>
           </div>
+
           {/* Meta Description */}
           <div>
             <div className="mb-2 flex items-center justify-between">
@@ -325,8 +422,12 @@ export default function BlogFrom() {
 
       {/* Submit */}
       <div className="mt-8 text-right">
-        <button className="rounded-lg bg-primaryBlue px-6 py-3 font-medium text-white shadow transition hover:bg-primaryBlue/90">
-          Publish Blog
+        <button
+          onClick={handleCreate}
+          disabled={isLoading}
+          className="rounded-lg bg-primaryBlue px-6 py-3 font-medium text-white shadow transition hover:bg-primaryBlue/90"
+        >
+          {isLoading ? 'Publishing...' : 'Publish Blog'}
         </button>
       </div>
     </div>
