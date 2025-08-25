@@ -232,7 +232,7 @@ export const getNavData = (data: any, vendorData: any) => [
         icon: IoMdCart,
         items: [
           {
-            title: 'All',
+            title: 'All Orders',
             url: '/admin/orders/all',
             accessKey: 'order-all',
             values: { vive: 'positive', value: data?.totalOrder },
