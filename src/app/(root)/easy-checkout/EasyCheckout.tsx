@@ -20,6 +20,8 @@ import { useCheckCouponCodeMutation } from '@/redux/services/client/applyCoupon'
 import getSeoData from '../getSeoData';
 
 const EasyCheckout: React.FC = () => {
+  const lang = useSelector((state: RootState) => state.language.language);
+
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState<any>('');
@@ -258,7 +260,9 @@ const EasyCheckout: React.FC = () => {
         {/* left-side */}
         <div className="w-full md:w-1/2">
           {contextHolder}
-          <p className="text-xl font-medium md:text-2xl">Payment Method</p>
+          <p className="text-xl font-medium md:text-2xl">
+            {lang === 'bn' ? 'পেমেন্ট পদ্ধতি' : 'Payment Method'}
+          </p>
 
           <div className="mt-5 flex w-full justify-evenly rounded border border-primaryBlue bg-[#E6EFFF] px-2 py-1 transition-all duration-500 md:w-[90%] md:px-3 md:py-2">
             <button
@@ -270,7 +274,7 @@ const EasyCheckout: React.FC = () => {
               onClick={() => setPaymentMethod('cod')}
             >
               {paymentMethod === 'cod' && <CheckOutlined className="text-xl" />}
-              Cash on Delivery
+              {lang === 'bn' ? 'ক্যাশ অন ডেলিভারি' : 'Cash on Delivery'}
             </button>
 
             <button
@@ -282,17 +286,20 @@ const EasyCheckout: React.FC = () => {
               onClick={() => setPaymentMethod('online')}
             >
               {paymentMethod === 'online' && <CheckOutlined className="text-xl" />}
-              Online Payment
+              {lang === 'bn' ? 'অনলাইন পেমেন্ট' : 'Online Payment'}
             </button>
           </div>
 
           <div className="mt-5 md:mt-10">
-            <h2 className="mb-3 text-lg font-semibold">Billing Details</h2>
+            <h2 className="mb-3 text-lg font-semibold">
+              {lang === 'bn' ? 'বিলিং এর বিস্তারিত' : 'Billing Details'}
+            </h2>
             <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
               {/* Full Name */}
               <div>
                 <label className="mb-1 block text-sm font-medium">
-                  Full Name <span className="text-primaryBlue">*</span>
+                  {lang === 'bn' ? 'পুরো নাম' : 'Full Name'}{' '}
+                  <span className="text-primaryBlue">*</span>
                 </label>
                 <Input
                   placeholder="Full Name"
@@ -307,7 +314,7 @@ const EasyCheckout: React.FC = () => {
                 {/* Email */}
                 <div>
                   <label className="mb-1 block text-sm font-medium">
-                    Email Address <span className="text-primaryBlue">*</span>
+                    {lang === 'bn' ? 'ইমেইল' : 'Email'}
                   </label>
                   <Input
                     type="email"
@@ -322,7 +329,8 @@ const EasyCheckout: React.FC = () => {
                 {/* Phone */}
                 <div>
                   <label className="mb-1 block text-sm font-medium">
-                    Phone Number <span className="text-primaryBlue">*</span>
+                    {lang === 'bn' ? 'ফোন নাম্বার' : 'Phone Number'}{' '}
+                    <span className="text-primaryBlue">*</span>
                   </label>
                   <div className="flex gap-2">
                     <Input
@@ -340,7 +348,8 @@ const EasyCheckout: React.FC = () => {
                 {/* Division */}
                 <div>
                   <label className="mb-1 block text-sm font-medium">
-                    Division <span className="text-primaryBlue">*</span>
+                    {lang === 'bn' ? 'বিভাগ' : 'Division'}{' '}
+                    <span className="text-primaryBlue">*</span>
                   </label>
                   <select
                     className="w-full rounded border border-primaryBlue px-3 py-2"
@@ -363,7 +372,8 @@ const EasyCheckout: React.FC = () => {
                 {/* District */}
                 <div>
                   <label className="mb-1 block text-sm font-medium">
-                    District <span className="text-primaryBlue">*</span>
+                    {lang === 'bn' ? 'জেলা' : 'District'}{' '}
+                    <span className="text-primaryBlue">*</span>
                   </label>
                   <select
                     className="w-full rounded border border-primaryBlue px-3 py-2"
@@ -415,7 +425,8 @@ const EasyCheckout: React.FC = () => {
               {/* Full Address */}
               <div>
                 <label className="mb-1 block text-sm font-medium">
-                  Additional Address Notes <span className="text-primaryBlue">*</span>
+                  {lang === 'bn' ? 'অতিরিক্ত ঠিকানা' : 'Additional Address'}{' '}
+                  <span className="text-primaryBlue">*</span>
                 </label>
                 <Input.TextArea
                   placeholder="Additional address details"
@@ -428,23 +439,23 @@ const EasyCheckout: React.FC = () => {
 
               {/* Agreement Checkbox */}
               <Checkbox checked={agree} onChange={(e) => setAgree(e.target.checked)} required>
-                I have read and agree to the{' '}
-                <span onClick={showModal} className="text-primaryBlue">
-                  Terms and Conditions
-                </span>{' '}
-                and{' '}
-                <span onClick={showModal2} className="text-primaryBlue">
-                  Privacy Policy
+                {lang === 'bn' ? 'আমি পড়েছি এবং সম্মত আছি' : 'I have read and agree to the'}
+                <span onClick={showModal} className="ml-1.5 mr-1.5 text-primaryBlue">
+                  {lang === 'bn' ? 'শর্তাবলী' : 'Terms and Conditions'}
+                </span>
+                {lang === 'bn' ? 'এবং' : 'and'}
+                <span onClick={showModal2} className="ml-1.5 text-primaryBlue">
+                  {lang === 'bn' ? 'গোপনীয়তা নীতি' : 'Privacy Policy'}
                 </span>
               </Checkbox>
             </form>
 
-            <div className="mt-5">
+            <div className="mt-5 hidden md:block">
               <button
-                className="rounded-full bg-blue-950 px-6 py-2 text-white"
+                className="w-full rounded-md bg-primaryBlue px-6 py-2 font-medium text-white transition-all duration-300 hover:bg-primaryBlue/90"
                 onClick={handleCheckout}
               >
-                Order
+                {lang === 'bn' ? 'আপনার অর্ডার' : 'Your Order'}
               </button>
             </div>
           </div>
@@ -452,7 +463,9 @@ const EasyCheckout: React.FC = () => {
 
         {/* right side */}
         <div className="w-full md:w-1/2 md:pl-[10%]">
-          <h2 className="mb-0 mt-5 text-lg font-semibold md:mb-3">Your Order</h2>
+          <h2 className="mb-0 mt-5 text-lg font-semibold md:mb-3">
+            {lang === 'bn' ? 'আপনার অর্ডারের বিস্তারিত' : 'Your Order Details'}
+          </h2>
 
           {checkoutItems?.map((item: any) => (
             <div
@@ -518,7 +531,9 @@ const EasyCheckout: React.FC = () => {
           ))}
 
           {couponDiscount?.id ? (
-            <p className="animate-bounce py-3 text-right font-bold text-teal-400">Coupon Applied</p>
+            <p className="animate-bounce py-3 text-right font-bold text-teal-400">
+              {lang === 'bn' ? 'কুপন প্রয়োগ করা হয়েছে' : 'Coupon Applied'}
+            </p>
           ) : (
             <div className="mt-3 flex items-center gap-2">
               <Input
@@ -527,46 +542,68 @@ const EasyCheckout: React.FC = () => {
                 className="flex-1"
               />
               <Button onClick={handleApplyCoupon} type="primary">
-                Apply
+                {lang === 'bn' ? 'প্রয়োগ করুন' : 'Apply'}
               </Button>
             </div>
           )}
 
           <div className="mt-5 space-y-1 text-sm">
             <div className="flex justify-between">
-              <span>Subtotal</span>
-              <span>BDT {subtotal}</span>
+              <span>{lang === 'bn' ? 'মোট' : 'Subtotal'}</span>
+              <span>
+                {subtotal} {lang === 'bn' ? 'টাকা' : 'BDT'}
+              </span>
             </div>
             <div className="flex justify-between text-primaryBlue">
-              <span>Delivery Charge</span>
-              <span>will be added</span>
+              <span>{lang === 'bn' ? 'ডেলিভারি চার্জ' : 'Delivery Charge'}</span>
+              <span>{lang === 'bn' ? 'যোগ হবে' : 'will be added'}</span>
             </div>
             {couponDiscount?.id && (
               <div className="flex justify-between text-primaryBlue">
-                <span>Coupon Discount</span>
+                <span>{lang === 'bn' ? 'কুপন ডিসকাউন্ট' : 'Coupon Discount'}</span>
                 <span>{`-${couponDiscount?.discount_type === 'flat' ? 'Tk' : ''} ${couponDiscount?.discount_amount}${couponDiscount?.discount_type === 'percentage' ? '%' : ''} `}</span>
               </div>
             )}
             <div className="flex justify-between text-lg font-semibold text-black">
-              <span>Total</span>
+              <span>{lang === 'bn' ? 'সর্বমোট' : 'Total'}</span>
               <span>
-                BDT{' '}
                 {couponDiscount?.id
                   ? couponDiscount?.discount_type === 'flat'
                     ? subtotal - couponDiscount?.discount_amount
                     : subtotal - subtotal * (couponDiscount?.discount_amount / 100)
-                  : subtotal}
+                  : subtotal}{' '}
+                {lang === 'bn' ? 'টাকা' : 'BDT'}
               </span>
             </div>
           </div>
         </div>
+        <div className="mt-5 md:hidden">
+          <button
+            className="w-full rounded-md bg-primaryBlue px-6 py-2 font-medium text-white transition-all duration-300 hover:bg-primaryBlue/90"
+            onClick={handleCheckout}
+          >
+            {lang === 'bn' ? 'অর্ডার' : 'Order'}
+          </button>
+        </div>
       </div>
 
-      <Modal title="Terms and Conditions" open={isModalOpen} onCancel={handleCancel} footer={false}>
+      <Modal
+        title="Terms and Conditions"
+        open={isModalOpen}
+        onCancel={handleCancel}
+        footer={false}
+        width={800}
+      >
         <div dangerouslySetInnerHTML={{ __html: terms || `<div>Loading..</div>` }} />
       </Modal>
 
-      <Modal title="Privacy Policy" open={isModalOpen2} onCancel={handleCancel2} footer={false}>
+      <Modal
+        title="Privacy Policy"
+        open={isModalOpen2}
+        onCancel={handleCancel2}
+        footer={false}
+        width={800}
+      >
         <div dangerouslySetInnerHTML={{ __html: privacy || `<div>Loading..</div>` }} />
       </Modal>
     </div>

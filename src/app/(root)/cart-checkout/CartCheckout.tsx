@@ -70,7 +70,6 @@ const CartCheckout: React.FC = () => {
   // ✅ Load checkout_items from localStorage when component mounts
   useEffect(() => {
     const storedItems = localStorage.getItem('checkout_items');
-    
 
     if (storedItems) {
       setCheckoutItems(JSON.parse(storedItems));
@@ -292,7 +291,7 @@ const CartCheckout: React.FC = () => {
                   ? 'bg-primaryBlue text-white'
                   : 'text-black hover:bg-slate-50 hover:text-primaryBlue'
               }`}
-              // onClick={() => setPaymentMethod("online")}
+              onClick={() => setPaymentMethod('online')}
             >
               {paymentMethod === 'online' && <CheckOutlined className="text-xl" />}
               {lang === 'bn' ? 'অনলাইন পেমেন্ট' : 'Online Payment'}
@@ -324,7 +323,6 @@ const CartCheckout: React.FC = () => {
                 <div>
                   <label className="mb-1 block text-sm font-medium">
                     {lang === 'bn' ? 'ইমেইল ঠিকানা' : 'Email Address'}{' '}
-                    <span className="text-primaryBlue">*</span>
                   </label>
                   <Input
                     type="email"
@@ -404,8 +402,8 @@ const CartCheckout: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                {/* Sub-district */}
+              {/* <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                
                 <div>
                   <label className="mb-1 block text-sm font-medium">
                     {lang === 'bn' ? 'উপজেলা / সাব-ডিস্ট্রিক্ট' : 'Sub-district / Upazila'}{' '}
@@ -420,7 +418,7 @@ const CartCheckout: React.FC = () => {
                   />
                 </div>
 
-                {/* Delivery Area */}
+                
                 <div>
                   <label className="mb-1 block text-sm font-medium">
                     {lang === 'bn' ? 'ডেলিভারি এরিয়া / ঠিকানা' : 'Delivery Area / Address'}{' '}
@@ -434,12 +432,12 @@ const CartCheckout: React.FC = () => {
                     required
                   />
                 </div>
-              </div>
+              </div> */}
 
               {/* Full Address */}
               <div>
                 <label className="mb-1 block text-sm font-medium">
-                  {lang === 'bn' ? 'অতিরিক্ত ঠিকানা নোট' : 'Additional Address Notes'}{' '}
+                  {lang === 'bn' ? 'অতিরিক্ত ঠিকানা' : 'Additional Address'}{' '}
                   <span className="text-primaryBlue">*</span>
                 </label>
                 <Input.TextArea
@@ -469,7 +467,7 @@ const CartCheckout: React.FC = () => {
 
             <div className="mt-5 hidden md:block">
               <button
-                className="w-full rounded-md bg-blue-950 px-16 py-2 font-medium text-white hover:bg-primary"
+                className="w-full rounded-md bg-primaryBlue px-6 py-2 font-medium text-white transition-all duration-300 hover:bg-primaryBlue/90"
                 onClick={handleCheckout}
               >
                 {lang === 'bn' ? 'অর্ডার করুন' : 'Order'}
@@ -481,7 +479,7 @@ const CartCheckout: React.FC = () => {
         {/* right side */}
         <div className="w-full md:w-1/2 md:pl-[10%]">
           <h2 className="mb-0 mt-5 text-lg font-semibold md:mb-3">
-            {lang === 'bn' ? 'আপনার অর্ডার' : 'Your Order'}
+            {lang === 'bn' ? 'আপনার অর্ডারের বিস্তারিত' : 'Your Order Details'}
           </h2>
 
           {checkoutItems?.map((item: any) => (
@@ -567,7 +565,9 @@ const CartCheckout: React.FC = () => {
           <div className="mt-5 space-y-1 text-sm">
             <div className="flex justify-between">
               <span>{lang === 'bn' ? 'সাবটোটাল' : 'Subtotal'}</span>
-              <span>BDT {subtotal}</span>
+              <span>
+                {subtotal} {lang === 'bn' ? 'টাকা' : 'BDT'}
+              </span>
             </div>
             <div className="flex justify-between text-primaryBlue">
               <span>{lang === 'bn' ? 'ডেলিভারি চার্জ' : 'Delivery Charge'}</span>
@@ -582,12 +582,12 @@ const CartCheckout: React.FC = () => {
             <div className="flex justify-between text-lg font-semibold text-black">
               <span>{lang === 'bn' ? 'মোট' : 'Total'}</span>
               <span>
-                BDT{' '}
                 {couponDiscount?.id
                   ? couponDiscount?.discount_type === 'flat'
                     ? subtotal - couponDiscount?.discount_amount
                     : subtotal - subtotal * (couponDiscount?.discount_amount / 100)
-                  : subtotal}
+                  : subtotal}{' '}
+                {lang === 'bn' ? 'টাকা' : 'BDT'}
               </span>
             </div>
           </div>
@@ -595,7 +595,7 @@ const CartCheckout: React.FC = () => {
 
         <div className="mt-5 block md:hidden">
           <button
-            className="w-full rounded-md bg-blue-950 px-16 py-2 font-medium text-white hover:bg-primary"
+            className="w-full rounded-md bg-primaryBlue px-6 py-2 font-medium text-white transition-all duration-300 hover:bg-primaryBlue/90"
             onClick={handleCheckout}
           >
             {lang === 'bn' ? 'অর্ডার করুন' : 'Order'}
