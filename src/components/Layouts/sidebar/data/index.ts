@@ -15,7 +15,7 @@ import * as Icons from '../icons';
 import { BsTornado } from 'react-icons/bs';
 import { FaListAlt } from 'react-icons/fa';
 import { IoMdAddCircle } from 'react-icons/io';
-import { FaRegListAlt, FaClock, FaShoppingBag, FaLaptop, FaShoppingCart, FaUndo, FaSitemap, FaBloggerB } from 'react-icons/fa';
+import { FaRegListAlt, FaClock, FaShoppingBag, FaLaptop, FaLink, FaShoppingCart, FaUndo, FaSitemap, FaBloggerB } from 'react-icons/fa';
 import { FaHeadphones } from "react-icons/fa6";
 export const getSellerNavData = (data: any) => [
   {
@@ -867,11 +867,18 @@ export const getNavData = (data: any, vendorData: any) => [
         url: '/admin/sitemap',
       },
       {
+        title: 'Redirection URL',
+        accessKey: 'redirection',
+        icon: FaLink,
+        url: '/admin/redirection',
+      },
+      {
         title: 'Analytics',
         accessKey: 'analytics',
         icon: IoAnalytics,
         url: '/admin/analytics',
       },
+      
     ],
   },
 ];
