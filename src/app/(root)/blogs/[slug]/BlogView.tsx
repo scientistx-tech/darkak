@@ -3,11 +3,11 @@ import Image from 'next/image';
 import { FaUser, FaCalendarAlt, FaArrowLeft } from 'react-icons/fa';
 import Link from 'next/link';
 
-import heroImg from '@/Data/Demo/thumb-1920-831859.jpg';
 import BlogsCart from '@/components/shared/BlogsCart';
 
 import img from '@/Data/Demo/thumb-1920-831859.jpg';
 import { Blog } from '@/app/admin/blog/type';
+import ContentFaqCard from '@/components/shared/ContentFaqCard';
 
 export default function BlogView({ data }: { data: Blog | undefined }) {
   return (
@@ -28,7 +28,14 @@ export default function BlogView({ data }: { data: Blog | undefined }) {
           {data?.title}
         </h1>
         <div className="relative h-72 w-full overflow-hidden rounded-xl shadow-lg md:h-[520px]">
-          <Image src={data?.thumbnail||""} height={800} width={1300} alt="Blog Hero" className="h-full w-full object-cover" priority />
+          <Image
+            src={data?.thumbnail || ''}
+            height={800}
+            width={1300}
+            alt="Blog Hero"
+            className="h-full w-full object-cover"
+            priority
+          />
         </div>
       </div>
 
@@ -41,36 +48,16 @@ export default function BlogView({ data }: { data: Blog | undefined }) {
           </div>
           <div className="flex items-center gap-2">
             <FaCalendarAlt className="text-gray-400" />
-            <span>August 20, 2025</span>
+            <span> {data?.date && new Date(data.date).toDateString()}</span>
           </div>
         </div>
       </div>
 
       {/* Blog Content */}
-      <div className="mt-6 w-full px-4 leading-relaxed text-gray-700">
-        <p className="mb-4">
-          Summer 2025 is all about bold statements, vibrant colors, and comfort. From oversized hats
-          to eco-friendly fabrics, this season’s fashion trends are designed to keep you stylish
-          while staying practical.
-        </p>
-
-        <h2 className="mb-3 mt-6 text-xl font-semibold md:text-2xl">1. Bright & Bold Colors</h2>
-        <p className="mb-4">
-          This summer, neon greens, electric blues, and bold oranges are taking over the fashion
-          scene. Pair them with neutral accessories for a balanced look.
-        </p>
-
-        <h2 className="mb-3 mt-6 text-xl font-semibold md:text-2xl">2. Eco-Friendly Fabrics</h2>
-        <p className="mb-4">
-          Sustainable fashion continues to rise in 2025. Expect to see more outfits made from
-          organic cotton, bamboo, and recycled fabrics.
-        </p>
-
-        <p className="mt-6">
-          These are just a few of the exciting fashion trends for Summer 2025. Stay tuned to our
-          blog for more updates and style guides.
-        </p>
-      </div>
+      <div
+        className="mt-6 w-full px-4 leading-relaxed text-gray-700"
+        dangerouslySetInnerHTML={{ __html: data?.description || '' }}
+      />
 
       {/* Related Blogs */}
       <div className="mb-16 mt-12 w-full">
