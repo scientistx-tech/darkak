@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React from "react";
-import Image, { StaticImageData } from "next/image";
-import Link from "next/link";
-import { FaUser, FaCalendarAlt } from "react-icons/fa";
+import React from 'react';
+import Image, { StaticImageData } from 'next/image';
+import Link from 'next/link';
+import { FaUser, FaCalendarAlt } from 'react-icons/fa';
 
 interface BlogCardProps {
   image: string | StaticImageData;
@@ -20,23 +20,23 @@ const BlogsCart: React.FC<BlogCardProps> = ({
   date,
   title,
   description,
-  link = "/blogs",
+  link,
 }) => {
   return (
-    <div className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 w-full max-w-sm mx-auto">
-      <Link href='/blogs/view' className="block">
+    <div className="group mx-auto w-full max-w-sm overflow-hidden rounded-xl bg-white shadow-md transition-shadow duration-300 hover:shadow-xl">
+      <Link href={link ?? '#'} className="block">
         {/* Image */}
-        <div className="relative h-48 md:h-64 w-full overflow-hidden">
+        <div className="relative h-48 w-full overflow-hidden md:h-64">
           <Image
             src={image}
             alt={title}
-            className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>
 
         {/* Content */}
         <div className="p-5">
-          <div className="flex items-center justify-between text-gray-500 text-sm mb-3">
+          <div className="mb-3 flex items-center justify-between text-sm text-gray-500">
             <div className="flex items-center gap-1">
               <FaCalendarAlt className="text-gray-400" />
               <span>{date}</span>
@@ -47,15 +47,15 @@ const BlogsCart: React.FC<BlogCardProps> = ({
             </div>
           </div>
 
-          <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-2 group-hover:text-primary transition-colors duration-300">
+          <h3 className="mb-2 text-lg font-semibold text-gray-800 transition-colors duration-300 group-hover:text-primary md:text-xl">
             {title}
           </h3>
 
-          <p className="text-gray-600 text-sm md:text-base line-clamp-3 h-[80px] md:h-[100px]">
+          <p className="line-clamp-3 h-[80px] text-sm text-gray-600 md:h-[100px] md:text-base">
             {description}
           </p>
 
-          <button className="mt-4 inline-block px-4 py-2 bg-primary text-white rounded-lg text-sm md:text-base font-medium hover:bg-primary/90 transition-colors duration-300">
+          <button className="mt-4 inline-block rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors duration-300 hover:bg-primary/90 md:text-base">
             Read More
           </button>
         </div>
