@@ -9,7 +9,8 @@ import img from '@/Data/Demo/thumb-1920-831859.jpg';
 import { Blog } from '@/app/admin/blog/type';
 import ContentFaqCard from '@/components/shared/ContentFaqCard';
 
-export default function BlogView({ data }: { data: Blog | undefined }) {
+export default async function BlogView({ data }: { data: Blog | undefined }) {
+  const blogs = await fetchBlogs(1, data?.id || 1);
   return (
     <div className="mt-10 w-full">
       {/* Back button */}
@@ -61,44 +62,41 @@ export default function BlogView({ data }: { data: Blog | undefined }) {
 
       {/* Related Blogs */}
       <div className="mb-16 mt-12 w-full">
-        <h3 className="mb-6 text-xl font-semibold text-primaryBlue md:text-2xl">Related Blogs</h3>
+        <h3 className="mb-6 text-xl font-semibold text-primaryBlue md:text-2xl">More Blogs</h3>
 
         <div className="mt-10 grid w-full grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-          <BlogsCart
-            image={img}
-            writerName="John Doe"
-            date="Aug 20, 2025"
-            title="Top 10 Summer Fashion Trends for 2025"
-            description="Discover the hottest summer fashion trends of 2025. From vibrant colors to stylish accessories, find out how to upgrade your wardrobe this season."
-          />
-          <BlogsCart
-            image={img}
-            writerName="John Doe"
-            date="Aug 20, 2025"
-            title="Top 10 Summer Fashion Trends for 2025"
-            description="Discover the hottest summer fashion trends of 2025..."
-          />
-          <BlogsCart
-            image={img}
-            writerName="Jane Smith"
-            date="Aug 18, 2025"
-            title="How to Style Your Accessories Like a Pro"
-            description="Learn how to choose and style accessories to elevate your outfits..."
-          />
-
-          <BlogsCart
-            image={img}
-            writerName="John Doe"
-            date="Aug 20, 2025"
-            title="Top 10 Summer Fashion Trends for 2025"
-            description="Discover the hottest summer fashion trends of 2025. From vibrant colors to stylish accessories, find out how to upgrade your wardrobe this season."
-          />
+          {blogs?.map((bg) => (
+            <BlogsCart
+              image={bg.thumbnail}
+              writerName={bg.name}
+              date={new Date(bg.date).toDateString()}
+              title={bg.title}
+              description={bg.description.replace(/<[^>]*>?/gm, '')}
+              key={bg.id}
+              link={`/blogs/${bg.slug}`}
+            />
+          ))}
         </div>
       </div>
 
-      {/* <div className="ml-[2.5%] mt-8 w-[95%] md:mt-16">
-        <ContentFaqCard content={data?.data?.content} faqs={data?.data?.faq?.faq || []} />
-      </div> */}
+      <div className="ml-[2.5%] mt-8 w-[95%] md:mt-16">
+        <ContentFaqCard
+          content={data?.content || '<p>Not Found!</p>'}
+          faqs={data?.faq?.faq || []}
+        />
+      </div>
     </div>
   );
 }
+
+const fetchBlogs = async (page: number, blogId: number) => {
+  try {
+    const res = await fetch(
+      `https://api.darkak.com.bd/api/public/blogs?page=${page}&limit=10&blogId=${blogId}`
+    );
+    const data = await res.json();
+    return (data.blogs || []) as Blog[];
+  } catch (err) {
+    console.error('Error fetching blogs:', err);
+  }
+};
