@@ -1,11 +1,17 @@
 import baseApi from '../../../redux/baseApi';
-import { BlogResponse, CrateBlogType } from './type';
+import { Blog, BlogResponse, CrateBlogType } from './type';
 
 export const adminBlogApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getBlogList: builder.query<BlogResponse, { page: number }>({
       query: ({ page }) => ({
         url: `/admin/blog?page=${page}&limit=10`,
+        method: 'GET',
+      }),
+    }),
+    getBlogById: builder.query<Blog, { id: number }>({
+      query: ({ id }) => ({
+        url: `/admin/blog/${id}`,
         method: 'GET',
       }),
     }),
@@ -32,11 +38,11 @@ export const adminBlogApi = baseApi.injectEndpoints({
       }),
     }),
 
-    updateBlogList: builder.mutation<any, any>({
+    updateBlog: builder.mutation<any, CrateBlogType & { id: string }>({
       query: (formData) => ({
-        url: `/admin/page/update-banner`,
-        method: 'POST',
-        body: formData,
+        url: `/admin/blog/${formData.id}`,
+        method: 'PUT',
+        body: { ...formData, id: undefined },
       }),
     }),
   }),
@@ -44,8 +50,9 @@ export const adminBlogApi = baseApi.injectEndpoints({
 
 export const {
   useGetBlogListQuery,
-  useUpdateBlogListMutation,
+  useUpdateBlogMutation,
   useGetBlogStatusChangeMutation,
   useGetBlogDeleteMutation,
   useGetBlogCreateMutation,
+  useGetBlogByIdQuery
 } = adminBlogApi;

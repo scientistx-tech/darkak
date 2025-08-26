@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import Image from 'next/image';
 import { FaUser, FaCalendarAlt, FaArrowLeft } from 'react-icons/fa';
@@ -9,9 +7,9 @@ import heroImg from '@/Data/Demo/thumb-1920-831859.jpg';
 import BlogsCart from '@/components/shared/BlogsCart';
 
 import img from '@/Data/Demo/thumb-1920-831859.jpg';
-import ContentFaqCard from '@/components/shared/ContentFaqCard';
+import { Blog } from '@/app/admin/blog/type';
 
-export default function BlogView() {
+export default function BlogView({ data }: { data: Blog | undefined }) {
   return (
     <div className="mt-10 w-full">
       {/* Back button */}
@@ -27,10 +25,10 @@ export default function BlogView() {
       {/* Hero Section */}
       <div className="w-full">
         <h1 className="mb-5 text-start text-2xl font-bold text-primaryBlue md:text-4xl">
-          Top 10 Summer Fashion Trends for 2025
+          {data?.title}
         </h1>
         <div className="relative h-72 w-full overflow-hidden rounded-xl shadow-lg md:h-[520px]">
-          <Image src={heroImg} alt="Blog Hero" className="h-full w-full object-cover" priority />
+          <Image src={data?.thumbnail||""} height={800} width={1300} alt="Blog Hero" className="h-full w-full object-cover" priority />
         </div>
       </div>
 
@@ -39,7 +37,7 @@ export default function BlogView() {
         <div className="flex items-center justify-between border-b pb-4 text-sm text-gray-500">
           <div className="flex items-center gap-2">
             <FaUser className="text-gray-400" />
-            <span>John Doe</span>
+            <span>{data?.name}</span>
           </div>
           <div className="flex items-center gap-2">
             <FaCalendarAlt className="text-gray-400" />
@@ -114,7 +112,6 @@ export default function BlogView() {
       {/* <div className="ml-[2.5%] mt-8 w-[95%] md:mt-16">
         <ContentFaqCard content={data?.data?.content} faqs={data?.data?.faq?.faq || []} />
       </div> */}
-
     </div>
   );
 }
