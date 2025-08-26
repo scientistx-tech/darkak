@@ -11,6 +11,7 @@ import {
 import Loader from '@/components/shared/Loader';
 import { toast } from 'react-toastify';
 import { LoaderCircle } from 'lucide-react';
+import Link from 'next/link';
 
 export default function BlogList() {
   const [messageApi, contextHolder] = message.useMessage();
@@ -96,9 +97,12 @@ export default function BlogList() {
                 )}
               </td>
               <td className="flex gap-3 px-4 py-3">
-                <button className="rounded-md bg-blue-500 px-3 py-1 text-white transition hover:bg-blue-600">
+                <Link
+                  href={`/admin/blog/${blog.id}`}
+                  className="rounded-md bg-blue-500 px-3 py-1 text-white transition hover:bg-blue-600"
+                >
                   <EditOutlined />
-                </button>
+                </Link>
                 <button
                   onClick={() => {
                     setSelectedBlogId(blog.id);
