@@ -25,6 +25,7 @@ export interface Blog {
   };
   date: string; // ISO date string
   published: boolean;
+  slug:string
 }
 
 export interface FAQ {
