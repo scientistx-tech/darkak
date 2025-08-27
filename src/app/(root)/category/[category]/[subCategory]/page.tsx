@@ -16,6 +16,7 @@ interface Category {
   content: string | null;
   sub_category: SubCategory[];
   sub_sub_category: SubSubCategory[];
+  slug:string
 }
 
 interface SubCategory {
@@ -30,6 +31,7 @@ interface SubCategory {
   faq: Record<string, unknown> | null;
   content: string | null;
   sub_sub_category: SubSubCategory[];
+  slug:string
 }
 
 interface SubSubCategory {
@@ -44,6 +46,7 @@ interface SubSubCategory {
   meta_keywords: MetaKeywords | null;
   faq: Record<string, unknown> | null;
   content: string | null;
+  slug:string
 }
 
 interface MetaKeywords {
@@ -55,8 +58,8 @@ export async function generateStaticParams() {
 
   const params = data.flatMap((category) =>
     category.sub_category.flatMap((subCategory) => ({
-      category: category.title?.split(' ').join('-'),
-      subCategory: subCategory.title?.split(' ').join('-'),
+      category: category.slug,
+      subCategory: subCategory.slug,
     }))
   );
 
