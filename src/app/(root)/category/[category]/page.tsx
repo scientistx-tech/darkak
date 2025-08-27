@@ -10,7 +10,7 @@ export async function generateMetadata({
 }) {
   const id = (await params).category;
   const category = (await params).category;
-  const response = await fetch(`https://api.darkak.com.bd/api/public/filter?categoryId=${slugToText(id)}`);
+  const response = await fetch(`https://api.darkak.com.bd/api/public/filter?categoryId=${id}`);
   const data = await response.json();
  // console.log(data);
   const meta = data?.category || {};
