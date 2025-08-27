@@ -2,50 +2,91 @@
 import React, { useState } from 'react';
 import { FaTrash, FaLink, FaEdit } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import {
+  useCreateUrlMutation,
+  useDeleteUrlMutation,
+  useGetUrlsQuery,
+  useUpdateUrlMutation,
+} from './urlApiServices';
+import Loader from '@/components/shared/Loader';
+import { toast } from 'react-toastify';
+import { Url } from './type';
 
 export default function Page() {
   const [oldUrl, setOldUrl] = useState('');
   const [newUrl, setNewUrl] = useState('');
-  const [redirects, setRedirects] = useState<{ id: number; oldUrl: string; newUrl: string }[]>([]);
+  const { data, isLoading, refetch } = useGetUrlsQuery();
   const [editId, setEditId] = useState<number | null>(null);
+  const [editUrl] = useUpdateUrlMutation();
+  const [deleteUrl] = useDeleteUrlMutation();
+  const [createUrl] = useCreateUrlMutation();
 
-  const handleAddOrUpdate = () => {
+  const handleAddOrUpdate = async () => {
     if (!oldUrl || !newUrl) return;
-
-    if (editId) {
-      // Update existing redirection
-      setRedirects(
-        redirects.map((r) =>
-          r.id === editId ? { ...r, oldUrl, newUrl } : r
-        )
-      );
-      setEditId(null);
-    } else {
-      // Add new redirection
-      setRedirects([...redirects, { id: Date.now(), oldUrl, newUrl }]);
-    }
-
-    setOldUrl('');
-    setNewUrl('');
-  };
-
-  const handleDelete = (id: number) => {
-    setRedirects(redirects.filter((r) => r.id !== id));
-    if (editId === id) {
-      setEditId(null);
+    const toastId = toast.loading('Please wait...');
+    try {
+      if (editId) {
+        await editUrl({ id: editId, new_url: newUrl, old_url: oldUrl }).unwrap();
+        setEditId(null);
+        refetch();
+      } else {
+        await createUrl({ new_url: newUrl, old_url: oldUrl }).unwrap();
+        refetch();
+      }
+      toast.update(toastId, {
+        render: 'Successful',
+        isLoading: false,
+        autoClose: 3000,
+        type: 'success',
+      });
       setOldUrl('');
       setNewUrl('');
+    } catch (error: any) {
+      toast.update(toastId, {
+        render: error?.data?.message,
+        isLoading: false,
+        autoClose: 3000,
+        type: 'error',
+      });
     }
   };
 
-  const handleEdit = (id: number) => {
-    const redirection = redirects.find((r) => r.id === id);
-    if (redirection) {
-      setOldUrl(redirection.oldUrl);
-      setNewUrl(redirection.newUrl);
-      setEditId(id);
+  const handleDelete = async (id: number) => {
+    const toastId = toast.loading('Please wait...');
+    try {
+      await deleteUrl({ id }).unwrap();
+      refetch();
+      toast.update(toastId, {
+        render: 'Successful',
+        isLoading: false,
+        autoClose: 3000,
+        type: 'success',
+      });
+      if (editId === id) {
+        setEditId(null);
+        setOldUrl('');
+        setNewUrl('');
+      }
+    } catch (error: any) {
+      toast.update(toastId, {
+        render: error?.data?.message,
+        isLoading: false,
+        autoClose: 3000,
+        type: 'error',
+      });
     }
   };
+
+  const handleEdit = (doc: Url) => {
+    if (doc) {
+      setOldUrl(doc.old_url);
+      setNewUrl(doc.new_url);
+      setEditId(doc.id);
+      window.scrollTo(0, 0);
+    }
+  };
+
+  if (isLoading) return <Loader />;
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-gray-100 to-gray-200 p-8">
@@ -104,14 +145,14 @@ export default function Page() {
               </tr>
             </thead>
             <tbody>
-              {redirects.length === 0 ? (
+              {data?.count === 0 ? (
                 <tr>
                   <td colSpan={4} className="py-6 text-center italic text-gray-500">
                     No redirections added yet
                   </td>
                 </tr>
               ) : (
-                redirects.map((r, index) => (
+                data?.urls?.map((r, index) => (
                   <motion.tr
                     key={r.id}
                     initial={{ opacity: 0, y: 10 }}
@@ -121,12 +162,12 @@ export default function Page() {
                   >
                     <td className="px-4 py-3">{index + 1}</td>
                     <td className="flex items-center gap-2 px-4 py-3 text-blue-600">
-                      <FaLink className="text-gray-500" /> {r.oldUrl}
+                      <FaLink className="text-gray-500" /> {r.old_url}
                     </td>
-                    <td className="px-4 py-3 text-green-600">{r.newUrl}</td>
-                    <td className="px-4 py-3 text-center flex gap-3 justify-center">
+                    <td className="px-4 py-3 text-green-600">{r.new_url}</td>
+                    <td className="flex justify-center gap-3 px-4 py-3 text-center">
                       <button
-                        onClick={() => handleEdit(r.id)}
+                        onClick={() => handleEdit(r)}
                         className="flex items-center gap-2 rounded-lg bg-yellow-500 px-4 py-2 text-white shadow transition-all hover:bg-yellow-600"
                       >
                         <FaEdit /> Edit
