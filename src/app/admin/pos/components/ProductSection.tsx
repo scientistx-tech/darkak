@@ -12,10 +12,37 @@ import { useGetBrandsQuery } from '@/redux/services/admin/adminBrandApis';
 import { useGetProductsQuery } from '@/redux/services/admin/adminProductApis';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
+import { IProduct } from '../type';
 
 const { Option } = Select;
 
-export default function ProductSection() {
+type ProductSectionProps = {
+  cart: {
+    productId: number;
+    title: string;
+    stock: number;
+    totalPrice: number;
+    quantity: number;
+    ae_sku_attr?: string;
+    options: {
+      optionId: number;
+      itemId: number;
+    }[];
+  }[];
+  addToCart: (
+    product: {
+      productId: number;
+      title: string;
+      stock: number;
+      totalPrice: number;
+      ae_sku_attr?: string;
+      options?: { optionId: number; itemId: number }[];
+    },
+    quantity?: number
+  ) => void;
+};
+
+export default function ProductSection({ cart, addToCart }: ProductSectionProps) {
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
   const [selectedSubCategory, setSelectedSubCategory] = useState<string | undefined>();
   const [selectedSubSubCategory, setSelectedSubSubCategory] = useState<string | undefined>();
@@ -226,7 +253,9 @@ export default function ProductSection() {
         <p className="col-span-full my-6 text-center text-gray-500">No products found</p>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {data?.data?.map((doc: any, i: number) => <PosProductCard data={doc} key={doc.id} />)}
+          {data?.data?.map((doc: IProduct, i: number) => (
+            <PosProductCard onPress={addToCart} data={doc} key={doc.id} />
+          ))}
         </div>
       )}
       {/* Product Grid */}
@@ -239,7 +268,7 @@ export default function ProductSection() {
           onShowSizeChange={setLimit}
           onChange={(p) => {
             setPage(p);
-           // handleShowData(); // Re-fetch on page change
+            // handleShowData(); // Re-fetch on page change
           }}
         />
       </div>

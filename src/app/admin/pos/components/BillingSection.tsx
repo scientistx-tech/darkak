@@ -6,7 +6,45 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
-export default function BillingSection() {
+type ProductSectionProps = {
+  cart: {
+    productId: number;
+    title: string;
+    stock: number;
+    totalPrice: number;
+    quantity: number;
+    ae_sku_attr?: string;
+    options: {
+      optionId: number;
+      itemId: number;
+    }[];
+  }[];
+  removeFromCart: (productId: number, options?: { optionId: number; itemId: number }[]) => void;
+  resetCart: () => void;
+  setCart: React.Dispatch<
+    React.SetStateAction<
+      {
+        productId: number;
+        title: string;
+        stock: number;
+        totalPrice: number;
+        quantity: number;
+        ae_sku_attr?: string;
+        options: {
+          optionId: number;
+          itemId: number;
+        }[];
+      }[]
+    >
+  >;
+};
+
+export default function BillingSection({
+  cart,
+  removeFromCart,
+  resetCart,
+  setCart,
+}: ProductSectionProps) {
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'wallet'>('cash');
   const [openHoldModal, setOpenHoldModal] = useState(false);
   const [openAddCustomerModal, setOpenAddCustomerModal] = useState(false);
@@ -15,11 +53,6 @@ export default function BillingSection() {
   const [selectedCustomer, setSelectedCustomer] = useState<string | undefined>();
   const [extraDiscount, setExtraDiscount] = useState<number>(0);
   const [couponDiscount, setCouponDiscount] = useState<number>(0);
-
-  const [products, setProducts] = useState([
-    { id: 1, name: 'Storage Large...', qty: 8, price: 480 },
-    { id: 2, name: 'Bronze floral...', qty: 1, price: 19 },
-  ]);
 
   const customer = [
     { value: '', label: 'Walking Customer' },
@@ -31,29 +64,19 @@ export default function BillingSection() {
     String(option?.children).toLowerCase().includes(input.toLowerCase());
 
   const handleQtyChange = (index: number, qty: number) => {
-    const updated = [...products];
-    updated[index].qty = qty;
-    setProducts(updated);
+    const updated = [...cart];
+    updated[index].quantity = qty;
+    setCart(updated);
   };
 
-  const handleDeleteProduct = (id: number) => {
-    setProducts(products.filter((p) => p.id !== id));
-  };
-
-  const getSubtotal = () => products.reduce((total, p) => total + p.qty * p.price, 0);
+  const getSubtotal = () => cart.reduce((total, p) => total + p.quantity * p.totalPrice, 0);
 
   const handlePlaceOrder = () => {
     message.success('Order placed successfully!');
   };
 
   const handleCancelOrder = () => {
-    setProducts([]);
     message.warning('Order has been canceled.');
-  };
-
-  const handleClearCart = () => {
-    setProducts([]);
-    message.info('Cart cleared.');
   };
 
   return (
@@ -105,7 +128,7 @@ export default function BillingSection() {
               <span className="mr-4 text-black">Phone:</span>0123456789
             </p>
           </div>
-          <Button danger onClick={handleClearCart}>
+          <Button danger onClick={resetCart}>
             Clear Cart
           </Button>
         </div>
@@ -117,25 +140,36 @@ export default function BillingSection() {
           <div>Delete</div>
         </div>
 
-        {products.map((item, idx) => (
-          <div key={item.id} className="grid grid-cols-4 items-center border-b py-2">
-            <div className="truncate">{item.name}</div>
-            <div>
-              <Input
-                type="number"
-                min={1}
-                value={item.qty}
-                onChange={(e) => handleQtyChange(idx, parseInt(e.target.value))}
-                className="w-20"
-              />
+        {cart?.map((item, idx) => (
+          <div key={idx} className="grid grid-cols-4 items-center border-b py-2">
+            <div className="truncate">{item.title}</div>
+
+            <div className="flex items-center gap-2 rounded-md border px-2 py-1">
+              <button
+                onClick={() => handleQtyChange(idx, Math.max(1, item.quantity - 1))}
+                className="px-2 text-lg"
+              >
+                −
+              </button>
+              <span>{item.quantity}</span>
+              <button
+                onClick={() => handleQtyChange(idx, Math.min(item.quantity + 1, item.stock))}
+                disabled={item.quantity >= item.stock} // disable when max reached
+                className={`px-2 text-lg ${item.quantity >= item.stock ? 'cursor-not-allowed opacity-50' : ''}`}
+              >
+                +
+              </button>
             </div>
-            <div className="font-medium text-gray-700">${(item.qty * item.price).toFixed(2)}</div>
+
+            <div className="font-medium text-gray-700">
+              ৳{(item.quantity * item.totalPrice).toFixed(2)}
+            </div>
             <div>
               <Button
                 danger
                 shape="circle"
                 icon={<DeleteOutlined />}
-                onClick={() => handleDeleteProduct(item.id)}
+                onClick={() => removeFromCart(item.productId, item.options)}
               />
             </div>
           </div>

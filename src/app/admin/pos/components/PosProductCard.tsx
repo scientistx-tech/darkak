@@ -3,24 +3,49 @@
 import React, { useState } from 'react';
 import { Modal, Button } from 'antd';
 import Image from 'next/image';
+import { IProduct } from '../type';
 
-const product = {
-  name: 'Waterproof Seat Protector',
-  price: 25,
-  stock: 'In stock',
-  image:
-    'data:image/jpeg;base64,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', // Replace with actual image path
-  sku: 'GNR5QQ',
-  category: 'Automotive',
-  brand: 'Electronic Store',
-  totalStock: 104,
-};
-
-export default function PosProductCard({ data }: { data: any }) {
+export default function PosProductCard({
+  data,
+  onPress,
+}: {
+  data: IProduct;
+  onPress: (
+    product: {
+      productId: number;
+      title: string;
+      stock: number;
+      totalPrice: number;
+      ae_sku_attr?: string;
+      options?: { optionId: number; itemId: number }[];
+    },
+    quantity?: number
+  ) => void;
+}) {
   const [open, setOpen] = useState(false);
-  const [qty, setQty] = useState(1);
+  const [qty, setQty] = useState(data.stock ? 1 : 0);
+  const [selectedOptions, setSelectedOptions] = useState<{
+    [itemId: number]: number;
+  }>({});
 
-  const totalPrice = qty * (data?.offerPrice || data?.price || 0);
+  const price = data?.price ?? 0;
+  const discount = data?.discount ?? 0;
+  const discountType = data?.discount_type ?? 'flat';
+
+  let finalPrice = price;
+
+  if (discountType === 'percentage') {
+    finalPrice = price - (price * discount) / 100;
+  } else if (discountType === 'flat') {
+    finalPrice = price - discount;
+  }
+  const optionprice =
+    data?.items
+      ?.flatMap((opt) => opt.options)
+      .filter((d) => Object.entries(selectedOptions).some(([key, val]) => val === d.id))
+      .reduce((acc, val) => acc + (val.price || 0), 0) || 0;
+
+  const subTotal = (finalPrice + optionprice) * qty;
 
   return (
     <>
@@ -31,13 +56,17 @@ export default function PosProductCard({ data }: { data: any }) {
       >
         {/* Hover quantity (visible on hover) */}
         <div className="absolute right-2 top-2 rounded-lg bg-primary px-4 py-2 font-semibold text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          {product.totalStock}
+          {data.stock}
         </div>
 
-        <img src={data?.thumbnail} alt={data?.meta_alt} className="mx-auto h-28 object-contain" />
+        <img
+          src={data?.thumbnail}
+          alt={data?.meta_alt || ''}
+          className="mx-auto h-28 object-contain"
+        />
         <div className="mt-3 text-center">
           <p className="text-sm font-medium text-gray-800">{data?.title}</p>
-          <p className="text-sm font-semibold text-blue-600">৳{data?.offerPrice || data?.price}</p>
+          <p className="text-sm font-semibold text-blue-600">৳{finalPrice.toFixed(2)}</p>
         </div>
       </div>
 
@@ -57,34 +86,83 @@ export default function PosProductCard({ data }: { data: any }) {
             <p className="mb-2 font-semibold">
               Total Stock: <span className="text-green-500">{data.stock}</span>
             </p>
-            <p className="text-lg font-bold text-blue-600">৳{data?.offerPrice || data?.price}</p>
+            <p className="text-lg font-bold text-blue-600">৳{finalPrice.toFixed(2)}</p>
+
+            {data?.items?.map((item, i: number) => (
+              <div key={item.id} className="mt-4 flex flex-col gap-4 md:flex-row">
+                <p className="text-sm font-medium">{item?.title}:</p>
+                <div className="flex flex-wrap gap-3">
+                  {item.options.map((option, idx: number) => {
+                    const isOutOfStock = Number(option.stock) <= 0;
+                    return (
+                      <div
+                        key={option.id}
+                        onClick={() => {
+                          if (isOutOfStock) return;
+                          setQty(1);
+                          setSelectedOptions((prev) => ({
+                            ...prev,
+                            [item.id]: option.id,
+                          }));
+                        }}
+                        className={`cursor-pointer rounded-full border-2 px-4 py-0.5 transition-colors duration-200 ${
+                          selectedOptions[item.id] === option.id
+                            ? 'border-primaryBlue bg-primaryBlue text-white shadow-2'
+                            : isOutOfStock
+                              ? 'cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400'
+                              : 'border-blue-300 bg-white text-primaryBlue'
+                        }`}
+                        title={isOutOfStock ? 'This option is stock out' : ''}
+                        style={isOutOfStock ? { pointerEvents: 'none' } : {}}
+                      >
+                        {option.title} {option.price ? `৳${option.price}` : ''}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
 
             <div className="mt-3 flex items-center gap-2">
               <label className="text-sm font-medium">Qty:</label>
               <div className="flex items-center gap-2 rounded-md border px-2 py-1">
                 <button
-                  onClick={() => setQty((prev) => Math.max(1, prev - 1))}
+                  onClick={() => setQty((prev) => Math.max(0, prev - 1))}
                   className="px-2 text-lg"
                 >
                   −
                 </button>
                 <span>{qty}</span>
-                <button onClick={() => setQty((prev) => prev + 1)} className="px-2 text-lg">
+                <button
+                  onClick={() => setQty((prev) => Math.min(prev + 1, data.stock))}
+                  disabled={qty >= data.stock} // disable when max reached
+                  className={`px-2 text-lg ${qty >= data.stock ? 'cursor-not-allowed opacity-50' : ''}`}
+                >
                   +
                 </button>
               </div>
-              <p className="ml-auto text-sm font-semibold">
-                Total Price: <span className="text-blue-600">৳{totalPrice.toFixed(2)}</span>
-              </p>
             </div>
-
+            <p className="my-4 ml-auto text-sm font-semibold">
+              Total Price: <span className="text-blue-600">৳{subTotal.toFixed(2)}</span>
+            </p>
             <Button
               type="primary"
               block
+              disabled={qty ? false : true}
               className="mt-5"
               onClick={() => {
-                console.log(`Add to cart ${qty}x ${product.name}`);
                 setOpen(false);
+                onPress({
+                  productId: data.id,
+                  stock: data.stock,
+                  title: data.title,
+                  totalPrice: finalPrice + optionprice,
+                  options: Object.entries(selectedOptions).map(([key, val]) => ({
+                    itemId: parseInt(key),
+                    optionId: val,
+                  })),
+                  //ae_sku_attr:data.ae
+                });
               }}
             >
               Add to cart
@@ -94,13 +172,13 @@ export default function PosProductCard({ data }: { data: any }) {
 
         <div className="mt-4 space-y-1 border-t pt-3 text-sm text-gray-600">
           <p>
-            <span className="font-medium">SKU:</span> {product.sku}
+            <span className="font-medium">SKU:</span> {data.code}
           </p>
           <p>
-            <span className="font-medium">Categories:</span> {product.category}
+            <span className="font-medium">Categories:</span> {data?.category?.title || 'N/A'}
           </p>
           <p>
-            <span className="font-medium">Brand:</span> {product.brand}
+            <span className="font-medium">Brand:</span> {data?.brand?.title || 'N/A'}
           </p>
         </div>
       </Modal>

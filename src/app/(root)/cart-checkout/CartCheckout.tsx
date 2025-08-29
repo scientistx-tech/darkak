@@ -230,6 +230,7 @@ const CartCheckout: React.FC = () => {
           cus_state: 'Bangladesh',
           ship_add2: address,
           ship_state: 'Bangladesh',
+          cartIds: productIds,
         }).unwrap();
 
         return (window.location.href = payData.url);

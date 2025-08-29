@@ -27,6 +27,7 @@ export interface SSLCommerzOrder {
   ship_country: string;
 
   order_id: string | number;
+  cartIds: string[] | undefined;
 }
 export interface SSLCommerzInitResponse {
   url: string; // The GatewayPageURL for redirect

@@ -538,7 +538,7 @@ const ProductList = () => {
                       </TableCell>
                       <TableCell className="">
                         <ButtonSelf
-                          // onClick={() => handleDelete(doc.id)}
+                          onClick={() => router.push(`/admin/pos/label?productId=${doc.id}`)}
                           className="mr-2 bg-red-50 p-1 text-blue-700"
                         >
                           <FaBarcode className="" />
