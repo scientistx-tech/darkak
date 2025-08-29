@@ -151,7 +151,7 @@ export default function Page() {
                 Product Code: <b>{data.code}</b>
               </p>
               {data.label_variants.map((doc) => (
-                <p>
+                <p key={doc.id}>
                   {doc.item.title}: <b>{doc.option.title}</b>
                 </p>
               ))}
