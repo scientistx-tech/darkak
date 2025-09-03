@@ -175,7 +175,16 @@ const CustomerTable = ({ data }: any) => {
                 <TableRow key={order.id} className="text-black">
                   <TableCell>{i + 1}</TableCell>
                   <TableCell>{order?.orderId}</TableCell>
-                  <TableCell>{order.date}</TableCell>
+
+                  <TableCell>
+                    {new Date(order.date).toLocaleString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </TableCell>
 
                   <TableCell>{order.order_type}</TableCell>
                   <TableCell>

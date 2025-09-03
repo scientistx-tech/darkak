@@ -413,7 +413,7 @@ export const getNavData = (data: any, vendorData: any) => [
         ],
       },
       {
-        title: 'Slider Adds',
+        title: 'Slider & Banner',
         url: '/admin/slider',
         accessKey: 'sliders',
         icon: BiSlider,
