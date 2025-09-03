@@ -143,7 +143,17 @@ const AllOrderList = () => {
                     <TableRow key={order.id} className="text-black dark:text-white">
                       <TableCell>{i + 1}</TableCell>
                       <TableCell>{order?.orderId}</TableCell>
-                      <TableCell>{order.date}</TableCell>
+
+                      <TableCell>
+                        {new Date(order.date).toLocaleString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </TableCell>
+
                       <TableCell className="flex items-center">
                         <div className="flex flex-col items-center gap-2">
                           <p>{order.name}</p>
