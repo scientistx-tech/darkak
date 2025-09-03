@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import SVG from "@/Data/Img/LoginPage.svg";
 import EmailInput from "./EmailInput";
 import { usePasswordResetMailMutation } from "@/redux/services/authApis";
@@ -20,6 +20,7 @@ const ForgotPasswordPage: React.FC = () => {
   const [timer, setTimer] = useState(60);
   const [resendDisabled, setResendDisabled] = useState(true);
   const [isOtpSent, setIsOtpSent] = useState(false);
+  const router = useRouter()
 
   const [sendOtp, { isLoading: sendingOtp }] = usePasswordResetMailMutation();
 
@@ -38,18 +39,19 @@ const ForgotPasswordPage: React.FC = () => {
     if (!email) return toast.info("Please enter your email.");
 
     try {
-      await sendOtp(email).unwrap();
+      const d = await sendOtp(email).unwrap();
       toast.success("Please check your email!");
       setIsOtpSent(true);
       setTimer(60);
       setResendDisabled(true);
+      router.push(`/auth/forgot-password?id=${d?.user?.id||""}`)
     } catch (error: any) {
       console.error(error);
       toast.error(error?.data?.message);
     }
   };
 
-  if (id && code)
+  if (id)
     return (
       <div className="flex h-screen items-center justify-center bg-primaryBlue">
 
@@ -99,8 +101,8 @@ const ForgotPasswordPage: React.FC = () => {
           <p className="text-[14px]">
             <button
               className={`font-medium text-secondary ${resendDisabled
-                  ? "cursor-not-allowed opacity-50"
-                  : "hover:bg-transparent hover:text-primary"
+                ? "cursor-not-allowed opacity-50"
+                : "hover:bg-transparent hover:text-primary"
                 }`}
               onClick={handleSendOtp}
               disabled={resendDisabled}

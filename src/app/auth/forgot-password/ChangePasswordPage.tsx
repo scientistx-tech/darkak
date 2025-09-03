@@ -12,7 +12,7 @@ const ChangePasswordPage: React.FC = () => {
   const router = useRouter();
 
   const id = searchParams.get("id");
-  const code = searchParams.get("code");
+  const [code, setCode] = useState("")
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -74,6 +74,17 @@ const ChangePasswordPage: React.FC = () => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="relative">
+          <label className="block text-sm font-medium">Verification Code</label>
+          <input maxLength={6}
+            type="text"
+            className="mt-1 w-full rounded border px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            required
+          />
+
+        </div>
         {/* New Password */}
         <div className="relative">
           <label className="block text-sm font-medium">New Password</label>
