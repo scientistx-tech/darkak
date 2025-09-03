@@ -43,16 +43,16 @@ const ForgotPasswordPage: React.FC = () => {
       setIsOtpSent(true);
       setTimer(60);
       setResendDisabled(true);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Failed to send OTP.");
+      toast.error(error?.data?.message);
     }
   };
 
   if (id && code)
     return (
       <div className="flex h-screen items-center justify-center bg-primaryBlue">
-       
+
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -64,12 +64,12 @@ const ForgotPasswordPage: React.FC = () => {
           </div>
         </motion.div>
 
-       
+
       </div>
     );
   return (
     <div className="flex h-screen items-center justify-center bg-primaryBlue">
-    
+
 
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 10 }}
@@ -87,9 +87,8 @@ const ForgotPasswordPage: React.FC = () => {
         <EmailInput value={email} onChange={setEmail} />
 
         <button
-          className={`my-4 w-[90%] rounded-lg bg-[#003084] py-2 font-semibold text-white transition hover:bg-[#00153B] md:w-[70%] ${
-            sendingOtp && "opacity-50"
-          }`}
+          className={`my-4 w-[90%] rounded-lg bg-[#003084] py-2 font-semibold text-white transition hover:bg-[#00153B] md:w-[70%] ${sendingOtp && "opacity-50"
+            }`}
           onClick={handleSendOtp}
           disabled={sendingOtp}
         >
@@ -99,11 +98,10 @@ const ForgotPasswordPage: React.FC = () => {
         {isOtpSent && (
           <p className="text-[14px]">
             <button
-              className={`font-medium text-secondary ${
-                resendDisabled
+              className={`font-medium text-secondary ${resendDisabled
                   ? "cursor-not-allowed opacity-50"
                   : "hover:bg-transparent hover:text-primary"
-              }`}
+                }`}
               onClick={handleSendOtp}
               disabled={resendDisabled}
             >
@@ -139,7 +137,7 @@ const ForgotPasswordPage: React.FC = () => {
         </div>
       </motion.div>
 
-      
+
     </div>
   );
 };
