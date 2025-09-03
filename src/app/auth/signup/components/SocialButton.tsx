@@ -1,10 +1,11 @@
-import { auth, provider, signInWithPopup } from '@/utils/firebase';
+import { auth, provider, signInWithPopup, fbProvider } from '@/utils/firebase';
 import { useDispatch } from 'react-redux';
 import { setUser } from '@/redux/slices/authSlice';
 import { toast } from 'react-toastify';
 import { convertFirebaseToAppUser } from '@/utils/convertFirebaseUser';
 import { FaGoogle, FaFacebookF, FaPhoneAlt } from 'react-icons/fa';
-import { useUserGoogleAuthenticationMutation, useGetUserQuery } from '@/redux/services/authApis';
+import { useUserGoogleAuthenticationMutation, useGetUserQuery, useUserFacebookAuthenticationMutation } from '@/redux/services/authApis';
+import { MdEmail } from 'react-icons/md';
 
 interface SocialButtonProps {
   signUpMedium: string;
@@ -14,6 +15,7 @@ interface SocialButtonProps {
 const SocialButton = ({ signUpMedium, setSignUpMedium }: SocialButtonProps) => {
   const dispatch = useDispatch();
   const [userGoogleAuthentication] = useUserGoogleAuthenticationMutation();
+  const [userFacebookAuthentication] = useUserFacebookAuthenticationMutation();
 
   const handleGoogleLogin = async () => {
     try {
@@ -34,8 +36,24 @@ const SocialButton = ({ signUpMedium, setSignUpMedium }: SocialButtonProps) => {
     }
   };
 
-  const handleFacebookLogin = () => {
-    toast.info('Facebook login not implemented yet.');
+
+  const handleFacebookLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, fbProvider);
+      const user = result.user;
+      const firebaseToken = await user.getIdToken();
+
+      const userValue = await userFacebookAuthentication({
+        token: firebaseToken,
+        name: user.displayName || 'Unknown User',
+      }).unwrap();
+
+      toast.success('Facebook login successful!');
+      dispatch(setUser(userValue));
+    } catch (error: any) {
+      toast.error('Facebook login failed!');
+      console.error(error);
+    }
   };
 
   const handlePhoneLogin = () => {
@@ -63,7 +81,7 @@ const SocialButton = ({ signUpMedium, setSignUpMedium }: SocialButtonProps) => {
     {
       text: `LOGIN WITH ${signUpMedium === 'phone' ? 'EMAIL' : 'PHONE'}`,
       color: 'bg-[#34A853] hover:bg-[#2e8b47]',
-      icon: <FaPhoneAlt size={20} />,
+      icon: signUpMedium === 'email' ? <FaPhoneAlt size={20} /> : <MdEmail size={20} />,
       onClick: handlePhoneLogin,
     },
   ];

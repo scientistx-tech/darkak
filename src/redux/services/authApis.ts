@@ -87,6 +87,13 @@ export const authApi = baseApi.injectEndpoints({
         method: 'POST',
       }),
     }),
+    userFacebookAuthentication: builder.mutation<AuthResponse, { token: string; name: string }>({
+      query: (body) => ({
+        url: `/auth/continue-with-facebook`,
+        body: body,
+        method: 'POST',
+      }),
+    }),
   }),
 });
 
@@ -102,4 +109,5 @@ export const {
   usePasswordResetMailMutation,
   useUserPassWordChangeMutation,
   useUserGoogleAuthenticationMutation,
+  useUserFacebookAuthenticationMutation
 } = authApi;

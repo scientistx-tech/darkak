@@ -6,6 +6,7 @@ import {
   GoogleAuthProvider,
   setPersistence,
   signInWithPopup,
+  FacebookAuthProvider,
 } from 'firebase/auth';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import { isSupported } from 'firebase/messaging'; // Check browser support
@@ -33,6 +34,7 @@ if (typeof window !== 'undefined') {
 }
 
 const provider = new GoogleAuthProvider();
+const fbProvider = new FacebookAuthProvider();
 
 let messaging: ReturnType<typeof getMessaging> | null = null;
 
@@ -67,4 +69,4 @@ const getFCMToken = async (): Promise<string | null> => {
   }
 };
 
-export { auth, provider, signInWithPopup, getFCMToken, onMessage };
+export { auth, provider, signInWithPopup, getFCMToken, onMessage, fbProvider };
