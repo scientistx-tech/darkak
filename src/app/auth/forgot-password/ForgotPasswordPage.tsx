@@ -40,11 +40,13 @@ const ForgotPasswordPage: React.FC = () => {
 
     try {
       const d = await sendOtp(email).unwrap();
-      toast.success("Please check your email!");
+      toast.success("Please check your email/sms!");
       setIsOtpSent(true);
       setTimer(60);
       setResendDisabled(true);
-      router.push(`/auth/forgot-password?id=${d?.user?.id||""}`)
+      if (email?.length == 11) {
+        router.push(`/auth/forgot-password?id=${d?.user?.id || ""}`)
+      }
     } catch (error: any) {
       console.error(error);
       toast.error(error?.data?.message);
