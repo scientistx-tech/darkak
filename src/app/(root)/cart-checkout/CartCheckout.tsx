@@ -27,14 +27,14 @@ import getSeoData from '../getSeoData';
 
 const CartCheckout: React.FC = () => {
   const lang = useSelector((state: RootState) => state.language.language);
-
+  const user = useSelector((state: RootState) => state.auth.user);
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod');
-  const [fullName, setFullName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [division, setDivision] = useState('');
-  const [address, setAddress] = useState('');
-  const [district, setDistrict] = useState('');
+  const [fullName, setFullName] = useState(user?.name || "");
+  const [phone, setPhone] = useState<any>(user?.phone || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [division, setDivision] = useState(user?.address?.division || "");
+  const [address, setAddress] = useState<any>(user?.address?.area || "");
+  const [district, setDistrict] = useState(user?.address?.district || "");
   const [subDistrict, setSubDistrict] = useState('');
   const [area, setArea] = useState('');
   const [agree, setAgree] = useState(true);
@@ -50,7 +50,7 @@ const CartCheckout: React.FC = () => {
   const [cartUpdate] = useUpdateCartMutation();
   const [applyCoupon] = useCheckCouponCodeMutation();
 
-  const user = useSelector((state: RootState) => state.auth.user);
+
 
   const { data, isLoading, isError, refetch } = useGetMyCartQuery();
   const [createOrder] = useOrderCartProductsMutation();
@@ -249,8 +249,8 @@ const CartCheckout: React.FC = () => {
   const divisionOptions = BD_Division.divisions;
   const districtOptions = division
     ? BD_District.districts.filter(
-        (d) => d.division_id === divisionOptions.find((div) => div.name === division)?.id
-      )
+      (d) => d.division_id === divisionOptions.find((div) => div.name === division)?.id
+    )
     : [];
 
   const handleApplyCoupon = async () => {
@@ -324,11 +324,10 @@ const CartCheckout: React.FC = () => {
 
           <div className="mt-5 flex w-full justify-evenly rounded border border-primaryBlue bg-[#E6EFFF] px-2 py-1 transition-all duration-500 md:w-[90%] md:px-3 md:py-2">
             <button
-              className={`flex items-center gap-2 rounded px-3 py-1 font-medium transition-all duration-300 md:px-3 md:py-1.5 ${
-                paymentMethod === 'cod'
-                  ? 'bg-primaryBlue text-white'
-                  : 'text-black hover:bg-slate-50 hover:text-primaryBlue'
-              }`}
+              className={`flex items-center gap-2 rounded px-3 py-1 font-medium transition-all duration-300 md:px-3 md:py-1.5 ${paymentMethod === 'cod'
+                ? 'bg-primaryBlue text-white'
+                : 'text-black hover:bg-slate-50 hover:text-primaryBlue'
+                }`}
               onClick={() => setPaymentMethod('cod')}
             >
               {paymentMethod === 'cod' && <CheckOutlined className="text-xl" />}
@@ -336,11 +335,10 @@ const CartCheckout: React.FC = () => {
             </button>
 
             <button
-              className={`flex items-center gap-2 rounded px-3 py-1.5 font-medium transition-all duration-300 ${
-                paymentMethod === 'online'
-                  ? 'bg-primaryBlue text-white'
-                  : 'text-black hover:bg-slate-50 hover:text-primaryBlue'
-              }`}
+              className={`flex items-center gap-2 rounded px-3 py-1.5 font-medium transition-all duration-300 ${paymentMethod === 'online'
+                ? 'bg-primaryBlue text-white'
+                : 'text-black hover:bg-slate-50 hover:text-primaryBlue'
+                }`}
               onClick={() => setPaymentMethod('online')}
             >
               {paymentMethod === 'online' && <CheckOutlined className="text-xl" />}

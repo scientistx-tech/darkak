@@ -9,7 +9,7 @@ import { useGetMyReviewsQuery } from "@/redux/services/client/order";
 export default function ReviewPage() {
   const { data, refetch } = useGetMyReviewsQuery({
     page: 1,
-    limit: 10,
+    limit: 4,
   });
   return (
     <div className="w-full">

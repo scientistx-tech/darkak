@@ -6,6 +6,7 @@ import { useGetMyOrdersQuery, useGetOrderDetailsQuery } from '@/redux/services/c
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import { Pagination } from 'antd';
 
 const steps = [
   {
@@ -65,8 +66,8 @@ export default function TrackOrder() {
   const isBn = lang === 'bn';
 
   const [orderId, setOrderId] = useState<number | undefined>(undefined);
-  const [page] = useState(1);
-  const [limit] = useState(1000);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
 
   const { data: ordersData } = useGetMyOrdersQuery({ page, limit });
 
@@ -103,9 +104,8 @@ export default function TrackOrder() {
               <div
                 key={item.id}
                 onClick={() => setOrderId(item.orderId)}
-                className={`flex cursor-pointer items-center rounded-xl p-4 transition hover:shadow-lg ${
-                  isActive ? 'bg-blue-100 ring-2 ring-primaryBlue' : 'bg-white shadow-md'
-                }`}
+                className={`flex cursor-pointer items-center rounded-xl p-4 transition hover:shadow-lg ${isActive ? 'bg-blue-100 ring-2 ring-primaryBlue' : 'bg-white shadow-md'
+                  }`}
               >
                 <Image
                   src={item.product.thumbnail}
@@ -116,9 +116,9 @@ export default function TrackOrder() {
                 />
                 <div className="ml-4">
                   <h3 className="text-md font-semibold">
-                     {item.product.title.length > 27
-                  ? item.product.title.substring(0, 27) + '...'
-                  : item.product.title}
+                    {item.product.title.length > 27
+                      ? item.product.title.substring(0, 27) + '...'
+                      : item.product.title}
                   </h3>
                   <p className="text-sm text-gray-500">
                     {item.quantity} {item.product.unit} / {item.product.price}
@@ -127,6 +127,20 @@ export default function TrackOrder() {
               </div>
             );
           })}
+      </div>
+      <div className="flex justify-center mt-6">
+        <Pagination
+          current={page}
+          pageSize={limit}
+          total={ordersData?.totalPages || 0}
+          onChange={(p) => {
+            setPage(p);
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // scroll to top on page change
+          }}
+          showSizeChanger={false}
+          showQuickJumper
+          className="ant-pagination"
+        />
       </div>
 
       {/* Step Tracker */}
@@ -147,18 +161,16 @@ export default function TrackOrder() {
                 className="relative flex w-28 flex-shrink-0 flex-col items-center md:w-36"
               >
                 <div
-                  className={`flex h-10 w-10 items-center justify-center rounded-full border-4 md:h-14 md:w-14 ${
-                    index <= activeStep
-                      ? 'border-primaryBlue bg-primaryBlue text-white'
-                      : 'border-gray-300 bg-gray-300 text-gray-500'
-                  }`}
+                  className={`flex h-10 w-10 items-center justify-center rounded-full border-4 md:h-14 md:w-14 ${index <= activeStep
+                    ? 'border-primaryBlue bg-primaryBlue text-white'
+                    : 'border-gray-300 bg-gray-300 text-gray-500'
+                    }`}
                 >
                   ✓
                 </div>
                 <h4
-                  className={`mt-2 text-center text-xs font-semibold md:text-sm ${
-                    index <= activeStep ? 'text-primaryBlue' : 'text-gray-400'
-                  }`}
+                  className={`mt-2 text-center text-xs font-semibold md:text-sm ${index <= activeStep ? 'text-primaryBlue' : 'text-gray-400'
+                    }`}
                 >
                   {step.title}
                 </h4>
@@ -168,9 +180,8 @@ export default function TrackOrder() {
 
                 {index !== localizedSteps.length - 1 && (
                   <div
-                    className={`absolute right-[-47%] top-7 hidden h-1 md:block ${
-                      index < activeStep ? 'bg-primaryBlue' : 'bg-gray-300'
-                    }`}
+                    className={`absolute right-[-47%] top-7 hidden h-1 md:block ${index < activeStep ? 'bg-primaryBlue' : 'bg-gray-300'
+                      }`}
                     style={{ width: '100px' }}
                   />
                 )}

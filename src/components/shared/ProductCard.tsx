@@ -53,7 +53,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
       {/* Discount badge */}
       {product.discount > 0 && (
         <div className="absolute left-0 top-5 z-20 rounded-r-full bg-secondaryBlue px-4 py-1 text-center text-xs font-semibold text-secondaryWhite">
-          {Math.round(product.discount)}%
+          {Math.round(product.discount)}{product.discount_type === "flat" ? "৳" : "%"}
           <br />
           {lang === 'bn' ? 'ছাড়' : 'OFF'}
         </div>
@@ -64,6 +64,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
         productId={product.id}
         slug={product.slug}
         hovered={hovered}
+        image={product.thumbnail}
+        title={product.title}
         success={success}
       ></RightIcons>
 
@@ -75,11 +77,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
             setActiveImage((activeImage + 1) % product.Image.length);
           }, 1600);
         }}
-        // onClick={() => {
-        //   // window.open(`/product/${product.slug}`, "_blank");
-        //   router.push(`/product/${product.slug}`);
-        //   if (setIsOpen) setIsOpen(false);
-        // }}
+      // onClick={() => {
+      //   // window.open(`/product/${product.slug}`, "_blank");
+      //   router.push(`/product/${product.slug}`);
+      //   if (setIsOpen) setIsOpen(false);
+      // }}
       >
         {/* Polygon background behind the image */}
         <div
@@ -108,11 +110,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
           <div
             key={i}
             onClick={() => setActiveImage(i)}
-            className={`h-2 w-4 cursor-pointer rounded-full transition-all duration-300 hover:bg-secondaryBlue ${
-              i === activeImage
+            className={`h-2 w-4 cursor-pointer rounded-full transition-all duration-300 hover:bg-secondaryBlue ${i === activeImage
                 ? 'w-8 bg-secondaryBlue'
                 : 'border-[1px] border-secondaryLiteBlue bg-secondaryWhite'
-            }`}
+              }`}
           />
         ))}
       </div>

@@ -118,13 +118,33 @@ const ProductsSection = ({
 
   // Handler to receive filter changes from LeftSidebar
   const handleSidebarFilters = (filters: any) => {
+    //console.log(filters);
+
     setSidebarFilters((prev: any) => {
-      // Merge, but avoid duplicate params (prefer new filters, but keep sort)
-      const merged = { ...prev, ...filters };
-      if (prev.sort || sortBy) merged.sort = prev.sort || sortBy || '';
+      const merged = {
+        ...prev,
+        ...filters,
+      };
+
+      // Only store lowPrice & highPrice if both are provided
+      if (filters.lowPrice != null && filters.highPrice != null) {
+        merged.lowPrice = filters.lowPrice;
+        merged.highPrice = filters.highPrice;
+      } else {
+        // If one is missing, remove both to avoid inconsistent range
+        delete merged.lowPrice;
+        delete merged.highPrice;
+      }
+
+      // Preserve sorting
+      if (prev.sort || sortBy) {
+        merged.sort = prev.sort || sortBy || "";
+      }
+
       return merged;
     });
   };
+
 
   //console.log(sidebarFilters, 'sidebar filter in psection');
 

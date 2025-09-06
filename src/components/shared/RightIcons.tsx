@@ -17,6 +17,8 @@ interface RightIconsProps {
   success: () => void;
   productId: number | string;
   slug: string;
+  image: string;
+  title: string
 }
 
 export default function RightIcons({
@@ -24,6 +26,8 @@ export default function RightIcons({
   success,
   productId,
   slug,
+  image,
+  title
 }: RightIconsProps) {
   const [addToWishList, { isLoading }] = useAddToWishListMutation();
   const router = useRouter();
@@ -84,39 +88,53 @@ export default function RightIcons({
       </Link>
 
       <Tooltip
-        className=""
         placement="bottomRight"
         color="#5694FF"
         title={
           <div className="flex gap-3 p-1 text-white">
+            {/* Facebook Share */}
             <a
-              href="https://facebook.com"
+              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                `https://darkak.com.bd/product/${slug}`
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
             >
               <FaFacebook className="text-lg transition-transform hover:scale-125 hover:text-white" />
             </a>
+
+            {/* Pinterest Share */}
             <a
-              href="https://pinterest.com"
+              href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(
+                `https://darkak.com.bd/product/${slug}`
+              )}&media=${encodeURIComponent(
+                image ?? "" // replace imageUrl with your product image if available
+              )}&description=${encodeURIComponent(title ?? "Check this product")}`}
               target="_blank"
               rel="noopener noreferrer"
             >
               <FaPinterest className="text-lg transition-transform hover:scale-125 hover:text-white" />
             </a>
+
+            {/* Twitter (X) Share */}
             <a
-              href="https://twitter.com"
+              href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(
+                `https://darkak.com.bd/product/${slug}`
+              )}&text=${encodeURIComponent(title ?? "Check this product!")}`}
               target="_blank"
               rel="noopener noreferrer"
             >
               <FaXTwitter className="text-lg transition-transform hover:scale-125 hover:text-white" />
             </a>
+
+            {/* Copy Link */}
             <div
               className="cursor-pointer text-lg transition-transform hover:scale-125 hover:text-white"
               onClick={() => {
                 navigator.clipboard.writeText(
-                  `${window.location.href}/product/${slug}`,
+                  `https://darkak.com.bd/product/${slug}`
                 );
-                success();
+                success(); // your toast/snackbar
               }}
             >
               <FaLink />
@@ -126,6 +144,7 @@ export default function RightIcons({
       >
         <FaRandom className="cursor-pointer transition-all duration-300 hover:scale-110 hover:text-primaryBlue" />
       </Tooltip>
+
     </motion.div>
   );
 }

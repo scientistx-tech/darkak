@@ -1,5 +1,7 @@
 // types/orderProductData.ts
 
+import { Review } from './myReviewsTypes';
+
 export interface OrderProductData {
   total: number;
   page: number;
@@ -78,10 +80,11 @@ export interface Product {
   brandId: number;
   userId: number;
   date: string;
+  review: Review[];
 }
 
 export interface ReturnRequest {
-  returened_method: string; 
+  returened_method: string;
   message: string;
   orderItemId: number;
   files: {

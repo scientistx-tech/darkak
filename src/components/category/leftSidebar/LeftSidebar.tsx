@@ -104,7 +104,7 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
   // Ref for auto-scroll to top of sidebar on filter change
   const sidebarRef = React.useRef<HTMLDivElement>(null);
 
-  console.log('props', props);
+  //console.log('props', props);
 
   const handleOpenClose = () => {
     setOpen((pre) => !pre);
@@ -302,8 +302,8 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
   // Filter brands by search
   const filteredBrands = Array.isArray(brandsData?.data)
     ? brandsData.data.filter((brand: any) =>
-        brand.title.toLowerCase().includes(brandSearch.toLowerCase())
-      )
+      brand.title.toLowerCase().includes(brandSearch.toLowerCase())
+    )
     : [];
   const visibleBrands = showAllBrands ? filteredBrands : filteredBrands.slice(0, 10);
 
@@ -336,8 +336,8 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
       available: availability,
       warranty,
       region,
-      lowPrice: lowPrice === '' ? undefined : Number(lowPrice),
-      highPrice: highPrice === '' ? undefined : Number(highPrice),
+      lowPrice: !lowPrice  ? "" : Number(lowPrice),
+      highPrice: !highPrice  ? "" : Number(highPrice),
       // Add more if needed
     };
 
@@ -366,6 +366,7 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
     <div ref={sidebarRef} className="flex flex-col gap-y-6">
       <Price
         onPriceChange={({ lowPrice, highPrice }) => {
+
           setLowPrice(lowPrice);
           setHighPrice(highPrice);
         }}
@@ -524,8 +525,8 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
         options={regionOptions}
         selected={region}
         onChange={handleChangeRegion}
-        // showSeeMore={true}
-        // onSeeMore={() => alert("Load more storage options")}
+      // showSeeMore={true}
+      // onSeeMore={() => alert("Load more storage options")}
       />
     </div>
   );

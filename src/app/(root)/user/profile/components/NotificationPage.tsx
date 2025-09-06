@@ -1,24 +1,34 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useGetNotificationsQuery } from '@/redux/services/client/notification';
-
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import { Pagination } from 'antd';
 
 export default function NotificationPage() {
   const lang = useSelector((state: RootState) => state.language.language);
+  const [page, setPage] = useState(1);
+  const pageSize = 10; // ✅ 10 notifications per page
 
-  const { data, isLoading, isError, error, refetch } = useGetNotificationsQuery();
+  const { data, isLoading, isError, refetch } = useGetNotificationsQuery();
 
-  const [notifications, setNotifications] = React.useState(data?.notification || []);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [paginatedData, setPaginatedData] = useState<any[]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (data?.notification) {
       setNotifications(data.notification);
     }
   }, [data]);
+
+  useEffect(() => {
+    // Slice notifications based on current page
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    setPaginatedData(notifications.slice(start, end));
+  }, [page, notifications]);
 
   const handleDelete = (id: number) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
@@ -39,7 +49,7 @@ export default function NotificationPage() {
       {isError && (
         <p className="text-center text-red-500">
           {lang === 'bn' ? 'বিজ্ঞপ্তি লোড করতে ব্যর্থ হয়েছে।' : 'Failed to load notifications.'}
-          <button onClick={refetch} className="underline">
+          <button onClick={refetch} className="underline ml-2">
             {lang === 'bn' ? 'আবার চেষ্টা করুন' : 'Try again'}
           </button>
         </p>
@@ -53,7 +63,7 @@ export default function NotificationPage() {
 
       <div className="space-y-4">
         {!isLoading &&
-          notifications.map((notification) => (
+          paginatedData.map((notification) => (
             <NotificationComponent
               key={notification.id}
               image={notification.image}
@@ -63,6 +73,22 @@ export default function NotificationPage() {
             />
           ))}
       </div>
+
+      {/* ✅ Pagination */}
+      {notifications.length > pageSize && (
+        <div className="mt-6 flex justify-center">
+          <Pagination
+            current={page}
+            pageSize={pageSize}
+            total={notifications.length}
+            onChange={(p) => {
+              setPage(p)
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            showSizeChanger={false} // optional, disable pageSize change
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -75,12 +101,19 @@ interface NotificationProps {
   onDelete: () => void;
 }
 
-const NotificationComponent: React.FC<NotificationProps> = ({ image, name, message, onDelete }) => {
+const NotificationComponent: React.FC<NotificationProps> = ({
+  image,
+  name,
+  message,
+}) => {
   return (
     <div className="flex items-center justify-between rounded-2xl border border-[#cfd8dc] bg-white/70 p-4 shadow-md backdrop-blur-lg transition-all hover:scale-[1.02] hover:shadow-xl">
       <div className="flex items-center gap-5">
         <Image
-          src={image || 'https://cdn.pixabay.com/photo/2015/12/16/17/41/bell-1096280_1280.png'} // fallback image
+          src={
+            image ||
+            'https://cdn.pixabay.com/photo/2015/12/16/17/41/bell-1096280_1280.png'
+          }
           alt={name}
           width={70}
           height={70}
@@ -91,17 +124,6 @@ const NotificationComponent: React.FC<NotificationProps> = ({ image, name, messa
           <p className="text-gray-500">{message}</p>
         </div>
       </div>
-
-      {/* Uncomment if you want a delete button */}
-      {/* <button
-        onClick={onDelete}
-        className="group relative rounded-full bg-red-500 p-3 text-white transition-all hover:bg-red-600"
-      >
-        <FaTrash size={18} />
-        <span className="absolute right-full mr-2 hidden rounded-md bg-black px-2 py-1 text-xs text-white group-hover:block">
-          Delete
-        </span>
-      </button> */}
     </div>
   );
 };

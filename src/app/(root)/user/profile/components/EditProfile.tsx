@@ -77,13 +77,16 @@ export default function EditProfile({ refetch, data }: any) {
   };
 
   const handleSubmit = async () => {
+    if (profile.maritalStatus === "married" && !profile.anniversary) {
+      return toast.info("Anniversary date is required")
+    }
     try {
       await updateUser({
-        name: profile.name,
-        phone: profile.phone,
-        dob: profile.dob,
-        gender: profile.gender,
-        marital_status: profile.maritalStatus,
+        name: profile.name || undefined,
+        phone: profile.phone || undefined,
+        dob: profile.dob || undefined,
+        gender: profile.gender || undefined,
+        marital_status: profile.maritalStatus || undefined,
         anniversary_date:
           profile.maritalStatus === 'single'
             ? undefined
@@ -93,9 +96,9 @@ export default function EditProfile({ refetch, data }: any) {
       }).unwrap();
       refetch();
       toast.success('Profile Updated Successfully!');
-    } catch (err) {
+    } catch (err: any) {
       console.error('Update Failed:', err);
-      toast.error('Failed to update profile.');
+      toast.error(err?.data?.message);
     }
   };
 
@@ -146,9 +149,9 @@ export default function EditProfile({ refetch, data }: any) {
       await updateUserAddress(finalAddress).unwrap();
       refetch();
       toast.success('Address updated successfully!');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Address update failed:', error);
-      toast.error('Failed to update address.');
+      toast.error(error?.data?.message);
     }
   };
 
@@ -210,8 +213,9 @@ export default function EditProfile({ refetch, data }: any) {
         />
         {profile.maritalStatus === 'married' && (
           <InputField
-            label={lang === 'bn' ? 'বিবাহ বার্ষিকী' : 'Anniversary Date'}
+            label={lang === 'bn' ? 'বিবাহ বার্ষিকী*' : 'Anniversary Date*'}
             type="date"
+
             value={profile.anniversary}
             onChange={(value) => handleChange('anniversary', value)}
           />

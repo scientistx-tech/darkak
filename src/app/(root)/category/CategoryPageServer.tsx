@@ -32,6 +32,7 @@ export default function CategoryPageServer({ searchPage }: { searchPage?: boolea
   const search = searchParams.get('search');
 
   // Add currentPage to sidebarFilters before calling useGetAllProductsQuery
+  //console.log(sidebarFilters)
   const filtersWithPageAndLimit = {
     ...sidebarFilters,
     page: String(visibleCount),
@@ -67,7 +68,7 @@ export default function CategoryPageServer({ searchPage }: { searchPage?: boolea
           <Link className="text-primary underline" href={'/'}>
             {lang === 'bn' ? 'হোম' : 'Home'}
           </Link>
-          <ArrowRightIcon />
+          /
           {lang === 'bn' ? 'ক্যাটাগরি' : 'Category'}
         </div>
       )}
