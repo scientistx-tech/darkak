@@ -19,7 +19,7 @@ import ButtonSelf from '../../../admin/components/Button';
 import { CiCirclePlus } from 'react-icons/ci';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FaBarcode, FaEdit, FaEye, FaTrashAlt } from 'react-icons/fa';
+import { FaBarcode, FaEdit, FaEye, FaTrashAlt, FaRedoAlt } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import Pagination from '@/components/shared/Pagination';
 import RequireAccess from '@/components/Layouts/RequireAccess';
@@ -452,7 +452,7 @@ const RejectedProductList = () => {
                         </p>
                       </TableCell>
                       <TableCell className="">
-                        {/* <ButtonSelf
+                        <ButtonSelf
                           onClick={async () => {
                             try {
                               const res = await restockProductRequest({
@@ -466,12 +466,12 @@ const RejectedProductList = () => {
                               toast.error(error?.data?.message || 'Failed Product Restock Request');
                             }
                           }}
-                          className="mr-2 border border-green-700 bg-blue-50 p-1 text-green-700 hover:bg-blue-100"
+                          className="mr-2 bg-blue-50 p-1 text-green-700 hover:bg-blue-100"
                         >
-                          Approved Request
-                        </ButtonSelf> */}
+                          <FaRedoAlt />
+                        </ButtonSelf>
 
-                         <>
+                        <>
                           <Button
                             type="default"
                             onClick={() => {
@@ -485,9 +485,7 @@ const RejectedProductList = () => {
                         </>
 
                         <ButtonSelf
-                          onClick={() =>
-                            router.push(`/seller/product/edit/${doc.id}`)
-                          }
+                          onClick={() => router.push(`/seller/product/edit/${doc.id}`)}
                           className="mr-2 bg-green-50 p-1 text-green-700"
                         >
                           <FaEdit className="" />
