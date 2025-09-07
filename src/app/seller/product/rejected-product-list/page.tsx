@@ -1,5 +1,5 @@
-"use client";
-import { Skeleton } from "@/components/ui/skeleton";
+'use client';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -7,28 +7,28 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import Image from "next/image";
-import * as Switch from "@radix-ui/react-switch";
-import React, { useEffect, useState } from "react";
-import { Button, Modal } from "antd";
+} from '@/components/ui/table';
+import Image from 'next/image';
+import * as Switch from '@radix-ui/react-switch';
+import React, { useEffect, useState } from 'react';
+import { Button, Modal } from 'antd';
 
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import ButtonSelf from "../../../admin/components/Button";
-import { CiCirclePlus } from "react-icons/ci";
+import { toast } from 'react-toastify';
+import * as yup from 'yup';
+import ButtonSelf from '../../../admin/components/Button';
+import { CiCirclePlus } from 'react-icons/ci';
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { FaBarcode, FaEdit, FaEye, FaTrashAlt } from "react-icons/fa";
-import { useSelector } from "react-redux";
-import Pagination from "@/components/shared/Pagination";
-import RequireAccess from "@/components/Layouts/RequireAccess";
-import { useGetBrandsSellerQuery } from "@/redux/services/seller/sellerBrandsApis";
+import { useRouter, useSearchParams } from 'next/navigation';
+import { FaBarcode, FaEdit, FaEye, FaTrashAlt } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
+import Pagination from '@/components/shared/Pagination';
+import RequireAccess from '@/components/Layouts/RequireAccess';
+import { useGetBrandsSellerQuery } from '@/redux/services/seller/sellerBrandsApis';
 import {
   useGetCategoriesSellerQuery,
   useGetSubCategoriesSellerQuery,
   useGetSubSubCategoriesSellerQuery,
-} from "@/redux/services/seller/sellerCategoryApis";
+} from '@/redux/services/seller/sellerCategoryApis';
 import {
   useCreatePorductRequestToAdminMutation,
   useCreateRestockRequestToAdminMutation,
@@ -39,23 +39,20 @@ import {
   useUpdateDraftStatusSellerMutation,
   useUpdateFeatureStatusSellerMutation,
   useUpdateTodaysDealStatusSellerMutation,
-} from "@/redux/services/seller/sellerProductApis";
+} from '@/redux/services/seller/sellerProductApis';
 
 const RejectedProductList = () => {
   const searchParams = useSearchParams();
-  const initialPage = Number(searchParams.get("page")) || 1;
+  const initialPage = Number(searchParams.get('page')) || 1;
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [queryParams, setQueryParams] = useState({});
-  const [selectedBrandId, setSelectedBrandId] = useState<string>("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
-  const [selectedSubCategoryId, setSelectedSubCategoryId] =
-    useState<string>("");
-  const [selectedSubSubCategoryId, setSelectedSubSubCategoryId] =
-    useState<string>("");
-  const [selectedStock, setSelectedStock] = useState<string>("");
+  const [selectedBrandId, setSelectedBrandId] = useState<string>('');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
+  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string>('');
+  const [selectedSubSubCategoryId, setSelectedSubSubCategoryId] = useState<string>('');
+  const [selectedStock, setSelectedStock] = useState<string>('');
 
-  const { data, isLoading, error, refetch } =
-    useGetRejectedProductsSellerQuery(queryParams);
+  const { data, isLoading, error, refetch } = useGetRejectedProductsSellerQuery(queryParams);
 
   const { data: brandsData } = useGetBrandsSellerQuery({});
 
@@ -85,13 +82,11 @@ const RejectedProductList = () => {
   const [deleteProduct] = useDeleteProductSellerMutation();
   const [restockProductRequest] = useCreateRestockRequestToAdminMutation();
 
-  const [selectedProductId, setSelectedProductId] = useState<number | null>(
-    null,
-  );
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [search, setSearch] = useState("");
-  const [code, setCode] = useState("");
-  const [sku, setSku] = useState("");
+  const [search, setSearch] = useState('');
+  const [code, setCode] = useState('');
+  const [sku, setSku] = useState('');
 
   const router = useRouter();
 
@@ -102,9 +97,9 @@ const RejectedProductList = () => {
     }));
     // Update the URL with the current page
     const params = new URLSearchParams(window.location.search);
-    params.set("page", String(currentPage));
+    params.set('page', String(currentPage));
     router.replace(`?${params.toString()}`);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage]);
 
   useEffect(() => {
@@ -122,21 +117,21 @@ const RejectedProductList = () => {
   const handleDelete = async (productId: number) => {
     try {
       await deleteProduct(productId).unwrap();
-      toast.success("Product deleted successfully!");
+      toast.success('Product deleted successfully!');
       setIsModalOpen(false);
       refetch();
     } catch (err) {
-      toast.error("Failed to delete Product.");
+      toast.error('Failed to delete Product.');
     }
   };
 
-  console.log("query", queryParams);
+  console.log('query', queryParams);
 
   return (
     <RequireAccess permission="product-list">
       <div className="min-h-screen">
         <h2 className="mb-4 flex items-center gap-2 text-xl font-bold">
-          🏠 Pending Product List{" "}
+          🏠 Pending Product List{' '}
           <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">
             {data?.data.length || 0}
           </span>
@@ -221,13 +216,11 @@ const RejectedProductList = () => {
               >
                 <option value="">Select Sub Sub Category</option>
                 {subSubCategoriesData?.data &&
-                  subSubCategoriesData?.data?.map(
-                    (subSubCat: any, i: number) => (
-                      <option key={subSubCat?.id} value={subSubCat?.id}>
-                        {subSubCat?.title}
-                      </option>
-                    ),
-                  )}
+                  subSubCategoriesData?.data?.map((subSubCat: any, i: number) => (
+                    <option key={subSubCat?.id} value={subSubCat?.id}>
+                      {subSubCat?.title}
+                    </option>
+                  ))}
               </select>
             </div>
 
@@ -252,11 +245,11 @@ const RejectedProductList = () => {
             <button
               className="rounded bg-gray-100 px-4 py-2 text-gray-700 hover:bg-gray-200"
               onClick={() => {
-                setSelectedBrandId("");
-                setSelectedCategoryId("");
-                setSelectedSubCategoryId("");
-                setSelectedSubSubCategoryId("");
-                setSelectedStock("");
+                setSelectedBrandId('');
+                setSelectedCategoryId('');
+                setSelectedSubCategoryId('');
+                setSelectedSubSubCategoryId('');
+                setSelectedStock('');
                 setQueryParams({});
               }}
             >
@@ -413,10 +406,7 @@ const RejectedProductList = () => {
 
                 {!isLoading && data?.data.length <= 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={10}
-                      className="py-8 text-center text-red-500"
-                    >
+                    <TableCell colSpan={10} className="py-8 text-center text-red-500">
                       No Data to Show
                     </TableCell>
                   </TableRow>
@@ -437,11 +427,7 @@ const RejectedProductList = () => {
 
                       <TableCell>{doc.title}</TableCell>
                       <TableCell>
-                        {doc.user.isAdmin
-                          ? "Admin"
-                          : doc.user.isModerator
-                            ? "Moderator"
-                            : "Seller"}
+                        {doc.user.isAdmin ? 'Admin' : doc.user.isModerator ? 'Moderator' : 'Seller'}
                       </TableCell>
                       <TableCell className="flex flex-col gap-1">
                         <div className="flex items-center gap-2">
@@ -459,32 +445,52 @@ const RejectedProductList = () => {
                       </TableCell>
                       <TableCell>{doc.stock}</TableCell>
                       <TableCell>
-                        <p className="rounded-xl bg-teal-100 px-2 py-0.5 capitalize text-teal-600">
+                        <p
+                          className={`inline-block rounded-xl px-3 py-0.5 capitalize ${doc.status === 'approved' ? 'bg-green-100 text-green-600' : ''} ${doc.status === 'pending' ? 'bg-yellow-100 text-yellow-600' : ''} ${doc.status === 'rejected' ? 'bg-red-100 text-red-600' : ''}`}
+                        >
                           {doc.status}
                         </p>
                       </TableCell>
                       <TableCell className="">
-                        <ButtonSelf
+                        {/* <ButtonSelf
                           onClick={async () => {
                             try {
                               const res = await restockProductRequest({
                                 data: { productId: doc?.id },
                               }).unwrap();
                               toast.success(
-                                res?.message ||
-                                  "Product Restock Request Sent to Admin",
+                                res?.message || 'Product Restock Request Sent to Admin'
                               );
                               refetch();
                             } catch (error: any) {
-                              toast.error(
-                                error?.data?.message ||
-                                  "Failed Product Restock Request",
-                              );
+                              toast.error(error?.data?.message || 'Failed Product Restock Request');
                             }
                           }}
                           className="mr-2 border border-green-700 bg-blue-50 p-1 text-green-700 hover:bg-blue-100"
                         >
-                          Restock Request
+                          Approved Request
+                        </ButtonSelf> */}
+
+                         <>
+                          <Button
+                            type="default"
+                            onClick={() => {
+                              setSelectedProductId(doc.id);
+                              setIsModalOpen(true);
+                            }}
+                            className="mr-2 border-none bg-red-50 p-1 text-red-700 shadow-none hover:bg-red-100 hover:text-red-800"
+                          >
+                            <FaTrashAlt className="" />
+                          </Button>
+                        </>
+
+                        <ButtonSelf
+                          onClick={() =>
+                            router.push(`/seller/product/edit/${doc.id}`)
+                          }
+                          className="mr-2 bg-green-50 p-1 text-green-700"
+                        >
+                          <FaEdit className="" />
                         </ButtonSelf>
                       </TableCell>
                     </TableRow>
@@ -508,7 +514,7 @@ const RejectedProductList = () => {
         </div> */}
         <Modal
           title="Product Delete"
-          closable={{ "aria-label": "Custom Close Button" }}
+          closable={{ 'aria-label': 'Custom Close Button' }}
           open={isModalOpen}
           onOk={() => {
             if (selectedProductId) handleOk(selectedProductId);

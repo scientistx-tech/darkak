@@ -545,6 +545,7 @@ const ProductList = () => {
                           <Switch.Thumb className="block h-4 w-4 rounded-full bg-white shadow-lg transition-transform data-[state=checked]:translate-x-6" />
                         </Switch.Root>
                       </TableCell>
+
                       <TableCell className="">
                         <ButtonSelf
                           // onClick={() => handleDelete(doc.id)}
@@ -552,6 +553,7 @@ const ProductList = () => {
                         >
                           <FaBarcode className="" />
                         </ButtonSelf>
+                        
                         <ButtonSelf
                           onClick={() => router.push(`/product/${doc.slug}`)}
                           className="mr-2 bg-red-50 p-1 text-yellow-700"
