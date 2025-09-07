@@ -451,9 +451,15 @@ const ProductList = () => {
                       </TableCell>
                       <TableCell>{doc?.product?.stock}</TableCell>
                       <TableCell>
-                        <p className="inline-block rounded-xl bg-teal-100 px-3 py-0.5 capitalize text-teal-600">
-                          {doc.status}
-                        </p>
+                        <p
+  className={`inline-block rounded-xl px-3 py-0.5 capitalize 
+    ${doc.status === "approved" ? "bg-green-100 text-green-600" : ""} 
+    ${doc.status === "pending" ? "bg-yellow-100 text-yellow-600" : ""} 
+    ${doc.status === "rejected" ? "bg-red-100 text-red-600" : ""}`}
+>
+  {doc.status}
+</p>
+
                       </TableCell>
                     </TableRow>
                   ))
