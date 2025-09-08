@@ -196,7 +196,7 @@ const CartCheckout: React.FC = () => {
       division,
       district,
       sub_district: subDistrict,
-      area,
+      area: address,
       paymentType: paymentMethod,
       cartIds: productIds,
       deliveryFee: district === 'Dhaka' ? 60 : 120,
