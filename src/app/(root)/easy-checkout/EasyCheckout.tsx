@@ -149,7 +149,7 @@ const EasyCheckout: React.FC = () => {
       phone,
       division, // send division name
       district, // send district name
-      sub_district: subDistrict,
+      sub_district: address,
       area: address,
       paymentType: paymentMethod,
       productId: checkoutItems[0].productId,

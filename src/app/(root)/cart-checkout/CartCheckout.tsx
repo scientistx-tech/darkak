@@ -195,7 +195,7 @@ const CartCheckout: React.FC = () => {
       phone,
       division,
       district,
-      sub_district: subDistrict,
+      sub_district: address,
       area: address,
       paymentType: paymentMethod,
       cartIds: productIds,
