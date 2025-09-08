@@ -170,7 +170,7 @@ const PendingOrderList = () => {
                           ? "N/A"
                           : order?.courier_status.split("_").join(" ")}
                       </TableCell>
-                      <TableCell>{order.order_type}</TableCell>
+                      <TableCell>ali-express</TableCell>
                       <TableCell>
                         {order.subTotal + order.deliveryFee}
 

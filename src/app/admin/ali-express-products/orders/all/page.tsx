@@ -160,7 +160,7 @@ const AllOrderList = () => {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>{order.order_type}</TableCell>
+                      <TableCell>ali-express</TableCell>
                       <TableCell>
                         <div className="flex flex-col items-center gap-2">
                           <p>{order.subTotal + order.deliveryFee}</p>
