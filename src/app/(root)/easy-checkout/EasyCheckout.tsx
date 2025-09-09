@@ -176,7 +176,7 @@ const EasyCheckout: React.FC = () => {
           cus_name: fullName,
           cus_phone: phone,
           cus_postcode: '1206',
-          order_id: res.order.id,
+          order_ids: [res.order.id],
           product_category: 'Darkak',
           product_name: 'Darkak Product',
           product_profile: 'Darkak',
@@ -198,7 +198,9 @@ const EasyCheckout: React.FC = () => {
       }
       toast.success(res?.message || 'Order placed successfully');
       handleBeforeUnload();
-      router.push(`/order-placed/${res?.order?.orderId}`);
+      router.push(`/order-placed?orderIds=${encodeURIComponent(
+        JSON.stringify([res?.order?.orderId]))
+        }`);
     } catch (error: any) {
       toast.error(error?.data?.message || 'Failed to place order');
       console.log(error);

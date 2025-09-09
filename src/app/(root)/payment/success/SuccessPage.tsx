@@ -9,7 +9,15 @@ import { AppDispatch } from '@/redux/store';
 
 export default function SuccessPage() {
   const params = useSearchParams();
-  const orderId = params.get('orderId');
+
+  let orderIds: string[] = [];
+  if (params.get("orderIds")) {
+    try {
+      orderIds = JSON.parse(params.get("orderIds") as string);
+    } catch {
+      orderIds = [];
+    }
+  }
   const total = params.get('total');
   const dispatch = useDispatch<AppDispatch>();
 
@@ -39,11 +47,11 @@ export default function SuccessPage() {
           <p className="font-semibold text-gray-700">Order Summary</p>
           <div className="mt-2 flex justify-between text-sm text-gray-600">
             <span>Order ID:</span>
-            <span>#{orderId}</span>
+            <span>#{orderIds?.join(", ")}</span>
           </div>
           <div className="mt-2 flex justify-between text-sm text-gray-600">
             <span>Total:</span>
-            <span>৳${total}</span>
+            <span>৳{total}</span>
           </div>
           <div className="mt-2 flex justify-between text-sm text-gray-600">
             <span>Status:</span>

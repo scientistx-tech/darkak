@@ -26,7 +26,7 @@ export interface SSLCommerzOrder {
   ship_postcode: string | number;
   ship_country: string;
 
-  order_id: string | number;
+  order_ids: string[] | number[];
   cartIds: string[] | undefined;
 }
 export interface SSLCommerzInitResponse {

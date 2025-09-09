@@ -215,7 +215,7 @@ const CartCheckout: React.FC = () => {
           cus_name: fullName,
           cus_phone: phone,
           cus_postcode: '1206',
-          order_id: res.order.id,
+          order_ids: res.orders?.map((d: any) => d.id),
           product_category: 'Darkak',
           product_name: 'Darkak Product',
           product_profile: 'Darkak',
@@ -238,7 +238,9 @@ const CartCheckout: React.FC = () => {
       dispatch(setCart(Math.random()));
       toast.success(res?.message || 'Order placed successfully!');
       localStorage.removeItem('checkout_items');
-      router.push(`/order-placed/${res?.order?.orderId}`);
+      router.push(`/order-placed?orderIds=${encodeURIComponent(
+        JSON.stringify(res?.orders?.map((d: any) => d.orderId))
+      )}`);
     } catch (error: any) {
       toast.error(error?.data?.message);
       console.log(error);
