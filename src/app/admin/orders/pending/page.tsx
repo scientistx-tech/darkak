@@ -1,5 +1,5 @@
-"use client";
-import { Skeleton } from "@/components/ui/skeleton";
+'use client';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -7,29 +7,29 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+} from '@/components/ui/table';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
 
 import {
   useGetBrandsQuery,
   useDeleteBrandMutation,
   useUpdateBrandMutation,
-} from "@/redux/services/admin/adminBrandApis";
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import Button from "../../components/Button";
-import { CiCirclePlus } from "react-icons/ci";
-import { useGetOrdersQuery } from "@/redux/services/admin/adminOrderApis";
-import { FaEdit, FaEye } from "react-icons/fa";
-import { MdFileDownload } from "react-icons/md";
-import Pagination from "@/components/shared/Pagination";
-import { useRouter } from "next/navigation";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import OrderInvoicePDF from "../[id]/components/OrderInvoicePDF";
-import FilterOrders from "../all/FilterOrders";
-import RequireAccess from "@/components/Layouts/RequireAccess";
-import MiniButton from "../[id]/components/MiniButton";
+} from '@/redux/services/admin/adminBrandApis';
+import { toast } from 'react-toastify';
+import * as yup from 'yup';
+import Button from '../../components/Button';
+import { CiCirclePlus } from 'react-icons/ci';
+import { useGetOrdersQuery } from '@/redux/services/admin/adminOrderApis';
+import { FaEdit, FaEye } from 'react-icons/fa';
+import { MdFileDownload } from 'react-icons/md';
+import Pagination from '@/components/shared/Pagination';
+import { useRouter } from 'next/navigation';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import OrderInvoicePDF from '../[id]/components/OrderInvoicePDF';
+import FilterOrders from '../all/FilterOrders';
+import RequireAccess from '@/components/Layouts/RequireAccess';
+import MiniButton from '../[id]/components/MiniButton';
 
 const PendingOrderList = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -42,10 +42,8 @@ const PendingOrderList = () => {
   } = useGetOrdersQuery({
     page: String(currentPage),
     ...query,
-    status: "pending",
+    status: 'pending',
   });
-
-
 
   const router = useRouter();
 
@@ -57,14 +55,14 @@ const PendingOrderList = () => {
     <RequireAccess permission="order-pending">
       <div className="min-h-screen">
         <h2 className="mb-4 flex items-center gap-2 text-xl font-bold dark:text-white">
-          🏠 Pending Orders{" "}
+          🏠 Pending Orders{' '}
           <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm text-green-600">
             {orderData?.total}
           </span>
         </h2>
 
         <FilterOrders value={query} onChange={setQuery} />
-        <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:shadow-card dark:text-white">
+        <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:text-white dark:shadow-card">
           {/* search box and export button */}
           <div className="flex items-center justify-between pb-6">
             <span>Order List</span>
@@ -81,7 +79,6 @@ const PendingOrderList = () => {
             </button> */}
 
               {/* search box */}
-
             </div>
           </div>
           {error ? (
@@ -113,10 +110,7 @@ const PendingOrderList = () => {
 
                 {!isLoading && orderData?.data?.length <= 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="py-8 text-center text-red-500"
-                    >
+                    <TableCell colSpan={7} className="py-8 text-center text-red-500">
                       No Data to Show
                     </TableCell>
                   </TableRow>
@@ -125,7 +119,15 @@ const PendingOrderList = () => {
                     <TableRow key={order.id}>
                       <TableCell>{i + 1}</TableCell>
                       <TableCell>{order?.orderId}</TableCell>
-                      <TableCell>{order.date}</TableCell>
+                      <TableCell>
+                        {new Date(order.date).toLocaleString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </TableCell>
                       <TableCell className="flex items-start">
                         <div className="flex flex-col gap-2">
                           <p>{order.name}</p>
@@ -140,11 +142,11 @@ const PendingOrderList = () => {
                             {order.phone}
                           </div>
                         </div>
-                      </TableCell>{" "}
+                      </TableCell>{' '}
                       <TableCell>
                         {order?.courier_status === null
-                          ? "N/A"
-                          : order?.courier_status.split("_").join(" ")}
+                          ? 'N/A'
+                          : order?.courier_status.split('_').join(' ')}
                       </TableCell>
                       <TableCell>{order.order_type}</TableCell>
                       <TableCell>

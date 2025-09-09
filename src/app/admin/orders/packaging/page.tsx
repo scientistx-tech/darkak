@@ -1,5 +1,5 @@
-"use client";
-import { Skeleton } from "@/components/ui/skeleton";
+'use client';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -7,29 +7,29 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+} from '@/components/ui/table';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
 
 import {
   useGetBrandsQuery,
   useDeleteBrandMutation,
   useUpdateBrandMutation,
-} from "@/redux/services/admin/adminBrandApis";
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import Button from "../../components/Button";
-import { CiCirclePlus } from "react-icons/ci";
-import { useGetOrdersQuery } from "@/redux/services/admin/adminOrderApis";
-import { FaEdit, FaEye } from "react-icons/fa";
-import { MdFileDownload } from "react-icons/md";
-import Pagination from "@/components/shared/Pagination";
-import { useRouter } from "next/navigation";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import OrderInvoicePDF from "../[id]/components/OrderInvoicePDF";
-import FilterOrders from "../all/FilterOrders";
-import RequireAccess from "@/components/Layouts/RequireAccess";
-import MiniButton from "../[id]/components/MiniButton";
+} from '@/redux/services/admin/adminBrandApis';
+import { toast } from 'react-toastify';
+import * as yup from 'yup';
+import Button from '../../components/Button';
+import { CiCirclePlus } from 'react-icons/ci';
+import { useGetOrdersQuery } from '@/redux/services/admin/adminOrderApis';
+import { FaEdit, FaEye } from 'react-icons/fa';
+import { MdFileDownload } from 'react-icons/md';
+import Pagination from '@/components/shared/Pagination';
+import { useRouter } from 'next/navigation';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import OrderInvoicePDF from '../[id]/components/OrderInvoicePDF';
+import FilterOrders from '../all/FilterOrders';
+import RequireAccess from '@/components/Layouts/RequireAccess';
+import MiniButton from '../[id]/components/MiniButton';
 
 const PackegingOrderList = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,13 +43,10 @@ const PackegingOrderList = () => {
   } = useGetOrdersQuery({
     page: String(currentPage),
     ...query,
-    status: "packaging",
+    status: 'packaging',
   });
 
-
-
   const router = useRouter();
-
 
   useEffect(() => {
     refetch();
@@ -59,7 +56,7 @@ const PackegingOrderList = () => {
     <RequireAccess permission="order-packaging">
       <div className="min-h-screen">
         <h2 className="mb-4 flex items-center gap-2 text-xl font-bold dark:text-white">
-          🏠 Packeging Orders{" "}
+          🏠 Packeging Orders{' '}
           <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm text-green-600">
             {orderData?.total}
           </span>
@@ -84,7 +81,6 @@ const PackegingOrderList = () => {
             </button> */}
 
               {/* search box */}
-
             </div>
           </div>
           {error ? (
@@ -116,10 +112,7 @@ const PackegingOrderList = () => {
 
                 {!isLoading && orderData?.data?.length <= 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="py-8 text-center text-red-500"
-                    >
+                    <TableCell colSpan={7} className="py-8 text-center text-red-500">
                       No Data to Show
                     </TableCell>
                   </TableRow>
@@ -128,7 +121,15 @@ const PackegingOrderList = () => {
                     <TableRow key={order.id}>
                       <TableCell>{i + 1}</TableCell>
                       <TableCell>{order?.orderId}</TableCell>
-                      <TableCell>{order.date}</TableCell>
+                      <TableCell>
+                        {new Date(order.date).toLocaleString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </TableCell>
                       <TableCell className="flex items-start">
                         <div className="flex flex-col gap-2">
                           <p>{order.name}</p>
@@ -143,11 +144,11 @@ const PackegingOrderList = () => {
                             {order.phone}
                           </div>
                         </div>
-                      </TableCell>{" "}
+                      </TableCell>{' '}
                       <TableCell>
                         {order?.courier_status === null
-                          ? "N/A"
-                          : order?.courier_status.split("_").join(" ")}
+                          ? 'N/A'
+                          : order?.courier_status.split('_').join(' ')}
                       </TableCell>
                       <TableCell>{order.order_type}</TableCell>
                       <TableCell>

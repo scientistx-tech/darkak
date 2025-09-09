@@ -46,8 +46,6 @@ const CancelledOrderList = () => {
     status: 'cancelled',
   });
 
-
-
   const router = useRouter();
 
   useEffect(() => {
@@ -83,7 +81,6 @@ const CancelledOrderList = () => {
             </button> */}
 
               {/* search box */}
-
             </div>
           </div>
           {error ? (
@@ -123,7 +120,16 @@ const CancelledOrderList = () => {
                     <TableRow key={order.id}>
                       <TableCell>{i + 1}</TableCell>
                       <TableCell>{order?.orderId}</TableCell>
-                      <TableCell>{order.date}</TableCell>
+                      <TableCell>
+                        {new Date(order.date).toLocaleString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </TableCell>
+
                       <TableCell className="flex items-start">
                         <div className="flex flex-col gap-2">
                           <p>{order.name}</p>
