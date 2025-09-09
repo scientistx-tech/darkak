@@ -1,5 +1,5 @@
-"use client";
-import { Skeleton } from "@/components/ui/skeleton";
+'use client';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -7,34 +7,34 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+} from '@/components/ui/table';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
 
 import {
   useGetBrandsQuery,
   useDeleteBrandMutation,
   useUpdateBrandMutation,
-} from "@/redux/services/admin/adminBrandApis";
-import { toast } from "react-toastify";
-import * as yup from "yup";
+} from '@/redux/services/admin/adminBrandApis';
+import { toast } from 'react-toastify';
+import * as yup from 'yup';
 
-import { CiCirclePlus } from "react-icons/ci";
-import FilterOrders from "./FilterOrders";
-import { useGetOrdersQuery } from "@/redux/services/admin/adminOrderApis";
-import { FaEdit, FaEye } from "react-icons/fa";
-import { MdFileDownload } from "react-icons/md";
-import Pagination from "@/components/shared/Pagination";
-import { useRouter } from "next/navigation";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import OrderInvoicePDF from "../[id]/components/OrderInvoicePDF";
-import RequireAccess from "@/components/Layouts/RequireAccess";
-import Button from "../../../components/Button";
-import { useGetAliExpressOrdersQuery } from "@/redux/services/admin/adminAli-ExpressOrderApi";
+import { CiCirclePlus } from 'react-icons/ci';
+import FilterOrders from './FilterOrders';
+import { useGetOrdersQuery } from '@/redux/services/admin/adminOrderApis';
+import { FaEdit, FaEye } from 'react-icons/fa';
+import { MdFileDownload } from 'react-icons/md';
+import Pagination from '@/components/shared/Pagination';
+import { useRouter } from 'next/navigation';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import OrderInvoicePDF from '../[id]/components/OrderInvoicePDF';
+import RequireAccess from '@/components/Layouts/RequireAccess';
+import Button from '../../../components/Button';
+import { useGetAliExpressOrdersQuery } from '@/redux/services/admin/adminAli-ExpressOrderApi';
 
 const AllOrderList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
 
   const {
     data: orderData,
@@ -43,7 +43,7 @@ const AllOrderList = () => {
     refetch,
   } = useGetAliExpressOrdersQuery({ page: String(currentPage), search });
 
-  console.log("orderData", orderData);
+  console.log('orderData', orderData);
 
   const router = useRouter();
 
@@ -59,7 +59,7 @@ const AllOrderList = () => {
           <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm text-green-600">194</span>
         </h2>
 
-        <FilterOrders />
+        {/* <FilterOrders /> */}
 
         <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:text-white dark:shadow-card">
           {/* search box and export button */}
@@ -85,7 +85,7 @@ const AllOrderList = () => {
                   onChange={(e) => {
                     setSearch(e.target.value);
                   }}
-                  className="w-full rounded-md border dark:bg-gray-700 border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none dark:bg-gray-500"
+                  className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none dark:bg-gray-500 dark:bg-gray-700"
                 />
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                   <svg
@@ -144,7 +144,16 @@ const AllOrderList = () => {
                     <TableRow key={order.id} className="text-black dark:text-white">
                       <TableCell>{i + 1}</TableCell>
                       <TableCell>{order?.orderId}</TableCell>
-                      <TableCell>{order.date}</TableCell>
+                      <TableCell>
+                        {new Date(order.date).toLocaleString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </TableCell>
+
                       <TableCell className="flex items-center">
                         <div className="flex flex-col items-center gap-2">
                           <p>{order.name}</p>
