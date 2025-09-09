@@ -103,12 +103,12 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
   const stockkkk = !data?.product?.items.length
     ? data?.product?.stock
     : data?.product?.items.map((item: any) => {
-        if (item?.id === Object.keys(selectedOptions)[0]) {
-          return (
-            item.options.find((option: any) => option.id === selectedOptions[item.id])?.stock || 0
-          );
-        }
-      });
+      if (item?.id === Object.keys(selectedOptions)[0]) {
+        return (
+          item.options.find((option: any) => option.id === selectedOptions[item.id])?.stock || 0
+        );
+      }
+    });
 
   //console.log('stockkkk', stockkkk);
   //console.log('product stock, items stock', data?.product?.stock, data?.product);
@@ -182,7 +182,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
       productId: product.id,
       quantity: quantity,
       date: new Date().toISOString(),
-      
+
       cart_items: [],
       product: {
         title: product.title,
@@ -208,7 +208,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
 
     return cart;
   };
-console.log(data?.product)
+  console.log(data?.product)
   //  Handle Buy Now
   //  This function handles the "Buy Now" button click
   const handleBuyNow = async () => {
@@ -235,12 +235,12 @@ console.log(data?.product)
     //   : [];
     const optionIds = data?.product?.items?.length
       ? data?.product?.items
-          .map((item: any) => {
-            if (selectedOptions[item.id]) {
-              return item.options?.find((d: any) => d.id === selectedOptions[item.id])?.id;
-            }
-          })
-          .filter(Boolean)
+        .map((item: any) => {
+          if (selectedOptions[item.id]) {
+            return item.options?.find((d: any) => d.id === selectedOptions[item.id])?.id;
+          }
+        })
+        .filter(Boolean)
       : [];
     try {
       const result = await addToCart({
@@ -329,9 +329,9 @@ console.log(data?.product)
                 key={idx}
                 onClick={() => setSelectedImage(img)}
                 src={img}
-                className={`h-16 w-16 min-w-16 flex-shrink-0 cursor-pointer rounded border object-cover ${
-                  selectedImage === img ? 'border-primaryBlue ring-2 ring-primaryBlue' : ''
-                }`}
+
+                className={`h-16 w-16 min-w-16 flex-shrink-0 cursor-pointer rounded border object-cover ${selectedImage === img ? 'border-primaryBlue ring-2 ring-primaryBlue' : ''
+                  }`}
                 alt={`thumb-${idx}`}
                 style={{
                   transition: 'box-shadow 0.2s',
@@ -351,9 +351,8 @@ console.log(data?.product)
 
           <div className="mt-4 flex flex-wrap gap-2">
             <span
-              className={`rounded bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue shadow-1 ${
-                hasDiscount ? 'line-through' : ''
-              }`}
+              className={`rounded bg-secondaryWhite px-4 py-2 text-sm text-primaryBlue shadow-1 ${hasDiscount ? 'line-through' : ''
+                }`}
             >
               {price} BDT
             </span>
@@ -420,13 +419,12 @@ console.log(data?.product)
                           setSelectedImage(option.image);
                         }
                       }}
-                      className={`cursor-pointer rounded-full border-2 px-4 py-0.5 transition-colors duration-200 ${
-                        selectedOptions[item.id] === option.id
+                      className={`cursor-pointer rounded-full border-2 px-4 py-0.5 transition-colors duration-200 ${selectedOptions[item.id] === option.id
                           ? 'border-primaryBlue bg-primaryBlue text-white shadow-2'
                           : isOutOfStock
                             ? 'cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400'
                             : 'border-blue-300 bg-white text-primaryBlue'
-                      }`}
+                        }`}
                       title={isOutOfStock ? 'This option is stock out' : ''}
                       style={isOutOfStock ? { pointerEvents: 'none' } : {}}
                     >

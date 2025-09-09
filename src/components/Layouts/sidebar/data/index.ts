@@ -10,17 +10,32 @@ import { IoAnalytics } from 'react-icons/io5';
 import { MdOutlineSettings } from 'react-icons/md';
 import { BiSolidOffer } from 'react-icons/bi';
 import { MdAddModerator } from 'react-icons/md';
-import { AiFillMessage } from "react-icons/ai";
+import { AiFillMessage } from 'react-icons/ai';
 import * as Icons from '../icons';
 import { BsTornado } from 'react-icons/bs';
 import { FaListAlt } from 'react-icons/fa';
 import { IoMdAddCircle } from 'react-icons/io';
-import { FaRegListAlt, FaClock, FaShoppingBag, FaLaptop, FaLink, FaShoppingCart, FaUndo, FaSitemap, FaBloggerB } from 'react-icons/fa';
-import { FaHeadphones } from "react-icons/fa6";
-export const getSellerNavData = (data: any) => [
+import {
+  FaRegListAlt,
+  FaClock,
+  FaShoppingBag,
+  FaLaptop,
+  FaLink,
+  FaShoppingCart,
+  FaUndo,
+  FaSitemap,
+  FaBloggerB,
+} from 'react-icons/fa';
+import { FaHeadphones } from 'react-icons/fa6';
+
+function getTotal(orders: Record<any, number>): number {
+  return Object.values(orders).reduce((sum, count) => sum + count, 0);
+}
+
+export const getSellerNavData = (data: OrderAnalytics | undefined) => [
   {
     label: 'Seller Dashboard',
-    
+
     items: [
       {
         title: 'Dashboard',
@@ -74,13 +89,13 @@ export const getSellerNavData = (data: any) => [
             title: 'All',
             url: '/seller/orders/all',
             accessKey: 'order-all',
-            values: { vive: 'positive', value: data?.totalOrder },
+            values: { vive: 'positive', value: getTotal(data?.vendorOrders || {}) },
           },
           {
             title: 'Pending',
             url: '/seller/orders/pending',
             accessKey: 'order-pending',
-            values: { vive: 'positive', value: data?.ordersCount[0].pending },
+            values: { vive: 'positive', value: data?.vendorOrders?.pending || 0 },
           },
           {
             title: 'Confirm',
@@ -88,7 +103,7 @@ export const getSellerNavData = (data: any) => [
             accessKey: 'order-confirm',
             values: {
               vive: 'neutral-1',
-              value: data?.ordersCount[1].confirmed,
+              value: data?.vendorOrders?.confirmed || 0,
             },
           },
           {
@@ -97,7 +112,7 @@ export const getSellerNavData = (data: any) => [
             accessKey: 'order-packaging',
             values: {
               vive: 'neutral-2',
-              value: data?.ordersCount[2].packaging,
+              value: data?.vendorOrders?.packaging || 0,
             },
           },
           {
@@ -106,7 +121,7 @@ export const getSellerNavData = (data: any) => [
             accessKey: 'order-out-for-delivery',
             values: {
               vive: 'neutral-2',
-              value: data?.ordersCount[3].out_for_delivery,
+              value: data?.vendorOrders?.out_for_delivery || 0,
             },
           },
           {
@@ -115,7 +130,7 @@ export const getSellerNavData = (data: any) => [
             accessKey: 'order-delivered',
             values: {
               vive: 'neutral-1',
-              value: data?.ordersCount[4].delivered,
+              value: data?.vendorOrders?.delivered || 0,
             },
           },
           {
@@ -124,7 +139,7 @@ export const getSellerNavData = (data: any) => [
             accessKey: 'order-returned',
             values: {
               vive: 'negetive',
-              value: data?.ordersCount[6].returned,
+              value: data?.vendorOrders?.returned || 0,
             },
           },
           {
@@ -133,7 +148,7 @@ export const getSellerNavData = (data: any) => [
             accessKey: 'order-failed-to-deliver',
             values: {
               vive: 'negetive',
-              value: data?.ordersCount[7].failed_to_delivery,
+              value: data?.vendorOrders?.failed_to_delivery || 0,
             },
           },
           {
@@ -143,7 +158,7 @@ export const getSellerNavData = (data: any) => [
 
             values: {
               vive: 'negetive',
-              value: data?.ordersCount[5].cancelled,
+              value: data?.vendorOrders?.cancelled || 0,
             },
           },
         ],
@@ -196,7 +211,7 @@ export const getSellerNavData = (data: any) => [
   },
 ];
 
-export const getNavData = (data: any, vendorData: any) => [
+export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) => [
   {
     label: 'MAIN MENU',
     items: [
@@ -235,13 +250,13 @@ export const getNavData = (data: any, vendorData: any) => [
             title: 'All Orders',
             url: '/admin/orders/all',
             accessKey: 'order-all',
-            values: { vive: 'positive', value: data?.totalOrder },
+            values: { vive: 'positive', value: getTotal(orders?.adminOrders || {}) },
           },
           {
             title: 'Pending',
             url: '/admin/orders/pending',
             accessKey: 'order-pending',
-            values: { vive: 'positive', value: data?.ordersCount[0].pending },
+            values: { vive: 'positive', value: orders?.adminOrders.pending || 0 },
           },
           {
             title: 'Confirm',
@@ -249,7 +264,7 @@ export const getNavData = (data: any, vendorData: any) => [
             accessKey: 'order-confirm',
             values: {
               vive: 'neutral-1',
-              value: data?.ordersCount[1].confirmed,
+              value: orders?.adminOrders.confirmed || 0,
             },
           },
           {
@@ -258,7 +273,7 @@ export const getNavData = (data: any, vendorData: any) => [
             accessKey: 'order-packaging',
             values: {
               vive: 'neutral-2',
-              value: data?.ordersCount[2].packaging,
+              value: orders?.adminOrders.packaging || 0,
             },
           },
           {
@@ -267,7 +282,7 @@ export const getNavData = (data: any, vendorData: any) => [
             accessKey: 'order-out-for-delivery',
             values: {
               vive: 'neutral-2',
-              value: data?.ordersCount[3].out_for_delivery,
+              value: orders?.adminOrders?.out_for_delivery,
             },
           },
           {
@@ -276,14 +291,14 @@ export const getNavData = (data: any, vendorData: any) => [
             accessKey: 'order-delivered',
             values: {
               vive: 'neutral-1',
-              value: data?.ordersCount[4].delivered,
+              value: orders?.adminOrders.delivered,
             },
           },
           {
             title: 'Returned',
             url: '/admin/orders/returned',
             accessKey: 'order-returned',
-            values: { vive: 'negetive', value: data?.ordersCount[6].returned },
+            values: { vive: 'negetive', value: orders?.adminOrders?.returned || 0 },
           },
           {
             title: 'Failled To Deliver',
@@ -291,7 +306,7 @@ export const getNavData = (data: any, vendorData: any) => [
             accessKey: 'order-failed-to-deliver',
             values: {
               vive: 'negetive',
-              value: data?.ordersCount[7].failed_to_delivery,
+              value: orders?.adminOrders?.failed_to_delivery || 0,
             },
           },
           {
@@ -299,13 +314,13 @@ export const getNavData = (data: any, vendorData: any) => [
             url: '/admin/orders/cancelled',
             accessKey: 'order-cancelled',
 
-            values: { vive: 'negetive', value: data?.ordersCount[5].cancelled },
+            values: { vive: 'negetive', value: orders?.adminOrders?.cancelled || 0 },
           },
         ],
       },
       {
         title: 'Refund Request',
-        accessKey: "refund-request",
+        accessKey: 'refund-request',
         icon: GiTakeMyMoney,
         items: [
           {
@@ -458,20 +473,20 @@ export const getNavData = (data: any, vendorData: any) => [
       },
       {
         title: 'Orders',
-        accessKey: "ali-express-order-list",
+        accessKey: 'ali-express-order-list',
         icon: IoMdCart,
         items: [
           {
             title: 'All',
             url: '/admin/ali-express-products/orders/all',
             accessKey: 'order-all',
-            values: { vive: 'positive', value: data?.totalOrder },
+            values: { vive: 'positive', value: getTotal(orders?.aeOrders || {}) },
           },
           {
             title: 'Pending',
             url: '/admin/ali-express-products/orders/pending',
             accessKey: 'order-pending',
-            values: { vive: 'positive', value: data?.ordersCount[0].pending },
+            values: { vive: 'positive', value: orders?.aeOrders?.pending || 0 },
           },
           {
             title: 'Confirm',
@@ -479,7 +494,7 @@ export const getNavData = (data: any, vendorData: any) => [
             accessKey: 'order-confirm',
             values: {
               vive: 'neutral-1',
-              value: data?.ordersCount[1].confirmed,
+              value: orders?.aeOrders?.confirmed || 0,
             },
           },
           {
@@ -488,7 +503,7 @@ export const getNavData = (data: any, vendorData: any) => [
             accessKey: 'order-packaging',
             values: {
               vive: 'neutral-2',
-              value: data?.ordersCount[2].packaging,
+              value: orders?.aeOrders?.packaging || 0,
             },
           },
           {
@@ -497,7 +512,7 @@ export const getNavData = (data: any, vendorData: any) => [
             accessKey: 'order-out-for-delivery',
             values: {
               vive: 'neutral-2',
-              value: data?.ordersCount[3].out_for_delivery,
+              value: orders?.aeOrders?.out_for_delivery || 0,
             },
           },
           {
@@ -506,14 +521,14 @@ export const getNavData = (data: any, vendorData: any) => [
             accessKey: 'order-delivered',
             values: {
               vive: 'neutral-1',
-              value: data?.ordersCount[4].delivered,
+              value: orders?.aeOrders?.delivered || 0,
             },
           },
           {
             title: 'Returned',
             url: '/admin/ali-express-products/orders/returned',
             accessKey: 'order-returned',
-            values: { vive: 'negetive', value: data?.ordersCount[6].returned },
+            values: { vive: 'negetive', value: orders?.aeOrders?.returned || 0 },
           },
           {
             title: 'Failled To Deliver',
@@ -521,7 +536,7 @@ export const getNavData = (data: any, vendorData: any) => [
             accessKey: 'order-failed-to-deliver',
             values: {
               vive: 'negetive',
-              value: data?.ordersCount[7].failed_to_delivery,
+              value: orders?.aeOrders?.failed_to_delivery || 0,
             },
           },
           {
@@ -529,7 +544,7 @@ export const getNavData = (data: any, vendorData: any) => [
             url: '/admin/ali-express-products/orders/cancelled',
             accessKey: 'order-cancelled',
 
-            values: { vive: 'negetive', value: data?.ordersCount[5].cancelled },
+            values: { vive: 'negetive', value: orders?.aeOrders?.cancelled || 0 },
           },
         ],
       },
@@ -647,12 +662,10 @@ export const getNavData = (data: any, vendorData: any) => [
     ],
   },
 
-
   {
     label: 'Landing Page',
     accessKey: 'landing-pages',
     items: [
-      
       {
         title: 'Watch',
         accessKey: 'watch',
@@ -678,7 +691,6 @@ export const getNavData = (data: any, vendorData: any) => [
             url: '/admin/landing-page/watch/others-content',
             accessKey: 'watch-others-content',
           },
-          
         ],
       },
       {
@@ -706,13 +718,12 @@ export const getNavData = (data: any, vendorData: any) => [
             url: '/admin/landing-page/bag/others-content',
             accessKey: 'bag-others-content',
           },
-          
         ],
       },
       {
         title: 'Electronics',
         accessKey: 'electronics',
-        icon: FaLaptop ,
+        icon: FaLaptop,
         items: [
           {
             title: 'Slider',
@@ -734,12 +745,10 @@ export const getNavData = (data: any, vendorData: any) => [
             url: '/admin/landing-page/electronics/others-content',
             accessKey: 'electronics-others-content',
           },
-          
         ],
       },
     ],
   },
-
 
   {
     label: 'OTHERS',
@@ -753,7 +762,7 @@ export const getNavData = (data: any, vendorData: any) => [
             title: 'Delivery Providers',
             url: '/admin/settings/delivery-providers',
           },
-          
+
           // {
           //   title: "Site Settings",
           //   url: "/admin/settings/site-settings",
@@ -786,7 +795,7 @@ export const getNavData = (data: any, vendorData: any) => [
             url: '/admin/seo/product-page',
             accessKey: 'seo',
           },
-           {
+          {
             title: 'Blogs Page',
             url: '/admin/seo/blogs-page',
             accessKey: 'blogs',
@@ -851,7 +860,6 @@ export const getNavData = (data: any, vendorData: any) => [
             url: '/admin/seo/moderator-login-page',
             accessKey: 'seo',
           },
-          
         ],
       },
       {
@@ -860,7 +868,7 @@ export const getNavData = (data: any, vendorData: any) => [
         icon: FaBloggerB,
         url: '/admin/blog',
       },
-       {
+      {
         title: 'Site Map',
         accessKey: 'sitemap',
         icon: FaSitemap,
@@ -878,16 +886,16 @@ export const getNavData = (data: any, vendorData: any) => [
         icon: IoAnalytics,
         url: '/admin/analytics',
       },
-      
     ],
   },
 ];
 
 import { useSelector } from 'react-redux';
-import { useDashboardDataQuery } from '@/redux/services/admin/adminDashboard';
+import { useGetOrdersStatisticsQuery } from '@/redux/services/admin/adminDashboard';
 import { useGetVendorsProductRequestCountsQuery } from '@/redux/services/admin/adminVendorApis';
 import Item from 'antd/es/list/Item';
 import { RiseOutlined } from '@ant-design/icons';
+import { OrderAnalytics } from '@/types/apiTypes';
 
 export const useFilteredNavData = () => {
   const moderatorAccess = useSelector((state: any) => state.auth.user?.moderator_access || []);
@@ -895,11 +903,11 @@ export const useFilteredNavData = () => {
   const accessKeys = moderatorAccess.map((a: any) => a.access);
 
   // Fetch dashboard data
-  const { data: dashboardData } = useDashboardDataQuery({});
   const { data: vendorProductsCount } = useGetVendorsProductRequestCountsQuery({});
+  const { data: orderStatics } = useGetOrdersStatisticsQuery();
 
   // Get nav data with API data
-  const NAV_DATA = getNavData(dashboardData, vendorProductsCount);
+  const NAV_DATA = getNavData(vendorProductsCount, orderStatics);
 
   const filterItems = (items: any[]): any[] => {
     return items

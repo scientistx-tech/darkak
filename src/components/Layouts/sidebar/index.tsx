@@ -10,7 +10,7 @@ import { MenuItem } from "./menu-item";
 import { useSidebarContext } from "./sidebar-context";
 import { getNavData, getSellerNavData, useFilteredNavData } from "./data";
 import { useSelector } from "react-redux";
-import { useDashboardDataQuery } from "@/redux/services/admin/adminDashboard";
+import { useDashboardDataQuery, useGetOrdersStatisticsQuery } from "@/redux/services/admin/adminDashboard";
 import { useGetVendorsProductRequestCountsQuery } from "@/redux/services/admin/adminVendorApis";
 
 export function Sidebar() {
@@ -24,15 +24,15 @@ export function Sidebar() {
   };
 
   // Fetch dashboard data
-  const { data: dashboardData } = useDashboardDataQuery({});
   const { data: vendorProductsCount } = useGetVendorsProductRequestCountsQuery(
     {},
   );
+  const { data: orderStatics } = useGetOrdersStatisticsQuery()
 
-  console.log("data drom count", vendorProductsCount);
+  //console.log("data drom count", vendorProductsCount);
   // Get nav data with API data
-  const NAV_DATA = getNavData(dashboardData, vendorProductsCount);
-  const SELLER_NAV_DATA = getSellerNavData(dashboardData);
+  const NAV_DATA = getNavData(vendorProductsCount, orderStatics);
+  const SELLER_NAV_DATA = getSellerNavData(orderStatics);
 
   const filteredNavs = useFilteredNavData();
 

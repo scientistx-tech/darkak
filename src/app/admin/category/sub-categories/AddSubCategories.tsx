@@ -384,7 +384,7 @@ function AddSubCategories({ refetch, categories, value, setIsEditable }: AddData
                     className="h-full w-full rounded-lg object-contain py-3"
                     width={150}
                     height={150}
-                    unoptimized
+                    
                   />
                   <button
                     type="button"

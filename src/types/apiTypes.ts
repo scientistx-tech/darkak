@@ -155,3 +155,18 @@ export type UpdateProduct = {
   delivery_info?: DeliveryInfo;
   items?: AttributeItem[];
 };
+export interface OrderAnalytics {
+  adminOrders: Record<OrderStatus, number>;
+  aeOrders: Record<OrderStatus, number>;
+  vendorOrders: Record<OrderStatus, number>;
+}
+
+type OrderStatus =
+  | "pending"
+  | "confirmed"
+  | "packaging"
+  | "out_for_delivery"
+  | "delivered"
+  | "cancelled"
+  | "returned"
+  | "failed_to_delivery";
