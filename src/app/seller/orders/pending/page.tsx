@@ -54,7 +54,7 @@ const PendingOrderList = () => {
           <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">{orderData?.total}</span>
         </h2>
 
-        <FilterOrders />
+        {/* <FilterOrders /> */}
 
         <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:shadow-card">
           {/* search box and export button */}
@@ -137,7 +137,15 @@ const PendingOrderList = () => {
                     <TableRow key={order.id}>
                       <TableCell>{i + 1}</TableCell>
                       <TableCell>{order?.orderId}</TableCell>
-                      <TableCell>{order.date}</TableCell>
+                      <TableCell>
+                        {new Date(order.date).toLocaleString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </TableCell>
                       <TableCell className="flex items-start">
                         <div className="flex flex-col gap-2">
                           <p>{order.name}</p>
