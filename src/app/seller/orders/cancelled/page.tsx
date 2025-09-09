@@ -1,5 +1,5 @@
-"use client";
-import { Skeleton } from "@/components/ui/skeleton";
+'use client';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -7,34 +7,34 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+} from '@/components/ui/table';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
 
 import {
   useGetBrandsQuery,
   useDeleteBrandMutation,
   useUpdateBrandMutation,
-} from "@/redux/services/admin/adminBrandApis";
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import { CiCirclePlus } from "react-icons/ci";
-import { useGetOrdersQuery } from "@/redux/services/admin/adminOrderApis";
-import { FaEdit, FaEye } from "react-icons/fa";
-import { MdFileDownload } from "react-icons/md";
-import Pagination from "@/components/shared/Pagination";
-import { useRouter } from "next/navigation";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import FilterOrders from "../all/FilterOrders";
-import RequireAccess from "@/components/Layouts/RequireAccess";
-import { useGetOrdersSellerQuery } from "@/redux/services/seller/sellerOrderApis";
-import Button from "@/app/admin/components/Button";
-import OrderInvoicePDF from "@/app/admin/orders/[id]/components/OrderInvoicePDF";
-import MiniButton from "@/app/admin/orders/[id]/components/MiniButton";
+} from '@/redux/services/admin/adminBrandApis';
+import { toast } from 'react-toastify';
+import * as yup from 'yup';
+import { CiCirclePlus } from 'react-icons/ci';
+import { useGetOrdersQuery } from '@/redux/services/admin/adminOrderApis';
+import { FaEdit, FaEye } from 'react-icons/fa';
+import { MdFileDownload } from 'react-icons/md';
+import Pagination from '@/components/shared/Pagination';
+import { useRouter } from 'next/navigation';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import FilterOrders from '../all/FilterOrders';
+import RequireAccess from '@/components/Layouts/RequireAccess';
+import { useGetOrdersSellerQuery } from '@/redux/services/seller/sellerOrderApis';
+import Button from '@/app/admin/components/Button';
+import OrderInvoicePDF from '@/app/admin/orders/[id]/components/OrderInvoicePDF';
+import MiniButton from '@/app/admin/orders/[id]/components/MiniButton';
 
 const CancelledOrderList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
 
   const {
     data: orderData,
@@ -44,10 +44,10 @@ const CancelledOrderList = () => {
   } = useGetOrdersSellerQuery({
     page: String(currentPage),
     search,
-    status: "cancelled",
+    status: 'cancelled',
   });
 
-  console.log("orderData", orderData);
+  console.log('orderData', orderData);
 
   const router = useRouter();
 
@@ -59,13 +59,11 @@ const CancelledOrderList = () => {
     <RequireAccess permission="order-cancelled">
       <div className="min-h-screen">
         <h2 className="mb-4 flex items-center gap-2 text-xl font-bold">
-          🏠 Cancelled Orders{" "}
-          <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">
-            {orderData?.total}
-          </span>
+          🏠 Cancelled Orders{' '}
+          <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">{orderData?.total}</span>
         </h2>
 
-        <FilterOrders />
+        {/* <FilterOrders /> */}
 
         <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:shadow-card">
           {/* search box and export button */}
@@ -139,10 +137,7 @@ const CancelledOrderList = () => {
 
                 {!isLoading && orderData?.data?.length <= 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="py-8 text-center text-red-500"
-                    >
+                    <TableCell colSpan={7} className="py-8 text-center text-red-500">
                       No Data to Show
                     </TableCell>
                   </TableRow>
@@ -151,7 +146,17 @@ const CancelledOrderList = () => {
                     <TableRow key={order.id}>
                       <TableCell>{i + 1}</TableCell>
                       <TableCell>{order?.orderId}</TableCell>
-                      <TableCell>{order.date}</TableCell>
+                      <TableCell>
+                        <TableCell>
+                          {new Date(order.date).toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </TableCell>
+                      </TableCell>
                       <TableCell className="flex items-start">
                         <div className="flex flex-col gap-2">
                           <p>{order.name}</p>
