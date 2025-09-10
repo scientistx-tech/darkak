@@ -45,7 +45,7 @@ const ConfirmedOrderList = () => {
     status: 'confirmed',
   });
 
-  console.log('orderData', orderData);
+
 
   const router = useRouter();
 
@@ -63,7 +63,7 @@ const ConfirmedOrderList = () => {
           </span>
         </h2>
 
-        {/* <FilterOrders /> */}
+        <FilterOrders value={search} onChange={setSearch} />
 
         <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:text-white dark:shadow-card">
           {/* search box and export button */}
@@ -82,32 +82,7 @@ const ConfirmedOrderList = () => {
             </button> */}
 
               {/* search box */}
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search order id"
-                  onChange={(e) => {
-                    setSearch(e.target.value);
-                  }}
-                  className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 text-sm outline-none focus:outline-none dark:bg-gray-700"
-                />
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-4.35-4.35M16.65 10.35a6.3 6.3 0 11-12.6 0 6.3 6.3 0 0112.6 0z"
-                    />
-                  </svg>
-                </span>
-              </div>
+             
             </div>
           </div>
           {error ? (

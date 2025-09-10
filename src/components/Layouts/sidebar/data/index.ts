@@ -98,6 +98,12 @@ export const getSellerNavData = (data: OrderAnalytics | undefined) => [
             values: { vive: 'positive', value: data?.vendorOrders?.pending || 0 },
           },
           {
+            title: 'Pre Orders',
+            url: '/seller/orders/pre-order',
+            accessKey: 'pre-order',
+            values: { vive: 'positive', value: data?.vendorOrders?.['pre-order'] || 0 },
+          },
+          {
             title: 'Confirm',
             url: '/seller/orders/confirmed',
             accessKey: 'order-confirm',
@@ -257,6 +263,12 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
             url: '/admin/orders/pending',
             accessKey: 'order-pending',
             values: { vive: 'positive', value: orders?.adminOrders.pending || 0 },
+          },
+          {
+            title: 'Pre Orders',
+            url: '/admin/orders/pre-order',
+            accessKey: 'pre-order',
+            values: { vive: 'positive', value: orders?.adminOrders?.['pre-order'] || 0 },
           },
           {
             title: 'Confirm',
@@ -487,6 +499,12 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
             url: '/admin/ali-express-products/orders/pending',
             accessKey: 'order-pending',
             values: { vive: 'positive', value: orders?.aeOrders?.pending || 0 },
+          },
+          {
+            title: 'Pre Orders',
+            url: '/admin/ali-express-products/orders/pre-order',
+            accessKey: 'pre-order',
+            values: { vive: 'positive', value: orders?.aeOrders?.['pre-order'] || 0 },
           },
           {
             title: 'Confirm',

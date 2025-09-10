@@ -1,13 +1,13 @@
 export type AccessType =
-  | "category"
-  | "venue"
-  | "news"
-  | "team"
-  | "player"
-  | "coach"
-  | "event"
-  | "fixture"
-  | "redirect";
+  | 'category'
+  | 'venue'
+  | 'news'
+  | 'team'
+  | 'player'
+  | 'coach'
+  | 'event'
+  | 'fixture'
+  | 'redirect';
 
 export interface Admin {
   id: string;
@@ -82,7 +82,7 @@ type AttributeItem = {
   options: AttributeOption[];
 };
 
-type DiscountType = "flat" | "percentage";
+type DiscountType = 'flat' | 'percentage';
 
 export type Product = {
   title: string;
@@ -162,11 +162,12 @@ export interface OrderAnalytics {
 }
 
 type OrderStatus =
-  | "pending"
-  | "confirmed"
-  | "packaging"
-  | "out_for_delivery"
-  | "delivered"
-  | "cancelled"
-  | "returned"
-  | "failed_to_delivery";
+  | 'pending'
+  | 'confirmed'
+  | 'packaging'
+  | 'out_for_delivery'
+  | 'delivered'
+  | 'cancelled'
+  | 'returned'
+  | 'failed_to_delivery'
+  | 'pre-order';

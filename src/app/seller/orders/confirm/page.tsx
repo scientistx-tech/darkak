@@ -34,7 +34,7 @@ import MiniButton from '@/app/admin/orders/[id]/components/MiniButton';
 
 const ConfirmedOrderList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState({});
 
   const {
     data: orderData,
@@ -43,11 +43,11 @@ const ConfirmedOrderList = () => {
     refetch,
   } = useGetOrdersSellerQuery({
     page: String(currentPage),
-    search,
+    ...search,
     status: 'confirmed',
   });
 
-  console.log('orderData', orderData);
+
 
   const router = useRouter();
 
@@ -63,7 +63,7 @@ const ConfirmedOrderList = () => {
           <span className="rounded-full bg-gray-200 px-2 py-0.5 text-sm">{orderData?.total}</span>
         </h2>
 
-        {/* <FilterOrders /> */}
+        <FilterOrders value={search} onChange={setSearch} />
 
         <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:shadow-card">
           {/* search box and export button */}

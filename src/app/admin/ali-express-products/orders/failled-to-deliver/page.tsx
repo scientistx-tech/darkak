@@ -32,7 +32,7 @@ import RequireAccess from '@/components/Layouts/RequireAccess';
 import { useGetAliExpressOrdersQuery } from '@/redux/services/admin/adminAli-ExpressOrderApi';
 const FailedToDeliveryOrderList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState({});
 
   const {
     data: orderData,
@@ -41,11 +41,11 @@ const FailedToDeliveryOrderList = () => {
     refetch,
   } = useGetAliExpressOrdersQuery({
     page: String(currentPage),
-    search,
+    ...search,
     status: 'failed_to-delivery',
   });
 
-  console.log('orderData', orderData);
+  
 
   const router = useRouter();
 
@@ -63,7 +63,7 @@ const FailedToDeliveryOrderList = () => {
           </span>
         </h2>
 
-        {/* <FilterOrders /> */}
+        <FilterOrders value={search} onChange={setSearch} />
 
         <div className="mt-8 bg-white p-5 dark:bg-gray-dark dark:text-white dark:shadow-card">
           {/* search box and export button */}

@@ -13,6 +13,7 @@ import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 const accessList = [
   'order-pending',
+  'pre-order',
   'order-confirm',
   'order-packaging',
   'order-out-for-delivery',
