@@ -12,6 +12,10 @@ import { toast } from 'react-toastify';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 const accessList = [
+  'dashboard',
+  'pos',
+  'product-management',
+  'order-all',
   'order-pending',
   'pre-order',
   'order-confirm',
@@ -21,39 +25,197 @@ const accessList = [
   'order-returned',
   'order-failed-to-deliver',
   'order-cancelled',
+  'refund-request',
   'refund-pending',
   'refund-approved',
+  'refund-under-review',
   'refund-refunded',
   'refund-rejected',
   'category',
   'sub-category',
   'sub-sub-category',
-  'brand',
+  'add-brand',
+  'brand-list',
   'attribute',
   'product-list',
   'product-add',
-  'sliders',
+  'bulk-product',
+  'restock-product',
+  'slider-banner',
+  'ali-express-add-product',
+  'ali-express-product-list',
+  'ali-express-order-list',
+  'ali-express-order-all',
+  'ali-express-order-pending',
+  'ali-express-pre-order',
+  'ali-express-order-confirm',
+  'ali-express-order-packaging',
+  'ali-express-order-out-for-delivery',
+  'ali-express-order-delivered',
+  'ali-express-order-returned',
+  'ali-express-order-failed-to-deliver',
+  'ali-express-order-cancelled',
   'customer-list',
   'customer-review',
+  'vendor',
   'add-vendor',
   'vendor-list',
+  'vendor-requested-products',
+  'vendor-approved-products',
+  'vendor-rejected-products',
+  'vendor-restock-request',
+  'subscriber',
+  'moderator',
+  'contact',
+  'chat',
+  'coupon',
+  'landing-pages',
+  'watch',
+  'watch-slider',
+  'watch-add-product',
+  'watch-product-list',
+  'watch-others-content',
+  'bag',
+  'bag-slider',
+  'bag-add-product',
+  'bag-product-list',
+  'bag-others-content',
+  'electronics',
+  'electronics-slider',
+  'electronics-add-product',
+  'electronics-product-list',
+  'electronics-others-content',
+  'settings',
   'seo',
-  "pos",
-  "product-management",
-  "refund-request",
-  "contact",
-  "chat",
-  "coupon",
-  "landing-pages",
-  "ali-express-add-product",
-  "ali-express-product-list",
-  "ali-express-order-list",
-  "subscriber",
-  "settings",
-  "seo",
-  "sitemap",
-  "analytics"
+  'home-seo',
+  'category-seo',
+  'explore-seo',
+  'product-seo',
+  'blogs-seo',
+  'vendor-seo',
+  'contact-us-seo',
+  'checkout-seo',
+  'about-us-seo',
+  'private-policy-seo',
+  'terms-condition-seo',
+  'return-refund-policy-seo',
+  'faq-seo',
+  'signup-seo',
+  'login-seo',
+  'forgot-password-seo',
+  'moderator-login-seo',
+  'blog',
+  'sitemap',
+  'redirection',
+  'analytics',
 ];
+
+const groupedAccessList: Record<string, string[]> = {
+  General: ['dashboard', 'pos', 'product-management'],
+  OrdersManagement: [
+    'order-all',
+    'order-pending',
+    'pre-order',
+    'order-confirm',
+    'order-packaging',
+    'order-out-for-delivery',
+    'order-delivered',
+    'order-returned',
+    'order-failed-to-deliver',
+    'order-cancelled',
+  ],
+  RefundRequest: [
+    'refund-request',
+    'refund-pending',
+    'refund-approved',
+    'refund-under-review',
+    'refund-refunded',
+    'refund-rejected',
+  ],
+  ProductsManagement: [
+    'category',
+    'sub-category',
+    'sub-sub-category',
+    'add-brand',
+    'brand-list',
+    'attribute',
+    'product-list',
+    'product-add',
+    'bulk-product',
+    'restock-product',
+    'slider-banner',
+  ],
+  AliExpress: [
+    'ali-express-add-product',
+    'ali-express-product-list',
+    'ali-express-order-list',
+    'ali-express-order-all',
+    'ali-express-order-pending',
+    'ali-express-pre-order',
+    'ali-express-order-confirm',
+    'ali-express-order-packaging',
+    'ali-express-order-out-for-delivery',
+    'ali-express-order-delivered',
+    'ali-express-order-returned',
+    'ali-express-order-failed-to-deliver',
+    'ali-express-order-cancelled',
+  ],
+  Customer: ['customer-list', 'customer-review'],
+  Vendor: [
+    'vendor',
+    'add-vendor',
+    'vendor-list',
+    'vendor-requested-products',
+    'vendor-approved-products',
+    'vendor-rejected-products',
+    'vendor-restock-request',
+  ],
+  UserManagement: ['subscriber', 'moderator', 'contact', 'chat'],
+  PromotionManagement: ['coupon'],
+  LandingPageWatch: [
+    'watch',
+    'watch-slider',
+    'watch-add-product',
+    'watch-product-list',
+    'watch-others-content',
+  ],
+
+  LandingPageBag: [
+    'bag',
+    'bag-slider',
+    'bag-add-product',
+    'bag-product-list',
+    'bag-others-content',
+  ],
+  LandingPageElectronics: [
+    'electronics',
+    'electronics-slider',
+    'electronics-add-product',
+    'electronics-product-list',
+    'electronics-others-content',
+  ],
+  PageSEO: [
+    'seo',
+    'home-seo',
+    'category-seo',
+    'explore-seo',
+    'product-seo',
+    'blogs-seo',
+    'vendor-seo',
+    'contact-us-seo',
+    'checkout-seo',
+    'about-us-seo',
+    'private-policy-seo',
+    'terms-condition-seo',
+    'return-refund-policy-seo',
+    'faq-seo',
+    'signup-seo',
+    'login-seo',
+    'forgot-password-seo',
+    'moderator-login-seo',
+  ],
+  Others: ['settings', 'blog', 'sitemap', 'redirection', 'analytics'],
+};
 
 const AddModeratorModal = ({
   openAddModeratorModal,
@@ -247,17 +409,22 @@ const AddModeratorModal = ({
               if (selected && !selectedAccessList.includes(selected)) {
                 setSelectedAccessList([...selectedAccessList, selected]);
               }
-              e.target.value = ''; // reset to placeholder
+              e.target.value = '';
             }}
           >
             <option value="">Select Section</option>
-            {accessList
-              .filter((ac) => !selectedAccessList.includes(ac))
-              .map((ac) => (
-                <option className="capitalize" key={ac} value={ac}>
-                  {ac}
-                </option>
-              ))}
+
+            {Object.entries(groupedAccessList).map(([category, items]) => (
+              <optgroup key={category} label={category}>
+                {items
+                  .filter((ac) => !selectedAccessList.includes(ac))
+                  .map((ac) => (
+                    <option key={ac} value={ac}>
+                      {ac.replace(/-/g, ' ')}
+                    </option>
+                  ))}
+              </optgroup>
+            ))}
           </select>
         </div>
       </div>

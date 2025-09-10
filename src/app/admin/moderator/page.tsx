@@ -1,5 +1,6 @@
-"use client";
-import React, { useState } from "react";
+'use client';
+import React, { useState } from 'react';
+
 import {
   Table,
   TableBody,
@@ -7,22 +8,129 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useRouter } from "next/navigation";
-import AddModeratorModal from "./AddModeratorModal";
+} from '@/components/ui/table';
+import { useRouter } from 'next/navigation';
+import AddModeratorModal from './AddModeratorModal';
 import {
   useDeleteModeratorMutation,
   useGetAllModeratorQuery,
   useUpdateModeratorStatusMutation,
-} from "@/redux/services/admin/adminModeratorApis";
-import { Skeleton } from "@/components/ui/skeleton";
-import * as Switch from "@radix-ui/react-switch";
-import { toast } from "react-toastify";
-import RequireAccess from "@/components/Layouts/RequireAccess";
+} from '@/redux/services/admin/adminModeratorApis';
+import { Skeleton } from '@/components/ui/skeleton';
+import * as Switch from '@radix-ui/react-switch';
+import { toast } from 'react-toastify';
+import RequireAccess from '@/components/Layouts/RequireAccess';
+import { Modal } from 'antd';
+
+const groupedAccessList: Record<string, string[]> = {
+  General: ['dashboard', 'pos', 'product-management'],
+  OrdersManagement: [
+    'order-all',
+    'order-pending',
+    'pre-order',
+    'order-confirm',
+    'order-packaging',
+    'order-out-for-delivery',
+    'order-delivered',
+    'order-returned',
+    'order-failed-to-deliver',
+    'order-cancelled',
+  ],
+  RefundRequest: [
+    'refund-request',
+    'refund-pending',
+    'refund-approved',
+    'refund-under-review',
+    'refund-refunded',
+    'refund-rejected',
+  ],
+  ProductsManagement: [
+    'category',
+    'sub-category',
+    'sub-sub-category',
+    'add-brand',
+    'brand-list',
+    'attribute',
+    'product-list',
+    'product-add',
+    'bulk-product',
+    'restock-product',
+    'slider-banner',
+  ],
+  AliExpress: [
+    'ali-express-add-product',
+    'ali-express-product-list',
+    'ali-express-order-list',
+    'ali-express-order-all',
+    'ali-express-order-pending',
+    'ali-express-pre-order',
+    'ali-express-order-confirm',
+    'ali-express-order-packaging',
+    'ali-express-order-out-for-delivery',
+    'ali-express-order-delivered',
+    'ali-express-order-returned',
+    'ali-express-order-failed-to-deliver',
+    'ali-express-order-cancelled',
+  ],
+  Customer: ['customer-list', 'customer-review'],
+  Vendor: [
+    'vendor',
+    'add-vendor',
+    'vendor-list',
+    'vendor-requested-products',
+    'vendor-approved-products',
+    'vendor-rejected-products',
+    'vendor-restock-request',
+  ],
+  UserManagement: ['subscriber', 'moderator', 'contact', 'chat'],
+  PromotionManagement: ['coupon'],
+  LandingPageWatch: [
+    'watch',
+    'watch-slider',
+    'watch-add-product',
+    'watch-product-list',
+    'watch-others-content',
+  ],
+
+  LandingPageBag: [
+    'bag',
+    'bag-slider',
+    'bag-add-product',
+    'bag-product-list',
+    'bag-others-content',
+  ],
+  LandingPageElectronics: [
+    'electronics',
+    'electronics-slider',
+    'electronics-add-product',
+    'electronics-product-list',
+    'electronics-others-content',
+  ],
+  PageSEO: [
+    'seo',
+    'home-seo',
+    'category-seo',
+    'explore-seo',
+    'product-seo',
+    'blogs-seo',
+    'vendor-seo',
+    'contact-us-seo',
+    'checkout-seo',
+    'about-us-seo',
+    'private-policy-seo',
+    'terms-condition-seo',
+    'return-refund-policy-seo',
+    'faq-seo',
+    'signup-seo',
+    'login-seo',
+    'forgot-password-seo',
+    'moderator-login-seo',
+  ],
+  Others: ['settings', 'blog', 'sitemap', 'redirection', 'analytics'],
+};
 
 const Page = () => {
-  const [openAddModeratorModal, setOpenAddModeratorCourierModal] =
-    useState(false);
+  const [openAddModeratorModal, setOpenAddModeratorCourierModal] = useState(false);
   const [isEditable, setIsEditable] = useState<{
     status: boolean;
     value: { id: number; moderator_access: { access: string }[] };
@@ -32,14 +140,12 @@ const Page = () => {
   });
   const router = useRouter();
 
-  const {
-    data: moderatorsData,
-    isLoading,
-    error,
-    refetch,
-  } = useGetAllModeratorQuery({});
+  const { data: moderatorsData, isLoading, error, refetch } = useGetAllModeratorQuery({});
   const [deleteModerator] = useDeleteModeratorMutation();
   const [changeModeratorStatus] = useUpdateModeratorStatusMutation();
+
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedModerator, setSelectedModerator] = useState<any>(null);
 
   return (
     <RequireAccess permission="moderator">
@@ -95,42 +201,53 @@ const Page = () => {
                       <TableCell>{doc?.name}</TableCell>
                       <TableCell>{doc?.email}</TableCell>
                       <TableCell>
-                        {new Date(doc?.createdAt).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
+                        {new Date(doc?.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
                         })}
                       </TableCell>
+
                       <TableCell>
-                        <div className="flex flex-col gap-1">
-                          {doc?.moderator_access?.map(
-                            (access: any, idx: number) => (
-                              <p
-                                className="mt-0.5 inline rounded px-2 py-0.5 text-red-600"
-                                key={access?.access || idx}
-                              >
-                                {access?.access}
-                              </p>
-                            ),
-                          )}
+                        <div className="flex flex-col gap-2">
+                          {Object.entries(groupedAccessList).map(([category, accesses]) => {
+                            // Filter which accesses this moderator has for this category
+                            const moderatorAccesses = doc?.moderator_access
+                              ?.map((a: any) => a.access)
+                              .filter((a: string) => accesses.includes(a));
+
+                            if (!moderatorAccesses || moderatorAccesses.length === 0) return null;
+
+                            return (
+                              <div key={category}>
+                                <p className="text-sm font-semibold text-gray-700">{category}</p>
+                                <div className="flex flex-wrap gap-1">
+                                  {moderatorAccesses.map((access: string, idx: number) => (
+                                    <span
+                                      key={idx}
+                                      className="rounded bg-teal-100 px-2 py-0.5 text-base text-teal-700"
+                                    >
+                                      {access}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
                       </TableCell>
+
                       <TableCell>
                         <Switch.Root
                           checked={!doc?.isBlocked}
                           onCheckedChange={async (checked) => {
                             try {
-                              const res = await changeModeratorStatus(
-                                doc.id,
-                              ).unwrap();
+                              const res = await changeModeratorStatus(doc.id).unwrap();
                               refetch();
-                              toast.success(
-                                res?.message || "Moderator Status Updated!",
-                              );
+                              toast.success(res?.message || 'Moderator Status Updated!');
                             } catch (err: any) {
                               toast.error(
-                                err?.data?.message ||
-                                  "Failed to Update Moderator status",
+                                err?.data?.message || 'Failed to Update Moderator status'
                               );
                             }
                           }}
@@ -153,20 +270,10 @@ const Page = () => {
                             Update
                           </button>
                           <button
-                            onClick={async () => {
-                              await deleteModerator(doc.id)
-                                .unwrap()
-                                .then(() => {
-                                  refetch();
-                                  toast.success(
-                                    "Moderator Deleted Successfully",
-                                  );
-                                })
-                                .catch((error: any) => {
-                                  toast.error(error?.data?.message);
-                                });
+                            onClick={() => {
+                              setSelectedModerator(doc);
+                              setOpenDeleteModal(true);
                             }}
-                            // disabled={isDeleting}
                             className="text-red-600 hover:underline"
                           >
                             Delete
@@ -188,6 +295,41 @@ const Page = () => {
           setIsEditable={setIsEditable}
         />
       </div>
+
+      <Modal
+        title="Confirm Delete"
+        open={openDeleteModal}
+        onCancel={() => setOpenDeleteModal(false)}
+        footer={[
+          <button
+            key="cancel"
+            onClick={() => setOpenDeleteModal(false)}
+            className="rounded bg-gray-200 px-4 py-1 hover:bg-gray-300"
+          >
+            Cancel
+          </button>,
+          <button
+            key="delete"
+            onClick={async () => {
+              try {
+                await deleteModerator(selectedModerator.id).unwrap();
+                refetch();
+                toast.success('Moderator Deleted Successfully');
+                setOpenDeleteModal(false);
+              } catch (error: any) {
+                toast.error(error?.data?.message || 'Failed to delete moderator');
+              }
+            }}
+            className="ml-5 rounded bg-red-600 px-4 py-1 text-white hover:bg-red-700"
+          >
+            Delete
+          </button>,
+        ]}
+      >
+        <p>
+          Are you sure you want to delete <b>{selectedModerator?.name}</b>?
+        </p>
+      </Modal>
     </RequireAccess>
   );
 };
