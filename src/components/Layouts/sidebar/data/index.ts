@@ -224,7 +224,7 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
       {
         title: 'Dashboard',
         icon: Icons.HomeIcon,
-        // accessKey: "dashboard",
+        accessKey: "dashboard",
         url: '/admin',
         items: [],
       },
@@ -394,12 +394,12 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
         items: [
           {
             title: 'Add New',
-            accessKey: 'brand',
+            accessKey: 'add-brand',
             url: '/admin/brand/add-brand',
           },
           {
             title: 'List',
-            accessKey: 'brand',
+            accessKey: 'brand-list',
             url: '/admin/brand/list',
           },
         ],
@@ -491,25 +491,25 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
           {
             title: 'All',
             url: '/admin/ali-express-products/orders/all',
-            accessKey: 'order-all',
+            accessKey: 'ali-express-order-all',
             values: { vive: 'positive', value: getTotal(orders?.aeOrders || {}) },
           },
           {
             title: 'Pending',
             url: '/admin/ali-express-products/orders/pending',
-            accessKey: 'order-pending',
+            accessKey: 'ali-express-order-pending',
             values: { vive: 'positive', value: orders?.aeOrders?.pending || 0 },
           },
           {
             title: 'Pre Orders',
             url: '/admin/ali-express-products/orders/pre-order',
-            accessKey: 'pre-order',
+            accessKey: 'ali-express-pre-order',
             values: { vive: 'positive', value: orders?.aeOrders?.['pre-order'] || 0 },
           },
           {
             title: 'Confirm',
             url: '/admin/ali-express-products/orders/confirmed',
-            accessKey: 'order-confirm',
+            accessKey: 'ali-express-order-confirm',
             values: {
               vive: 'neutral-1',
               value: orders?.aeOrders?.confirmed || 0,
@@ -518,7 +518,7 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
           {
             title: 'Packaging',
             url: '/admin/ali-express-products/orders/packaging',
-            accessKey: 'order-packaging',
+            accessKey: 'ali-express-order-packaging',
             values: {
               vive: 'neutral-2',
               value: orders?.aeOrders?.packaging || 0,
@@ -527,7 +527,7 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
           {
             title: 'Out For Delivery',
             url: '/admin/ali-express-products/orders/out-for-delivery',
-            accessKey: 'order-out-for-delivery',
+            accessKey: 'ali-express-order-out-for-delivery',
             values: {
               vive: 'neutral-2',
               value: orders?.aeOrders?.out_for_delivery || 0,
@@ -536,7 +536,7 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
           {
             title: 'Delivered',
             url: '/admin/ali-express-products/orders/delivered',
-            accessKey: 'order-delivered',
+            accessKey: 'ali-express-order-delivered',
             values: {
               vive: 'neutral-1',
               value: orders?.aeOrders?.delivered || 0,
@@ -545,13 +545,13 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
           {
             title: 'Returned',
             url: '/admin/ali-express-products/orders/returned',
-            accessKey: 'order-returned',
+            accessKey: 'ali-express-order-returned',
             values: { vive: 'negetive', value: orders?.aeOrders?.returned || 0 },
           },
           {
             title: 'Failled To Deliver',
             url: '/admin/ali-express-products/orders/failled-to-deliver',
-            accessKey: 'order-failed-to-deliver',
+            accessKey: 'ali-express-order-failed-to-deliver',
             values: {
               vive: 'negetive',
               value: orders?.aeOrders?.failed_to_delivery || 0,
@@ -560,7 +560,7 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
           {
             title: 'Canceled',
             url: '/admin/ali-express-products/orders/cancelled',
-            accessKey: 'order-cancelled',
+            accessKey: 'ali-express-order-cancelled',
 
             values: { vive: 'negetive', value: orders?.aeOrders?.cancelled || 0 },
           },
@@ -602,7 +602,7 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
       {
         title: 'Vendors',
         icon: GrVend,
-        // accessKey: "vendor",
+        accessKey: "vendor",
         items: [
           {
             title: 'Add New Vendor',
@@ -796,87 +796,87 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
           {
             title: 'Home Page',
             url: '/admin/seo/home-page',
-            accessKey: 'seo',
+            accessKey: 'home-seo',
           },
           {
             title: 'Category Page',
             url: '/admin/seo/category-page',
-            accessKey: 'seo',
+            accessKey: 'category-seo',
           },
           {
             title: 'Explore Page',
             url: '/admin/seo/explore-page',
-            accessKey: 'explore',
+            accessKey: 'explore-seo',
           },
           {
             title: 'Product Page',
             url: '/admin/seo/product-page',
-            accessKey: 'seo',
+            accessKey: 'product-seo',
           },
           {
             title: 'Blogs Page',
             url: '/admin/seo/blogs-page',
-            accessKey: 'blogs',
+            accessKey: 'blogs-seo',
           },
           {
             title: 'Vendor Page',
             url: '/admin/seo/vendor-page',
-            accessKey: 'seo',
+            accessKey: 'vendor-seo',
           },
           {
             title: 'Contact Us Page',
             url: '/admin/seo/contact-us-page',
-            accessKey: 'seo',
+            accessKey: 'contact-us-seo',
           },
           {
             title: 'CheckOut Page',
             url: '/admin/seo/checkout-page',
-            accessKey: 'seo',
+            accessKey: 'checkout-seo',
           },
           {
             title: 'About Us Page',
             url: '/admin/seo/about-us-page',
-            accessKey: 'seo',
+            accessKey: 'about-us-seo',
           },
           {
             title: 'Private Policy Page',
             url: '/admin/seo/private-policy-page',
-            accessKey: 'seo',
+            accessKey: 'private-policy-seo',
           },
           {
             title: 'Terms Condition Page',
             url: '/admin/seo/terms-condition-page',
-            accessKey: 'seo',
+            accessKey: 'terms-condition-seo',
           },
           {
             title: 'Return & Refund Policy Page',
             url: '/admin/seo/return-refund-policy-page',
-            accessKey: 'seo',
+            accessKey: 'return-refund-policy-seo',
           },
           {
             title: 'FAQ Page',
             url: '/admin/seo/faq-page',
-            accessKey: 'seo',
+            accessKey: 'faq-seo',
           },
           {
             title: 'SignUp Page',
             url: '/admin/seo/signup-page',
-            accessKey: 'seo',
+            accessKey: 'signup-seo',
           },
           {
             title: 'LogIn Page',
             url: '/admin/seo/login-page',
-            accessKey: 'seo',
+            accessKey: 'login-seo',
           },
           {
             title: 'Forgot Password Page',
             url: '/admin/seo/forgot-password-page',
-            accessKey: 'seo',
+            accessKey: 'forgot-password-seo',
           },
           {
             title: 'Moderator LonIn Page',
             url: '/admin/seo/moderator-login-page',
-            accessKey: 'seo',
+            accessKey: 'moderator-login-seo',
           },
         ],
       },
