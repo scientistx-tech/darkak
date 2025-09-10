@@ -442,7 +442,7 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
       {
         title: 'Slider & Banner',
         url: '/admin/slider',
-        accessKey: 'sliders',
+        accessKey: 'slider-banner',
         icon: BiSlider,
         items: [],
       },
@@ -569,7 +569,7 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
     ],
   },
   {
-    label: 'User Management',
+    label: 'Customers & Vendors',
     items: [
       {
         title: 'Customers',
@@ -640,7 +640,17 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
           },
         ],
       },
-
+    ],
+  },
+  {
+    label: 'User Management',
+    items: [
+     {
+        title: 'Moderator',
+        icon: MdAddModerator,
+        accessKey: 'moderator',
+        url: '/admin/moderator',
+      },
       {
         title: 'Subscribers',
         icon: PiUserSoundFill,
@@ -648,12 +658,7 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
         url: '/admin/subscribers',
         items: [],
       },
-      {
-        title: 'Moderator',
-        icon: MdAddModerator,
-        accessKey: 'moderator',
-        url: '/admin/moderator',
-      },
+     
       {
         title: 'Contact',
         icon: FaHeadphones,
