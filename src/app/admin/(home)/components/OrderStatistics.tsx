@@ -83,7 +83,7 @@ const OrderStatistics: React.FC<OrderStatisticsProps> = ({ period }) => {
       y: {
         beginAtZero: true,
         grid: {
-        
+
           color: isDarkMode ? "#374151" : "#E5E7EB", // gray-700 or gray-200
         },
         ticks: {
@@ -110,6 +110,13 @@ const OrderStatistics: React.FC<OrderStatisticsProps> = ({ period }) => {
         borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 1,
       },
+      {
+        label: "AliExpress",
+        data: data?.datasets[2].data,
+        backgroundColor: "rgba(75, 192, 192, 0.5)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+      },
     ],
   };
 
@@ -123,6 +130,10 @@ const OrderStatistics: React.FC<OrderStatisticsProps> = ({ period }) => {
         <div className="flex items-center">
           <span className="mr-2 inline-block h-3 w-3 rounded-full bg-red-400"></span>
           <span className="text-sm text-gray-600 dark:text-white">Vendor</span>
+        </div>
+        <div className="flex items-center">
+          <span className="mr-2 inline-block h-3 w-3 rounded-full bg-teal-400"></span>
+          <span className="text-sm text-gray-600 dark:text-white">AliExpress</span>
         </div>
       </div>
       <Bar options={options} data={chartData} />

@@ -85,6 +85,7 @@ export default function ProductSection({ cart, addToCart }: ProductSectionProps)
     setProducts([]);
     setPage(1);
   };
+  //console.log(data)
 
   // Fetch products using filters (mocked)
   const handleShowData = async () => {
@@ -263,12 +264,13 @@ export default function ProductSection({ cart, addToCart }: ProductSectionProps)
       <div className="mt-5 flex w-full items-center justify-center">
         <Pagination
           current={page}
-          total={data?.totalPage || 0} // Replace with dynamic total if paginating from server
+          total={Math.round(data?.totalPage * limit) || 0} // Replace with dynamic total if paginating from server
           pageSize={limit}
           onShowSizeChange={setLimit}
+          showSizeChanger={false}
           onChange={(p) => {
             setPage(p);
-            // handleShowData(); // Re-fetch on page change
+            /// handleShowData(); // Re-fetch on page change
           }}
         />
       </div>

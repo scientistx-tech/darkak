@@ -18,7 +18,7 @@ const FinancialCards: React.FC<FinancialCardsProps> = ({
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: "BDT",
       minimumFractionDigits: 2,
     }).format(amount);
   };
@@ -33,14 +33,14 @@ const FinancialCards: React.FC<FinancialCardsProps> = ({
               <Wallet className="h-5 w-5 text-green-600" />
             </div>
             <span className="text-sm text-gray-500 dark:text-white">
-              Admin Wallet
+              Wallet
             </span>
           </div>
           <h3 className="text-xl font-bold text-gray-800 dark:text-white">
             {formatCurrency(toalInhouseEarning)}
           </h3>
           <p className="mt-1 text-xs text-gray-500 dark:text-white">
-            In-House Earning
+            Total Earning
           </p>
         </div>
       </div>

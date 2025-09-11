@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input, Select, Button, Modal, Form, message } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { IWishlistItem } from '../type';
+import { toast } from 'react-toastify';
 
 const { Option } = Select;
 
@@ -45,7 +47,7 @@ export default function BillingSection({
   resetCart,
   setCart,
 }: ProductSectionProps) {
-  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'wallet'>('cash');
+  const [paymentMethod, setPaymentMethod] = useState<'online' | 'offline'>('offline');
   const [openHoldModal, setOpenHoldModal] = useState(false);
   const [openAddCustomerModal, setOpenAddCustomerModal] = useState(false);
   const [openExtraDiscount, setOpenExtraDiscount] = useState(false);
@@ -78,6 +80,56 @@ export default function BillingSection({
   const handleCancelOrder = () => {
     message.warning('Order has been canceled.');
   };
+
+  useEffect(() => {
+    let buffer = "";
+    let timer: NodeJS.Timeout;
+
+    const handleKeydown = (e: KeyboardEvent) => {
+      // Reset buffer if no input for 300ms
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        buffer = "";
+      }, 300);
+
+      if (e.key === "Enter") {
+        if (buffer.length > 0) {
+          console.log("Scanned:", buffer);
+          fetchProduct(buffer);
+          buffer = "";
+        }
+      } else {
+        buffer += e.key;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeydown);
+    return () => window.removeEventListener("keydown", handleKeydown);
+  }, []);
+
+  const fetchProduct = async (code: string) => {
+    const tId = toast.loading("Barcode scanning....")
+    try {
+      const res = await fetch(`https://api.darkak.com.bd/api/admin/pos/barcode/${code}`); // API endpoint
+      const product = await res.json();
+      toast.update(tId, {
+        render: "Added to cart",
+        isLoading: false,
+        autoClose: 3000,
+        type: "success"
+      })
+      return product as IWishlistItem
+    } catch (err: any) {
+      console.error("Product not found", err);
+      toast.update(tId, {
+        render: "Failed to add product",
+        isLoading: false,
+        autoClose: 3000,
+        type: "success"
+      })
+    }
+  };
+
 
   return (
     <>
@@ -178,16 +230,16 @@ export default function BillingSection({
         <div className="mt-4 space-y-2 text-sm text-gray-700">
           <div className="flex justify-between">
             <span>Sub Total :</span>
-            <span>${getSubtotal().toFixed(2)}</span>
+            <span>৳{getSubtotal().toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
             <span>Product Discount :</span>
-            <span>$0.00</span>
+            <span>৳0.00</span>
           </div>
           <div className="flex justify-between">
             <span>Extra Discount :</span>
             <span className="flex items-center gap-1">
-              ${extraDiscount.toFixed(2)}{' '}
+              ৳{extraDiscount.toFixed(2)}{' '}
               <button onClick={() => setOpenExtraDiscount(true)}>
                 <EditOutlined className="text-blue-500" />
               </button>
@@ -196,7 +248,7 @@ export default function BillingSection({
           <div className="flex justify-between">
             <span>Coupon Discount :</span>
             <span className="flex items-center gap-1">
-              ${couponDiscount.toFixed(2)}{' '}
+              ৳{couponDiscount.toFixed(2)}{' '}
               <button onClick={() => setOpenCouponDiscount(true)}>
                 <EditOutlined className="text-blue-500" />
               </button>
@@ -204,26 +256,25 @@ export default function BillingSection({
           </div>
           <div className="flex justify-between">
             <span>Tax :</span>
-            <span>$0.00</span>
+            <span>৳0.00</span>
           </div>
           <div className="flex justify-between font-semibold text-black">
             <span>Total :</span>
-            <span>${(getSubtotal() - extraDiscount - couponDiscount).toFixed(2)}</span>
+            <span>৳{(getSubtotal() - extraDiscount - couponDiscount).toFixed(2)}</span>
           </div>
         </div>
 
         <div className="mt-4">
           <p className="mb-2 text-sm font-medium text-gray-700">Paid By:</p>
           <div className="flex gap-3">
-            {['cash', 'card', 'wallet'].map((method) => (
+            {['online', 'offline'].map((method) => (
               <button
                 key={method}
-                onClick={() => setPaymentMethod(method as 'cash' | 'card' | 'wallet')}
-                className={`rounded-md border px-4 py-2 text-sm font-medium transition ${
-                  paymentMethod === method
-                    ? 'border-black bg-black text-white'
-                    : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-100'
-                }`}
+                onClick={() => setPaymentMethod(method as 'online' | 'offline')}
+                className={`rounded-md border px-4 py-2 text-sm font-medium transition ${paymentMethod === method
+                  ? 'border-black bg-black text-white'
+                  : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-100'
+                  }`}
               >
                 {method.charAt(0).toUpperCase() + method.slice(1)}
               </button>
@@ -399,3 +450,4 @@ export default function BillingSection({
     </>
   );
 }
+

@@ -30,9 +30,9 @@ interface EarningStatisticsProps {
 
 const EarningStatistics: React.FC<EarningStatisticsProps> = ({ period }) => {
   const { data, isLoading, error } = useEarningStatisticsQuery({ period });
-    const { theme } = useTheme(); // ✅ useTheme hook
-  
-    const isDarkMode = theme === "dark";
+  const { theme } = useTheme(); // ✅ useTheme hook
+
+  const isDarkMode = theme === "dark";
 
   if (isLoading)
     return (
@@ -116,8 +116,16 @@ const EarningStatistics: React.FC<EarningStatisticsProps> = ({ period }) => {
         fill: true,
       },
       {
+        label: "AliExpress",
+        data: data?.datasets[2].data,
+        backgroundColor: "rgba(153, 102, 255, 0.5)",
+        borderColor: "rgba(153, 102, 255, 1)",
+        tension: 0.4,
+        fill: true,
+      },
+      {
         label: "Commission",
-        data: data?.datasets[2]?.data || [],
+        data: data?.datasets[3]?.data || [],
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         tension: 0.4,
@@ -136,6 +144,10 @@ const EarningStatistics: React.FC<EarningStatisticsProps> = ({ period }) => {
         <div className="flex items-center">
           <span className="mr-2 inline-block h-3 w-3 rounded-full bg-red-400"></span>
           <span className="text-sm text-gray-600 dark:text-white">Vendor</span>
+        </div>
+        <div className="flex items-center">
+          <span className="mr-2 inline-block h-3 w-3 rounded-full bg-purple-400"></span>
+          <span className="text-sm text-gray-600 dark:text-white">AliExpress</span>
         </div>
         <div className="flex items-center">
           <span className="mr-2 inline-block h-3 w-3 rounded-full bg-teal-400"></span>

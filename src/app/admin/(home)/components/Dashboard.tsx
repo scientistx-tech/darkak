@@ -1,7 +1,7 @@
 "use client";
 
 import { useDashboardDataQuery } from "@/redux/services/admin/adminDashboard";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BarChart3, BarChart4, ArrowUp, ArrowDown } from "lucide-react";
 import SummaryCards from "./SummaryCards";
 import OrderStatusCards from "./OrderStatusCards";
@@ -16,7 +16,8 @@ import { RootState } from "@/redux/store";
 import ModeratorLandingPage from "./ModeratorDashboard";
 
 const Dashboard: React.FC = () => {
-  const { data, isLoading, error } = useDashboardDataQuery({});
+  const [sort, setSort] = useState("")
+  const { data, isLoading, error, refetch } = useDashboardDataQuery({ sort: sort });
   const [orderPeriod, setOrderPeriod] = useState<"year" | "month" | "week">(
     "year",
   );
@@ -25,6 +26,14 @@ const Dashboard: React.FC = () => {
   );
 
   const user = useSelector((state: RootState) => state.auth.user);
+  const accessList = useSelector((s: RootState) => s.auth.accessList)
+
+  useEffect(() => {
+    if (sort) {
+      refetch()
+    }
+  }, [sort])
+
 
   if (isLoading)
     return (
@@ -49,7 +58,7 @@ const Dashboard: React.FC = () => {
     );
   if (!data) return <div className="p-8 text-center">No data available</div>;
 
-  if (!user?.isAdmin && user?.isModerator) {
+  if (!user?.isAdmin && user?.isModerator && !accessList.includes("dashboard")) {
     return <ModeratorLandingPage />;
   }
 
@@ -68,7 +77,12 @@ const Dashboard: React.FC = () => {
           Business Analytics
         </h2>
         <div className="text-right">
-          <h3 className="text-sm font-medium text-gray-500 dark:text-white">Overall statistics</h3>
+          <select className="px-2 py-1 " onChange={(e: any) => setSort(e.target.value)} value={sort}>
+            <option value={""}>All</option>
+            <option value={"in-house"}>In House</option>
+            <option value={"vendor"}>Vendor</option>
+            <option value={"ali-express"}>Aliexpress</option>
+          </select>
         </div>
       </div>
 
