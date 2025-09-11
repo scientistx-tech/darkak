@@ -11,6 +11,7 @@ export default function Page() {
       stock: number;
       totalPrice: number;
       quantity: number;
+      tax: number;
       ae_sku_attr?: string;
       options: {
         optionId: number;
@@ -28,6 +29,7 @@ export default function Page() {
       totalPrice: number;
       ae_sku_attr?: string;
       options?: { optionId: number; itemId: number }[];
+      tax: number
     },
     quantity: number = 1
   ) => {
@@ -44,6 +46,7 @@ export default function Page() {
         const newQty = Math.min(updated[existingIndex].quantity + quantity, product.stock);
         updated[existingIndex].quantity = newQty;
         updated[existingIndex].totalPrice = product.totalPrice;
+        updated[existingIndex].tax = product.tax;
         return updated;
       }
 
@@ -55,6 +58,7 @@ export default function Page() {
           quantity: Math.min(quantity, product.stock),
           options: product.options || [],
           totalPrice: product.totalPrice,
+          tax: product.tax
         },
       ];
     });

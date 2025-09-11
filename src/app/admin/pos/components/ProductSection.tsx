@@ -24,6 +24,7 @@ type ProductSectionProps = {
     totalPrice: number;
     quantity: number;
     ae_sku_attr?: string;
+    tax: number
     options: {
       optionId: number;
       itemId: number;
@@ -37,6 +38,7 @@ type ProductSectionProps = {
       totalPrice: number;
       ae_sku_attr?: string;
       options?: { optionId: number; itemId: number }[];
+      tax: number
     },
     quantity?: number
   ) => void;

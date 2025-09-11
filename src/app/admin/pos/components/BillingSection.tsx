@@ -7,6 +7,7 @@ import { IWishlistItem } from '../type';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import { useCreateOfflineUserMutation, useGetOfflineUserQuery } from '../posApiServices';
 
 const { Option } = Select;
 
@@ -18,6 +19,7 @@ type ProductSectionProps = {
     totalPrice: number;
     quantity: number;
     ae_sku_attr?: string;
+    tax: number
     options: {
       optionId: number;
       itemId: number;
@@ -31,6 +33,7 @@ type ProductSectionProps = {
       totalPrice: number;
       ae_sku_attr?: string;
       options?: { optionId: number; itemId: number }[];
+      tax: number
     },
     quantity?: number
   ) => void;
@@ -44,6 +47,7 @@ type ProductSectionProps = {
         stock: number;
         totalPrice: number;
         quantity: number;
+        tax: number
         ae_sku_attr?: string;
         options: {
           optionId: number;
@@ -69,13 +73,13 @@ export default function BillingSection({
   const [selectedCustomer, setSelectedCustomer] = useState<string | undefined>();
   const [extraDiscount, setExtraDiscount] = useState<number>(0);
   const [couponDiscount, setCouponDiscount] = useState<number>(0);
+  const [coupon, setCoupon] = useState<any>()
+  const [extra, setExtra] = useState<any>()
   const token = useSelector((s: RootState) => s.auth.token)
+  const [addCustomer, { isLoading: cusLoading }] = useCreateOfflineUserMutation()
+  const { data: customers, isLoading: loadingCus, refetch } = useGetOfflineUserQuery()
+  const customerInfo = selectedCustomer ? customers?.find(d => d.id === parseInt(selectedCustomer)) : null
 
-  const customer = [
-    { value: '', label: 'Walking Customer' },
-    { value: 'xyz', label: 'Mr. XYZ' },
-    { value: 'akash', label: 'Md. Akash' },
-  ];
 
   const filterOption = (input: string, option?: { children: React.ReactNode }) =>
     String(option?.children).toLowerCase().includes(input.toLowerCase());
@@ -87,6 +91,7 @@ export default function BillingSection({
   };
 
   const getSubtotal = () => cart.reduce((total, p) => total + p.quantity * p.totalPrice, 0);
+  const getTax = () => cart.reduce((t, p) => t + p.quantity * (p.tax || 0), 0)
 
   const handlePlaceOrder = () => {
     message.success('Order placed successfully!');
@@ -95,10 +100,6 @@ export default function BillingSection({
   const handleCancelOrder = () => {
     message.warning('Order has been canceled.');
   };
-
-  const handleAddCustomer = async () => {
-
-  }
 
   useEffect(() => {
     let buffer = "";
@@ -180,12 +181,14 @@ export default function BillingSection({
         product?.label_variants?.reduce((acc, val) => acc + (val.option.price || 0), 0)
 
       const subTotal = (finalPrice + optionprice)
-
+      const tax =
+        product.product.tax_type === "include" ? 0 : product.product.tax_amount;
       addToCart({
         productId: product.id,
         stock: product.product.stock,
         title: product.product.title,
         totalPrice: subTotal,
+        tax,
         options: [{
           itemId: product.label_variants?.[0]?.itemId,
           optionId: product?.label_variants?.[0]?.optionId
@@ -227,9 +230,9 @@ export default function BillingSection({
             onChange={(value) => setSelectedCustomer(value)}
             filterOption={filterOption}
           >
-            {customer.map((cat) => (
-              <Option key={cat.value} value={cat.value}>
-                {cat.label}
+            {customers?.map((cat) => (
+              <Option key={cat.id} value={cat.id}>
+                {cat.name}
               </Option>
             ))}
           </Select>
@@ -247,10 +250,10 @@ export default function BillingSection({
           <div className="w-1/2">
             <p className="font-medium text-black">Customer Information</p>
             <p>
-              <span className="mr-5 text-black">Name:</span>Mr. XYZ
+              <span className="mr-5 text-black">Name:</span>{customerInfo ? customerInfo.name : "N/A"}
             </p>
             <p>
-              <span className="mr-4 text-black">Phone:</span>0123456789
+              <span className="mr-4 text-black">Phone:</span>{customerInfo?.phone || "N/A"}
             </p>
           </div>
           <Button danger onClick={resetCart}>
@@ -305,10 +308,7 @@ export default function BillingSection({
             <span>Sub Total :</span>
             <span>৳{getSubtotal().toFixed(2)}</span>
           </div>
-          <div className="flex justify-between">
-            <span>Product Discount :</span>
-            <span>৳0.00</span>
-          </div>
+
           <div className="flex justify-between">
             <span>Extra Discount :</span>
             <span className="flex items-center gap-1">
@@ -329,11 +329,11 @@ export default function BillingSection({
           </div>
           <div className="flex justify-between">
             <span>Tax :</span>
-            <span>৳0.00</span>
+            <span>৳{getTax().toFixed(2)}</span>
           </div>
           <div className="flex justify-between font-semibold text-black">
             <span>Total :</span>
-            <span>৳{(getSubtotal() - extraDiscount - couponDiscount).toFixed(2)}</span>
+            <span>৳{((getSubtotal() + getTax()) - (extraDiscount + couponDiscount)).toFixed(2)}</span>
           </div>
         </div>
 
@@ -385,28 +385,25 @@ export default function BillingSection({
         <Form
           layout="vertical"
           onFinish={async (values) => {
-            console.log('Customer Info:', values);
-            message.success('Customer added!');
-            setOpenAddCustomerModal(false);
+            try {
+              const res = await addCustomer(values).unwrap()
+              setSelectedCustomer(String(res.id))
+              console.log('Customer Info:', values);
+              toast.success('Customer added!');
+              refetch()
+              setOpenAddCustomerModal(false);
+            } catch (error: any) {
+              toast.error(error?.data?.message);
+            }
           }}
         >
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Form.Item
-              label="First Name"
-              name="firstName"
-              rules={[{ required: true, message: 'First name is required' }]}
-            >
-              <Input placeholder="Enter first name" />
-            </Form.Item>
-
-            <Form.Item
-              label="Last Name"
-              name="lastName"
-              rules={[{ required: true, message: 'Last name is required' }]}
-            >
-              <Input placeholder="Enter last name" />
-            </Form.Item>
-          </div>
+          <Form.Item
+            label="First Name"
+            name="name"
+            rules={[{ required: true, message: 'Name is required' }]}
+          >
+            <Input placeholder="Enter first name" />
+          </Form.Item>
 
           <Form.Item
             label="Email"
@@ -435,7 +432,7 @@ export default function BillingSection({
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
+            <Button loading={cusLoading} type="primary" htmlType="submit" block>
               Save Customer
             </Button>
           </Form.Item>

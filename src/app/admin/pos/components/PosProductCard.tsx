@@ -17,6 +17,7 @@ export default function PosProductCard({
       stock: number;
       totalPrice: number;
       ae_sku_attr?: string;
+      tax: number;
       options?: { optionId: number; itemId: number }[];
     },
     quantity?: number
@@ -105,13 +106,12 @@ export default function PosProductCard({
                             [item.id]: option.id,
                           }));
                         }}
-                        className={`cursor-pointer rounded-full border-2 px-4 py-0.5 transition-colors duration-200 ${
-                          selectedOptions[item.id] === option.id
-                            ? 'border-primaryBlue bg-primaryBlue text-white shadow-2'
-                            : isOutOfStock
-                              ? 'cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400'
-                              : 'border-blue-300 bg-white text-primaryBlue'
-                        }`}
+                        className={`cursor-pointer rounded-full border-2 px-4 py-0.5 transition-colors duration-200 ${selectedOptions[item.id] === option.id
+                          ? 'border-primaryBlue bg-primaryBlue text-white shadow-2'
+                          : isOutOfStock
+                            ? 'cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400'
+                            : 'border-blue-300 bg-white text-primaryBlue'
+                          }`}
                         title={isOutOfStock ? 'This option is stock out' : ''}
                         style={isOutOfStock ? { pointerEvents: 'none' } : {}}
                       >
@@ -152,11 +152,14 @@ export default function PosProductCard({
               className="mt-5"
               onClick={() => {
                 setOpen(false);
+                const tax =
+                  data.tax_type === "include" ? 0 : data.tax_amount;
                 onPress({
                   productId: data.id,
                   stock: data.stock,
                   title: data.title,
                   totalPrice: finalPrice + optionprice,
+                  tax: tax,
                   options: Object.entries(selectedOptions).map(([key, val]) => ({
                     itemId: parseInt(key),
                     optionId: val,
@@ -181,7 +184,7 @@ export default function PosProductCard({
             <span className="font-medium">Brand:</span> {data?.brand?.title || 'N/A'}
           </p>
         </div>
-      </Modal>
+      </Modal >
     </>
   );
 }
