@@ -5,6 +5,8 @@ import { Input, Select, Button, Modal, Form, message } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { IWishlistItem } from '../type';
 import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 const { Option } = Select;
 
@@ -21,6 +23,17 @@ type ProductSectionProps = {
       itemId: number;
     }[];
   }[];
+  addToCart: (
+    product: {
+      productId: number;
+      title: string;
+      stock: number;
+      totalPrice: number;
+      ae_sku_attr?: string;
+      options?: { optionId: number; itemId: number }[];
+    },
+    quantity?: number
+  ) => void;
   removeFromCart: (productId: number, options?: { optionId: number; itemId: number }[]) => void;
   resetCart: () => void;
   setCart: React.Dispatch<
@@ -46,6 +59,7 @@ export default function BillingSection({
   removeFromCart,
   resetCart,
   setCart,
+  addToCart
 }: ProductSectionProps) {
   const [paymentMethod, setPaymentMethod] = useState<'online' | 'offline'>('offline');
   const [openHoldModal, setOpenHoldModal] = useState(false);
@@ -55,6 +69,7 @@ export default function BillingSection({
   const [selectedCustomer, setSelectedCustomer] = useState<string | undefined>();
   const [extraDiscount, setExtraDiscount] = useState<number>(0);
   const [couponDiscount, setCouponDiscount] = useState<number>(0);
+  const token = useSelector((s: RootState) => s.auth.token)
 
   const customer = [
     { value: '', label: 'Walking Customer' },
@@ -81,11 +96,27 @@ export default function BillingSection({
     message.warning('Order has been canceled.');
   };
 
+  const handleAddCustomer = async () => {
+
+  }
+
   useEffect(() => {
     let buffer = "";
     let timer: NodeJS.Timeout;
 
     const handleKeydown = (e: KeyboardEvent) => {
+      // Ignore special keys
+      if (
+        e.key === "Shift" ||
+        e.key === "Control" ||
+        e.key === "Alt" ||
+        e.key === "CapsLock" ||
+        e.key === "NumLock" ||
+        e.key === "Tab"
+      ) {
+        return;
+      }
+
       // Reset buffer if no input for 300ms
       if (timer) clearTimeout(timer);
       timer = setTimeout(() => {
@@ -94,7 +125,7 @@ export default function BillingSection({
 
       if (e.key === "Enter") {
         if (buffer.length > 0) {
-          console.log("Scanned:", buffer);
+          console.log("Scanned Code:", buffer);
           fetchProduct(buffer);
           buffer = "";
         }
@@ -107,25 +138,67 @@ export default function BillingSection({
     return () => window.removeEventListener("keydown", handleKeydown);
   }, []);
 
+
   const fetchProduct = async (code: string) => {
     const tId = toast.loading("Barcode scanning....")
     try {
-      const res = await fetch(`https://api.darkak.com.bd/api/admin/pos/barcode/${code}`); // API endpoint
-      const product = await res.json();
+      const res = await fetch(`https://api.darkak.com.bd/api/admin/pos/barcode/${code}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // replace with your token
+        },
+      }); // API endpoint
+      const product = await res.json() as IWishlistItem
+      if (!product.product.stock) {
+        toast.update(tId, {
+          render: "Product is stock out",
+          isLoading: false,
+          autoClose: 3000,
+          type: "error"
+        })
+        return
+      }
       toast.update(tId, {
         render: "Added to cart",
         isLoading: false,
         autoClose: 3000,
         type: "success"
       })
-      return product as IWishlistItem
+
+      const price = product?.product?.price ?? 0;
+      const discount = product?.product?.discount ?? 0;
+      const discountType = product?.product?.discount_type ?? 'flat';
+
+      let finalPrice = price;
+
+      if (discountType === 'percentage') {
+        finalPrice = price - (price * discount) / 100;
+      } else if (discountType === 'flat') {
+        finalPrice = price - discount;
+      }
+      const optionprice =
+        product?.label_variants?.reduce((acc, val) => acc + (val.option.price || 0), 0)
+
+      const subTotal = (finalPrice + optionprice)
+
+      addToCart({
+        productId: product.id,
+        stock: product.product.stock,
+        title: product.product.title,
+        totalPrice: subTotal,
+        options: [{
+          itemId: product.label_variants?.[0]?.itemId,
+          optionId: product?.label_variants?.[0]?.optionId
+        }]
+      })
+      return product
     } catch (err: any) {
       console.error("Product not found", err);
       toast.update(tId, {
         render: "Failed to add product",
         isLoading: false,
         autoClose: 3000,
-        type: "success"
+        type: "error"
       })
     }
   };
@@ -134,7 +207,7 @@ export default function BillingSection({
   return (
     <>
       <div className="mt-5 rounded-lg bg-white p-4 shadow-sm">
-        <div className="mb-4 flex w-full justify-end">
+        {/* <div className="mb-4 flex w-full justify-end">
           <Button
             onClick={() => setOpenHoldModal(true)}
             type="default"
@@ -142,7 +215,7 @@ export default function BillingSection({
           >
             View All Hold Orders <span className="ml-2 text-red-500">0</span>
           </Button>
-        </div>
+        </div> */}
 
         <div className="mb-4 flex w-full flex-1 items-center justify-between gap-8">
           <Select
@@ -267,7 +340,7 @@ export default function BillingSection({
         <div className="mt-4">
           <p className="mb-2 text-sm font-medium text-gray-700">Paid By:</p>
           <div className="flex gap-3">
-            {['online', 'offline'].map((method) => (
+            {['offline'].map((method) => (
               <button
                 key={method}
                 onClick={() => setPaymentMethod(method as 'online' | 'offline')}
@@ -311,7 +384,7 @@ export default function BillingSection({
       >
         <Form
           layout="vertical"
-          onFinish={(values) => {
+          onFinish={async (values) => {
             console.log('Customer Info:', values);
             message.success('Customer added!');
             setOpenAddCustomerModal(false);
@@ -339,7 +412,7 @@ export default function BillingSection({
             label="Email"
             name="email"
             rules={[
-              { required: true, message: 'Email is required' },
+              { required: false, message: 'Email is required' },
               { type: 'email', message: 'Enter a valid email' },
             ]}
           >
@@ -354,12 +427,10 @@ export default function BillingSection({
             <Input placeholder="Enter phone number" />
           </Form.Item>
 
-          <Form.Item label="Zip Code" name="zip">
-            <Input placeholder="Enter zip code" />
-          </Form.Item>
 
-          <Form.Item label="Address" name="address">
-            ›
+
+          <Form.Item rules={[{ required: true, message: 'Address is required' }]}
+            label="Address" name="address">
             <Input.TextArea placeholder="Enter address" rows={3} />
           </Form.Item>
 

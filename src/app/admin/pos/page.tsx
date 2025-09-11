@@ -43,7 +43,7 @@ export default function Page() {
         const updated = [...prev];
         const newQty = Math.min(updated[existingIndex].quantity + quantity, product.stock);
         updated[existingIndex].quantity = newQty;
-        updated[existingIndex].totalPrice = newQty * product.totalPrice;
+        updated[existingIndex].totalPrice = product.totalPrice;
         return updated;
       }
 
@@ -54,7 +54,7 @@ export default function Page() {
           ...product,
           quantity: Math.min(quantity, product.stock),
           options: product.options || [],
-          totalPrice: product.totalPrice * quantity,
+          totalPrice: product.totalPrice,
         },
       ];
     });
@@ -88,6 +88,7 @@ export default function Page() {
           setCart={setCart}
           removeFromCart={removeFromCart}
           resetCart={resetCart}
+          addToCart={addToCart}
         />
       </div>
     </div>

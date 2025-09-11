@@ -1,5 +1,5 @@
 import baseApi from '@/redux/baseApi';
-import { IWishlistItem, IWishlistRequest, PosOrderInput } from './type';
+import { Customer, ICustomer, IWishlistItem, IWishlistRequest, PosOrderInput } from './type';
 
 export const posApiServices = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -25,8 +25,26 @@ export const posApiServices = baseApi.injectEndpoints({
         body,
       }),
     }),
+    createOfflineUser: builder.mutation<ICustomer, Customer>({
+      query: (body) => ({
+        url: `/admin/pos/offline-user`,
+        method: 'POST',
+        body,
+      }),
+    }),
+    getOfflineUser: builder.query<ICustomer[], void>({
+      query: () => ({
+        url: `/admin/pos/offline-user`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
-export const { useGetPosDataQuery, useCreatePosDataMutation, useCreatePosOrderMutation } =
-  posApiServices;
+export const {
+  useGetPosDataQuery,
+  useCreatePosDataMutation,
+  useCreatePosOrderMutation,
+  useGetOfflineUserQuery,
+  useCreateOfflineUserMutation,
+} = posApiServices;

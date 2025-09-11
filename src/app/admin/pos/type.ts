@@ -207,3 +207,19 @@ export interface PosOrderInput {
   paid?: boolean; // defaults to false
   store_discount?: number; // defaults to 0
 }
+
+export interface Customer {
+  name: string;
+  address: string;
+  phone: string;
+  email?: string;
+}
+
+export interface ICustomer {
+  id: number;
+  name: string;
+  phone: string;
+  email: string;
+  address: string;
+  date: string; // ISO date string
+}
