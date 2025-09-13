@@ -30,6 +30,7 @@ import OrderInvoicePDF from '../[id]/components/OrderInvoicePDF';
 import FilterOrders from '../all/FilterOrders';
 import RequireAccess from '@/components/Layouts/RequireAccess';
 import { useGetAliExpressOrdersQuery } from '@/redux/services/admin/adminAli-ExpressOrderApi';
+import MiniButton from '@/app/admin/orders/[id]/components/MiniButton';
 const FailedToDeliveryOrderList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState({});
@@ -202,16 +203,7 @@ const FailedToDeliveryOrderList = () => {
                         >
                           <FaEye />
                         </Button>
-                        <PDFDownloadLink
-                          document={<OrderInvoicePDF orderDetails={order} />}
-                          fileName={`invoice_order_${order?.id}.pdf`}
-                        >
-                          {({ loading }) => (
-                            <button className="rounded-full bg-teal-100 p-1 text-base text-teal-700 hover:bg-teal-50">
-                              <MdFileDownload />
-                            </button>
-                          )}
-                        </PDFDownloadLink>
+                        <MiniButton orderDetails={order} />
                       </TableCell>
                     </TableRow>
                   ))
