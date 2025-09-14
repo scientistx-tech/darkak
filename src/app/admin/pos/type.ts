@@ -203,9 +203,8 @@ export interface PosOrderInput {
   productIds: ProductInput[];
   couponId?: number;
   sellerId?: number;
-  order_type: 'in-house' | 'vendor' | 'pos';
-  paid?: boolean; // defaults to false
   store_discount?: number; // defaults to 0
+  store_discount_type?: 'flat' | 'percentage'; // defaults to 'flat'
 }
 
 export interface Customer {

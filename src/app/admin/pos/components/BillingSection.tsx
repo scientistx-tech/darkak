@@ -7,7 +7,8 @@ import { IWishlistItem } from '../type';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { useCreateOfflineUserMutation, useGetOfflineUserQuery } from '../posApiServices';
+import { useCreateOfflineUserMutation, useCreatePosOrderMutation, useGetOfflineUserQuery } from '../posApiServices';
+import { Coupon, useCheckCouponCodeMutation } from '@/redux/services/client/applyCoupon';
 
 const { Option } = Select;
 
@@ -73,12 +74,17 @@ export default function BillingSection({
   const [selectedCustomer, setSelectedCustomer] = useState<string | undefined>();
   const [extraDiscount, setExtraDiscount] = useState<number>(0);
   const [couponDiscount, setCouponDiscount] = useState<number>(0);
-  const [coupon, setCoupon] = useState<any>()
-  const [extra, setExtra] = useState<any>()
-  const token = useSelector((s: RootState) => s.auth.token)
+  const [coupon, setCoupon] = useState<Coupon | undefined>()
+  const [extra, setExtra] = useState<{
+    type: 'flat' | 'percentage';
+    value: number;
+  } | undefined>()
+  const { token, user } = useSelector((s: RootState) => s.auth)
   const [addCustomer, { isLoading: cusLoading }] = useCreateOfflineUserMutation()
   const { data: customers, isLoading: loadingCus, refetch } = useGetOfflineUserQuery()
   const customerInfo = selectedCustomer ? customers?.find(d => d.id === parseInt(selectedCustomer)) : null
+  const [checkCoupon, { isLoading: checkingCoupon }] = useCheckCouponCodeMutation()
+  const [createOrder, { isLoading: placingOrder }] = useCreatePosOrderMutation()
 
 
   const filterOption = (input: string, option?: { children: React.ReactNode }) =>
@@ -93,12 +99,36 @@ export default function BillingSection({
   const getSubtotal = () => cart.reduce((total, p) => total + p.quantity * p.totalPrice, 0);
   const getTax = () => cart.reduce((t, p) => t + p.quantity * (p.tax || 0), 0)
 
-  const handlePlaceOrder = () => {
-    message.success('Order placed successfully!');
+  const handlePlaceOrder = async () => {
+    try {
+      await createOrder({
+        userId: Number(user?.id) || undefined,
+        name: customerInfo?.name || "",
+        email: customerInfo?.email || "",
+        phone: customerInfo?.phone || "",
+        division: "N/A",
+        district: "N/A",
+        sub_district: "N/A",
+        area: customerInfo?.address || "N/A",
+        paymentType: paymentMethod,
+        productIds: cart,
+        couponId: coupon?.id || undefined,
+        store_discount: extra?.value,
+        store_discount_type: extra?.type,
+      }).unwrap()
+      toast.success("Order placed successfully")
+      resetCart()
+      setExtra(undefined)
+      setCoupon(undefined)
+      setCouponDiscount(0)
+      setExtraDiscount(0)
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to place order")
+    }
   };
 
   const handleCancelOrder = () => {
-    message.warning('Order has been canceled.');
+    resetCart()
   };
 
   useEffect(() => {
@@ -205,6 +235,27 @@ export default function BillingSection({
       })
     }
   };
+
+  const checkCouponCode = async (code: string) => {
+    try {
+      const res = await checkCoupon({
+        code, data: {
+          total: getSubtotal(),
+          productIds: cart.map(i => i.productId),
+          visitorId: "pos-visitor",
+          userId: Number(user?.id) || null
+        }
+      }).unwrap()
+      setCoupon(res.coupon)
+      setCouponDiscount(res.coupon.discount_type == "flat" ? res.coupon.discount_amount :
+        (getSubtotal() * res.coupon.discount_amount) / 100
+      )
+      toast.success(res.message)
+      setOpenCouponDiscount(false);
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to apply coupon")
+    }
+  }
 
 
   return (
@@ -359,8 +410,9 @@ export default function BillingSection({
           <Button danger className="w-1/2 py-2" onClick={handleCancelOrder}>
             Cancel Order
           </Button>
-          <Button type="primary" className="w-1/2 py-2" onClick={handlePlaceOrder}>
-            Place Order
+          <Button disabled={cart.length === 0 || !Boolean(selectedCustomer) || placingOrder ? true : false}
+            type="primary" className="w-1/2 py-2" onClick={handlePlaceOrder}>
+            {placingOrder ? "Please wait.." : "Place Order"}
           </Button>
         </div>
       </div>
@@ -449,22 +501,20 @@ export default function BillingSection({
         <Form
           layout="vertical"
           onFinish={(values) => {
-            console.log('Discount Type:', values.type);
-            console.log('Discount Value:', values.value);
-            message.success(
-              `Discount of ${values.value}${values.type === 'percentage' ? '%' : '৳'} applied!`
-            );
+            setExtra({ type: values.type as any, value: values.value })
+            setExtraDiscount(values.type === "flat" ? parseFloat(values.value)
+              : (getSubtotal() * parseFloat(values.value) / 100))
             setOpenExtraDiscount(false);
           }}
         >
           <Form.Item
             label="Discount Type"
             name="type"
-            initialValue="amount"
+            initialValue="flat"
             rules={[{ required: true, message: 'Please select a discount type' }]}
           >
             <Select>
-              <Select.Option value="amount">Amount</Select.Option>
+              <Select.Option value="flat">Amount</Select.Option>
               <Select.Option value="percentage">Percentage</Select.Option>
             </Select>
           </Form.Item>
@@ -494,10 +544,8 @@ export default function BillingSection({
       >
         <Form
           layout="vertical"
-          onFinish={(values) => {
-            console.log('Applied Coupon:', values.coupon);
-            message.success(`Coupon "${values.coupon}" applied!`);
-            setOpenCouponDiscount(false);
+          onFinish={async (values) => {
+            await checkCouponCode(values.coupon)
           }}
         >
           <Form.Item
@@ -509,8 +557,8 @@ export default function BillingSection({
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
-              Apply Coupon
+            <Button disabled={checkingCoupon} type="primary" htmlType="submit" block>
+              {checkingCoupon ? "Pleasing wait..." : "Apply Coupon"}
             </Button>
           </Form.Item>
         </Form>
