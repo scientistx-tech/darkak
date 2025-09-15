@@ -5,18 +5,19 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import bannerImg from "@/Data/Demo/White Brown Modern Youtube Thumbnail.png";
 import Link from "next/link";
+import { getLocalStorage, setLocalStorage } from "@/utils/localStorage";
 
 const EidOfferNotice: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [countdown, setCountdown] = useState(10);
 
   useEffect(() => {
-    const lastShown = localStorage.getItem("eid_offer_shown_date");
+    const lastShown = getLocalStorage("eid_offer_shown_date");
     const today = new Date().toISOString().split("T")[0];
 
     if (lastShown !== today) {
       setIsModalOpen(true);
-      localStorage.setItem("eid_offer_shown_date", today);
+      setLocalStorage("eid_offer_shown_date", today);
     }
   }, []);
 

@@ -18,6 +18,7 @@ import {
 import { BD_Division, BD_District } from '@/Data/addressData';
 import { useCheckCouponCodeMutation } from '@/redux/services/client/applyCoupon';
 import getSeoData from '../getSeoData';
+import { getLocalStorage } from '@/utils/localStorage';
 
 const EasyCheckout: React.FC = () => {
   const lang = useSelector((state: RootState) => state.language.language);
@@ -60,7 +61,7 @@ const EasyCheckout: React.FC = () => {
   const [createOrder] = useOrderSingleProductMutation();
   const [applyCoupon] = useCheckCouponCodeMutation();
   const [paymentUrl] = useGetPaymentUrlMutation();
-  const storedItems = localStorage.getItem('checkout_items');
+  const storedItems = getLocalStorage('checkout_items');
 
   useEffect(() => {
     getContentData();
@@ -216,7 +217,7 @@ const EasyCheckout: React.FC = () => {
     : [];
 
   const handleApplyCoupon = async () => {
-    const visitorId = localStorage.getItem('visitorId');
+    const visitorId = getLocalStorage('visitorId');
 
     const payload: {
       total: number;

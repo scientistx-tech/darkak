@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import ProfileImg from "@/Data/Img/profile.jpg";
 import ContuctUs from "@/Data/Img/Contact us.png";
+import { getLocalStorage, setLocalStorage } from "@/utils/localStorage";
 
 const WHATSAPP_LINK =
   "https://api.whatsapp.com/send?phone=8801711726501&text=hello%F0%9F%98%87";
@@ -11,7 +12,7 @@ export default function FloatButton() {
   const [showBubble, setShowBubble] = useState(true);
 
   useEffect(() => {
-    const hideTime = localStorage.getItem("hideBubbleTime");
+    const hideTime = getLocalStorage("hideBubbleTime");
     if (hideTime) {
       const diff = Date.now() - parseInt(hideTime);
       if (diff < 30 * 60 * 1000) {
@@ -31,7 +32,7 @@ export default function FloatButton() {
 
   const handleHide = () => {
     setShowBubble(false);
-    localStorage.setItem("hideBubbleTime", Date.now().toString());
+    setLocalStorage("hideBubbleTime", Date.now().toString());
   };
 
   return (

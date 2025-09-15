@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { AppDispatch, RootState } from '@/redux/store';
-import { setLocalStorage } from '@/utils/localStorage';
+import { getLocalStorage, setLocalStorage } from '@/utils/localStorage';
 import InputField from '../signup/components/InputField';
 import SocialButton from '../signup/components/SocialButton';
 import { useEmailLoginMutation, usePhoneLoginMutation } from '@/redux/services/authApis';
@@ -73,10 +73,10 @@ const LoginPage: React.FC = () => {
         dispatch(setUser(res));
       }
       toast.success('Login successful!');
-      let visitorId = localStorage.getItem('visitorId');
+      let visitorId = getLocalStorage('visitorId');
       if (!visitorId) {
         visitorId = generateVisitorId();
-        localStorage.setItem('visitorId', visitorId);
+        setLocalStorage('visitorId', visitorId);
       }
       router.push('/admin');
     } catch (err: any) {

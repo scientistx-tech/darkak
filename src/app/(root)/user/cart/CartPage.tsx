@@ -23,6 +23,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
+import { setLocalStorage } from '@/utils/localStorage';
 
 const CartPage: React.FC = () => {
   const lang = useSelector((state: RootState) => state.language.language);
@@ -403,7 +404,7 @@ const CartPage: React.FC = () => {
             <button
               className="flex items-center gap-2 rounded-full bg-primaryBlue px-6 py-2 text-white transition-all duration-300 ease-in hover:bg-blue-600"
               onClick={() => {
-                localStorage.setItem('checkout_items', JSON.stringify(cartItems));
+                setLocalStorage('checkout_items', JSON.stringify(cartItems));
                 router.push('/cart-checkout');
               }}
             >

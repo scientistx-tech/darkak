@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { AppDispatch, RootState } from '@/redux/store';
-import { setLocalStorage } from '@/utils/localStorage';
+import { getLocalStorage, setLocalStorage } from '@/utils/localStorage';
 
 import { useModeratorLoginMutation } from '@/redux/services/authApis';
 import { toast } from 'react-toastify';
@@ -60,10 +60,10 @@ const ModeratorLoginForm: React.FC = () => {
       const res = await login({ email, password }).unwrap();
       dispatch(setUser(res));
       toast.success('Moderator Login successful!');
-      let visitorId = localStorage.getItem('visitorId');
+      let visitorId = getLocalStorage('visitorId');
       if (!visitorId) {
         visitorId = generateVisitorId();
-        localStorage.setItem('visitorId', visitorId);
+        setLocalStorage('visitorId', visitorId);
       }
       router.push('/admin');
     } catch (err: any) {

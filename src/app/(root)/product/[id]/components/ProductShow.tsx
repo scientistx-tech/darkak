@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useAddToCartMutation } from '@/redux/services/client/myCart';
 import { setCart } from '@/redux/slices/authSlice';
 import DOMPurify from 'dompurify';
+import { setLocalStorage } from '@/utils/localStorage';
 
 interface ProductShowProps {
   data: {
@@ -215,7 +216,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
     const cartObject = buildCartObject(data?.product);
     console.log('cartobject', cartObject);
     try {
-      localStorage.setItem('checkout_items', JSON.stringify([cartObject]));
+      setLocalStorage('checkout_items', JSON.stringify([cartObject]));
       router.push('/easy-checkout');
     } catch (error: any) {
       if (error?.status === 401) {

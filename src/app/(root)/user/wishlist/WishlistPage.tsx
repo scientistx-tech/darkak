@@ -21,6 +21,7 @@ import { useAddToCartMutation } from '@/redux/services/client/myCart';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import Button from '@/app/admin/components/Button';
+import { setLocalStorage } from '@/utils/localStorage';
 
 const WishlistPage: React.FC = () => {
   const lang = useSelector((state: RootState) => state.language.language);
@@ -138,7 +139,7 @@ const WishlistPage: React.FC = () => {
               const cartObject = buildCartObject(item.product);
               console.log('cartobject', cartObject);
               try {
-                localStorage.setItem('checkout_items', JSON.stringify([cartObject]));
+                setLocalStorage('checkout_items', JSON.stringify([cartObject]));
                 dispatch(setCart(Math.random()));
                 // toast.success("Item added to cart!");
                 router.push('/easy-checkout');

@@ -24,6 +24,7 @@ import { setCart } from '@/redux/slices/authSlice';
 import { BD_Division, BD_District } from '@/Data/addressData';
 import { useCheckCouponCodeMutation } from '@/redux/services/client/applyCoupon';
 import getSeoData from '../getSeoData';
+import { getLocalStorage } from '@/utils/localStorage';
 
 const CartCheckout: React.FC = () => {
   const lang = useSelector((state: RootState) => state.language.language);
@@ -70,7 +71,7 @@ const CartCheckout: React.FC = () => {
 
   // ✅ Load checkout_items from localStorage when component mounts
   useEffect(() => {
-    const storedItems = localStorage.getItem('checkout_items');
+    const storedItems = getLocalStorage('checkout_items');
 
     if (storedItems) {
       setCheckoutItems(JSON.parse(storedItems));
@@ -256,7 +257,7 @@ const CartCheckout: React.FC = () => {
     : [];
 
   const handleApplyCoupon = async () => {
-    const visitorId = localStorage.getItem('visitorId');
+    const visitorId = getLocalStorage('visitorId');
     const productIds = checkoutItems.map((item: any) => item.productId);
 
     const payload: {

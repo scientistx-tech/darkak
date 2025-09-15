@@ -58,7 +58,7 @@ async function getClientNewsDetailsById(id: string) {
           // Authorization: Bearer ${process.env.API_TOKEN}, // Uncomment if needed
         },
         // You must disable caching for dynamic SSR data
-        cache: "no-store",
+        next: { revalidate: 3600 },
       },
     );
 

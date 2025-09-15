@@ -9,6 +9,7 @@ import { FaShoppingCart } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { Rating } from 'react-simple-star-rating';
+import { setLocalStorage } from '@/utils/localStorage';
 
 const PriceInfo = ({
   product,
@@ -72,7 +73,7 @@ const PriceInfo = ({
     const cartObject = buildCartObject(product);
     console.log('cartobject', cartObject);
     try {
-      localStorage.setItem('checkout_items', JSON.stringify([cartObject]));
+      setLocalStorage('checkout_items', JSON.stringify([cartObject]));
       dispatch(setCart(Math.random()));
       // toast.success("Item added to cart!");
       router.push('/easy-checkout');

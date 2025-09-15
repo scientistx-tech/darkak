@@ -59,7 +59,7 @@ async function getShopDetailsById(id: string, token: string) {
         // Authorization: `Bearer ${token}`,
       },
 
-      cache: 'no-store',
+      next: { revalidate: 3600 },
     });
 
     if (!res.ok) {

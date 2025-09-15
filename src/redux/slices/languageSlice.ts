@@ -1,3 +1,4 @@
+import { getLocalStorage, setLocalStorage } from '@/utils/localStorage';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type LanguageState = {
@@ -7,7 +8,7 @@ type LanguageState = {
 const LOCAL_KEY = 'lang';
 const getInitialLanguage = (): 'en' | 'bn' => {
   if (typeof window !== 'undefined') {
-    const stored = localStorage.getItem(LOCAL_KEY);
+    const stored = getLocalStorage(LOCAL_KEY);
     if (stored === 'bn' || stored === 'en') return stored;
   }
   return 'en';
@@ -24,7 +25,7 @@ const languageSlice = createSlice({
     setLanguage: (state, action: PayloadAction<'en' | 'bn'>) => {
       state.language = action.payload;
       if (typeof window !== 'undefined') {
-        localStorage.setItem(LOCAL_KEY, action.payload);
+        setLocalStorage(LOCAL_KEY, action.payload);
       }
     },
   },

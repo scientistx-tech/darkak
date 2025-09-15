@@ -37,7 +37,7 @@ async function getCustomerDetailsById(id: string, token: string) {
           Authorization: `Bearer ${token}`,
         },
 
-        cache: "no-store",
+       next: { revalidate: 3600 },
       },
     );
 

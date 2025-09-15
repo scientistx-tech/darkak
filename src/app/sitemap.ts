@@ -37,6 +37,7 @@ const getSiteMap = async () => {
       headers: {
         'Content-Type': 'application/json',
       },
+      next: { revalidate: 3600 },
     });
     clearTimeout(timeout);
     return await res.json();
