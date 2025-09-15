@@ -322,9 +322,9 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 async function fetchScripts() {
   try {
     const res = await fetch('https://api.darkak.com.bd/api/public/script', {
-      cache: 'no-store',
+      next: { revalidate: 3600 }, // Revalidate every hour
     });
-   
+
     return await res.json();
   } catch (error) {
     console.error('Failed to fetch scripts:', error);
