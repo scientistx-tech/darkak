@@ -1,39 +1,34 @@
-"use client";
+'use client';
 
-import { useDashboardDataQuery } from "@/redux/services/admin/adminDashboard";
-import React, { useEffect, useState } from "react";
-import { BarChart3, BarChart4, ArrowUp, ArrowDown } from "lucide-react";
-import SummaryCards from "./SummaryCards";
-import OrderStatusCards from "./OrderStatusCards";
-import FinancialCards from "./FinancialCards";
-import OrderStatistics from "./OrderStatistics";
-import EarningStatistics from "./EarningStatistics";
-import TopCustomers from "./TopCustomers";
-import MostPopularStores from "./MostPopularStores";
-import TopSellingProducts from "./TopSellingProducts";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-import ModeratorLandingPage from "./ModeratorDashboard";
+import { useDashboardDataQuery } from '@/redux/services/admin/adminDashboard';
+import React, { useEffect, useState } from 'react';
+import { BarChart3, BarChart4, ArrowUp, ArrowDown } from 'lucide-react';
+import SummaryCards from './SummaryCards';
+import OrderStatusCards from './OrderStatusCards';
+import FinancialCards from './FinancialCards';
+import OrderStatistics from './OrderStatistics';
+import EarningStatistics from './EarningStatistics';
+import TopCustomers from './TopCustomers';
+import MostPopularStores from './MostPopularStores';
+import TopSellingProducts from './TopSellingProducts';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import ModeratorLandingPage from './ModeratorDashboard';
 
 const Dashboard: React.FC = () => {
-  const [sort, setSort] = useState("")
+  const [sort, setSort] = useState('');
   const { data, isLoading, error, refetch } = useDashboardDataQuery({ sort: sort });
-  const [orderPeriod, setOrderPeriod] = useState<"year" | "month" | "week">(
-    "year",
-  );
-  const [earningPeriod, setEarningPeriod] = useState<"year" | "month" | "week">(
-    "year",
-  );
+  const [orderPeriod, setOrderPeriod] = useState<'year' | 'month' | 'week'>('year');
+  const [earningPeriod, setEarningPeriod] = useState<'year' | 'month' | 'week'>('year');
 
   const user = useSelector((state: RootState) => state.auth.user);
-  const accessList = useSelector((s: RootState) => s.auth.accessList)
+  const accessList = useSelector((s: RootState) => s.auth.accessList);
 
   useEffect(() => {
     if (sort) {
-      refetch()
+      refetch();
     }
-  }, [sort])
-
+  }, [sort]);
 
   if (isLoading)
     return (
@@ -51,14 +46,10 @@ const Dashboard: React.FC = () => {
       </div>
     );
   if (error)
-    return (
-      <div className="p-8 text-center text-red-500">
-        Error loading dashboard data
-      </div>
-    );
+    return <div className="p-8 text-center text-red-500">Error loading dashboard data</div>;
   if (!data) return <div className="p-8 text-center">No data available</div>;
 
-  if (!user?.isAdmin && user?.isModerator && !accessList.includes("dashboard")) {
+  if (!user?.isAdmin && user?.isModerator && !accessList.includes('dashboard')) {
     return <ModeratorLandingPage />;
   }
 
@@ -76,13 +67,26 @@ const Dashboard: React.FC = () => {
           <BarChart3 className="h-5 w-5 text-blue-600" />
           Business Analytics
         </h2>
-        <div className="text-right">
-          <select className="px-2 py-1 " onChange={(e: any) => setSort(e.target.value)} value={sort}>
-            <option value={""}>All</option>
-            <option value={"in-house"}>In House</option>
-            <option value={"vendor"}>Vendor</option>
-            <option value={"ali-express"}>Aliexpress</option>
-          </select>
+
+        <div className="flex justify-end gap-2">
+          {[
+            { label: 'All', value: '' },
+            { label: 'In House', value: 'in-house' },
+            { label: 'Vendor', value: 'vendor' },
+            { label: 'Aliexpress', value: 'ali-express' },
+          ].map((option) => (
+            <button
+              key={option.value}
+              onClick={() => setSort(option.value)}
+              className={`rounded-md border px-3 py-1 ${
+                sort === option.value
+                  ? 'border-blue-600 bg-blue-600 text-white'
+                  : 'border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
         </div>
       </div>
 
