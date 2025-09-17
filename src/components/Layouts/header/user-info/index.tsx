@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { LogOutIcon, SettingsIcon, UserIcon } from './icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch } from '@/redux/store';
+import { AppDispatch, RootState } from '@/redux/store';
 import { clearUser } from '@/redux/slices/authSlice';
 import { auth } from '@/utils/firebase';
 import { Router } from 'next/router';
@@ -26,7 +26,7 @@ export function UserInfo() {
   //   img: "/images/user/user-03.png",
   // };
 
-  const USER = useSelector((state: any) => state.auth.user);
+  const USER = useSelector((state: RootState) => state.auth.user);
 
   if (!USER) return null;
 
@@ -43,8 +43,8 @@ export function UserInfo() {
 
         <figure className="flex items-center gap-3">
           <Image
-            src={'/images/user/user-03.png'}
-            className="size-12"
+            src={USER.image || '/images/user/user-03.png'}
+            className="size-12 rounded-full"
             alt={`Avatar of ${USER.name}`}
             role="presentation"
             width={200}
@@ -75,8 +75,8 @@ export function UserInfo() {
 
         <figure className="flex items-center gap-2.5 px-5 py-3.5">
           <Image
-            src={'/images/user/user-03.png'}
-            className="size-12"
+            src={USER.image || '/images/user/user-03.png'}
+            className="size-12 rounded-full"
             alt={`Avatar for ${USER.name}`}
             role="presentation"
             width={200}
@@ -99,7 +99,7 @@ export function UserInfo() {
 
         <div className="p-2 text-base text-[#4B5563] dark:text-dark-6 [&>*]:cursor-pointer">
           <Link
-            href={'/profile'}
+            href={'/admin/profile'}
             onClick={() => setIsOpen(false)}
             className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[9px] hover:bg-gray-2 hover:text-dark dark:hover:bg-dark-3 dark:hover:text-white"
           >
@@ -109,7 +109,7 @@ export function UserInfo() {
           </Link>
 
           <Link
-            href={'/pages/settings'}
+            href={'/admin/pages/settings'}
             onClick={() => setIsOpen(false)}
             className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[9px] hover:bg-gray-2 hover:text-dark dark:hover:bg-dark-3 dark:hover:text-white"
           >

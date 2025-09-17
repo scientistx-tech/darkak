@@ -4,7 +4,7 @@ import baseApi from "../baseApi";
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     updateUser: builder.mutation<
-      AuthResponse,
+      User,
       Partial<
         Pick<
           User,
