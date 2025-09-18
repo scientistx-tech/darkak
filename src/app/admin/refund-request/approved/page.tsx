@@ -128,7 +128,9 @@ const ApprovedRefundRequest = () => {
   const navigate = useRouter();
 
   const { data, isFetching, isLoading } = useGetAllApprovedRefundRequestQuery(
-    {},
+    {
+      search: searchTerm
+    },
   );
   console.log("approved data", data?.refund);
 
@@ -179,14 +181,14 @@ const ApprovedRefundRequest = () => {
                     className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-3 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                   <select className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option>All</option>
                     <option>Pending</option>
                     <option>Approved</option>
                     <option>Rejected</option>
                   </select>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

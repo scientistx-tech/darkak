@@ -238,16 +238,13 @@ const RefundDetails = () => {
               </div>
               <div className="p-6">
                 <p className="mb-4 leading-relaxed text-gray-700">
-                  {refundData?.order_item?.order?.failed_reason}
+                  {refundData?.message}
                 </p>
-                {/* <div className="flex gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
-                    <FaFileAlt className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
-                    <FaCalendarAlt className="h-5 w-5 text-green-600" />
-                  </div>
-                </div> */}
+                <div className="flex flex-wrap gap-4 my-4">
+                  {refundData?.files?.images?.map((d: any, i: number) => (
+                    <Image alt="ref-img" height={200} width={200} className="" src={d} key={i} />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -257,53 +254,53 @@ const RefundDetails = () => {
             {/* Action Buttons */}
             {(refundData?.status !== "refunded" ||
               refundData?.status !== "rejected") && (
-              <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
-                <div className="p-4">
-                  <div className="flex flex-col gap-3">
-                    {refundData?.status === "pending" && (
-                      <>
+                <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+                  <div className="p-4">
+                    <div className="flex flex-col gap-3">
+                      {refundData?.status === "pending" && (
+                        <>
+                          <button
+                            className="w-full rounded-md bg-red-500 px-4 py-2 font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                            onClick={() => handleAction("rejected")}
+                          >
+                            Reject
+                          </button>
+                          <button
+                            className="w-full rounded-md bg-blue-500 px-4 py-2 font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            onClick={() => handleAction("approved")}
+                          >
+                            Approve
+                          </button>
+                        </>
+                      )}
+                      {refundData?.status === "approved" && (
                         <button
-                          className="w-full rounded-md bg-red-500 px-4 py-2 font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                          onClick={() => handleAction("rejected")}
+                          className="w-full rounded-md bg-yellow-500 px-4 py-2 font-medium text-white hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                          onClick={() => handleAction("under-review")}
                         >
-                          Reject
+                          Under Review
                         </button>
-                        <button
-                          className="w-full rounded-md bg-blue-500 px-4 py-2 font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                          onClick={() => handleAction("approved")}
-                        >
-                          Approve
-                        </button>
-                      </>
-                    )}
-                    {refundData?.status === "approved" && (
-                      <button
-                        className="w-full rounded-md bg-yellow-500 px-4 py-2 font-medium text-white hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
-                        onClick={() => handleAction("under-review")}
-                      >
-                        Under Review
-                      </button>
-                    )}
-                    {refundData?.status === "under-review" && (
-                      <>
-                        <button
-                          className="w-full rounded-md bg-red-500 px-4 py-2 font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                          onClick={() => handleAction("rejected")}
-                        >
-                          Reject
-                        </button>
-                        <button
-                          className="w-full rounded-md bg-blue-500 px-4 py-2 font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                          onClick={() => handleAction("refunded")}
-                        >
-                          Refund
-                        </button>
-                      </>
-                    )}
+                      )}
+                      {refundData?.status === "under-review" && (
+                        <>
+                          <button
+                            className="w-full rounded-md bg-red-500 px-4 py-2 font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                            onClick={() => handleAction("rejected")}
+                          >
+                            Reject
+                          </button>
+                          <button
+                            className="w-full rounded-md bg-blue-500 px-4 py-2 font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            onClick={() => handleAction("refunded")}
+                          >
+                            Refund
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Product Details */}
             <div className="rounded-lg border border-gray-200 bg-white shadow-sm">

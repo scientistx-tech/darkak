@@ -56,7 +56,8 @@ export default function ProductSection({ cart, addToCart }: ProductSectionProps)
   const [limit, setLimit] = useState(10);
 
   const { data, isLoading, error, refetch } = useGetProductsQuery({
-    search: searchSKU || searchName,
+    search: searchName,
+    code:searchSKU,
     brandId: selectedBrand || '',
     categoryId: selectedCategory || '',
     subSubCategoryId: selectedSubSubCategory || '',
