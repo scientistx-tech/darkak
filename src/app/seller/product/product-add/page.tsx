@@ -1986,7 +1986,7 @@ export default function ProductForm() {
           >
             Publish
           </button>
-          <button
+          {/* <button
             type="button"
             // onClick={handleSubmit}
             className="cursor-not-allowed rounded bg-teal-600 px-4 py-2 text-white shadow"
@@ -1995,7 +1995,7 @@ export default function ProductForm() {
             }
           >
             Schedule
-          </button>
+          </button> */}
         </div>
       </div>
     </RequireAccess>

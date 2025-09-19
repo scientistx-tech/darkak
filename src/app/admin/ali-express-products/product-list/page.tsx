@@ -550,12 +550,12 @@ const ProductList = () => {
                         </Switch.Root>
                       </TableCell>
                       <TableCell className="">
-                        <ButtonSelf
+                        {/* <ButtonSelf
                           // onClick={() => handleDelete(doc.id)}
                           className="mr-2 bg-red-50 p-1 text-blue-700"
                         >
                           <FaBarcode className="" />
-                        </ButtonSelf>
+                        </ButtonSelf> */}
                         <ButtonSelf
                           onClick={() =>
                             window.open(

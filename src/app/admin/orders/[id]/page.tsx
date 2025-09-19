@@ -10,6 +10,7 @@ import { useGetOrderDetailsQuery } from "@/redux/services/admin/adminOrderApis";
 import { FaLeftLong } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import FruadCheck from "./components/FruadCheck";
 
 export default function OrderDetailsPage() {
   const params = useParams();
@@ -62,6 +63,7 @@ export default function OrderDetailsPage() {
               />
             )}
           <CustomerInfo orderDetails={orderDetailsData} />
+          <FruadCheck orderDetails={orderDetailsData} />
           <AddressCard
             orderDetails={orderDetailsData}
             title="Shipping address"

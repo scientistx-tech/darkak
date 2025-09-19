@@ -18,7 +18,7 @@ export default function FilterSection({
   ]);
   const [sort, setSort] = useState("");
 
-  const formatDate = (date: any) => (date ? format(date, "dd-MM-yyyy") : "");
+  const formatDate = (date: any) => (date ? format(date, "yyyy-MM-dd") : "");
 
   const [orderDateFrom, orderDateTo] = orderDateRange;
   const [joiningDateFrom, joiningDateTo] = joiningDateRange;

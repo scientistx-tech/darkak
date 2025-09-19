@@ -141,13 +141,13 @@ const CustomerTable = ({ data }: any) => {
       <div className="rounded-lg bg-white p-4 shadow">
         <div className="mb-4 flex items-center justify-between">
           <h4 className="font-semibold">Orders ({data?.order?.length})</h4>
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <input
               type="text"
               placeholder="Search orders"
               className="rounded-md border px-3 py-1 text-sm"
             />
-          </div>
+          </div> */}
         </div>
 
         <Table>
