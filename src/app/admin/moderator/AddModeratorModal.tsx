@@ -108,6 +108,7 @@ const accessList = [
   'sitemap',
   'redirection',
   'analytics',
+  'marketing',
 ];
 
 const groupedAccessList: Record<string, string[]> = {

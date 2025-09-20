@@ -95,4 +95,5 @@ export const moderatorAccessList: string[] = [
   'sitemap',
   'redirection',
   'analytics',
+  'marketing',
 ];
