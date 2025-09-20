@@ -1,15 +1,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Table, Checkbox, Button, message, Input } from "antd";
+import { Table, Checkbox, Button, Input, Select } from "antd";
 import EditorHTML from "@/components/EditorHTML"; // your custom editor
 import dayjs from "dayjs";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { toast } from "react-toastify";
 
-// ✅ Define a type for your customer
 interface Customer {
   name: string;
   email: string;
   phone?: string;
-  dob?: string; // ISO date string e.g. "1995-08-20"
+  date: string; // API returns createdAt or order date
 }
 
 export default function EmailForm() {
@@ -17,17 +19,40 @@ export default function EmailForm() {
   const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
   const [subject, setSubject] = useState<string>("");
   const [mainContent, setMainContent] = useState<string>("");
+  const token = useSelector((s: RootState) => s.auth.token)
+  const [loading, setLoading] = useState<boolean>(false); // ✅ Loading state
+  // pagination + filter
+  const [page, setPage] = useState<number>(1);
+  const [limit] = useState<number>(10);
+  const [totalPage, setTotalPage] = useState<number>(0);
+  const [sort, setSort] = useState<"user" | "order">("user");
 
-  // ✅ Mock customer data
+  // ✅ Fetch customers from API
+  const fetchCustomers = async (pageNum = 1, sortBy = sort) => {
+    try {
+      const res = await fetch(
+        `https://api.darkak.com.bd/api/admin/user/mail-list?page=${pageNum - 1}&limit=${limit}&sort=${sortBy}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        next: {
+          tags: ["EMAILS"]
+        }
+      }
+      );
+      const data = await res.json();
+
+      setCustomers(data.data || []);
+      setTotalPage(data.totalPage || 0);
+    } catch (err) {
+      console.error("❌ Error fetching customers:", err);
+      toast.error("Failed to fetch customer list");
+    }
+  };
+
   useEffect(() => {
-    const mockCustomers: Customer[] = [
-      { name: "John Doe", email: "john@example.com", phone: "01711111111", dob: "1995-08-20" },
-      { name: "Jane Smith", email: "jane@example.com", phone: "01822222222" }, // no dob
-      { name: "David Lee", email: "david@example.com", dob: "1990-01-05" },
-      { name: "Sarah Connor", email: "sarah@example.com", phone: "01933333333", dob: "1988-12-15" },
-    ];
-    setCustomers(mockCustomers);
-  }, []);
+    fetchCustomers(page, sort);
+  }, [page, sort]);
 
   // ✅ Table columns
   const columns = [
@@ -47,55 +72,86 @@ export default function EmailForm() {
         />
       ),
     },
-    {
-      title: "Customer Name",
-      dataIndex: "name",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-    },
+    { title: "Customer Name", dataIndex: "name" },
+    { title: "Email", dataIndex: "email" },
     {
       title: "Phone",
       dataIndex: "phone",
       render: (phone?: string) => phone || "N/A",
     },
     {
-      title: "Date of Birth",
-      dataIndex: "dob",
-      render: (dob?: string) => (dob ? dayjs(dob).format("DD/MM/YYYY") : "N/A"),
+      title: "Date",
+      dataIndex: "date",
+      render: (date: string) => (date ? dayjs(date).format("DD/MM/YYYY") : "N/A"),
     },
   ];
 
-  // ✅ Handle send
-  const handleSend = () => {
+  // ✅ Handle send email
+  const handleSend = async () => {
     if (!subject.trim()) {
-      message.error("Please enter an email subject!");
+      toast.error("Please enter an email subject!");
       return;
     }
-
     if (!mainContent.trim()) {
-      message.error("Please write email content!");
+      toast.error("Please write email content!");
       return;
     }
-
     if (selectedEmails.length === 0) {
-      message.error("Please select at least one email!");
+      toast.error("Please select at least one email!");
       return;
     }
+    setLoading(true); // ✅ Start loading
+    try {
+      const res = await fetch("https://api.darkak.com.bd/api/admin/user/send-mail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          emails: selectedEmails,
+          subject,
+          body: mainContent,
+        }),
+      });
 
-    console.log("📧 Sending email to:", selectedEmails);
-    console.log("📌 Subject:", subject);
-    console.log("📝 Content:", mainContent);
-
-    message.success(
-      `Email campaign started! (${selectedEmails.length} recipients)`
-    );
+      const result = await res.json();
+      if (res.ok) {
+        toast.success(`Email sent to ${result.sended?.count || selectedEmails.length} users`);
+      } else {
+        toast.error(result.toast || "Failed to send emails");
+      }
+    } catch (err) {
+      console.error("❌ Error sending emails:", err);
+      toast.error("Failed to send emails");
+    } finally {
+      setSelectedEmails([])
+      setSubject("")
+      setMainContent("")
+      setLoading(false)
+    }
   };
 
   return (
     <div className="w-full rounded-md bg-white shadow-md p-4">
-      {/* ✅ Select All / Clear Buttons */}
+      {/* ✅ Filter for sort */}
+      <div className="mb-3 flex gap-4 items-center">
+        <span className="font-medium">Sort By:</span>
+        <Select
+          value={sort}
+          style={{ width: 150 }}
+          onChange={(value) => {
+            setSort(value);
+            setPage(1);
+          }}
+          options={[
+            { label: "Users", value: "user" },
+            { label: "Orders", value: "order" },
+          ]}
+        />
+      </div>
+
+      {/* ✅ Select All / Clear */}
       <div className="mb-3 flex gap-2">
         <Button
           type="primary"
@@ -111,10 +167,15 @@ export default function EmailForm() {
         rowKey="email"
         dataSource={customers}
         columns={columns}
-        pagination={{ pageSize: 5 }}
+        pagination={{
+          current: page,
+          pageSize: limit,
+          total: totalPage * limit,
+          onChange: (p) => setPage(p),
+        }}
       />
 
-      {/* ✅ Email Subject */}
+      {/* ✅ Subject Input */}
       <div className="mt-5">
         <h3 className="font-semibold mb-2">Email Subject</h3>
         <Input
@@ -124,19 +185,16 @@ export default function EmailForm() {
         />
       </div>
 
-      {/* ✅ Email Writing Box */}
+      {/* ✅ Email Editor */}
       <div className="mt-5">
         <h3 className="font-semibold mb-2">Write Body</h3>
-        <EditorHTML
-          value={mainContent}
-          onChange={(newContent) => setMainContent(newContent)}
-        />
+        <EditorHTML value={mainContent} onChange={setMainContent} />
       </div>
 
       {/* ✅ Send Button */}
       <div className="mt-4 text-right">
-        <Button type="primary" onClick={handleSend}>
-          Send Email
+        <Button disabled={loading} type="primary" onClick={handleSend}>
+          {loading ? "Please wait.." : "Send Email"}
         </Button>
       </div>
     </div>

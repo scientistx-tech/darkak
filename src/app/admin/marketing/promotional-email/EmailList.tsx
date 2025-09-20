@@ -1,9 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Table, Button, Popconfirm, message } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
 
-// ✅ Define type for email record
 interface EmailRecord {
   id: number;
   date: string;
@@ -13,36 +14,54 @@ interface EmailRecord {
 }
 
 export default function EmailList() {
-  // ✅ Mock Data
-  const [emails, setEmails] = useState<EmailRecord[]>([
-    {
-      id: 1,
-      date: "2025-09-16 10:30 AM",
-      email: "john@example.com",
-      subject: "Welcome to our store",
-      body: "Hi John, thanks for signing up!",
-    },
-    {
-      id: 2,
-      date: "2025-09-16 11:45 AM",
-      email: "jane@example.com",
-      subject: "Exclusive Offer!",
-      body: "Hi Jane, enjoy 20% off on your next order.",
-    },
-  ]);
+  const [emails, setEmails] = useState<EmailRecord[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [limit] = useState<number>(5);
+  const [total, setTotal] = useState<number>(0);
+  const token = useSelector((s: RootState) => s.auth.token)
 
-  // ✅ Delete handler
-  const handleDelete = (id: number) => {
-    setEmails((prev) => prev.filter((item) => item.id !== id));
-    message.success("Email deleted!");
+  // ✅ Fetch emails
+  const fetchEmails = async (pageNum = 1) => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `https://api.darkak.com.bd/api/admin/user/send-mail-list?page=${pageNum - 1}&limit=${limit}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        next: {
+          tags: ["SENDS"]
+        }
+      }
+      );
+      const data = await res.json();
+
+      if (res.ok) {
+        setEmails(data.data || []);
+        setTotal(data.totalPage * limit || 0);
+      } else {
+        message.error(data.message || "Failed to fetch emails");
+      }
+    } catch (error) {
+      console.error("❌ Error fetching emails:", error);
+      message.error("Failed to fetch emails");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // ✅ Table Columns
+  useEffect(() => {
+    fetchEmails(page);
+  }, [page]);
+
+
   const columns = [
     {
       title: "Date & Time",
       dataIndex: "date",
       key: "date",
+      render: (date: string) => new Date(date).toLocaleString(),
     },
     {
       title: "Customer Email",
@@ -61,30 +80,36 @@ export default function EmailList() {
       render: (text: string) =>
         text.length > 40 ? text.substring(0, 40) + "..." : text,
     },
-    {
-      title: "Action",
-      key: "action",
-      render: (_: any, record: EmailRecord) => (
-        <Popconfirm
-          title="Delete Email?"
-          onConfirm={() => handleDelete(record.id)}
-          okText="Yes"
-          cancelText="No"
-        >
-          <Button danger icon={<DeleteOutlined />} />
-        </Popconfirm>
-      ),
-    },
+    // {
+    //   title: "Action",
+    //   key: "action",
+    //   render: (_: any, record: EmailRecord) => (
+    //     <Popconfirm
+    //       title="Delete Email?"
+    //       onConfirm={() => handleDelete(record.id)}
+    //       okText="Yes"
+    //       cancelText="No"
+    //     >
+    //       <Button danger icon={<DeleteOutlined />} />
+    //     </Popconfirm>
+    //   ),
+    // },
   ];
 
   return (
     <div className="w-full rounded-md bg-white shadow-md p-4">
       <h2 className="text-lg font-semibold mb-3">📩 Sent Emails</h2>
-      <Table
+      <Table<EmailRecord>
         rowKey="id"
         dataSource={emails}
         columns={columns}
-        pagination={{ pageSize: 5 }}
+        loading={loading}
+        pagination={{
+          current: page,
+          pageSize: limit,
+          total,
+          onChange: (p) => setPage(p),
+        }}
       />
     </div>
   );
