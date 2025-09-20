@@ -25,6 +25,7 @@ import {
   FaUndo,
   FaSitemap,
   FaBloggerB,
+  FaTools,
 } from 'react-icons/fa';
 import { FaHeadphones } from 'react-icons/fa6';
 
@@ -224,7 +225,7 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
       {
         title: 'Dashboard',
         icon: Icons.HomeIcon,
-        accessKey: "dashboard",
+        accessKey: 'dashboard',
         url: '/admin',
         items: [],
       },
@@ -602,7 +603,7 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
       {
         title: 'Vendors',
         icon: GrVend,
-        accessKey: "vendor",
+        accessKey: 'vendor',
         items: [
           {
             title: 'Add New Vendor',
@@ -645,7 +646,7 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
   {
     label: 'User Management',
     items: [
-     {
+      {
         title: 'Moderator',
         icon: MdAddModerator,
         accessKey: 'moderator',
@@ -658,7 +659,7 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
         url: '/admin/subscribers',
         items: [],
       },
-     
+
       {
         title: 'Contact',
         icon: FaHeadphones,
@@ -890,6 +891,17 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
         accessKey: 'blog',
         icon: FaBloggerB,
         url: '/admin/blog',
+      },
+      {
+        title: 'Marketing Tools',
+        accessKey: 'marketing',
+        icon: FaTools,
+        items: [
+          {
+            title: 'Promotional Email',
+            url: '/admin/marketing/promotional-email',
+          },
+        ],
       },
       {
         title: 'Site Map',

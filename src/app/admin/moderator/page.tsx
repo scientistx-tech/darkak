@@ -126,7 +126,7 @@ const groupedAccessList: Record<string, string[]> = {
     'forgot-password-seo',
     'moderator-login-seo',
   ],
-  Others: ['settings', 'blog', 'sitemap', 'redirection', 'analytics'],
+  Others: ['settings', 'blog', 'sitemap', 'redirection', 'analytics', 'marketing'],
 };
 
 const Page = () => {
