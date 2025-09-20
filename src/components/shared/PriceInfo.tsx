@@ -56,6 +56,7 @@ const PriceInfo = ({
         price: product.price,
         discount: product.discount,
         discount_type: product.discount_type,
+        delivery_info: product.delivery_info
       },
     };
 

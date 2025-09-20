@@ -193,6 +193,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
         price: product.price,
         discount: product.discount,
         discount_type: product.discount_type,
+        delivery_info: product.delivery_info
       },
     };
 
@@ -421,10 +422,10 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
                         }
                       }}
                       className={`cursor-pointer rounded-full border-2 px-4 py-0.5 transition-colors duration-200 ${selectedOptions[item.id] === option.id
-                          ? 'border-primaryBlue bg-primaryBlue text-white shadow-2'
-                          : isOutOfStock
-                            ? 'cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400'
-                            : 'border-blue-300 bg-white text-primaryBlue'
+                        ? 'border-primaryBlue bg-primaryBlue text-white shadow-2'
+                        : isOutOfStock
+                          ? 'cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400'
+                          : 'border-blue-300 bg-white text-primaryBlue'
                         }`}
                       title={isOutOfStock ? 'This option is stock out' : ''}
                       style={isOutOfStock ? { pointerEvents: 'none' } : {}}

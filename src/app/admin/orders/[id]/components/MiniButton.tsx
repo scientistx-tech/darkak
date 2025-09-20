@@ -21,6 +21,7 @@ export async function fetchBase64Image(url: string): Promise<string> {
 }
 
 export default function MiniButton({ orderDetails }: { orderDetails: any }) {
+  return null
   //console.log('orderDetails print', orderDetails);
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);

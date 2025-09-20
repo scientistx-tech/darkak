@@ -185,7 +185,7 @@ const CartCheckout: React.FC = () => {
 
     return acc + finalPrice * item.quantity;
   }, 0);
-  //console.log('cartitem', checkoutItems);
+  console.log('cartitem', checkoutItems);
 
   const handleCheckout = async () => {
     const productIds = checkoutItems.map((item: any) => item.id);
@@ -200,7 +200,7 @@ const CartCheckout: React.FC = () => {
       area: address,
       paymentType: paymentMethod,
       cartIds: productIds,
-      deliveryFee: district === 'Dhaka' ? 60 : 120,
+      deliveryFee: district === 'Dhaka' ? 80 : 160,
       order_type: !checkoutItems[0].product?.user?.isSeller ? 'in-house' : 'vendor',
       couponId: couponDiscount?.id || undefined,
       //options:
@@ -621,7 +621,7 @@ const CartCheckout: React.FC = () => {
             </div>
             <div className="flex justify-between text-primaryBlue">
               <span>{lang === 'bn' ? 'ডেলিভারি চার্জ' : 'Delivery Charge'}</span>
-              <span>{lang === 'bn' ? 'যোগ করা হবে' : 'will be added'}</span>
+              <span>{district === 'Dhaka' ? 80 : 160}</span>
             </div>
             {couponDiscount?.id && (
               <div className="flex justify-between text-primaryBlue">

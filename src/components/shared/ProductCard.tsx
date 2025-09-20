@@ -22,6 +22,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
   const [hovered, setHovered] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const router = useRouter();
+  //console.log(product)
 
   // Message setup
   const [messageApi, contextHolder] = message.useMessage();
