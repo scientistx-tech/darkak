@@ -20,7 +20,7 @@ export async function fetchBase64Image(url: string): Promise<string> {
 }
 
 export default function PrintButton({ orderDetails }: { orderDetails: any }) {
-  //console.log('orderDetails print', orderDetails);
+  console.log('orderDetails print', orderDetails);
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [imagesBase64, setImagesBase64] = useState<Record<string, string>>({});
