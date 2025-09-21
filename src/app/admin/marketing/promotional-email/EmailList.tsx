@@ -17,7 +17,7 @@ export default function EmailList() {
   const [emails, setEmails] = useState<EmailRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
-  const [limit] = useState<number>(5);
+  const [limit] = useState<number>(10);
   const [total, setTotal] = useState<number>(0);
   const [openEmail, setOpenEmail] = useState<EmailRecord | null>(null); // ✅ for modal
   const token = useSelector((s: RootState) => s.auth.token);
