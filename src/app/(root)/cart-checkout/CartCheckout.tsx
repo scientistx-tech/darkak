@@ -200,7 +200,7 @@ const CartCheckout: React.FC = () => {
       area: address,
       paymentType: paymentMethod,
       cartIds: productIds,
-      deliveryFee: district === 'Dhaka' ? 80 : 160,
+      deliveryFee: district === 'Dhaka' ? 60 : 120,
       order_type: !checkoutItems[0].product?.user?.isSeller ? 'in-house' : 'vendor',
       couponId: couponDiscount?.id || undefined,
       //options:
@@ -636,7 +636,7 @@ const CartCheckout: React.FC = () => {
                   ? couponDiscount?.discount_type === 'flat'
                     ? subtotal - couponDiscount?.discount_amount
                     : subtotal - subtotal * (couponDiscount?.discount_amount / 100)
-                  : subtotal}{' '}
+                  : subtotal + (district === 'Dhaka' ? 60 : 120)}{' '}
                 {lang === 'bn' ? 'টাকা' : 'BDT'}
               </span>
             </div>
