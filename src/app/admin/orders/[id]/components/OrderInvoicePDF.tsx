@@ -1,5 +1,8 @@
-// components/OrderInvoicePDF.tsx
+
+import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer';
+
+import WaterMarkImg from '@/Data/Img/1.1.png';
 
 // Helper for formatting currency
 const formatCurrency = (amount: number) => `${amount?.toFixed(2) || '0.00'}`;
@@ -10,7 +13,15 @@ Font.register({
 });
 // Styles
 const styles = StyleSheet.create({
-  page: { padding: 30, fontSize: 11, fontFamily: 'Helvetica' },
+  page: { padding: 30, fontSize: 11, fontFamily: 'Helvetica', position: 'relative' },
+   watermark: {
+    position: 'absolute',
+    top: '35%',
+    left: '20%',
+    width: '60%',
+    height: 'auto',
+    opacity: 0.1, // Faint background
+  },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -63,6 +74,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontStyle: 'italic',
   },
+  
 });
 
 export default function OrderInvoicePDF({
@@ -106,10 +118,14 @@ export default function OrderInvoicePDF({
   return (
     <Document>
       <Page size="A4" style={styles.page}>
+        {/* ✅ Watermark */}
+        {/* <Image src={WaterMarkImg.src} style={styles.watermark} /> */}
+
         {/* Header */}
         <View style={styles.headerRow}>
           <View>
             <Text style={styles.invoiceTitle}>INVOICE</Text>
+            <Text style={{ fontWeight: 'bold', marginTop:'5' }}>Darkak Mart</Text>
             <Text style={styles.invoiceDate}>
               Invoice Date : {new Date(orderDetails.date).toDateString()}
             </Text>
@@ -119,7 +135,6 @@ export default function OrderInvoicePDF({
               src="/images/logo/brandLogo.jpeg" // Make sure this path is correct and accessible
               style={{ width: 72, height: 32, marginRight: 6 }}
             />
-            <Text>Darkak</Text>
           </View>
         </View>
 
