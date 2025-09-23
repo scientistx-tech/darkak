@@ -621,7 +621,7 @@ const CartCheckout: React.FC = () => {
             </div>
             <div className="flex justify-between text-primaryBlue">
               <span>{lang === 'bn' ? 'ডেলিভারি চার্জ' : 'Delivery Charge'}</span>
-              <span>{district === 'Dhaka' ? 80 : 160}</span>
+              <span>{district === 'Dhaka' ? 60 : 120}</span>
             </div>
             {couponDiscount?.id && (
               <div className="flex justify-between text-primaryBlue">
