@@ -56,7 +56,7 @@ const PriceInfo = ({
         price: product.price,
         discount: product.discount,
         discount_type: product.discount_type,
-        delivery_info: product.delivery_info
+        delivery_info: product.delivery_info,
       },
     };
 
@@ -118,22 +118,22 @@ const PriceInfo = ({
       className="group cursor-pointer"
     >
       <div className="flex flex-col justify-between space-y-2 p-2 text-center md:h-[150px] md:space-y-1 lg:space-y-2 xl:h-[200px] xl:space-y-0 xl:p-6 2xl:h-[170px]">
-        <div className="flex flex-wrap items-center justify-center gap-1">
+        <div className="flex w-full flex-wrap items-center justify-center gap-1">
           <span
-            className={`hidden text-sm text-gray-600 sm:block ${hasDiscount ? 'line-through' : ''}`}
+            className={`hidden text-sm font-medium text-gray-600 sm:block md:text-[15px] ${hasDiscount ? 'line-through' : ''}`}
           >
             {price} BDT
           </span>
 
           {hasDiscount && (
-            <span className="ml-2 text-sm font-semibold text-primaryBlue">
+            <span className="ml-2 text-sm font-semibold text-primaryBlue md:text-lg">
               {lang === 'bn' ? 'মূল্য ' : 'Price '}
               {Math.round(discountPrice)} BDT
             </span>
           )}
         </div>
         <h3
-          className="truncate text-center text-sm font-semibold text-primaryDarkBlue transition-all duration-300 group-hover:text-secondaryBlue md:line-clamp-2 md:whitespace-normal"
+          className="truncate text-center text-sm font-semibold text-primaryDarkBlue transition-all duration-300 group-hover:text-secondaryBlue md:line-clamp-2 md:whitespace-normal md:text-[14px]"
           style={{ maxWidth: '100%' }}
           title={product.title}
         >
@@ -159,22 +159,27 @@ const PriceInfo = ({
         {product?.stock === 0 ? (
           <div className="flex items-center justify-evenly">
             <div>
-              <p className="text-primbg-primaryWhite scale-90 cursor-pointer rounded-full bg-primaryBlue px-4 py-1 text-sm font-normal text-secondaryWhite transition-all duration-300 hover:bg-primaryDarkBlue hover:text-white md:scale-100 md:px-4 md:font-semibold lg:text-sm">
-                {lang === 'bn' ? 'পূর্ব অর্ডার' : 'Pre Order'}
-              </p>
+              <button className="group relative cursor-pointer overflow-hidden rounded bg-primaryBlue px-5 py-1.5 text-white transition-all duration-300 ease-out hover:bg-gradient-to-r hover:from-primaryBlue hover:to-primaryBlue/20 hover:ring-2 hover:ring-primaryBlue/20 hover:ring-offset-2">
+                <span className="ease absolute right-0 -mt-12 h-32 w-8 translate-x-12 rotate-12 transform bg-white opacity-10 transition-all duration-1000 group-hover:-translate-x-40"></span>
+                <span className="relative">{lang === 'bn' ? 'পূর্ব অর্ডার' : 'Pre Order'}</span>
+              </button>
             </div>
           </div>
         ) : (
           <div className="flex items-center justify-evenly">
             <div onClick={(e) => handleBuyNow(e)}>
-              <p className="text-primbg-primaryWhite scale-90 cursor-pointer rounded-full bg-primaryBlue px-4 py-1 text-sm font-normal text-secondaryWhite transition-all duration-300 hover:bg-primaryDarkBlue hover:text-white md:scale-100 md:px-4 md:font-semibold lg:text-sm">
+              {/* <p className="text-primbg-primaryWhite scale-90 cursor-pointer rounded-full bg-primaryBlue px-4 py-1 text-sm font-normal text-secondaryWhite transition-all duration-300 hover:bg-primaryDarkBlue hover:text-white md:scale-100 md:px-4 md:font-semibold lg:text-sm">
                 {lang === 'bn' ? 'এখনই কিনুন' : 'BUY NOW'}
-              </p>
+              </p> */}
+              <button className="group relative cursor-pointer overflow-hidden rounded bg-primaryBlue px-5 py-1.5 text-white transition-all duration-300 ease-out hover:bg-gradient-to-r hover:from-primaryBlue hover:to-primaryBlue/20 hover:ring-2 hover:ring-primaryBlue/20 hover:ring-offset-2">
+                <span className="ease absolute right-0 -mt-12 h-32 w-8 translate-x-12 rotate-12 transform bg-white opacity-10 transition-all duration-1000 group-hover:-translate-x-40"></span>
+                <span className="relative">{lang === 'bn' ? 'এখনই কিনুন' : 'BUY NOW'}</span>
+              </button>
             </div>
 
             <div
               onClick={(e) => handleAddToCart(e)}
-              className="cursor-pointer rounded-full bg-secondaryWhite px-4 py-2 text-sm text-secondaryBlue hover:text-primaryBlue md:px-4 lg:text-base"
+              className="cursor-pointer rounded border-[2px] border-primaryBlue bg-white px-1 py-1.5 text-sm text-primaryBlue transition-transform duration-300 hover:scale-110 md:px-4 lg:text-base"
             >
               {isLoading ? (
                 <svg
@@ -193,7 +198,7 @@ const PriceInfo = ({
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
                 </svg>
               ) : (
-                <FaShoppingCart />
+                <FaShoppingCart className="md:text-lg" />
               )}
             </div>
           </div>

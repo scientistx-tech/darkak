@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaWhatsapp, FaComments } from "react-icons/fa";
 import { Modal, Input, Button } from "antd";
 import ProfileImg from "@/Data/Img/profile.jpg";
+import NoneUserChat from "./NoneUserChat";
 
 const WHATSAPP_LINK =
   "https://api.whatsapp.com/send?phone=8801711726501&text=Hello 👋";
@@ -138,22 +139,7 @@ export default function FloatButton() {
         title={`Chat with Support (${name})`}
         width={500}
       >
-        <div className="flex flex-col h-[400px] justify-between">
-          {/* Chat messages area */}
-          <div className="flex-1 overflow-y-auto space-y-3 p-2 border rounded-lg bg-gray-50">
-            <div className="text-gray-500 text-center text-sm mt-2">
-              👋 Hello {name}, how can we help you today?
-            </div>
-          </div>
-
-          {/* Chat input */}
-          <div className="flex items-center gap-2 mt-3">
-            <Input placeholder="Type your message..." size="large" />
-            <Button type="primary" className="bg-blue-600 hover:bg-blue-700">
-              Send
-            </Button>
-          </div>
-        </div>
+        <NoneUserChat name={name}/>
       </Modal>
     </>
   );
