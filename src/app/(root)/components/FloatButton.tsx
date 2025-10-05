@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaWhatsapp, FaComments } from "react-icons/fa";
-import { Modal, Input, Button } from "antd";
+import { FaWhatsapp, FaComments, FaMinus, FaTimes } from "react-icons/fa";
+import { Input, Button } from "antd";
 import ProfileImg from "@/Data/Img/profile.jpg";
 import NoneUserChat from "./NoneUserChat";
 
@@ -12,41 +12,45 @@ const WHATSAPP_LINK =
 
 export default function FloatButton() {
   const [isHovered, setIsHovered] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Name/Email Modal
-  const [isChatModalOpen, setIsChatModalOpen] = useState(false); // Chat Modal
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-
-  const handleLiveChatClick = () => {
-    setIsModalOpen(true);
-  };
 
   const handleStartChat = () => {
     if (!name.trim() || !email.trim()) {
       alert("Please fill all fields");
       return;
     }
+    setIsFormOpen(false);
+    setIsChatOpen(true);
+  };
 
-    // Save user data (optional)
-    localStorage.setItem(
-      "chatUser",
-      JSON.stringify({ name: name.trim(), email: email.trim() })
-    );
+  const handleCloseChat = () => {
+    setIsChatOpen(false);
+    setIsMinimized(false);
+  };
 
-    // Close first modal and open chat modal
-    setIsModalOpen(false);
-    setIsChatModalOpen(true);
+  const handleMinimizeChat = () => {
+    setIsMinimized(true);
+    setIsChatOpen(false);
+  };
+
+  const handleReopenChat = () => {
+    setIsMinimized(false);
+    setIsChatOpen(true);
   };
 
   return (
     <>
-      {/* Floating Button */}
+      {/* Floating Buttons */}
       <div
         className="fixed bottom-8 right-6 z-50 flex flex-col items-end"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Hover Menu */}
+        {/* Hover Options */}
         <AnimatePresence>
           {isHovered && (
             <motion.div
@@ -56,30 +60,27 @@ export default function FloatButton() {
               transition={{ duration: 0.25 }}
               className="mb-3 flex flex-col items-end gap-2"
             >
-              {/* Live Chat Button */}
               <button
-                onClick={handleLiveChatClick}
+                onClick={() => setIsFormOpen(true)}
                 className="flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-md transition-all hover:bg-blue-700"
               >
-                <FaComments className="text-white" />
+                <FaComments />
                 Live Chat
               </button>
-
-              {/* WhatsApp Button */}
               <a
                 href={WHATSAPP_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 rounded-full bg-green-500 px-4 py-2 text-sm font-medium text-white shadow-md transition-all hover:bg-green-600"
               >
-                <FaWhatsapp className="text-white" />
+                <FaWhatsapp />
                 WhatsApp
               </a>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Main Floating Profile Button */}
+        {/* Main Floating Icon */}
         <motion.div
           whileHover={{ scale: 1.05 }}
           className="relative cursor-pointer rounded-full border-2 border-primary shadow-lg"
@@ -96,51 +97,103 @@ export default function FloatButton() {
         </motion.div>
       </div>
 
-      {/* 1️⃣ Modal for Name & Email */}
-      <Modal
-        open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
-        footer={null}
-        centered
-        title="Start Live Chat"
-      >
-        <div className="flex flex-col gap-3">
-          <Input
-            placeholder="Your Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            size="large"
-            className="outline-none border-2 border-primaryBlue focus:outline-none focus:border-primaryBlue"
-          />
-          <Input
-            placeholder="Your Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            size="large"
-            className="outline-none border-2 border-primaryBlue focus:outline-none focus:border-primaryBlue"
-          />
-          <Button
-            type="primary"
-            className="bg-blue-600 hover:bg-blue-700"
-            onClick={handleStartChat}
-            size="large"
-          >
-            Start Chat
-          </Button>
-        </div>
-      </Modal>
+      {/* 1️⃣ Name & Email Form Modal (Floating) */}
+      {isFormOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: 80 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 80 }}
+          transition={{ duration: 0.3 }}
+          className="fixed bottom-20 right-6 z-[60] w-[320px] rounded-xl bg-white p-5 shadow-2xl"
+        >
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-primaryBlue">
+              Start Live Chat
+            </h2>
+            <button
+              onClick={() => setIsFormOpen(false)}
+              className="text-gray-500 hover:text-red-500"
+            >
+              <FaTimes />
+            </button>
+          </div>
+          <div className="mt-4 flex flex-col gap-3">
+            <Input
+              placeholder="Your Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              size="large"
+            />
+            <Input
+              placeholder="Phone No"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              size="large"
+              type="number"
+            />
+            <Button
+              type="primary"
+              className="bg-blue-600 hover:bg-blue-700"
+              onClick={handleStartChat}
+              size="large"
+            >
+              Start Chat
+            </Button>
+          </div>
+        </motion.div>
+      )}
 
-      {/* 2️⃣ Modal for Actual Live Chat */}
-      <Modal
-        open={isChatModalOpen}
-        onCancel={() => setIsChatModalOpen(false)}
-        footer={null}
-        centered
-        title={`Chat with Support (${name})`}
-        width={500}
-      >
-        <NoneUserChat name={name}/>
-      </Modal>
+      {/* 2️⃣ Floating Chat Modal */}
+      {isChatOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 60 }}
+          transition={{ duration: 0.3 }}
+          className="fixed bottom-4 right-6 z-[70] flex h-[420px] w-[340px] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl"
+        >
+          {/* Chat Header */}
+          <div className="flex items-center justify-between bg-blue-600 px-4 py-2 text-white">
+            <span className="font-medium">
+              Chat with Support ({name})
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={handleMinimizeChat}
+                className="hover:text-yellow-300"
+              >
+                <FaMinus />
+              </button>
+              <button
+                onClick={handleCloseChat}
+                className="hover:text-red-300"
+              >
+                <FaTimes />
+              </button>
+            </div>
+          </div>
+
+          {/* Chat Content */}
+          <div className="flex-1 overflow-y-auto p-3 bg-gray-50">
+            <NoneUserChat name={name} />
+          </div>
+        </motion.div>
+      )}
+
+      {/* 3️⃣ Minimized Chat Button */}
+      {isMinimized && (
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 40 }}
+          transition={{ duration: 0.3 }}
+          onClick={handleReopenChat}
+          className="fixed bottom-6 right-6 z-[80] flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg cursor-pointer hover:bg-blue-700"
+        >
+          <FaComments />
+          Continue Chat
+        </motion.div>
+      )}
     </>
   );
 }
