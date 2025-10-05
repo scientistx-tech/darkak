@@ -53,7 +53,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
 
       {/* Discount badge */}
       {product.discount > 0 && (
-        <div className="absolute left-0 top-5 z-20 rounded-r-full bg-secondaryBlue px-4 py-1 text-center text-xs font-semibold text-secondaryWhite">
+        <div className="absolute left-0 top-5 z-20 rounded-r-full bg-primaryBlue px-4 py-1 text-center text-xs font-semibold text-secondaryWhite">
           {Math.round(product.discount)}{product.discount_type === "flat" ? "৳" : "%"}
           <br />
           {lang === 'bn' ? 'ছাড়' : 'OFF'}
@@ -103,16 +103,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
           transition={{ duration: 1.6 }}
           className="z-10 h-32 object-contain md:h-48"
         />
+        
       </Link>
 
       {/* Image Indicators */}
-      <div className="my-2 flex items-center justify-center gap-2">
+      <div className="my-2 flex items-center justify-center gap-2 mt-3">
         {sliderImages.map((_, i) => (
           <div
             key={i}
             onClick={() => setActiveImage(i)}
-            className={`h-2 w-4 cursor-pointer rounded-full transition-all duration-300 hover:bg-secondaryBlue ${i === activeImage
-                ? 'w-8 bg-secondaryBlue'
+            className={`h-2 w-4 cursor-pointer rounded-full transition-all duration-300 hover:bg-primaryBlue ${i === activeImage
+                ? 'w-8 bg-primaryBlue'
                 : 'border-[1px] border-secondaryLiteBlue bg-secondaryWhite'
               }`}
           />
