@@ -15,7 +15,7 @@ type Message = {
 
 export default function NoneUserChat({ name }: { name: string }) {
   const [messages, setMessages] = useState<Message[]>([
-    { sender: "bot", text: `👋 Hello ${name}, how can we help you today?` },
+    { sender: "bot", text: `👋 Hello ${name}, how can We help you today?` },
   ]);
   const [input, setInput] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
