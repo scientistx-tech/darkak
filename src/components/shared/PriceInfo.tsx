@@ -127,7 +127,7 @@ const PriceInfo = ({
 
           {hasDiscount && (
             <span className="ml-2 text-sm font-semibold text-primaryBlue md:text-lg">
-              {lang === 'bn' ? 'মূল্য ' : 'Price '}
+              {/* {lang === 'bn' ? 'মূল্য ' : 'Price '} */}
               {Math.round(discountPrice)} BDT
             </span>
           )}
