@@ -45,7 +45,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
 
   return (
     <div
-      className="relative mx-auto w-full max-w-sm overflow-hidden rounded-[20px] bg-primaryWhite shadow-md transition-all duration-300 md:h-[370px] xl:h-[400px] 2xl:h-[380px]"
+      className="relative mx-auto w-full border-1.5 border-primaryBlue max-w-sm overflow-hidden rounded-[20px] bg-primaryWhite shadow-md transition-all duration-300 md:h-[370px] xl:h-[400px] 2xl:h-[380px]"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -86,7 +86,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
       >
         {/* Polygon background behind the image */}
         <div
-          className="absolute inset-0 bg-[#E6EFFF]"
+          className="absolute inset-0 bg-white"
           style={{
             clipPath: 'polygon(0 0, 100% 0, 100% 38%, 0% 100%)',
             zIndex: 0,
@@ -101,7 +101,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, setIsOpen }) => {
           initial={{ opacity: 0.5, scale: 0.98 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.6 }}
-          className="z-10 h-32 object-contain md:h-48"
+          className="z-10 h-32 object-contain md:h-48 rounded-md"
         />
         
       </Link>
