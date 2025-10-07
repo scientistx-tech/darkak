@@ -122,13 +122,13 @@ const PriceInfo = ({
           <span
             className={`hidden text-sm font-medium text-red-400 sm:block md:text-[15px] ${hasDiscount ? 'line-through' : ''}`}
           >
-            {price} BDT
+            {price?.toLocaleString('en-US')} BDT
           </span>
 
           {hasDiscount && (
             <span className="ml-2 text-sm font-semibold text-primaryBlue md:text-lg">
               {/* {lang === 'bn' ? 'মূল্য ' : 'Price '} */}
-              {Math.round(discountPrice)} BDT
+              {Math.round(discountPrice).toLocaleString('en-US')} BDT
             </span>
           )}
         </div>

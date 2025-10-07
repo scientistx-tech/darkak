@@ -48,7 +48,7 @@ export default function RightIcons({
   };
   return (
     <motion.div
-      className="absolute right-3 top-5 z-30 flex flex-col gap-3 text-xl text-secondaryBlue"
+      className="absolute right-3 top-5 z-30 flex flex-col gap-3 text-xl text-primaryBlue"
       initial={{ opacity: 0, y: -10 }}
       animate={hovered ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
       transition={{ duration: 0.8 }}
@@ -56,7 +56,7 @@ export default function RightIcons({
       {/* <Link href="/wishlist"> */}
       <div
         onClick={handleAddToWishlist}
-        className="cursor-pointer transition-all duration-300 hover:scale-110 hover:text-primaryBlue"
+        className="cursor-pointer transition-all duration-300 hover:scale-110 hover:text-secondaryBlue"
       >
         {isLoading ? (
           <svg
@@ -84,7 +84,7 @@ export default function RightIcons({
       </div>
       {/* </Link> */}
       <Link href={`/product/${slug}`}>
-        <FaEye className="cursor-pointer transition-all duration-300 hover:scale-110 hover:text-primaryBlue" />
+        <FaEye className="cursor-pointer transition-all duration-300 hover:scale-110 hover:text-secondaryBlue" />
       </Link>
 
       <Tooltip
@@ -142,7 +142,7 @@ export default function RightIcons({
           </div>
         }
       >
-        <FaRandom className="cursor-pointer transition-all duration-300 hover:scale-110 hover:text-primaryBlue" />
+        <FaRandom className="cursor-pointer transition-all duration-300 hover:scale-110 hover:text-secondaryBlue" />
       </Tooltip>
 
     </motion.div>
