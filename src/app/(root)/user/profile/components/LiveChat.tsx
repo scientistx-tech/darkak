@@ -70,23 +70,6 @@ export default function LiveChat({ id }: { id: number }) {
     }
   }, [messages]);
 
-  const dummyOrders: Order[] = [
-    {
-      id: '#ORDER00123',
-      productName: 'Blue Cotton T-Shirt',
-      productImage: 'https://via.placeholder.com/150x150?text=T-Shirt',
-    },
-    {
-      id: '#ORDER00124',
-      productName: 'Wireless Headphones',
-      productImage: 'https://via.placeholder.com/150x150?text=Headphones',
-    },
-    {
-      id: '#ORDER00125',
-      productName: 'Leather Wallet',
-      productImage: 'https://via.placeholder.com/150x150?text=Wallet',
-    },
-  ];
 
   const handleSendMessage = () => {
     if (input.trim() === '') return;

@@ -15,6 +15,7 @@ import * as Icons from '../icons';
 import { BsTornado } from 'react-icons/bs';
 import { FaListAlt } from 'react-icons/fa';
 import { IoMdAddCircle } from 'react-icons/io';
+import { FaRocketchat } from "react-icons/fa";
 import {
   FaRegListAlt,
   FaClock,
@@ -671,6 +672,12 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
         icon: AiFillMessage,
         accessKey: 'chat',
         url: '/admin/chat',
+      },
+      {
+        title: 'Live Message',
+        icon: FaRocketchat,
+        accessKey: 'live-message',
+        url: '/admin/live',
       },
     ],
   },

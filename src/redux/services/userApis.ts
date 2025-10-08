@@ -1,26 +1,18 @@
-import { AuthResponse, User } from "@/types/userTypes";
-import baseApi from "../baseApi";
+import { AuthResponse, User } from '@/types/userTypes';
+import baseApi from '../baseApi';
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     updateUser: builder.mutation<
       User,
       Partial<
-        Pick<
-          User,
-          | "name"
-          | "phone"
-          | "dob"
-          | "gender"
-          | "marital_status"
-          | "anniversary_date"
-        >
+        Pick<User, 'name' | 'phone' | 'dob' | 'gender' | 'marital_status' | 'anniversary_date'>
       >
     >({
       query: (body) => ({
         url: `/user/update`,
         body: body,
-        method: "PUT",
+        method: 'PUT',
       }),
     }),
     updateUserAddress: builder.mutation<
@@ -30,31 +22,37 @@ export const authApi = baseApi.injectEndpoints({
       query: (body) => ({
         url: `/user/update/address`,
         body: body,
-        method: "PUT",
+        method: 'PUT',
       }),
     }),
     updateUserProfilePicture: builder.mutation<any, FormData>({
       query: (body) => ({
         url: `/user/upload-picture`,
         body: body,
-        method: "PUT",
+        method: 'PUT',
       }),
     }),
     uploadMultipleImages: builder.mutation<any, FormData>({
       query: (body) => ({
         url: `/user/upload-multiple-images`,
         body: body,
-        method: "POST",
+        method: 'POST',
+      }),
+    }),
+    uploadMultipleImagesPublic: builder.mutation<any, FormData>({
+      query: (body) => ({
+        url: `/public/upload-multiple-images`,
+        body: body,
+        method: 'POST',
       }),
     }),
     uploadVideos: builder.mutation<any, FormData>({
       query: (body) => ({
         url: `/user/upload-video`,
         body: body,
-        method: "POST",
+        method: 'POST',
       }),
     }),
-
   }),
 });
 
@@ -63,5 +61,6 @@ export const {
   useUpdateUserAddressMutation,
   useUpdateUserProfilePictureMutation,
   useUploadMultipleImagesMutation,
+  useUploadMultipleImagesPublicMutation,
   useUploadVideosMutation,
 } = authApi;

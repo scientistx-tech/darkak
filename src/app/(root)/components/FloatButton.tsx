@@ -6,7 +6,15 @@ import { FaWhatsapp, FaComments, FaMinus, FaTimes } from "react-icons/fa";
 import { Input, Button } from "antd";
 import ProfileImg from "@/Data/Img/profile.jpg";
 import NoneUserChat from "./NoneUserChat";
-
+import { useCreateLiveChatMutation, useGetLiveChatStatusQuery } from "@/redux/services/liveChatApis";
+import { toast } from "react-toastify";
+import Cookies from "js-cookie";
+import Loader from "@/components/shared/Loader";
+function generateRefToken(prefix = "REF") {
+  const randomPart = Math.random().toString(36).substring(2, 10).toUpperCase();
+  const timestamp = Date.now().toString(36).toUpperCase();
+  return `${prefix}-${timestamp}-${randomPart}`;
+}
 const WHATSAPP_LINK =
   "https://api.whatsapp.com/send?phone=8801711726501&text=Hello 👋";
 
@@ -17,14 +25,37 @@ export default function FloatButton() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const { data: liveChatStatus } = useGetLiveChatStatusQuery()
+  const [createChat, { isLoading: chatCreating }] = useCreateLiveChatMutation()
+  const [conversationId, setConversationId] = useState<number | undefined>()
+  const isToken = Cookies.get("live_session")
 
-  const handleStartChat = () => {
+
+  const handleStartChat = async () => {
     if (!name.trim() || !email.trim()) {
-      alert("Please fill all fields");
+      toast.info("Please fill all fields");
       return;
     }
-    setIsFormOpen(false);
-    setIsChatOpen(true);
+    try {
+      let token;
+      if (!isToken) {
+        token = generateRefToken()
+        Cookies.set("live_session", token)
+      } else {
+        token = isToken
+      }
+
+      const result = await createChat({
+        name: name,
+        phone: email,
+        token: token
+      }).unwrap()
+      setConversationId(result.id)
+      setIsFormOpen(false);
+      setIsChatOpen(true);
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Unknown Error")
+    }
   };
 
   const handleCloseChat = () => {
@@ -60,13 +91,16 @@ export default function FloatButton() {
               transition={{ duration: 0.25 }}
               className="mb-3 flex flex-col items-end gap-2"
             >
-              <button
-                onClick={() => setIsFormOpen(true)}
-                className="flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-md transition-all hover:bg-blue-700"
-              >
-                <FaComments />
-                Live Chat
-              </button>
+              {liveChatStatus && liveChatStatus.status ? (
+                <button
+                  onClick={() => setIsFormOpen(true)}
+                  className="flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-md transition-all hover:bg-blue-700"
+                >
+                  <FaComments />
+                  Live Chat
+                </button>
+              ) : null}
+
               <a
                 href={WHATSAPP_LINK}
                 target="_blank"
@@ -131,7 +165,8 @@ export default function FloatButton() {
               size="large"
               type="number"
             />
-            <Button
+            <Button loading={chatCreating}
+              disabled={chatCreating}
               type="primary"
               className="bg-blue-600 hover:bg-blue-700"
               onClick={handleStartChat}
@@ -175,7 +210,10 @@ export default function FloatButton() {
 
           {/* Chat Content */}
           <div className="flex-1 overflow-y-auto p-3 bg-gray-50">
-            <NoneUserChat name={name} />
+            {conversationId ? (<NoneUserChat conversationId={conversationId} name={name} />)
+              :
+              (<Loader />)}
+
           </div>
         </motion.div>
       )}

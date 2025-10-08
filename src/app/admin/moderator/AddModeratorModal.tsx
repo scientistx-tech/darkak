@@ -57,6 +57,7 @@ const accessList = [
   'ali-express-order-cancelled',
   'customer-list',
   'customer-review',
+  'live-message',
   'vendor',
   'add-vendor',
   'vendor-list',

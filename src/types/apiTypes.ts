@@ -171,3 +171,35 @@ type OrderStatus =
   | 'returned'
   | 'failed_to_delivery'
   | 'pre-order';
+
+export interface LiveMessage {
+  id: number;
+  message: string;
+}
+
+export interface LiveConversationTypes {
+  id: number;
+  sender_name: string;
+  token: string;
+  sender_number: string;
+  updatedAt: string; // ISO date string
+  live_messages: LiveMessage[];
+}
+
+interface MessageFile {
+  id: number;
+  url: string;
+  createAt: string; // ISO date string
+  messageId: number;
+}
+
+export interface LiveMessage {
+  id: number;
+  message: string;
+  senderId: number | null;
+  isReadBy: any | null; // adjust if you know the structure of `isReadBy`
+  conversationId: number;
+  createdAt: string; // ISO date string
+  read: boolean;
+  message_files: MessageFile[];
+}

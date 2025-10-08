@@ -1,42 +1,108 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Input, Button, message as antdMessage } from "antd";
 import {
   PaperClipOutlined,
   SendOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
+import { useUploadMultipleImagesPublicMutation } from "@/redux/services/userApis";
+import { toast } from "react-toastify";
+import { socket } from "@/socket";
 
-type Message = {
-  sender: "user" | "bot";
-  text?: string;
-  image?: string;
-};
+export interface MessageFile {
+  id: number;
+  url: string;
+  createAt: string; // ISO date string
+  messageId: number;
+}
 
-export default function NoneUserChat({ name }: { name: string }) {
+export interface Message {
+  id: number;
+  message: string;
+  senderId?: number | null;
+  isReadBy: any | null; // can refine later if structure known
+  conversationId: number;
+  createdAt: string; // ISO date string
+  read: boolean;
+  message_files: MessageFile[];
+}
+export default function NoneUserChat({ name, conversationId }: { name: string, conversationId: number }) {
   const [messages, setMessages] = useState<Message[]>([
-    { sender: "bot", text: `👋 Hello ${name}, how can We help you today?` },
+    {
+      message: `👋 Hello ${name}, how can We help you today?`, senderId: 1,
+      conversationId: conversationId,
+      createdAt: new Date().toString(),
+      id: 1,
+      isReadBy: null,
+      message_files: [],
+      read: true
+    },
   ]);
   const [input, setInput] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | undefined>()
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadImages, { isLoading: uploading }] = useUploadMultipleImagesPublicMutation();
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim() && !imagePreview) return;
 
     const newMessages: Message[] = [];
+    try {
 
-    if (input.trim()) {
-      newMessages.push({ sender: "user", text: input });
+      if (input.trim()) {
+        newMessages.push(
+          {
+            message: input.trim(),
+            senderId: null,
+            conversationId: conversationId,
+            createdAt: new Date().toString(),
+            id: messages?.length,
+            isReadBy: null,
+            message_files: [],
+            read: true
+          }
+        );
+        socket.emit("live_send_message", {
+          conversationId: conversationId,
+          message: input.trim(),
+          files: []
+        })
+      }
+
+      if (imagePreview && imageFile) {
+        const imageForm = new FormData()
+        imageForm.append("images", imageFile)
+        const urls = await uploadImages(imageForm).unwrap()
+        newMessages.push({
+          message: "",
+          senderId: null,
+          conversationId: conversationId,
+          createdAt: new Date().toString(),
+          id: messages?.length,
+          isReadBy: null,
+          message_files: [{
+            id: 1,
+            createAt: new Date().toString(),
+            messageId: messages?.length,
+            url: urls[0]
+          }],
+          read: true
+        });
+        setImagePreview(null);
+        socket.emit("live_send_message", {
+          conversationId: conversationId,
+          message: " ",
+          files: urls
+        })
+      }
+      setMessages((prev) => [...prev, ...newMessages]);
+      setInput("");
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Server Error!")
     }
-
-    if (imagePreview) {
-      newMessages.push({ sender: "user", image: imagePreview });
-      setImagePreview(null);
-    }
-
-    setMessages((prev) => [...prev, ...newMessages]);
-    setInput("");
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,29 +113,48 @@ export default function NoneUserChat({ name }: { name: string }) {
       antdMessage.error("Please select an image file");
       return;
     }
-
+    setImageFile(file)
     const reader = new FileReader();
     reader.onload = () => setImagePreview(reader.result as string);
     reader.readAsDataURL(file);
   };
+  useEffect(() => {
+    const container = bottomRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [messages]);
+  const addNewMessage = (message: Message) => {
+    console.log(message)
+    if (conversationId !== message.conversationId)
+      return
+    if (message.senderId === null) {
+      return
+    }
+    setMessages((prev) => [...prev, message]);
+  }
+  useEffect(() => {
+    socket.on('live_receive_message', (newMessage: Message) => {
+      addNewMessage(newMessage);
+    });
+  }, []);
 
   return (
     <div className="flex h-full flex-col justify-between">
       {/* Chat Messages */}
-      <div className="flex-1 space-y-3 overflow-y-auto rounded-lg p-3 bg-gray-50">
+      <div ref={bottomRef} className="flex-1 space-y-3 overflow-y-auto rounded-lg p-3 bg-gray-50">
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`max-w-[80%] rounded-xl px-3 py-2 text-sm shadow-sm ${
-              msg.sender === "user"
-                ? "ml-auto bg-blue-600 text-white"
-                : "bg-white text-gray-800"
-            }`}
+            className={`max-w-[80%] rounded-xl px-3 py-2 text-sm shadow-sm ${msg.senderId === null
+              ? "ml-auto bg-blue-600 text-white"
+              : "bg-white text-gray-800"
+              }`}
           >
-            {msg.text && <p>{msg.text}</p>}
-            {msg.image && (
-              <ImageBubble image={msg.image} isUser={msg.sender === "user"} />
-            )}
+            {msg.message && <p>{msg.message}</p>}
+            {msg.message_files?.map(d => (
+              <ImageBubble key={d.id} image={d.url} isUser={msg.senderId === null} />
+            ))}
           </div>
         ))}
 
@@ -116,7 +201,7 @@ export default function NoneUserChat({ name }: { name: string }) {
           onPressEnter={handleSend}
           className="flex-1"
         />
-        <Button
+        <Button loading={uploading} disabled={uploading}
           type="primary"
           icon={<SendOutlined />}
           className="bg-blue-600 hover:bg-blue-700"
@@ -130,9 +215,8 @@ export default function NoneUserChat({ name }: { name: string }) {
 function ImageBubble({ image, isUser }: { image: string; isUser: boolean }) {
   return (
     <div
-      className={`mt-1 ${
-        isUser ? "flex justify-end" : "flex justify-start"
-      }`}
+      className={`mt-1 ${isUser ? "flex justify-end" : "flex justify-start"
+        }`}
     >
       <img
         src={image}
