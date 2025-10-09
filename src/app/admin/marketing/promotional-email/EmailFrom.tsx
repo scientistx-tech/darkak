@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { toast } from 'react-toastify';
+import { getLocalStorage, setLocalStorage } from '@/utils/localStorage';
 
 interface Customer {
   name: string;
@@ -26,6 +27,8 @@ export default function EmailForm() {
   const [limit] = useState<number>(10);
   const [totalPage, setTotalPage] = useState<number>(0);
   const [sort, setSort] = useState<'user' | 'order'>('user');
+  const [emailHeader, setEmailHeader] = useState(getLocalStorage("email-header"))
+  const [emailFooter, setEmailFooter] = useState(getLocalStorage("email-footer"))
 
   // ✅ Fetch customers from API
   const fetchCustomers = async (pageNum = 1, sortBy = sort) => {
@@ -120,7 +123,10 @@ export default function EmailForm() {
         body: JSON.stringify({
           emails: selectedEmails,
           subject,
-          body: mainContent,
+          body: `<div>${emailHeader ? emailHeader : ""}
+          ${mainContent}
+          ${emailFooter ? emailFooter : ""}
+          </div>`,
         }),
       });
 
@@ -190,11 +196,24 @@ export default function EmailForm() {
           onChange={(e) => setSubject(e.target.value)}
         />
       </div>
-
+      <div className="mt-5">
+        <h3 className="mb-2 font-semibold">Write Header</h3>
+        <EditorHTML value={emailHeader || ""} onChange={e => {
+          setEmailHeader(e)
+          setLocalStorage("email-header", e)
+        }} />
+      </div>
       {/* ✅ Email Editor */}
       <div className="mt-5">
         <h3 className="mb-2 font-semibold">Write Body</h3>
         <EditorHTML value={mainContent} onChange={setMainContent} />
+      </div>
+      <div className="mt-5">
+        <h3 className="mb-2 font-semibold">Write Footer</h3>
+        <EditorHTML value={emailFooter || ""} onChange={(e) => {
+          setEmailFooter(e)
+          setLocalStorage("email-footer", e)
+        }} />
       </div>
 
       {/* ✅ Send Button */}
