@@ -24,12 +24,12 @@ const EasyCheckout: React.FC = () => {
   const lang = useSelector((state: RootState) => state.language.language);
   const user = useSelector((state: RootState) => state.auth.user);
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod');
-  const [fullName, setFullName] = useState(user?.name || "");
-  const [phone, setPhone] = useState<any>(user?.phone || "");
-  const [email, setEmail] = useState(user?.email || "");
-  const [division, setDivision] = useState(user?.address?.division || "");
-  const [address, setAddress] = useState<any>(user?.address?.area || "");
-  const [district, setDistrict] = useState(user?.address?.district || "");
+  const [fullName, setFullName] = useState(user?.name || '');
+  const [phone, setPhone] = useState<any>(user?.phone || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [division, setDivision] = useState(user?.address?.division || '');
+  const [address, setAddress] = useState<any>(user?.address?.area || '');
+  const [district, setDistrict] = useState(user?.address?.district || '');
   const [subDistrict, setSubDistrict] = useState('-');
   const [area, setArea] = useState('');
   const [agree, setAgree] = useState(true);
@@ -99,7 +99,7 @@ const EasyCheckout: React.FC = () => {
     setIsModalOpen2(false);
   };
   // For right side
-  console.log(checkoutItems)
+  console.log(checkoutItems);
 
   const updateQuantity = (id: number, type: 'inc' | 'dec') => {
     console.log('id', id, 'type', type);
@@ -200,9 +200,9 @@ const EasyCheckout: React.FC = () => {
       }
       toast.success(res?.message || 'Order placed successfully');
       handleBeforeUnload();
-      router.push(`/order-placed?orderIds=${encodeURIComponent(
-        JSON.stringify([res?.order?.orderId]))
-        }`);
+      router.push(
+        `/order-placed?orderIds=${encodeURIComponent(JSON.stringify([res?.order?.orderId]))}`
+      );
     } catch (error: any) {
       toast.error(error?.data?.message || 'Failed to place order');
       console.log(error);
@@ -213,8 +213,8 @@ const EasyCheckout: React.FC = () => {
   const divisionOptions = BD_Division.divisions;
   const districtOptions = division
     ? BD_District.districts.filter(
-      (d) => d.division_id === divisionOptions.find((div) => div.name === division)?.id
-    )
+        (d) => d.division_id === divisionOptions.find((div) => div.name === division)?.id
+      )
     : [];
 
   const handleApplyCoupon = async () => {
@@ -264,11 +264,11 @@ const EasyCheckout: React.FC = () => {
           {paymentMethod === 'cod' ? (
             <>
               অর্ডার সংক্রান্ত যেকোনো প্রয়োজনে কথা বলুন আমাদের কাস্টমার সার্ভিস প্রতিনিধির সাথে -{' '}
-              <strong> 01915665089</strong>
+              <strong> 01711726501</strong>
             </>
           ) : (
             <>
-              অনলাইন পেমেন্ট সংক্রান্ত সহায়তার জন্য হেল্পলাইন - <strong> 01915665089</strong>
+              অনলাইন পেমেন্ট সংক্রান্ত সহায়তার জন্য হেল্পলাইন - <strong> 01711726501</strong>
             </>
           )}
         </motion.div>
@@ -285,10 +285,11 @@ const EasyCheckout: React.FC = () => {
 
           <div className="mt-5 flex w-full justify-evenly rounded border border-primaryBlue bg-[#E6EFFF] px-2 py-1 transition-all duration-500 md:w-[90%] md:px-3 md:py-2">
             <button
-              className={`flex items-center gap-2 rounded px-3 py-1 font-medium transition-all duration-300 md:px-3 md:py-1.5 ${paymentMethod === 'cod'
-                ? 'bg-primaryBlue text-white'
-                : 'text-black hover:bg-slate-50 hover:text-primaryBlue'
-                }`}
+              className={`flex items-center gap-2 rounded px-3 py-1 font-medium transition-all duration-300 md:px-3 md:py-1.5 ${
+                paymentMethod === 'cod'
+                  ? 'bg-primaryBlue text-white'
+                  : 'text-black hover:bg-slate-50 hover:text-primaryBlue'
+              }`}
               onClick={() => setPaymentMethod('cod')}
             >
               {paymentMethod === 'cod' && <CheckOutlined className="text-xl" />}
@@ -296,10 +297,11 @@ const EasyCheckout: React.FC = () => {
             </button>
 
             <button
-              className={`flex items-center gap-2 rounded px-3 py-1.5 font-medium transition-all duration-300 ${paymentMethod === 'online'
-                ? 'bg-primaryBlue text-white'
-                : 'text-black hover:bg-slate-50 hover:text-primaryBlue'
-                }`}
+              className={`flex items-center gap-2 rounded px-3 py-1.5 font-medium transition-all duration-300 ${
+                paymentMethod === 'online'
+                  ? 'bg-primaryBlue text-white'
+                  : 'text-black hover:bg-slate-50 hover:text-primaryBlue'
+              }`}
               onClick={() => setPaymentMethod('online')}
             >
               {paymentMethod === 'online' && <CheckOutlined className="text-xl" />}
@@ -572,7 +574,9 @@ const EasyCheckout: React.FC = () => {
             </div>
             <div className="flex justify-between text-primaryBlue">
               <span>{lang === 'bn' ? 'ডেলিভারি চার্জ' : 'Delivery Charge'}</span>
-              <span>{lang === 'bn' ? 'যোগ হবে' : 'will be added'}</span>
+              <span>
+                {district === 'Dhaka' ? 60 : 120} {lang === 'bn' ? 'টাকা' : 'BDT'}
+              </span>
             </div>
             {couponDiscount?.id && (
               <div className="flex justify-between text-primaryBlue">
@@ -587,7 +591,7 @@ const EasyCheckout: React.FC = () => {
                   ? couponDiscount?.discount_type === 'flat'
                     ? subtotal - couponDiscount?.discount_amount
                     : subtotal - subtotal * (couponDiscount?.discount_amount / 100)
-                  : subtotal}{' '}
+                  : subtotal + (district === 'Dhaka' ? 60 : 120)}{' '}
                 {lang === 'bn' ? 'টাকা' : 'BDT'}
               </span>
             </div>
