@@ -27,6 +27,7 @@ import {
   FaSitemap,
   FaBloggerB,
   FaTools,
+  FaDollarSign,
 } from 'react-icons/fa';
 import { FaHeadphones } from 'react-icons/fa6';
 
@@ -243,6 +244,32 @@ export const getNavData = (vendorData: any, orders: OrderAnalytics | undefined) 
         accessKey: 'product-management',
         url: '/admin/product-management',
         items: [],
+      },
+      {
+        title: 'Online Payments',
+        icon: FaDollarSign,
+        items: [
+          {
+            title: 'All Payments',
+            accessKey: 'all-payments',
+            url: '/admin/online/all-payments',
+          },
+          {
+            title: 'In-House Pay',
+            accessKey: 'in-house-pay',
+            url: '/admin/online/in-house-pay',
+          },
+          {
+            title: 'AliExpress Pay',
+            accessKey: 'ali-express-pay',
+            url: '/admin/online/ali-express-pay',
+          },
+          {
+            title: 'Vendor Pay',
+            accessKey: 'vendor-pay',
+            url: '/admin/online/vendor-pay',
+          },
+        ],
       },
     ],
   },
