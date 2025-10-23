@@ -85,7 +85,7 @@ export default function Page() {
 
   return (
     <div>
-      <h2 className="mb-4 text-xl font-semibold">Ali Express</h2>
+      <h2 className="mb-4 text-xl font-semibold">Vendor</h2>
       <OnlineFilter onFilterChange={handleFilterChange} />
       <PaymentTable data={filteredData} itemsPerPage={5} />
     </div>

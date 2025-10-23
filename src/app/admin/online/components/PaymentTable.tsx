@@ -84,10 +84,21 @@ const PaymentTable: React.FC<PaymentTableProps> = ({ data, itemsPerPage = 5 }) =
             </div>
 
             {/* Product Info */}
-            <div className="text-center">
+            <div className="group relative text-center">
               <p className="font-medium">{item.productTitle}</p>
-              <p className="text-xs text-gray-500">
-                ID: <span className="text-blue-500">{item.productId}</span>
+              <p className="flex items-center justify-center gap-1 text-xs text-gray-500">
+                ID:
+                <span className="text-blue-500">{item.productId}</span>
+                {/* Copy button, hidden by default, shows on hover */}
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(item.productId);
+                    // alert('Product ID copied!');
+                  }}
+                  className="ml-2 hidden items-center justify-center rounded bg-gray-200 px-2 py-1 text-xs text-gray-700 hover:bg-gray-300 group-hover:inline-flex"
+                >
+                  Copy
+                </button>
               </p>
             </div>
 
