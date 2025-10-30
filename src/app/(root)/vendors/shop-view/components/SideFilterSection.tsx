@@ -2,13 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 
-import FilterRadioGroup from "@/components/category/leftSidebar/FilterRadioGroup";
-import FilterRadioSearch from "@/components/category/leftSidebar/FilterRadioSearch";
 import { IoIosArrowDown } from "react-icons/io";
 import { useGetProductCategoriesQuery } from "@/redux/services/client/categories";
 import { useGetBrandsPublicQuery } from "@/redux/services/client/brands";
 import { useRouter, useSearchParams } from "next/navigation";
 import Price from "@/components/category/leftSidebar/Price";
+import Image from "next/image";
 
 const availabilityOptions = [
   { value: "in-stock", label: "In stock" },
@@ -482,7 +481,7 @@ const SideFilterSection: React.FC<{
               />
               {/* Brand logo if available */}
               {brand.image && (
-                <img
+                <Image
                   src={brand.image}
                   alt={brand.title}
                   className="h-5 w-5 object-contain"

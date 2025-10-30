@@ -1,9 +1,14 @@
 'use client';
 
-import BlogsCart from '@/components/shared/BlogsCart';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import { Pagination } from 'antd';
-import Loader from '@/components/shared/Loader';
+
+// Dynamic imports for better performance
+const BlogsCart = dynamic(() => import('@/components/shared/BlogsCart'), {
+  loading: () => <p>Loading...</p>,
+});
+const Loader = dynamic(() => import('@/components/shared/Loader'));
 
 interface Blog {
   id: number;
@@ -11,7 +16,7 @@ interface Blog {
   description: string;
   thumbnail: string;
   date: string;
-  name: string; // writer name (from API `name`)
+  name: string; // writer name
   slug: string;
 }
 
@@ -22,31 +27,47 @@ const BlogsPage: React.FC = () => {
   const [limit] = useState(10);
   const [loading, setLoading] = useState(false);
 
-  const fetchBlogs = async (page: number) => {
+  // ✅ useCallback to stabilize function and fix ESLint warning
+  const fetchBlogs = useCallback(async (page: number) => {
+    const controller = new AbortController();
+    const { signal } = controller;
+
     setLoading(true);
     try {
       const res = await fetch(
-        `https://api.darkak.com.bd/api/public/blogs?page=${page}&limit=${limit}`
+        `https://api.darkak.com.bd/api/public/blogs?page=${page}&limit=${limit}`,
+        { signal, cache: 'force-cache' }
       );
+
+      if (!res.ok) throw new Error('Failed to fetch blogs');
       const data = await res.json();
 
       setBlogs(data.blogs || []);
       setTotal(data.total || 0);
     } catch (err) {
-      console.error('Error fetching blogs:', err);
+      if ((err as any).name !== 'AbortError') {
+        console.error('Error fetching blogs:', err);
+      }
     } finally {
       setLoading(false);
     }
-  };
 
+    return () => controller.abort();
+  }, [limit]);
+
+  // ✅ useEffect dependency fixed
   useEffect(() => {
     fetchBlogs(page);
-  }, [page]);
+  }, [page, fetchBlogs]);
 
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Blogs grid */}
-      <div className="mt-10 grid w-full grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+      <div
+        className="mt-10 grid w-full grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
+        aria-busy={loading}
+        role="status"
+      >
         {loading ? (
           <Loader />
         ) : blogs.length > 0 ? (
@@ -66,13 +87,22 @@ const BlogsPage: React.FC = () => {
             />
           ))
         ) : (
-          <p className="col-span-full text-center">No blogs found.</p>
+          <p className="col-span-full text-center text-gray-500">
+            No blogs found.
+          </p>
         )}
       </div>
 
       {/* Pagination */}
       <div className="mt-8 flex justify-center">
-        <Pagination current={page} pageSize={limit} total={total} onChange={(p) => setPage(p)} />
+        <Pagination
+          current={page}
+          pageSize={limit}
+          total={total}
+          showSizeChanger={false}
+          onChange={(p) => setPage(p)}
+          aria-label="Blog pagination"
+        />
       </div>
     </div>
   );

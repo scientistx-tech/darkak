@@ -1,5 +1,6 @@
-import React from "react";
-import { User } from "lucide-react";
+import React from 'react';
+import { User } from 'lucide-react';
+import Image from 'next/image';
 
 interface Customer {
   id: number;
@@ -20,20 +21,17 @@ const TopCustomers: React.FC<TopCustomersProps> = ({ customers }) => {
   const topFiveCustomers = customers.slice(0, 5);
 
   return (
-    <div className="overflow-hidden rounded-lg bg-white dark:bg-gray-dark shadow">
+    <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-dark">
       <div className="border-b p-4">
         <h3 className="text-md font-semibold dark:text-white">Top Customer</h3>
       </div>
       <div className="divide-y">
         {topFiveCustomers.map((customer) => (
-          <div
-            key={customer.id}
-            className="flex items-center justify-between p-4"
-          >
+          <div key={customer.id} className="flex items-center justify-between p-4">
             <div className="flex items-center space-x-3">
               <div className="rounded-full bg-gray-100 p-2">
                 {customer.image ? (
-                  <img
+                  <Image
                     src={customer.image}
                     alt={customer.name}
                     className="h-10 w-10 rounded-full object-cover"
@@ -48,8 +46,7 @@ const TopCustomers: React.FC<TopCustomersProps> = ({ customers }) => {
               </div>
             </div>
             <div className="text-xs text-gray-500 dark:text-white">
-              Orders:{" "}
-              <span className="font-medium dark:text-white">{customer._count.orders}</span>
+              Orders: <span className="font-medium dark:text-white">{customer._count.orders}</span>
             </div>
           </div>
         ))}

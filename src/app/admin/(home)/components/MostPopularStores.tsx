@@ -1,5 +1,6 @@
 import React from "react";
 import { Building, ShoppingCart } from "lucide-react";
+import Image from "next/image";
 
 interface Store {
   id: number;
@@ -29,7 +30,7 @@ const MostPopularStores: React.FC<MostPopularStoresProps> = ({ stores }) => {
             <div className="flex items-center space-x-3">
               <div className="rounded-full bg-gray-100 p-2">
                 {store.shop_logo ? (
-                  <img
+                  <Image
                     src={store.shop_logo}
                     alt={store.store_name}
                     className="h-10 w-10 rounded-full object-cover"

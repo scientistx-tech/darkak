@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import './content.css';
 
 type EditorJsBlock = {
@@ -49,7 +50,7 @@ const EditorJsRenderer: React.FC<EditorJsRendererProps> = ({ data }) => {
       case 'image':
         return (
           <div key={index} className="my-4 text-center">
-            <img
+            <Image
               src={data.file?.url}
               alt={data.caption || 'Image'}
               className="mx-auto w-full rounded"

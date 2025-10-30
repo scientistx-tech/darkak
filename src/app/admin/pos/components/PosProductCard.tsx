@@ -60,7 +60,7 @@ export default function PosProductCard({
           {data.stock}
         </div>
 
-        <img
+        <Image
           src={data?.thumbnail}
           alt={data?.meta_alt || ''}
           className="mx-auto h-28 object-contain"
@@ -75,7 +75,7 @@ export default function PosProductCard({
       <Modal title={null} open={open} onCancel={() => setOpen(false)} footer={null} centered>
         <div className="flex flex-col items-center gap-6 p-4 md:p-6 lg:flex-row">
           <div className="w-full md:w-1/3">
-            <img src={data?.thumbnail} alt="preview" className="h-40 w-40 object-contain" />
+            <Image src={data?.thumbnail} alt="preview" className="h-40 w-40 object-contain" />
           </div>
           <div className="w-2/3">
             <span

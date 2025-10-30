@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function AddressCard({
   title,
   orderDetails,
@@ -8,7 +10,7 @@ export default function AddressCard({
   return (
     <div className="rounded  bg-white p-4 text-slate-900 shadow dark:bg-gray-dark dark:text-white ">
       <div className="flex items-center gap-2">
-        <img
+        <Image
           width={20}
           height={20}
           src="/images/icon/icon_location.png"

@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import EditorHTML from '@/components/EditorHTML';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 import { message } from 'antd';
+import Image from 'next/image';
+
 
 import { useGetBlogCreateMutation } from '../adminBlogApi';
 import { useUploadImagesMutation } from '@/redux/services/admin/adminProductApis';
@@ -193,7 +195,7 @@ export default function BlogFrom() {
               <label className="cursor-pointer">
                 {thamblePreview ? (
                   <div className="relative inline-block">
-                    <img
+                    <Image
                       src={thamblePreview}
                       alt="Thumbnail Preview"
                       className="mx-auto h-40 rounded-md object-cover"
@@ -314,7 +316,7 @@ export default function BlogFrom() {
               <label className="cursor-pointer">
                 {metaPreview ? (
                   <div className="relative inline-block">
-                    <img
+                    <Image
                       src={metaPreview}
                       alt="Meta Preview"
                       className="mx-auto h-32 rounded-md object-cover"

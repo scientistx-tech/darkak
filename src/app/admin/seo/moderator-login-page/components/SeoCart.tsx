@@ -3,6 +3,8 @@ import React, { useEffect, useState, ChangeEvent, KeyboardEvent } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
+import Image from 'next/image';
+
 
 export default function SeoCart() {
   const [metaTitle, setMetaTitle] = useState('');
@@ -186,7 +188,7 @@ export default function SeoCart() {
               <label className="cursor-pointer">
                 {metaImage ? (
                   <div className="relative inline-block">
-                    <img
+                    <Image
                       src={metaImage}
                       alt="Meta Preview"
                       className="mx-auto h-32 rounded-md object-cover"

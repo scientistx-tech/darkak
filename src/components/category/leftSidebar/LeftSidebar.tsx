@@ -11,6 +11,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import Image from 'next/image';
 
 const availabilityOptions = [
   { value: 'in-stock', label: 'In stock' },
@@ -478,7 +479,7 @@ const LeftSidebar: React.FC<{ onFilterChange?: (params: any) => void }> = (props
               />
               {/* Brand logo if available */}
               {brand.image && (
-                <img
+                <Image
                   src={brand.image}
                   alt={brand.title}
                   className="h-5 w-5 object-contain"

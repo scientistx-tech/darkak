@@ -328,7 +328,7 @@ const ProductShow = ({ data, slug }: ProductShowProps) => {
               style={{ scrollSnapType: 'x mandatory' }}
             >
               {allImages.map((img, idx) => (
-                <img
+                <Image
                   key={idx}
                   onClick={() => setSelectedImage(img)}
                   src={img}
