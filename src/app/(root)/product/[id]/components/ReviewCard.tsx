@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { useState } from "react";
 
 type Review = {
@@ -29,7 +30,7 @@ export const ReviewCard = ({ review }: { review: Review }) => {
     >
       <div className="flex w-full items-start gap-1">
         <div className="flex w-[30%] flex-col items-center gap-2">
-          <img
+          <Image
             src="/images/icon/icon_user.png"
             alt="user"
             className="h-12 w-12 rounded-full object-cover"
@@ -64,7 +65,7 @@ export const ReviewCard = ({ review }: { review: Review }) => {
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
         {review.attachments.images.map((img, idx) => (
-          <img
+          <Image
             key={idx}
             src={img}
             alt={`screenshot-${idx}`}

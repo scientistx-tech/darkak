@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+
 import {
   SendHorizonal,
   ImageIcon,
@@ -194,7 +196,7 @@ export default function ChatConversation({ selectedCustomer }: Props) {
                 >
                   {msg.message_files?.length > 0
                     ? msg.message_files.map((file) => (
-                        <img
+                        <Image
                           key={file.url}
                           src={file.url}
                           alt="uploaded"
@@ -212,7 +214,7 @@ export default function ChatConversation({ selectedCustomer }: Props) {
 
       {imagePreview && (
         <div className="relative mx-3 mt-1 max-w-[160px] rounded-md border bg-white p-1 shadow">
-          <img src={imagePreview} alt="Preview" className="rounded" />
+          <Image src={imagePreview} alt="Preview" className="rounded" />
           <button
             onClick={() => setImagePreview(null)}
             className="absolute right-1 top-1 rounded-full bg-white p-1 text-gray-600 shadow hover:text-red-600"

@@ -31,7 +31,7 @@ const VendorCard: React.FC<VendorCardProps> = ({
     >
       {/* Banner Image */}
       <div className="relative h-[120px] w-full overflow-hidden">
-        <img
+        <Image
           src={shopBanner}
           alt="Vendor Banner"
           width={50}
@@ -45,7 +45,7 @@ const VendorCard: React.FC<VendorCardProps> = ({
         {/* Logo and Name */}
         <div className="flex items-center gap-4">
           <div className="">
-            <img
+            <Image
               src={shopLogo}
               alt={`${shopName} Logo`}
               width={48}

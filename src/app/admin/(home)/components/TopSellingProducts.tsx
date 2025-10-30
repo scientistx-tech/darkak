@@ -1,5 +1,6 @@
 import React from "react";
-import { Package, ShoppingCart } from "lucide-react";
+import { Package } from "lucide-react";
+import Image from 'next/image';
 
 interface Product {
   id: number;
@@ -44,7 +45,7 @@ const TopSellingProducts: React.FC<TopSellingProductsProps> = ({
             <div className="flex items-center space-x-3">
               <div className="rounded-md bg-gray-100 p-1">
                 {product.thumbnail ? (
-                  <img
+                  <Image
                     src={product.thumbnail}
                     alt={product.title}
                     className="h-12 w-12 rounded-md object-cover"

@@ -78,7 +78,7 @@ const PaymentTable: React.FC<PaymentTableProps> = ({ data, itemsPerPage = 5 }) =
               {/* Product Thumbnail */}
               <div className="flex justify-center">
                 <div className="relative h-15 w-15 overflow-hidden rounded-md border">
-                  <img src={item.productImage} alt={item.productTitle} className="object-cover" />
+                  <Image src={item.productImage} alt={item.productTitle} className="object-cover" />
                 </div>
               </div>
             </div>

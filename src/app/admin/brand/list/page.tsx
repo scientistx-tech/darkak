@@ -159,7 +159,7 @@ function BrandTable() {
             {/* export button */}
             {/* <div>
             <button className="flex items-center gap-2 rounded-md border-2 border-blue-400 px-4 py-2 text-sm font-medium text-blue-400">
-              <img
+              <Image
                 width={20}
                 height={20}
                 src="/images/icon/icon-excel.svg"

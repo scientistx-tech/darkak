@@ -10,6 +10,7 @@ import { RootState } from '@/redux/store';
 import { useUploadImagesMutation } from '@/redux/services/admin/adminProductApis';
 import { socket } from '@/socket';
 import { useGetMyOrdersQuery } from '@/redux/services/client/order';
+import Image from 'next/image';
 
 interface MessageFile {
   id: number;
@@ -178,7 +179,7 @@ export default function LiveChat({ id }: { id: number }) {
                 key={order.id}
                 className="flex cursor-pointer items-center gap-3 border-b"
               >
-                <img
+                <Image
                   src={order.product.thumbnail}
                   alt={order.product.title}
                   className="h-12 w-12 rounded object-cover"
@@ -209,7 +210,7 @@ export default function LiveChat({ id }: { id: number }) {
           }`}
         >
           {msg.message_files?.length > 0 && (
-            <img
+            <Image
               src={msg.message_files[0].url}
               alt="attachment"
               className="mb-1 h-auto w-40 rounded"
@@ -255,7 +256,7 @@ export default function LiveChat({ id }: { id: number }) {
 
       {selectedImage && (
         <div className="relative mt-2 w-40">
-          <img src={selectedImage} alt="Selected" className="h-auto w-full rounded" />
+          <Image src={selectedImage} alt="Selected" className="h-auto w-full rounded" />
           <button
             className="absolute right-1 top-1 rounded-full bg-black bg-opacity-50 text-white"
             onClick={() => setSelectedImage(null)}

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import ReactImageMagnify from "react-image-magnify";
 import { BsWhatsapp } from "react-icons/bs";
+import Image from "next/image";
 const ProductShow = () => {
   const product = {
     brand: "APPLE",
@@ -54,7 +55,7 @@ const ProductShow = () => {
           </div>
           <div className="mt-4 flex gap-3">
             {product.images.map((img, idx) => (
-              <img
+              <Image
                 key={idx}
                 onClick={() => setSelectedImage(img)}
                 src={img}

@@ -9,6 +9,7 @@ import {
 import { useUploadMultipleImagesPublicMutation } from "@/redux/services/userApis";
 import { toast } from "react-toastify";
 import { socket } from "@/socket";
+import Image from "next/image";
 
 export interface MessageFile {
   id: number;
@@ -162,11 +163,12 @@ export default function NoneUserChat({ name, conversationId }: { name: string, c
         {imagePreview && (
           <div className="mt-3 flex items-center justify-end">
             <div className="relative">
-              <img
+              <Image
                 src={imagePreview}
                 alt="Preview"
                 className="w-24 h-24 rounded-lg border object-cover shadow"
               />
+              
               <button
                 onClick={() => setImagePreview(null)}
                 className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-[2px]"
@@ -218,7 +220,7 @@ function ImageBubble({ image, isUser }: { image: string; isUser: boolean }) {
       className={`mt-1 ${isUser ? "flex justify-end" : "flex justify-start"
         }`}
     >
-      <img
+      <Image
         src={image}
         alt="Sent"
         className="max-w-[150px] rounded-lg shadow-md border object-cover"

@@ -6,6 +6,7 @@ import {
   useUploadVideosMutation,
 } from '@/redux/services/userApis';
 import React, { useState } from 'react';
+import Image from "next/image";
 import { FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
@@ -192,7 +193,7 @@ export default function ReturnAndRefund() {
           <div className="mt-4 flex flex-wrap gap-4">
             {imageURLs.map((url, idx) => (
               <div key={idx} className="relative h-24 w-24 overflow-hidden rounded-xl shadow-lg">
-                <img
+                <Image
                   src={url}
                   alt={`uploaded-${idx}`}
                   className="h-full w-full object-cover transition duration-200 hover:scale-105"
