@@ -52,7 +52,7 @@ export default function NotFound() {
         </div>
 
         <div className="w-[50%] flex justify-center items-center">
-          <Image src={Img} alt="Icon" />
+          <Image  src={Img} alt="Icon" />
         </div>
       </div>
     </div>

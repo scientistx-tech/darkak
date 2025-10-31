@@ -1,20 +1,18 @@
 import 'remirror/styles/all.css';
-import '@/css/satoshi.css';
-import '@/css/style.css';
-import 'flatpickr/dist/flatpickr.min.css';
-import 'jsvectormap/dist/jsvectormap.css';
 import 'antd/dist/reset.css';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import '@/css/satoshi.css';
+import '@/css/style.css';
+import 'flatpickr/dist/flatpickr.min.css';
+import 'jsvectormap/dist/jsvectormap.css';
 import type { Metadata } from 'next';
 import { PropsWithChildren } from 'react';
-import UpdateNotice from '@/app/(root)/component/UpdateNotice';
 import ReduxProvider from '@/redux/ReduxProvider';
 import DataLoader from '@/app/DataLoader';
 import GTMHead from '@/components/Scripts/GTMHead';
 import Script from 'next/script';
-import CustomEditor from './admin/components/CustomEditor';
 
 export const metadata: Metadata = {
   title: {
@@ -305,7 +303,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         </noscript>
         <ReduxProvider>
           <DataLoader>
-            {/* <UpdateNotice /> */}
+           
             {children}
           </DataLoader>
         </ReduxProvider>
