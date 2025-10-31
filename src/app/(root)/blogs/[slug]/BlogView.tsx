@@ -4,8 +4,6 @@ import { FaUser, FaCalendarAlt, FaArrowLeft } from 'react-icons/fa';
 import Link from 'next/link';
 
 import BlogsCart from '@/components/shared/BlogsCart';
-
-import img from '@/Data/Demo/thumb-1920-831859.jpg';
 import { Blog } from '@/app/admin/blog/type';
 import ContentFaqCard from '@/components/shared/ContentFaqCard';
 

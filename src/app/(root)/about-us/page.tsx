@@ -4,7 +4,6 @@ import getSeoData from '../getSeoData';
 
 export async function generateMetadata() {
   const data = await getSeoData('about');
-  //console.log(data);
 
   return {
     title: data?.data?.meta_title || '',
