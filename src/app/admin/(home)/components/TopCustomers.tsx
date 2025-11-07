@@ -34,6 +34,7 @@ const TopCustomers: React.FC<TopCustomersProps> = ({ customers }) => {
                   <Image
                     src={customer.image}
                     alt={customer.name}
+                    height={400} width={400}
                     className="h-10 w-10 rounded-full object-cover"
                   />
                 ) : (

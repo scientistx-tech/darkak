@@ -1,13 +1,12 @@
 'use client';
-import React, { useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import { DatePicker, Input, Select, Button } from 'antd';
-import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
-// Define a strong filter type
 export interface FilterValues {
   paymentType?: string;
   transactionId?: string;
@@ -15,113 +14,77 @@ export interface FilterValues {
   dateRange?: [string, string];
 }
 
-export interface OnlineFilterProps {
-  onFilterChange?: (filters: FilterValues) => void;
-}
-
-const OnlineFilter: React.FC<OnlineFilterProps> = ({ onFilterChange }) => {
+export default function OnlineFilter() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname()
   const [filters, setFilters] = useState<FilterValues>({
-    paymentType: undefined,
-    transactionId: undefined,
-    phoneNumber: undefined,
-    dateRange: undefined,
+    paymentType: searchParams.get('paymentType') || undefined,
+    transactionId: searchParams.get('tranId') || undefined,
+    phoneNumber: searchParams.get('phone') || undefined,
+    dateRange: searchParams.get('dateFrom') && searchParams.get('dateTo')
+      ? [searchParams.get('dateFrom')!, searchParams.get('dateTo')!]
+      : undefined,
   });
 
-  const handleChange = <K extends keyof FilterValues>(key: K, value: FilterValues[K]) => {
-    const updated = { ...filters, [key]: value };
-    setFilters(updated);
-    onFilterChange?.(updated);
+  const updateUrl = (newFilters: FilterValues, page = 1) => {
+    const params = new URLSearchParams();
+    if (newFilters.paymentType) params.set('paymentType', newFilters.paymentType);
+    if (newFilters.transactionId) params.set('tranId', newFilters.transactionId);
+    if (newFilters.phoneNumber) params.set('phone', newFilters.phoneNumber);
+    if (newFilters.dateRange) {
+      params.set('dateFrom', newFilters.dateRange[0]);
+      params.set('dateTo', newFilters.dateRange[1]);
+    }
+    params.set('page', page.toString());
+    router.push(`${pathname}?${params.toString()}`);
   };
 
+  const handleSearch = () => updateUrl(filters, 1);
   const handleReset = () => {
-    const resetFilters: FilterValues = {
-      paymentType: undefined,
-      transactionId: undefined,
-      phoneNumber: undefined,
-      dateRange: undefined,
-    };
-    setFilters(resetFilters);
-    onFilterChange?.(resetFilters);
+    setFilters({});
+    updateUrl({}, 1);
   };
 
   return (
     <div className="mb-6 rounded-2xl border bg-white p-4 shadow-sm">
-      <div className="mb-5 mt-5 flex w-full items-end justify-evenly gap-4">
-        {/* Payment Type */}
-        <div className="flex flex-col">
-          <label className="mb-1 text-sm text-gray-600">Payment Type</label>
-          <Select
-            placeholder="Select Payment Type"
-            value={filters.paymentType}
-            onChange={(value) => handleChange('paymentType', value)}
-            allowClear
-            style={{ width: 200 }}
-            size="large"
-          >
-            <Option value="MasterCard">MasterCard</Option>
-            <Option value="Visa Card">Visa Card</Option>
-            <Option value="Mobile Banking">Mobile Banking</Option>
-          </Select>
-        </div>
+      {/* Payment Type */}
+      <Select
+        placeholder="Payment Type"
+        value={filters.paymentType}
+        onChange={(value) => setFilters(f => ({ ...f, paymentType: value }))}
+        allowClear
+        style={{ width: 200 }}
+      >
+        <Option value="cod">Cash on Delivery</Option>
+        <Option value="online">Online</Option>
+        <Option value="pos">POS</Option>
+      </Select>
 
-        {/* Transaction ID */}
-        <div className="flex flex-col">
-          <label className="mb-1 text-sm text-gray-600">Transaction ID</label>
-          <Input
-            placeholder="Enter Transaction ID"
-            value={filters.transactionId}
-            onChange={(e) => handleChange('transactionId', e.target.value)}
-            style={{ width: 200 }}
-            size="large"
-          />
-        </div>
+      {/* Transaction ID */}
+      <Input
+        placeholder="Transaction ID"
+        value={filters.transactionId}
+        onChange={e => setFilters(f => ({ ...f, transactionId: e.target.value }))}
+        style={{ width: 200 }}
+      />
 
-        {/* Phone Number */}
-        <div className="flex flex-col">
-          <label className="mb-1 text-sm text-gray-600">Phone Number</label>
-          <Input
-            placeholder="Enter Phone Number"
-            value={filters.phoneNumber}
-            onChange={(e) => handleChange('phoneNumber', e.target.value)}
-            style={{ width: 200 }}
-            size="large"
-          />
-        </div>
+      {/* Phone */}
+      <Input
+        placeholder="Phone"
+        value={filters.phoneNumber}
+        onChange={e => setFilters(f => ({ ...f, phoneNumber: e.target.value }))}
+        style={{ width: 200 }}
+      />
 
-        {/* Date Range */}
-        <div className="flex flex-col">
-          <label className="mb-1 text-sm text-gray-600">Date Range</label>
-          <RangePicker
-            value={
-              filters.dateRange ? [dayjs(filters.dateRange[0]), dayjs(filters.dateRange[1])] : null
-            }
-            onChange={(dates, dateStrings) =>
-              handleChange('dateRange', dateStrings as [string, string])
-            }
-            size="large"
-          />
-        </div>
+      {/* Date Range */}
+      <RangePicker
+        value={filters.dateRange ? [dayjs(filters.dateRange[0]), dayjs(filters.dateRange[1])] : null}
+        onChange={(dates, dateStrings) => setFilters(f => ({ ...f, dateRange: dateStrings as [string, string] }))}
+      />
 
-        {/* Buttons */}
-        <div className="flex flex-col">
-          <label className="mb-1 text-sm text-gray-600">Action Button</label>
-          <div className="mt-1 flex gap-2">
-            <Button
-              type="primary"
-              icon={<SearchOutlined />}
-              onClick={() => onFilterChange?.(filters)}
-              size="large"
-            >
-              Search
-            </Button>
-            <Button icon={<ReloadOutlined />} onClick={handleReset} size="large" danger>
-              Reset
-            </Button>
-          </div>
-        </div>
-      </div>
+      <Button onClick={handleSearch}>Search</Button>
+      <Button onClick={handleReset} danger>Reset</Button>
     </div>
   );
-};
-
-export default OnlineFilter;
+}

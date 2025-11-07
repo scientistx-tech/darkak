@@ -1,37 +1,29 @@
 'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
-
-export interface PaymentItem {
-  id: string;
-  productImage: string;
-  productTitle: string;
-  productId: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  orderNumber: string;
-  orderDate: string;
-  amount: number;
-  paymentStatus: 'Cancelled' | 'Pending' | 'Successful';
-  paymentType: string; // 🔹 e.g., "Bkash", "Visa Card", "Master Card"
-  transactionId: string; // 🔹 Transaction ID
-}
+import { PaymentListResponse } from '../types';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export interface PaymentTableProps {
-  data: PaymentItem[];
+  data: PaymentListResponse;
   itemsPerPage?: number;
 }
 
-const PaymentTable: React.FC<PaymentTableProps> = ({ data, itemsPerPage = 5 }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const totalPages = Math.ceil(data.length / itemsPerPage);
+const PaymentTable: React.FC<PaymentTableProps> = ({ data, itemsPerPage = 10 }) => {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") as string||"1"));
+  const totalPages = data.totalPage;
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentData = data.slice(startIndex, startIndex + itemsPerPage);
 
   const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    const query = new URLSearchParams(searchParams)
+    query.set("page", page.toString())
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page)
+      router.push(`${pathname}?${query.toString()}`)
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -65,8 +57,8 @@ const PaymentTable: React.FC<PaymentTableProps> = ({ data, itemsPerPage = 5 }) =
       </div>
 
       {/* Table Body */}
-      {currentData.length > 0 ? (
-        currentData.map((item, index) => (
+      {data?.data?.length > 0 ? (
+        data.data?.map((item, index) => (
           <div
             key={item.id}
             className="grid min-w-[1000px] grid-cols-8 items-center border-b py-3 text-sm text-gray-700 transition hover:bg-gray-50"
@@ -77,63 +69,74 @@ const PaymentTable: React.FC<PaymentTableProps> = ({ data, itemsPerPage = 5 }) =
 
               {/* Product Thumbnail */}
               <div className="flex justify-center">
-                <div className="relative h-15 w-15 overflow-hidden rounded-md border">
-                  <Image src={item.productImage} alt={item.productTitle} className="object-cover" />
-                </div>
+                {item?.order_items?.map(d => (
+                  <div key={d.product.id} className="relative h-15 w-15 overflow-hidden rounded-md border">
+                    <Image height={400} width={400} src={d?.product.thumbnail}
+                      alt={d?.product.title} className="object-cover" />
+                  </div>
+                ))}
+
               </div>
             </div>
 
             {/* Product Info */}
             <div className="group relative text-center">
-              <p className="font-medium">{item.productTitle}</p>
-              <p className="flex items-center justify-center gap-1 text-xs text-gray-500">
-                ID:
-                <span className="text-blue-500">{item.productId}</span>
-                {/* Copy button, hidden by default, shows on hover */}
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(item.productId);
-                    // alert('Product ID copied!');
-                  }}
-                  className="ml-2 hidden items-center justify-center rounded bg-gray-200 px-2 py-1 text-xs text-gray-700 hover:bg-gray-300 group-hover:inline-flex"
-                >
-                  Copy
-                </button>
-              </p>
+              {item?.order_items?.map(d => (
+                <div key={d.product.id}>
+                  <p className="font-medium">{d.product.title}</p>
+                  <p className="flex items-center justify-center gap-1 text-xs text-gray-500">
+                    ID:
+                    <span className="text-blue-500">{d.product.id}</span>
+                    {/* Copy button, hidden by default, shows on hover */}
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(`https://darkak.com.bd/product/${d.product.slug}`);
+                        // alert('Product ID copied!');
+                      }}
+                      className="ml-2 hidden items-center justify-center rounded bg-gray-200 px-2 py-1 text-xs text-gray-700 hover:bg-gray-300 group-hover:inline-flex"
+                    >
+                      Copy
+                    </button>
+                  </p>
+                </div>
+              ))}
+
             </div>
 
             {/* Customer Info */}
             <div className="text-center">
-              <p className="font-medium">{item.customerName}</p>
-              <p className="text-xs text-gray-500">{item.customerEmail}</p>
-              <p className="text-xs text-gray-500">{item.customerPhone}</p>
+              <p className="font-medium">{item.name}</p>
+              <p className="text-xs text-gray-500">{item.email || "N/A"}</p>
+              <p className="text-xs text-gray-500">{item.phone || "N/A"}</p>
             </div>
 
             {/* Order Number */}
-            <div className="text-center">{item.orderNumber}</div>
+            <div className="text-center">{item.orderId}</div>
 
             {/* Order Date */}
-            <div className="text-center">{item.orderDate}</div>
+            <div className="text-center">{item.date.split("T")[0]}</div>
 
             {/* 🆕 Payment Details */}
             <div className="text-center">
               <p className="font-medium">{item.paymentType}</p>
               <p className="text-xs text-gray-500">
-                TXN: <span className="text-blue-500">{item.transactionId}</span>
+                TXN: <span className="text-blue-500">{item.online_payments?.[0]?.tran_id || "N/A"}</span>
               </p>
             </div>
 
             {/* Amount */}
-            <div className="text-center font-semibold">৳{item.amount.toLocaleString('en-BD')}</div>
+            <div className="text-center font-semibold">৳{item.total.toLocaleString('en-BD')}</div>
 
             {/* Payment Status */}
             <div className="text-center">
               <span
                 className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusColor(
-                  item.paymentStatus
+                  item.paid ? "Successful"
+                    : !item.paid && item.status === "cancelled" ? "Cancelled" : "Pending"
                 )}`}
               >
-                {item.paymentStatus}
+                {item.paid ? "Successful"
+                  : !item.paid && item.status === "cancelled" ? "Cancelled" : "Pending"}
               </span>
             </div>
           </div>
@@ -146,11 +149,10 @@ const PaymentTable: React.FC<PaymentTableProps> = ({ data, itemsPerPage = 5 }) =
       {totalPages > 1 && (
         <div className="mt-4 flex items-center justify-center gap-2">
           <button
-            className={`rounded-md border px-3 py-1 ${
-              currentPage === 1
-                ? 'cursor-not-allowed border-gray-200 text-gray-400'
-                : 'text-gray-700 hover:bg-gray-100'
-            }`}
+            className={`rounded-md border px-3 py-1 ${currentPage === 1
+              ? 'cursor-not-allowed border-gray-200 text-gray-400'
+              : 'text-gray-700 hover:bg-gray-100'
+              }`}
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
           >
@@ -161,22 +163,20 @@ const PaymentTable: React.FC<PaymentTableProps> = ({ data, itemsPerPage = 5 }) =
             <button
               key={i}
               onClick={() => handlePageChange(i + 1)}
-              className={`rounded-md border px-3 py-1 ${
-                currentPage === i + 1
-                  ? 'border-blue-500 bg-blue-500 text-white'
-                  : 'border-gray-300 hover:bg-gray-100'
-              }`}
+              className={`rounded-md border px-3 py-1 ${currentPage === i + 1
+                ? 'border-blue-500 bg-blue-500 text-white'
+                : 'border-gray-300 hover:bg-gray-100'
+                }`}
             >
               {i + 1}
             </button>
           ))}
 
           <button
-            className={`rounded-md border px-3 py-1 ${
-              currentPage === totalPages
-                ? 'cursor-not-allowed border-gray-200 text-gray-400'
-                : 'text-gray-700 hover:bg-gray-100'
-            }`}
+            className={`rounded-md border px-3 py-1 ${currentPage === totalPages
+              ? 'cursor-not-allowed border-gray-200 text-gray-400'
+              : 'text-gray-700 hover:bg-gray-100'
+              }`}
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
           >

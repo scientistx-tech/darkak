@@ -33,6 +33,7 @@ const MostPopularStores: React.FC<MostPopularStoresProps> = ({ stores }) => {
                   <Image
                     src={store.shop_logo}
                     alt={store.store_name}
+                    height={400} width={400}
                     className="h-10 w-10 rounded-full object-cover"
                   />
                 ) : (
