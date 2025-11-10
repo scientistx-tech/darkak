@@ -70,7 +70,7 @@ export default function AliExpressSearch() {
   useEffect(() => {
     if (!token) {
       window.location.href =
-        'https://api-sg.aliexpress.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=https://darkak.com.bd/connecting-aliExpress&client_id=514372';
+        'https://api-sg.aliexpress.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri=https://panel.darkak.com.bd/connecting-aliExpress&client_id=514372';
     }
   }, []);
 
