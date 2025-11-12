@@ -17,7 +17,7 @@ jobs:
           username: root
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd /var/www/frontend
+            cd /home/panel/darkak
             git pull
             npm i --force
             npm run build
