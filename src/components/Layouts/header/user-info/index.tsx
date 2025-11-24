@@ -33,7 +33,7 @@ export function UserInfo() {
   const handleLogOut = () => {
     dispatch(clearUser());
     auth.signOut();
-    router.push('/auth/login');
+    router.push('/');
   };
 
   return (

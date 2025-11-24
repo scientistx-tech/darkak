@@ -1,7 +1,6 @@
 'use client';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Product } from '@/app/(root)/types/ProductType';
 import { message } from 'antd';
 import PriceInfo from './PriceInfo';
 import RightIcons from './RightIcons';
@@ -10,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import Link from 'next/link';
+import { Product } from '@/types/productType';
 
 interface ProductCardProps {
   product: Product;

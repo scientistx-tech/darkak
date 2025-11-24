@@ -25,7 +25,7 @@ const AdminPrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
     if (user?.isAdmin || user?.isModerator) {
       setChecked(true); // allow rendering children
     } else {
-      router.replace("/auth/login");
+      router.replace("/");
     }
   }, [user, router, pathname]);
 

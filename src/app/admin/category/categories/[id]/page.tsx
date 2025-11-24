@@ -5,10 +5,10 @@ import Input from "../../../components/Input";
 import Button from "../../../components/Button";
 import { toast } from "react-toastify";
 import { useUpdateCategoryMutation } from "@/redux/services/admin/adminCategoryApis";
-import SelectField from "@/app/(root)/user/profile/components/SelectField";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import SelectField from "@/components/FormElements/SelectField";
 
 interface EditDataProps {
   params: Promise<{ id: string }>;

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import ProductCard from '@/components/shared/ProductCard';
-import { Product } from '@/app/(root)/types/ProductType';
 import LeftSidebar from '@/components/category/leftSidebar/LeftSidebar';
 import CategoryFilter from '@/assets/svg/CategoryFilter';
 import { useGetAllProductsQuery } from '@/redux/services/client/products';
@@ -9,6 +8,7 @@ import { toast } from 'react-toastify';
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import { Product } from '@/types/productType';
 
 const ProductsSection = ({
   data,

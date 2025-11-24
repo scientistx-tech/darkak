@@ -6,12 +6,12 @@ import {
   useUploadFormDataMutation,
 } from '@/redux/services/admin/adminCategoryApis';
 import { toast } from 'react-toastify';
-import SelectField from '@/app/(root)/user/profile/components/SelectField';
 import Image from 'next/image';
 import Textarea from '../../components/Textarea';
 import { useUploadImagesMutation } from '@/redux/services/admin/adminProductApis';
 import { values } from '@remirror/core';
 import EditorHTML from '@/components/EditorHTML';
+import SelectField from '@/components/FormElements/SelectField';
 
 export type FaqType = {
   question: string;

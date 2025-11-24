@@ -6,7 +6,7 @@ import Button from "../../../components/Button";
 
 import { toast } from "react-toastify";
 import { useUpdateCategoryMutation } from "@/redux/services/admin/adminCategoryApis";
-import SelectField from "@/app/(root)/user/profile/components/SelectField";
+import SelectField from "@/components/FormElements/SelectField";
 
 interface EditDataProps {
   params: Promise<{ id: string }>;

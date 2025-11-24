@@ -5,12 +5,12 @@ import SendButton from '@/components/Button/SendButton';
 import { useGetUserQuery } from '@/redux/services/authApis';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
-import { useUpdateUserAddressMutation, useUpdateUserMutation } from '@/redux/services/userApis';
-import ClientLoading from '@/app/(root)/components/ClientLoading';
+import {  useUpdateUserMutation } from '@/redux/services/userApis';
 import { toast } from 'react-toastify';
-import InputField from '@/app/(root)/user/profile/components/InputField';
-import SelectField from '@/app/(root)/user/profile/components/SelectField';
 import { updateUser } from '@/redux/slices/authSlice';
+import ClientLoading from '@/components/ClientLoading';
+import InputField from '@/components/InputField';
+import SelectField from '@/components/FormElements/SelectField';
 
 
 export default function EditProfile() {

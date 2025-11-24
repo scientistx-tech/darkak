@@ -1,7 +1,7 @@
 'use client';
 
-import { Product } from '@/app/(root)/types/ProductType';
 import ProductCard from '@/components/shared/ProductCard';
+import { Product } from '@/types/productType';
 import { FaSpinner } from 'react-icons/fa';
 
 interface Props {

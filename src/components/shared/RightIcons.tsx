@@ -41,7 +41,7 @@ export default function RightIcons({
     } catch (error: any) {
       //console.log(error);
       if (error?.status === 401) {
-        return router.replace("/auth/login");
+        return router.replace("/");
       }
       toast.error(error?.data?.message || "Failed to add to wishlist");
     }

@@ -20,9 +20,9 @@ import {
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import ClientLoading from "@/app/(root)/components/ClientLoading";
 import Pagination from "@/components/shared/Pagination";
 import RequireAccess from "@/components/Layouts/RequireAccess";
+import ClientLoading from "@/components/ClientLoading";
 
 function SliderTable() {
   const [isOpen, setIsOpen] = useState(false);
@@ -68,7 +68,7 @@ function SliderTable() {
     refetch();
   }, [refetch]);
 
-  if (isLoading) <ClientLoading></ClientLoading>;
+  if (isLoading) return <ClientLoading></ClientLoading>;
   return (
     <RequireAccess permission="sliders">
       <div>

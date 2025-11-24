@@ -7,7 +7,6 @@ import {
   useUploadFormDataMutation,
 } from '@/redux/services/admin/adminCategoryApis';
 import { toast } from 'react-toastify';
-import SelectField from '@/app/(root)/user/profile/components/SelectField';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -16,6 +15,7 @@ import { useUploadImagesMutation } from '@/redux/services/admin/adminProductApis
 import Image from 'next/image';
 import Textarea from '../../components/Textarea';
 import EditorHTML from '@/components/EditorHTML';
+import SelectField from '@/components/FormElements/SelectField';
 
 type AddDataProps = {
   refetch: () => void;

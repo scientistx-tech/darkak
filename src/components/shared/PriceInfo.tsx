@@ -1,5 +1,4 @@
 'use client';
-import { Product } from '@/app/(root)/types/ProductType';
 import { useAddToCartMutation } from '@/redux/services/client/myCart';
 import { setCart } from '@/redux/slices/authSlice';
 import { AppDispatch, RootState } from '@/redux/store';
@@ -10,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { Rating } from 'react-simple-star-rating';
 import { setLocalStorage } from '@/utils/localStorage';
+import { Product } from '@/types/productType';
 
 const PriceInfo = ({
   product,
@@ -80,7 +80,7 @@ const PriceInfo = ({
       router.push('/easy-checkout');
     } catch (error: any) {
       if (error?.status === 401) {
-        return router.replace('/auth/login');
+        return router.replace('/');
       }
       toast.error(error?.data?.message || 'Failed to add to cart');
     }
@@ -103,7 +103,7 @@ const PriceInfo = ({
       toast.success('Item added to cart!');
     } catch (error: any) {
       if (error?.status === 401) {
-        return router.replace('/auth/login');
+        return router.replace('/');
       }
       toast.error(error?.data?.message || 'Failed to add to cart');
     }

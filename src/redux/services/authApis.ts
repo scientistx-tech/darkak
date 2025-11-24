@@ -8,7 +8,7 @@ export const authApi = baseApi.injectEndpoints({
     }),
     emailLogin: builder.mutation<AuthResponse, { email: string; password: string }>({
       query: (body) => ({
-        url: `/auth/login-with-email`,
+        url: `/-with-email`,
         body: body,
         method: 'POST',
       }),
@@ -16,7 +16,7 @@ export const authApi = baseApi.injectEndpoints({
 
     phoneLogin: builder.mutation<AuthResponse, { phone: string; password: string }>({
       query: (body) => ({
-        url: `/auth/login-with-phone`,
+        url: `/-with-phone`,
         body: body,
         method: 'POST',
       }),

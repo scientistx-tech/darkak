@@ -19,7 +19,7 @@ const SellerPrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
 
     useEffect(() => {
         if (!admin) {
-            router.replace("/auth/login");
+            router.replace("/");
         } else {
             router.replace(getLocalStorage("path") || "/seller");
         }

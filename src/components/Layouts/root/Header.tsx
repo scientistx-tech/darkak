@@ -272,7 +272,7 @@ const Header: React.FC = () => {
               ) : (
                 <div className="flex items-center gap-2">
                   <Link
-                    href="/auth/login"
+                    href="/"
                     className="rounded-md bg-secondaryLiteBlue px-4 py-1 text-sm text-primaryDarkBlue transition hover:bg-primaryDarkBlue hover:text-primaryWhite"
                   >
                     Login
@@ -594,7 +594,7 @@ const Header: React.FC = () => {
                 ) : (
                   <div className="flex items-center gap-2">
                     <Link
-                      href="/auth/login"
+                      href="/"
                       className="rounded-md bg-secondaryLiteBlue px-4 py-1 text-sm text-primaryDarkBlue transition hover:bg-primaryDarkBlue hover:text-primaryWhite"
                     >
                       Login
